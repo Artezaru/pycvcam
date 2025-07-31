@@ -3,6 +3,7 @@ import copy
 from typing import Optional
 
 from ..core.transform import Transform
+from ..core.package import Package
 
 def optimize_parameters(
     transform: Transform,
@@ -57,7 +58,7 @@ def optimize_parameters(
 
     .. note::
 
-        The ``_skip`` parameter is used to skip the checks for the transformation parameters and assume the input and output points are given in the (Npoints, input_dim) and (Npoints, output_dim) float64 format, respectively.
+        The ``_skip`` parameter is used to skip the checks for the transformation parameters and assume the input and output points are given in the (Npoints, input_dim) and (Npoints, output_dim) float format, respectively.
         Please use this parameter with caution, as it may lead to unexpected results if the transformation parameters are not set correctly.
 
     For conditioning, the following steps are applied:
@@ -66,6 +67,11 @@ def optimize_parameters(
     - Second, a preconditioner is applied to the Jacobian matrix to improve the conditioning of the problem.
     
     The `cond_cutoff` parameter is used to detect ill-conditioned problems. If the condition number of the Jacobian matrix is greater than this value, a warning is raised and the optimization returns NaN array.
+
+    .. warning::
+
+            The points are converting to float before applying the inverse transformation.
+            See :class:`pycvcam.core.Package` for more details on the default data types used in the package.
 
     Parameters
     ----------
@@ -103,8 +109,8 @@ def optimize_parameters(
         If True, apply a preconditioner to the Jacobian matrix to improve the conditioning of the problem. This is done by applying the Jacobi preconditioner to the Jacobian matrix before solving the optimization problem. Default is False.
 
     _skip : bool, optional
-        If True, skip the checks for the transformation parameters and assume the input and output points are given in the (Npoints, input_dim) and (Npoints, output_dim) float64 format, respectively.
-        The guess must be given in the (Nparams,) float64 format.
+        If True, skip the checks for the transformation parameters and assume the input and output points are given in the (Npoints, input_dim) and (Npoints, output_dim) float format, respectively.
+        The guess must be given in the (Nparams,) float format.
         `transpose` is ignored if this parameter is set to True.
 
     Returns
@@ -169,9 +175,9 @@ def optimize_parameters(
         if not isinstance(precond_jacobi, bool):
             raise TypeError(f"precond_jacobi must be a boolean, got {type(precond_jacobi)}")
 
-        # Convert input and output points to float64
-        input_points = numpy.asarray(input_points, dtype=numpy.float64)
-        output_points = numpy.asarray(output_points, dtype=numpy.float64)
+        # Convert input and output points to float
+        input_points = numpy.asarray(input_points, dtype=Package.get_float_dtype())
+        output_points = numpy.asarray(output_points, dtype=Package.get_float_dtype())
 
         # Check the shape of the input and output points
         if input_points.ndim < 2 or output_points.ndim < 2:
@@ -201,7 +207,7 @@ def optimize_parameters(
 
         # Check the guess
         if guess is not None:
-            guess = numpy.asarray(guess, dtype=numpy.float64)
+            guess = numpy.asarray(guess, dtype=Package.get_float_dtype())
             if guess.ndim != 1:
                 raise ValueError(f"Guess must be a 1D array, got {guess.ndim} dimensions.")
             if guess.shape[0] != transform.Nparams:
@@ -209,19 +215,19 @@ def optimize_parameters(
         
         else:
             # Use the current parameters as the guess
-            guess = transform.parameters if transform.is_set() else numpy.zeros(transform.Nparams, dtype=numpy.float64)
+            guess = transform.parameters if transform.is_set() else numpy.zeros(transform.Nparams, dtype=Package.get_float_dtype())
 
     # Return empty arrays if Nparams is 0
     if transform.Nparams == 0:
-        return numpy.zeros(0, dtype=numpy.float64)
-    
+        return numpy.zeros(0, dtype=Package.get_float_dtype())
+
     # Create a perfect copy of the current class to avoid modifying the original one
     object_class = copy.deepcopy(transform)
     Npoints = input_points.shape[0]  # Number of points in computation
 
     # Set the parameters of the object class to the guess
     object_class.parameters = guess
-    delta_itk = numpy.zeros_like(object_class.parameters, dtype=numpy.float64)
+    delta_itk = numpy.zeros_like(object_class.parameters, dtype=Package.get_float_dtype())
 
     # Run the iterative algorithm
     for it in range(max_iter):
@@ -291,7 +297,7 @@ def optimize_parameters(
 
         # Add regularization if requested
         if reg_factor > 0.0:
-            JTJ += reg_factor * numpy.eye(transform.Nparams, dtype=numpy.float64)
+            JTJ += reg_factor * numpy.eye(transform.Nparams, dtype=Package.get_float_dtype())
 
             if verbose:
                 print(f"Iteration {it+1}: Condition number of JTJ after regularization: {numpy.linalg.cond(JTJ)}")
@@ -328,8 +334,8 @@ def optimize_parameters(
 
         if cond_number > cond_cutoff:
             print(f"Warning: Condition number {cond_number} exceeds cutoff {cond_cutoff}. Optimization may be unstable. skipping iteration {it+1} and returning NaN array.")
-            return numpy.full(transform.Nparams, numpy.nan, dtype=numpy.float64)
-        
+            return numpy.full(transform.Nparams, numpy.nan, dtype=Package.get_float_dtype())
+
         # ====================================================
         # Solve the linear system to find the delta
         # ====================================================

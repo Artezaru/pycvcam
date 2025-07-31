@@ -3,6 +3,7 @@ from typing import Optional, Tuple, Dict, List, ClassVar
 import numpy
 
 from .transform_result import TransformResult
+from .package import Package
 
 
 class Transform(ABC):
@@ -164,7 +165,7 @@ class Transform(ABC):
         r"""
         Setter for the parameters of the transformation.
         
-        The parameters must be a 1-D float64 numpy array of shape (Nparams,) where Nparams is the number of parameters of the transformation.
+        The parameters must be a 1-D float numpy array of shape (Nparams,) where Nparams is the number of parameters of the transformation.
 
         If the transformation does not have parameters or they are not set, this setter should set the parameters to None.
         
@@ -173,7 +174,7 @@ class Transform(ABC):
         value : Optional[numpy.ndarray]
             The parameters of the transformation.
         """
-        parameters = numpy.asarray(value, dtype=numpy.float64) if value is not None else None
+        parameters = numpy.asarray(value, dtype=Package.get_float_dtype()) if value is not None else None
         if parameters is not None and parameters.ndim != 1:
             raise ValueError(f"Parameters must be a 1-D numpy array, got shape {parameters.shape}")
         self._parameters = parameters
@@ -183,7 +184,7 @@ class Transform(ABC):
         r"""
         Property to return the constants of the transformation.
 
-        The constants must be a 1-D float64 numpy array of shape (Nconstants,) where Nconstants is the number of constants of the transformation.
+        The constants must be a 1-D float numpy array of shape (Nconstants,) where Nconstants is the number of constants of the transformation.
 
         If the transformation does not have constants or they are not set, this property should return None.
 
@@ -199,7 +200,7 @@ class Transform(ABC):
         r"""
         Setter for the constants of the transformation.
 
-        The constants must be a 1-D float64 numpy array of shape (Nconstants,) where Nconstants is the number of constants of the transformation.
+        The constants must be a 1-D float numpy array of shape (Nconstants,) where Nconstants is the number of constants of the transformation.
 
         If the transformation does not have constants or they are not set, this setter should set the constants to None.
 
@@ -208,7 +209,7 @@ class Transform(ABC):
         value : Optional[numpy.ndarray]
             The constants of the transformation.
         """
-        constants = numpy.asarray(value, dtype=numpy.float64) if value is not None else None
+        constants = numpy.asarray(value, dtype=Package.get_float_dtype()) if value is not None else None
         if constants is not None and constants.ndim != 1:
             raise ValueError(f"Constants must be a 1-D numpy array, got shape {constants.shape}")
         self._constants = constants
@@ -485,7 +486,8 @@ class Transform(ABC):
 
         .. warning::
 
-            The points are converting to float64 before applying the transformation.
+            The points are converting to float before applying the transformation.
+            See :class:`pycvcam.core.Package` for more details on the default data types used in the package.
 
         The method also computes 2 Jacobian matrices if requested:
 
@@ -522,7 +524,7 @@ class Transform(ABC):
 
         .. note::
 
-            The _skip parameter is used to skip the checks for the transformation parameters and assume the points are given in the (Npoints, input_dim) float64 format.
+            The _skip parameter is used to skip the checks for the transformation parameters and assume the points are given in the (Npoints, input_dim) float format.
             Please use this parameter with caution, as it may lead to unexpected results if the transformation parameters are not set correctly.
         
         Parameters
@@ -540,7 +542,7 @@ class Transform(ABC):
             If True, compute the Jacobian of the transformed points with respect to the parameters of the transformation. Default is False.
 
         _skip : bool, optional
-            [INTERNAL USE], If True, skip the checks for the transformation parameters and assume the points are given in the (Npoints, input_dim) float64 format.
+            [INTERNAL USE], If True, skip the checks for the transformation parameters and assume the points are given in the (Npoints, input_dim) float format.
             `transpose` is ignored if this parameter is set to True.
 
         **kwargs
@@ -579,8 +581,8 @@ class Transform(ABC):
             if not self.is_set():
                 raise ValueError("Transformation parameters are not set. Please set the parameters before transforming points.")
         
-            # Convert input points to float64
-            points = numpy.asarray(points, dtype=numpy.float64)
+            # Convert input points to float
+            points = numpy.asarray(points, dtype=Package.get_float_dtype())
 
             # Check the shape of the input points
             if points.ndim < 2:
@@ -641,7 +643,8 @@ class Transform(ABC):
 
         .. warning::
 
-            The points are converting to float64 before applying the inverse transformation.
+            The points are converting to float before applying the inverse transformation.
+            See :class:`pycvcam.core.Package` for more details on the default data types used in the package.
 
         The method also computes 2 Jacobian matrices if requested:
 
@@ -678,7 +681,7 @@ class Transform(ABC):
 
         .. note::
 
-            The _skip parameter is used to skip the checks for the transformation parameters and assume the points are given in the (Npoints, output_dim) float64 format.
+            The _skip parameter is used to skip the checks for the transformation parameters and assume the points are given in the (Npoints, output_dim) float format.
             Please use this parameter with caution, as it may lead to unexpected results if the transformation parameters are not set correctly.
 
         Parameters
@@ -696,7 +699,7 @@ class Transform(ABC):
             If True, compute the Jacobian of the transformed points with respect to the parameters of the transformation. Default is False.
 
         _skip : bool, optional
-            [INTERNAL USE], If True, skip the checks for the transformation parameters and assume the points are given in the (Npoints, output_dim) float64 format.
+            [INTERNAL USE], If True, skip the checks for the transformation parameters and assume the points are given in the (Npoints, output_dim) float format.
             `transpose` is ignored if this parameter is set to True.
 
         **kwargs
@@ -734,8 +737,8 @@ class Transform(ABC):
             if not self.is_set():
                 raise ValueError("Transformation parameters are not set. Please set the parameters before transforming points.")
             
-            # Convert input points to float64
-            points = numpy.asarray(points, dtype=numpy.float64)
+            # Convert input points to float
+            points = numpy.asarray(points, dtype=Package.get_float_dtype())
 
             # Check the shape of the input points
             if points.ndim < 2:

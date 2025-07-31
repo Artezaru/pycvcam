@@ -5,6 +5,8 @@ from .core.transform import TransformResult
 from .core.distortion import Distortion
 from .core.intrinsic import Intrinsic
 from .core.extrinsic import Extrinsic
+from .core.package import Package
+
 from .distortion_objects.no_distortion import NoDistortion
 from .intrinsic_objects.no_intrinsic import NoIntrinsic
 from .extrinsic_objects.no_extrinsic import NoExtrinsic
@@ -13,9 +15,9 @@ from .extrinsic_objects.no_extrinsic import NoExtrinsic
 
 def project_points(
         world_points: numpy.ndarray, 
-        extrinsic: Optional[Extrinsic], 
-        distortion: Optional[Distortion],
         intrinsic: Optional[Intrinsic],
+        distortion: Optional[Distortion],
+        extrinsic: Optional[Extrinsic],
         *,
         transpose: bool = False,
         dx: bool = False, 
@@ -56,22 +58,27 @@ def project_points(
     - ``jacobian_ddistortion``: Alias for ``jacobian_dp[..., Nextrinsic:Nextrinsic + Ndistortion]`` to represent the Jacobian with respect to the distortion parameters. Shape (..., 2, Ndistortion).
     - ``jacobian_dintrinsic``: Alias for ``jacobian_dp[..., Nextrinsic + Ndistortion:]`` to represent the Jacobian with respect to the intrinsic parameters. Shape (..., 2, Nintrinsic).
 
+    .. warning::
+
+        The points are converting to float before applying the inverse transformation.
+        See :class:`pycvcam.core.Package` for more details on the default data types used in the package.
+
     Parameters
     ----------
     world_points : numpy.ndarray
         The 3D points in the world coordinate system. Shape (..., 3).
-
-    extrinsic : Optional[Extrinsic]
-        The extrinsic transformation to be applied to the 3D world points.
-        If None, a no extrinsic transformation is applied (identity transformation).
+    
+    intrinsic : Optional[Intrinsic]
+        The intrinsic transformation to be applied to the distorted points.
+        If None, a no intrinsic transformation is applied (identity intrinsic).
 
     distortion : Optional[Distortion]
         The distortion model to be applied to the normalized points.
         If None, a no distortion transformation is applied (identity distortion).
 
-    intrinsic : Optional[Intrinsic]
-        The intrinsic transformation to be applied to the distorted points.
-        If None, a no intrinsic transformation is applied (identity intrinsic).
+    extrinsic : Optional[Extrinsic]
+        The extrinsic transformation to be applied to the 3D world points.
+        If None, a no extrinsic transformation is applied (identity transformation).
 
     transpose : bool, optional
         If True, the input points are assumed to be in the shape (3, ...) instead of (..., 3). Default is False.
@@ -86,7 +93,7 @@ def project_points(
         If False, the Jacobian is not computed. Default is False.
 
     _skip : bool, optional
-        [INTERNAL USE], If True, skip the checks for the transformation parameters and assume the points are given in the (Npoints, input_dim) float64 format.
+        [INTERNAL USE], If True, skip the checks for the transformation parameters and assume the points are given in the (Npoints, input_dim) float format.
         `transpose` is ignored if this parameter is set to True.
 
     **kwargs : dict
@@ -129,7 +136,7 @@ def project_points(
         distortion = Cv2Distortion(parameters = [0.1, 0.2, 0.3, 0.4, 0.5])
 
         # Project the 3D points to 2D image points
-        result = project_points(world_points, extrinsic=extrinsic, distortion=distortion, intrinsic=intrinsic)
+        result = project_points(world_points, intrinsic=intrinsic, distortion=distortion, extrinsic=extrinsic, transpose=False)
         print("Projected image points:")
         print(result.image_points) # shape (5, 2)
 
@@ -138,7 +145,7 @@ def project_points(
     .. code-block:: python
 
         # Project the 3D points to 2D image points with Jacobians
-        result = project_points(world_points, extrinsic=extrinsic, distortion=distortion, intrinsic=intrinsic, dx=True, dp=True)
+        result = project_points(world_points, intrinsic=intrinsic, distortion=distortion, extrinsic=extrinsic, transpose=False, dx=True, dp=True)
 
         print("Jacobian with respect to 3D points:")
         print(result.jacobian_dx) # shape (5, 2, 3)
@@ -188,7 +195,7 @@ def project_points(
             raise ValueError("dp must be a boolean value")        
 
         # Create the array of points
-        points = numpy.asarray(world_points, dtype=numpy.float64) 
+        points = numpy.asarray(world_points, dtype=Package.get_float_dtype())
 
         # Transpose the points if needed
         if transpose:
@@ -215,7 +222,7 @@ def project_points(
 
     # Apply the chain rules to compute the Jacobians with respect to the projection parameters
     if dp:
-        jacobian_flat_dp = numpy.empty((Npoints, 2, Nparams), dtype=numpy.float64)
+        jacobian_flat_dp = numpy.empty((Npoints, 2, Nparams), dtype=Package.get_float_dtype())
         # wrt the extrinsic parameters
         if isinstance(intrinsic, NoIntrinsic) and isinstance(distortion, NoDistortion):
             jacobian_flat_dp[..., :extrinsic.Nparams] = extrinsic_jacobian_dp

@@ -7,6 +7,7 @@ from .core.distortion import Distortion
 from .core.intrinsic import Intrinsic
 from .core.extrinsic import Extrinsic
 from .core.rays import Rays
+from .core.package import Package
 
 from .distortion_objects.no_distortion import NoDistortion
 from .intrinsic_objects.no_intrinsic import NoIntrinsic
@@ -45,6 +46,11 @@ def compute_rays(
 
         The expected ``image_points`` can be extracted from the ``pixel_points`` by swaping the axes.
 
+    .. warning::
+
+        The points are converting to float before applying the inverse transformation.
+        See :class:`pycvcam.core.Package` for more details on the default data types used in the package.
+
     Parameters
     ----------
     image_points : numpy.ndarray
@@ -67,7 +73,7 @@ def compute_rays(
         Default is False.
 
     _skip : bool, optional
-            [INTERNAL USE], If True, skip the checks for the transformation parameters and assume the points are given in the (Npoints, input_dim) float64 format.
+            [INTERNAL USE], If True, skip the checks for the transformation parameters and assume the points are given in the (Npoints, input_dim) float format.
             `transpose` is ignored if this parameter is set to True.
 
     **kwargs : dict
@@ -96,16 +102,16 @@ def compute_rays(
         # Construct the intrinsic transformation :
         intrinsic = Cv2Intrinsic.from_matrix(numpy.array([[1000, 0, image_width / 2],
                                                           [0, 1000, image_height / 2],
-                                                          [0, 0, 1]], dtype=numpy.float64))
+                                                          [0, 0, 1]]))
 
         # Construct the distortion transformation:
-        distortion = Cv2Distortion(parameters=numpy.array([0.1, -0.05, 0, 0, 0], dtype=numpy.float64))
+        distortion = Cv2Distortion(parameters=numpy.array([0.1, -0.05, 0, 0, 0]))
 
         # Construct the extrinsic transformation:
         extrinsic = Cv2Extrinsic.from_rt(rvec=[0.1, 0.2, 0.3], tvec=[0, 0, 5])
 
         # Define the image points (e.g., pixels in the image):
-        pixel_points = numpy.indices((image_height, image_width), dtype=numpy.float64) # shape (2, H, W)
+        pixel_points = numpy.indices((image_height, image_width)) # shape (2, H, W)
         pixel_points = pixel_points.reshape(2, -1).T  # shape (H*W, 2) WARNING: [H, W -> Y, X]
         image_points = pixel_points[:, [1, 0]]  # Swap to [X, Y] format
 
@@ -143,7 +149,7 @@ def compute_rays(
             raise ValueError("transpose must be a boolean value")
         
         # Create the array of points
-        points = numpy.asarray(image_points, dtype=numpy.float64)
+        points = numpy.asarray(image_points, dtype=Package.get_float_dtype())
 
         # Transpose the points if needed
         if transpose:

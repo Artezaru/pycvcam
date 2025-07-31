@@ -5,6 +5,7 @@ import pyzernike
 
 from ..core import Distortion
 from ..optimize import optimize_input_points
+from ..core.package import Package
 
 
 class ZernikeDistortion(Distortion):
@@ -248,7 +249,7 @@ class ZernikeDistortion(Distortion):
     @parameters.setter
     def parameters(self, parameters: Optional[numpy.ndarray]) -> None:
         if parameters is not None:
-            parameters = numpy.asarray(parameters, dtype=numpy.float64)
+            parameters = numpy.asarray(parameters, dtype=Package.get_float_dtype())
             if parameters.ndim != 1:
                 raise ValueError("The parameters should be a 1D numpy array.")
             # Extend the number of parameters to a valid number
@@ -288,9 +289,9 @@ class ZernikeDistortion(Distortion):
     @constants.setter
     def constants(self, value: Optional[numpy.ndarray]) -> None:
         if value is None:
-            self._constants = numpy.array([1.0, 1.0, 0.0, 0.0], dtype=numpy.float64)
+            self._constants = numpy.array([1.0, 1.0, 0.0, 0.0], dtype=Package.get_float_dtype())
         else:
-            value = numpy.asarray(value, dtype=numpy.float64)
+            value = numpy.asarray(value, dtype=Package.get_float_dtype())
             if value.ndim != 1 or value.size != 4:
                 raise ValueError("The constants should be a 1D numpy array of shape (4,).")
             if not numpy.isfinite(value).all():
@@ -500,7 +501,7 @@ class ZernikeDistortion(Distortion):
     
     @center.setter
     def center(self, value: numpy.ndarray) -> None:
-        value = numpy.asarray(value, dtype=numpy.float64)
+        value = numpy.asarray(value, dtype=Package.get_float_dtype())
         if value.ndim != 1 or value.size != 2:
             raise ValueError("The center should be a 1D numpy array of shape (2,).")
         if not numpy.isfinite(value).all():
@@ -612,7 +613,7 @@ class ZernikeDistortion(Distortion):
     def parameters_x(self, value: numpy.ndarray) -> None:
         if self.parameters is None:
             raise ValueError("No distortion model is defined. Set the parameters first.")
-        value = numpy.asarray(value, dtype=numpy.float64)
+        value = numpy.asarray(value, dtype=Package.get_float_dtype())
         if not value.ndim == 1:
             raise ValueError("The Zernike coefficients for the x coordinate should be a 1D numpy array.")
         if not value.size == self.Nparams // 2:
@@ -644,7 +645,7 @@ class ZernikeDistortion(Distortion):
     def parameters_y(self, value: numpy.ndarray) -> None:
         if self.parameters is None:
             raise ValueError("No distortion model is defined. Set the parameters first.")
-        value = numpy.asarray(value, dtype=numpy.float64)
+        value = numpy.asarray(value, dtype=Package.get_float_dtype())
         if not value.ndim == 1:
             raise ValueError("The Zernike coefficients for the y coordinate should be a 1D numpy array.")
         if not value.size == self.Nparams // 2:
@@ -868,12 +869,12 @@ class ZernikeDistortion(Distortion):
 
         # Prepare the output jacobian arrays
         if dx:
-            jacobian_dx = numpy.tile(numpy.eye(2, dtype=numpy.float64), (x_N.size, 1, 1))  # shape (Npoints, 2, 2)
+            jacobian_dx = numpy.tile(numpy.eye(2, dtype=Package.get_float_dtype()), (x_N.size, 1, 1))  # shape (Npoints, 2, 2)
         else:
             jacobian_dx = None
 
         if dp:
-            jacobian_dp = numpy.empty((x_N.size, 2, Nparams), dtype=numpy.float64)
+            jacobian_dp = numpy.empty((x_N.size, 2, Nparams), dtype=Package.get_float_dtype())
         else:
             jacobian_dp = None
 
@@ -931,7 +932,7 @@ class ZernikeDistortion(Distortion):
                     jacobian_dp[:, 1, index_y] = Z_nm
 
         # Convert the distorted points back to the original coordinates
-        distorted_points = numpy.empty_like(normalized_points, dtype=numpy.float64)
+        distorted_points = numpy.empty_like(normalized_points, dtype=Package.get_float_dtype())
         distorted_points[:, 0] = x_D
         distorted_points[:, 1] = y_D
 

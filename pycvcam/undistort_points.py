@@ -5,6 +5,7 @@ import numpy
 from .core.distortion import Distortion
 from .core.intrinsic import Intrinsic
 from .core.extrinsic import Extrinsic
+from .core.package import Package
 
 from .distortion_objects.no_distortion import NoDistortion
 from .intrinsic_objects.no_intrinsic import NoIntrinsic
@@ -48,6 +49,10 @@ def undistort_points(
 
         The expected ``image_points`` can be extracted from the ``pixel_points`` by swaping the axes.
 
+    .. warning::
+
+        The points are converting to float before applying the inverse transformation.
+        See :class:`pycvcam.core.Package` for more details on the default data types used in the package.
         
     Parameters
     ----------
@@ -76,7 +81,7 @@ def undistort_points(
         The output points will be in the same shape as the input points.
 
     _skip : bool, optional
-            [INTERNAL USE], If True, skip the checks for the transformation parameters and assume the points are given in the (Npoints, input_dim) float64 format.
+            [INTERNAL USE], If True, skip the checks for the transformation parameters and assume the points are given in the (Npoints, input_dim) float format.
             `transpose` is ignored if this parameter is set to True.
     
     **kwargs : optional
@@ -158,7 +163,7 @@ def undistort_points(
             raise ValueError("transpose must be a boolean value")
         
         # Create the array of points
-        points = numpy.asarray(image_points, dtype=numpy.float64)
+        points = numpy.asarray(image_points, dtype=Package.get_float_dtype())
 
         # Transpose the points if needed
         if transpose:

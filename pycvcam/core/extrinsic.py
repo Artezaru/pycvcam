@@ -4,6 +4,7 @@ import numpy
 
 from .transform import Transform, TransformResult
 from .rays import Rays
+from .package import Package
 
 class Extrinsic(Transform):
     r"""
@@ -210,9 +211,9 @@ class Extrinsic(Transform):
             # Check if the transformation is set
             if not self.is_set():
                 raise ValueError("Transformation parameters are not set. Please set the parameters before transforming points.")
-            
-            # Convert input points to float64
-            points = numpy.asarray(normalized_points, dtype=numpy.float64)
+
+            # Convert input points to float
+            points = numpy.asarray(normalized_points, dtype=Package.get_float_dtype())
 
             # Check the shape of the input points
             if points.ndim < 2:

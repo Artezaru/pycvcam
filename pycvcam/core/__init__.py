@@ -1,5 +1,8 @@
 __all__ = []
 
+from .package import Package
+__all__.extend(["Package"])
+
 from .transform_result import TransformResult
 __all__.extend(["TransformResult"])
 

@@ -2,7 +2,7 @@ from typing import Optional, Tuple
 import numpy
 
 from ..core import Distortion
-
+from ..core.package import Package
 
 class NoDistortion(Distortion):
     r"""
@@ -101,11 +101,11 @@ class NoDistortion(Distortion):
         jacobian_dx = None # shape (Npoints, 2, 2)
         jacobian_dp = None # shape (Npoints, 2, Nparams)
         if dx:
-            jacobian_dx = numpy.zeros((distorted_points.shape[0], 2, 2), dtype=numpy.float64) # shape (Npoints, 2, 2)
+            jacobian_dx = numpy.zeros((distorted_points.shape[0], 2, 2), dtype=Package.get_float_dtype()) # shape (Npoints, 2, 2)
             jacobian_dx[:, 0, 0] = 1.0
             jacobian_dx[:, 1, 1] = 1.0
         if dp:
-            jacobian_dp = numpy.empty((distorted_points.shape[0], 2, 0), dtype=numpy.float64) # shape (Npoints, 2, 0)
+            jacobian_dp = numpy.empty((distorted_points.shape[0], 2, 0), dtype=Package.get_float_dtype()) # shape (Npoints, 2, 0)
         return distorted_points, jacobian_dx, jacobian_dp
 
 

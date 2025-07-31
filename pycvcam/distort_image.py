@@ -5,6 +5,7 @@ import scipy
 
 from .core.distortion import Distortion
 from .core.intrinsic import Intrinsic
+from .core.package import Package
 
 from .distortion_objects.no_distortion import NoDistortion
 from .intrinsic_objects.no_intrinsic import NoIntrinsic
@@ -218,8 +219,8 @@ def distort_image(
     
     # Construct the pixel points in the image coordinate system
     height, width = src.shape[:2]
-    pixel_points = numpy.indices((height, width), dtype=numpy.float64) # shape (2, H, W)
-    
+    pixel_points = numpy.indices((height, width), dtype=Package.get_float_dtype()) # shape (2, H, W)
+
     image_points = pixel_points.copy() # shape (2, H, W) [2, Y, X]
     image_points = image_points.reshape(2, -1).T  # shape (2, H, W) [2, Y, X] -> shape (Npoints, 2) [Y, X]
     image_points = image_points[:, [1, 0]]  # Switch to [X, Y] format, shape (Npoints, 2) [Y, X] -> shape (Npoints, 2) [X, Y]
@@ -252,10 +253,10 @@ def distort_image(
         
         elif use_bivariate_spline:
             # Create the values and the image (H, W, 1 * [C] * [D])
-            values = src.reshape(height, width, -1).astype(numpy.float64) # shape (H, W, 1 * [C] * [D])
+            values = src.reshape(height, width, -1).astype(Package.get_float_dtype()) # shape (H, W, 1 * [C] * [D])
 
             # Initialize the distorted image
-            distorted_image = numpy.zeros_like(values, dtype=numpy.float64) # shape (H, W, 1 * [C] * [D])
+            distorted_image = numpy.zeros_like(values, dtype=Package.get_float_dtype()) # shape (H, W, 1 * [C] * [D])
 
             # For all image data dimensions, interpolate the undistorted pixel points in the src image
             for i in range(values.shape[-1]):
@@ -303,11 +304,11 @@ def distort_image(
         distorted_image_points = distorted_image_points[:, [1, 0]] # Switch to [Y, X] format, shape (Npoints, 2) [X', Y'] -> shape (Npoints, 2) [Y', X']
 
         # Create the values and the image (H, W, 1 * [C] * [D])
-        values = src.reshape(height, width, -1).astype(numpy.float64) # shape (H, W, 1 * [C] * [D])
+        values = src.reshape(height, width, -1).astype(Package.get_float_dtype()) # shape (H, W, 1 * [C] * [D])
         values = values.reshape(-1, values.shape[-1])  # shape (H, W, 1 * [C] * [D]) -> shape (Npoints, 1 * [C] * [D])
 
         # Create the mapping for scipy.interpolate.LinearNDInterpolator
-        distorted_image = numpy.zeros_like(values, dtype=numpy.float64)
+        distorted_image = numpy.zeros_like(values, dtype=Package.get_float_dtype())
         image_points = pixel_points.reshape(2, -1).T # shape (2, H, W) [2, Y, X] -> shape (Npoints, 2) [Y', X']
 
         # For all image data dimensions, interpolate the pixel_points in the cloud of points (distorted_image_points ; values)

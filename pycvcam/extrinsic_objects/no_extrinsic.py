@@ -2,7 +2,7 @@ from typing import Optional, Tuple
 import numpy
 
 from ..core import Extrinsic
-
+from ..core.package import Package
 
 class NoExtrinsic(Extrinsic):
     r"""
@@ -101,11 +101,11 @@ class NoExtrinsic(Extrinsic):
         jacobian_dx = None # shape (Npoints, 2, 2)
         jacobian_dp = None # shape (Npoints, 2, Nparams)
         if dx:
-            jacobian_dx = numpy.zeros((normalized_points.shape[0], 2, 3), dtype=numpy.float64) # shape (Npoints, 2, 3)
+            jacobian_dx = numpy.zeros((normalized_points.shape[0], 2, 3), dtype=Package.get_float_dtype()) # shape (Npoints, 2, 3)
             jacobian_dx[:, 0, 0] = 1.0
             jacobian_dx[:, 1, 1] = 1.0
         if dp:
-            jacobian_dp = numpy.empty((normalized_points.shape[0], 2, 0), dtype=numpy.float64) # shape (Npoints, 2, 0)
+            jacobian_dp = numpy.empty((normalized_points.shape[0], 2, 0), dtype=Package.get_float_dtype()) # shape (Npoints, 2, 0)
         return normalized_points, jacobian_dx, jacobian_dp
     
     
@@ -146,17 +146,17 @@ class NoExtrinsic(Extrinsic):
         jacobian_dp : Optional[numpy.ndarray]
             The jacobian of the world 3D points with respect to the extrinsic parameters. Shape (Npoints, 3, 0) if dp is True, otherwise None.
         """
-        world_points = numpy.empty((normalized_points.shape[0], 3), dtype=numpy.float64) # shape (Npoints, 3)
+        world_points = numpy.empty((normalized_points.shape[0], 3), dtype=Package.get_float_dtype()) # shape (Npoints, 3)
         world_points[:, :2] = normalized_points.copy() # copy x and y coordinates
         world_points[:, 2] = 1.0 # set z coordinate
         jacobian_dx = None # shape (Npoints, 2, 2)
         jacobian_dp = None # shape (Npoints, 2, Nparams)
         if dx:
-            jacobian_dx = numpy.zeros((normalized_points.shape[0], 3, 2), dtype=numpy.float64) # shape (Npoints, 3, 2)
+            jacobian_dx = numpy.zeros((normalized_points.shape[0], 3, 2), dtype=Package.get_float_dtype()) # shape (Npoints, 3, 2)
             jacobian_dx[:, 0, 0] = 1.0
             jacobian_dx[:, 1, 1] = 1.0
         if dp:
-            jacobian_dp = numpy.empty((normalized_points.shape[0], 2, 0), dtype=numpy.float64) # shape (Npoints, 2, 0)
+            jacobian_dp = numpy.empty((normalized_points.shape[0], 2, 0), dtype=Package.get_float_dtype()) # shape (Npoints, 2, 0)
         return normalized_points, jacobian_dx, jacobian_dp
 
     # =============================================
@@ -181,7 +181,7 @@ class NoExtrinsic(Extrinsic):
         rays : numpy.ndarray
             The rays in the world coordinate system. Shape (Npoints, 6).
         """
-        rays = numpy.empty((normalized_points.shape[0], 6), dtype=numpy.float64)
+        rays = numpy.empty((normalized_points.shape[0], 6), dtype=Package.get_float_dtype())
         rays[:, :2] = normalized_points.copy()  # copy x and y coordinates
         rays[:, 2] = 1.0  # set z coordinate to 1
         rays[:, 3] = 0.0  # direction x

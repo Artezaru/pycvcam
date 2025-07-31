@@ -4,7 +4,7 @@ from numbers import Number
 import numpy
 
 from ..core import Intrinsic
-
+from ..core.package import Package
 
 
 
@@ -184,7 +184,7 @@ class SkewIntrinsic(Intrinsic):
         """
         if self._fx is None or self._fy is None or self._cx is None or self._cy is None or self._s is None:
             return None
-        return numpy.array([self._fx, self._fy, self._cx, self._cy, self._s], dtype=numpy.float64)
+        return numpy.array([self._fx, self._fy, self._cx, self._cy, self._s], dtype=Package.get_float_dtype())
 
     @parameters.setter
     def parameters(self, value: Optional[numpy.ndarray]) -> None:
@@ -195,7 +195,7 @@ class SkewIntrinsic(Intrinsic):
             self._cy = None
             self._s = None
             return
-        value = numpy.asarray(value, dtype=numpy.float64).flatten()
+        value = numpy.asarray(value, dtype=Package.get_float_dtype()).flatten()
         if value.shape != (5,):
             raise ValueError("Parameters must be a 1D array of shape (5,).")
         if not numpy.isfinite(value).all():
@@ -492,7 +492,7 @@ class SkewIntrinsic(Intrinsic):
             [self._fx, self._s, self._cx],
             [0, self._fy, self._cy],
             [0, 0, 1]
-        ], dtype=numpy.float64)
+        ], dtype=Package.get_float_dtype())
     
     @intrinsic_matrix.setter
     def intrinsic_matrix(self, intrinsic_matrix: Optional[numpy.ndarray]) -> None:
@@ -503,7 +503,7 @@ class SkewIntrinsic(Intrinsic):
             self._cy = None
             self._s = None
             return
-        intrinsic_matrix = numpy.asarray(intrinsic_matrix, dtype=numpy.float64)
+        intrinsic_matrix = numpy.asarray(intrinsic_matrix, dtype=Package.get_float_dtype())
         if intrinsic_matrix.shape != (3, 3):
             raise ValueError("Intrinsic matrix must be a 3x3 matrix.")
         # Set the intrinsic parameters
@@ -668,7 +668,7 @@ class SkewIntrinsic(Intrinsic):
  
         # Compute the jacobian with respect to the distorted points
         if dx:
-            jacobian_flat_dx = numpy.empty((*distorted_points.shape, 2), dtype=numpy.float64) # shape (Npoints, 2, 2)
+            jacobian_flat_dx = numpy.empty((*distorted_points.shape, 2), dtype=Package.get_float_dtype()) # shape (Npoints, 2, 2)
             jacobian_flat_dx[:, 0, 0] = self._fx # shape (Npoints,)
             jacobian_flat_dx[:, 0, 1] = self._s # shape (Npoints,)
             jacobian_flat_dx[:, 1, 0] = 0.0 # shape (Npoints,)
@@ -678,7 +678,7 @@ class SkewIntrinsic(Intrinsic):
 
         # Compute the jacobian with respect to the intrinsic parameters
         if dp:
-            jacobian_flat_dp = numpy.empty((*distorted_points.shape, 5), dtype=numpy.float64) # shape (Npoints, 2, 5)
+            jacobian_flat_dp = numpy.empty((*distorted_points.shape, 5), dtype=Package.get_float_dtype()) # shape (Npoints, 2, 5)
             jacobian_flat_dp[:, 0, 0] = x_D # shape (Npoints,)
             jacobian_flat_dp[:, 0, 1] = 0.0 # shape (Npoints,)
             jacobian_flat_dp[:, 0, 2] = 1.0 # shape (Npoints,)
@@ -754,7 +754,7 @@ class SkewIntrinsic(Intrinsic):
 
         # Compute the jacobian with respect to the image points
         if dx:
-            jacobian_flat_dx = numpy.empty((*image_points.shape, 2), dtype=numpy.float64) # shape (Npoints, 2, 2)
+            jacobian_flat_dx = numpy.empty((*image_points.shape, 2), dtype=Package.get_float_dtype()) # shape (Npoints, 2, 2)
             jacobian_flat_dx[:, 0, 0] = 1.0 / self._fx # shape (Npoints,)
             jacobian_flat_dx[:, 0, 1] = - self._s / (self._fx * self._fy) # shape (Npoints,)
             jacobian_flat_dx[:, 1, 0] = 0.0 # shape (Npoints,)
@@ -764,7 +764,7 @@ class SkewIntrinsic(Intrinsic):
 
         # Compute the jacobian with respect to the intrinsic parameters
         if dp:
-            jacobian_flat_dp = numpy.empty((*image_points.shape, 5), dtype=numpy.float64) # shape (Npoints, 2, 5)
+            jacobian_flat_dp = numpy.empty((*image_points.shape, 5), dtype=Package.get_float_dtype()) # shape (Npoints, 2, 5)
             jacobian_flat_dp[:, 0, 0] = - x_D / self._fx # shape (Npoints,)
             jacobian_flat_dp[:, 0, 1] = self._s * y_D / (self._fx * self._fy) # shape (Npoints,)
             jacobian_flat_dp[:, 0, 2] = - 1.0 / self._fx # shape (Npoints,)

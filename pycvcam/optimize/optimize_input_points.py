@@ -3,6 +3,7 @@ from typing import Optional
 import scipy
 
 from ..core.transform import Transform
+from ..core.package import Package
 
 def optimize_input_points(
     transform: Transform,
@@ -49,8 +50,13 @@ def optimize_input_points(
 
     .. note::
 
-        The ``_skip`` parameter is used to skip the checks for the transformation parameters and assume the output points are given in the (Npoints, dim) float64 format.
+        The ``_skip`` parameter is used to skip the checks for the transformation parameters and assume the output points are given in the (Npoints, dim) float format.
         Please use this parameter with caution, as it may lead to unexpected results if the transformation parameters are not set correctly.
+
+    .. warning::
+
+            The points are converting to float before applying the inverse transformation.
+            See :class:`pycvcam.core.Package` for more details on the default data types used in the package.
 
     Parameters
     ----------
@@ -76,8 +82,8 @@ def optimize_input_points(
         If True, print the optimization progress and diagnostics. Default is False.
 
     _skip : bool, optional
-        If True, skip the checks for the transformation parameters and assume the output points are given in the (Npoints, dim) float64 format.
-        The guess must be given in the (Npoints, dim) float64 format.
+        If True, skip the checks for the transformation parameters and assume the output points are given in the (Npoints, dim) float format.
+        The guess must be given in the (Npoints, dim) float format.
         `transpose` is ignored if this parameter is set to True.
 
     Returns
@@ -137,15 +143,15 @@ def optimize_input_points(
         if not transform.is_set():
             raise ValueError("Transformation parameters are not set. Please set the parameters before optimizing.")
 
-        # Convert output points to float64
-        output_points = numpy.asarray(output_points, dtype=numpy.float64)
+        # Convert output points to float
+        output_points = numpy.asarray(output_points, dtype=Package.get_float_dtype())
 
         # Check the guess
         if guess is not None:
-            guess = numpy.asarray(guess, dtype=numpy.float64)
+            guess = numpy.asarray(guess, dtype=Package.get_float_dtype())
         else:
             # Use the output points as the initial guess
-            guess = numpy.zeros((output_points.shape[0], dim), dtype=numpy.float64)
+            guess = numpy.zeros((output_points.shape[0], dim), dtype=Package.get_float_dtype())
 
         # Check the shape of the output points
         if output_points.ndim < 2:
@@ -176,7 +182,7 @@ def optimize_input_points(
         
     # Initialize the guess for the input points
     Npoints = output_points.shape[0]
-    delta_itk = numpy.zeros_like(guess, dtype=numpy.float64) # shape (Npoints, dim) (Delta for the next iteration)
+    delta_itk = numpy.zeros_like(guess, dtype=Package.get_float_dtype()) # shape (Npoints, dim) (Delta for the next iteration)
     Nopt = Npoints # Number of points in computation
 
     # Prepare the output array:
@@ -214,7 +220,7 @@ def optimize_input_points(
         J = jacobian_dx # shape (Nopt, dim, dim)
 
         # Solve the linear system to find the delta
-        delta_itk = numpy.array([scipy.linalg.solve(J[i], R[i]) for i in range(Nopt)], dtype=numpy.float64) # shape (Nopt, dim)
+        delta_itk = numpy.array([scipy.linalg.solve(J[i], R[i]) for i in range(Nopt)], dtype=Package.get_float_dtype()) # shape (Nopt, dim)
 
         # Update the input points
         input_points[mask, :] = input_points[mask, :] + delta_itk

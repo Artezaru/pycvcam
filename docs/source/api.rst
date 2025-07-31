@@ -1,6 +1,8 @@
 API Reference
 ==============
 
+To set the type of the arrays in the package use the :class:`pycvcam.core.Package` class.
+
 Transformations
 ----------------
 

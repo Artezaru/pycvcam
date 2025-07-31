@@ -38,6 +38,7 @@ def test_transform_inverse_transform_consistency(default):
     points = numpy.random.rand(100, 2)  # Random normalized points
     transformed = default.transform(points)
     inverse_transformed = default.inverse_transform(transformed.transformed_points)
+    print(points, inverse_transformed.transformed_points)
     numpy.testing.assert_allclose(inverse_transformed.transformed_points, points)
 
 def test_jacobian_analytic_numeric_match(default):
