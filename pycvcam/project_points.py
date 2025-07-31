@@ -54,9 +54,9 @@ def project_points(
 
     - ``jacobian_dx``: The Jacobian of the image points with respect to the input 3D world points. Shape (..., 2, 3).
     - ``jacobian_dp``: The Jacobian of the image points with respect to the projection parameters (extrinsic, distortion, intrinsic). Shape (..., 2, Nextrinsic + Ndistortion + Nintrinsic).
-    - ``jacobian_dextrinsic``: Alias for ``jacobian_dp[..., :Nextrinsic]`` to represent the Jacobian with respect to the extrinsic parameters. Shape (..., 2, Nextrinsic).
-    - ``jacobian_ddistortion``: Alias for ``jacobian_dp[..., Nextrinsic:Nextrinsic + Ndistortion]`` to represent the Jacobian with respect to the distortion parameters. Shape (..., 2, Ndistortion).
-    - ``jacobian_dintrinsic``: Alias for ``jacobian_dp[..., Nextrinsic + Ndistortion:]`` to represent the Jacobian with respect to the intrinsic parameters. Shape (..., 2, Nintrinsic).
+    - ``jacobian_dintrinsic``: Alias for ``jacobian_dp[..., :Nintrinsic]`` to represent the Jacobian with respect to the intrinsic parameters. Shape (..., 2, Nintrinsic).
+    - ``jacobian_ddistortion``: Alias for ``jacobian_dp[..., Nintrinsic:Nintrinsic + Ndistortion]`` to represent the Jacobian with respect to the distortion parameters. Shape (..., 2, Ndistortion).
+    - ``jacobian_dextrinsic``: Alias for ``jacobian_dp[..., Nintrinsic + Ndistortion:]`` to represent the Jacobian with respect to the extrinsic parameters. Shape (..., 2, Nextrinsic).
 
     .. warning::
 
@@ -225,22 +225,22 @@ def project_points(
         jacobian_flat_dp = numpy.empty((Npoints, 2, Nparams), dtype=Package.get_float_dtype())
         # wrt the extrinsic parameters
         if isinstance(intrinsic, NoIntrinsic) and isinstance(distortion, NoDistortion):
-            jacobian_flat_dp[..., :extrinsic.Nparams] = extrinsic_jacobian_dp
+            jacobian_flat_dp[..., intrinsic.Nparams + distortion.Nparams:] = extrinsic_jacobian_dp
         elif isinstance(intrinsic, NoIntrinsic):
-            jacobian_flat_dp[..., :extrinsic.Nparams] = numpy.matmul(distortion_jacobian_dx, extrinsic_jacobian_dp)
+            jacobian_flat_dp[..., intrinsic.Nparams + distortion.Nparams:] = numpy.matmul(distortion_jacobian_dx, extrinsic_jacobian_dp)
         elif isinstance(distortion, NoDistortion):
-            jacobian_flat_dp[..., :extrinsic.Nparams] = numpy.matmul(intrinsic_jacobian_dx, extrinsic_jacobian_dp)
+            jacobian_flat_dp[..., intrinsic.Nparams + distortion.Nparams:] = numpy.matmul(intrinsic_jacobian_dx, extrinsic_jacobian_dp)
         else:
-            jacobian_flat_dp[..., :extrinsic.Nparams] = numpy.matmul(intrinsic_jacobian_dx, numpy.matmul(distortion_jacobian_dx, extrinsic_jacobian_dp))
+            jacobian_flat_dp[..., intrinsic.Nparams + distortion.Nparams:] = numpy.matmul(intrinsic_jacobian_dx, numpy.matmul(distortion_jacobian_dx, extrinsic_jacobian_dp))
 
         # wrt the distortion parameters
         if intrinsic is None:
-            jacobian_flat_dp[..., extrinsic.Nparams:extrinsic.Nparams + distortion.Nparams] = distortion_jacobian_dp
+            jacobian_flat_dp[..., intrinsic.Nparams:intrinsic.Nparams + distortion.Nparams] = distortion_jacobian_dp
         else:
-            jacobian_flat_dp[..., extrinsic.Nparams:extrinsic.Nparams + distortion.Nparams] = numpy.matmul(intrinsic_jacobian_dx, distortion_jacobian_dp)
+            jacobian_flat_dp[..., intrinsic.Nparams:intrinsic.Nparams + distortion.Nparams] = numpy.matmul(intrinsic_jacobian_dx, distortion_jacobian_dp)
 
         # wrt the intrinsic parameters
-        jacobian_flat_dp[..., extrinsic.Nparams + distortion.Nparams:extrinsic.Nparams + distortion.Nparams + intrinsic.Nparams] = intrinsic_jacobian_dp # (intrinsic parameters)
+        jacobian_flat_dp[..., :intrinsic.Nparams] = intrinsic_jacobian_dp # (intrinsic parameters)
 
     # Apply the chain rules to compute the Jacobians with respect to the input 3D world points
     if dx:
@@ -274,9 +274,9 @@ def project_points(
     )
 
     # Add the short-hand properties for the jacobians
-    result.add_jacobian("dextrinsic", 0, extrinsic.Nparams, f"Jacobian of the image points with respect to the extrinsic parameters (see {extrinsic.__class__.__name__}) for more details on their order")
-    result.add_jacobian("ddistortion", extrinsic.Nparams, extrinsic.Nparams + distortion.Nparams, f"Jacobian of the image points with respect to the distortion parameters (see {distortion.__class__.__name__}) for more details on their order")
-    result.add_jacobian("dintrinsic", extrinsic.Nparams + distortion.Nparams, Nparams, f"Jacobian of the image points with respect to the intrinsic parameters (see {intrinsic.__class__.__name__}) for more details on their order")
+    result.add_jacobian("dintrinsic", 0, intrinsic.Nparams, f"Jacobian of the image points with respect to the intrinsic parameters (see {intrinsic.__class__.__name__}) for more details on their order")
+    result.add_jacobian("ddistortion", intrinsic.Nparams, intrinsic.Nparams + distortion.Nparams, f"Jacobian of the image points with respect to the distortion parameters (see {distortion.__class__.__name__}) for more details on their order")
+    result.add_jacobian("dextrinsic", intrinsic.Nparams + distortion.Nparams, Nparams, f"Jacobian of the image points with respect to the extrinsic parameters (see {extrinsic.__class__.__name__}) for more details on their order")
 
     # Add the alias for the transformed points
     result.add_alias("image_points")
