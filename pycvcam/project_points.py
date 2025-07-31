@@ -195,28 +195,28 @@ def project_points(
             raise ValueError("dp must be a boolean value")        
 
         # Create the array of points
-        points = numpy.asarray(world_points, dtype=Package.get_float_dtype())
+        world_points = numpy.asarray(world_points, dtype=Package.get_float_dtype())
 
         # Transpose the points if needed
         if transpose:
-            points = numpy.moveaxis(points, 0, -1) # (3, ...) -> (..., 3)
+            world_points = numpy.moveaxis(world_points, 0, -1) # (3, ...) -> (..., 3)
 
         # Extract the original shape
-        shape = points.shape # (..., 3)
+        shape = world_points.shape # (..., 3)
 
         # Flatten the points along the last axis
-        points = points.reshape(-1, shape[-1]) # shape (..., 3) -> shape (Npoints, 3)
+        world_points = world_points.reshape(-1, shape[-1]) # shape (..., 3) -> shape (Npoints, 3)
 
         # Check the shape of the points
-        if points.ndim !=2 or points.shape[1] != 3:
+        if world_points.ndim !=2 or world_points.shape[1] != 3:
             raise ValueError(f"The points must be in the shape (..., 3) or (3, ...) if ``transpose`` is True. Got {shape} instead and transpose is {transpose}.")
         
     # Extract the useful constants
-    Npoints = points.shape[0] # Npoints
+    Npoints = world_points.shape[0] # Npoints
     Nparams = intrinsic.Nparams + distortion.Nparams + extrinsic.Nparams # Total number of parameters
 
     # Realize the transformation:
-    normalized_points, extrinsic_jacobian_dx, extrinsic_jacobian_dp = extrinsic._transform(points, dx=dx, dp=dp)
+    normalized_points, extrinsic_jacobian_dx, extrinsic_jacobian_dp = extrinsic._transform(world_points, dx=dx, dp=dp)
     distorted_points, distortion_jacobian_dx, distortion_jacobian_dp = distortion._transform(normalized_points, dx=dx or dp, dp=dp, **kwargs) # (dx is requiered for propagation of dp)
     image_points, intrinsic_jacobian_dx, intrinsic_jacobian_dp = intrinsic._transform(distorted_points, dx=dx or dp, dp=dp) # (dx is requiered for propagation of dp)
 

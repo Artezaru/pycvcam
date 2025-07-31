@@ -100,7 +100,6 @@ def undistort_points(
 
         import numpy
         from pycvcam import undistort_points, Cv2Distortion, Cv2Intrinsic
-        from py3dframe import Frame
 
         # Define the 2D image points in the camera coordinate system
         image_points = numpy.array([[320.0, 240.0],
@@ -163,42 +162,44 @@ def undistort_points(
             raise ValueError("transpose must be a boolean value")
         
         # Create the array of points
-        points = numpy.asarray(image_points, dtype=Package.get_float_dtype())
+        image_points = numpy.asarray(image_points, dtype=Package.get_float_dtype())
 
         # Transpose the points if needed
         if transpose:
-            points = numpy.moveaxis(points, 0, -1) # (2, ...) -> (..., 2)
+            image_points = numpy.moveaxis(image_points, 0, -1) # (2, ...) -> (..., 2)
 
         # Extract the original shape
-        shape = points.shape # (..., 2)
+        shape = image_points.shape # (..., 2)
 
         # Flatten the points along the last axis
-        points = points.reshape(-1, shape[-1]) # shape (..., 2) -> shape (Npoints, 2)
+        image_points = image_points.reshape(-1, shape[-1]) # shape (..., 2) -> shape (Npoints, 2)
         
         # Check the shape of the points
-        if points.ndim !=2 or points.shape[1] != 2:
-            raise ValueError(f"The points must be in the shape (..., 2) or (2, ...) if ``transpose`` is True. Got {points.shape} instead and transpose is {transpose}.")
+        if image_points.ndim !=2 or image_points.shape[1] != 2:
+            raise ValueError(f"The points must be in the shape (..., 2) or (2, ...) if ``transpose`` is True. Got {image_points.shape} instead and transpose is {transpose}.")
 
-    Npoints = points.shape[0] # Npoints
-
+    Npoints = image_points.shape[0] # Npoints
+    output_points = image_points.copy() # shape (Npoints, 2)
+    print(intrinsic, distortion)
     # Realize the transformation:
-    distorted_points, _, _ = intrinsic._inverse_transform(points, dx=False, dp=False) # shape (Npoints, 2) -> shape (Npoints, 2)
-    undistorted_points, _, _ = distortion._inverse_transform(distorted_points, dx=False, dp=False, **kwargs) # shape (Npoints, 2) -> shape (Npoints, 2)
-
+    if not isinstance(intrinsic, NoIntrinsic):
+        output_points, _, _ = intrinsic._inverse_transform(output_points, dx=False, dp=False) # shape (Npoints, 2) -> shape (Npoints, 2)
+    if not isinstance(distortion, NoDistortion):
+        output_points, _, _ = distortion._inverse_transform(output_points, dx=False, dp=False, **kwargs) # shape (Npoints, 2) -> shape (Npoints, 2)
     if not isinstance(R, NoExtrinsic):
-        undistorted_points, _, _ = R._transform(numpy.concatenate((undistorted_points, numpy.ones((Npoints, 1))), axis=1), dx=False, dp=False) # shape (Npoints, 2) -> shape (Npoints, 3)
-        undistorted_points = undistorted_points[:, :2] # shape (Npoints, 3) -> shape (Npoints, 2)
+        output_points, _, _ = R._transform(numpy.concatenate((output_points, numpy.ones((Npoints, 1))), axis=1), dx=False, dp=False) # shape (Npoints, 2) -> shape (Npoints, 3)
+        output_points = output_points[:, :2] # shape (Npoints, 3) -> shape (Npoints, 2)
 
     if not isinstance(P, NoIntrinsic):
-        undistorted_points, _, _ = P._transform(undistorted_points, dx=False, dp=False) # shape (Npoints, 2) -> shape (Npoints, 2)
-    
+        output_points, _, _ = P._transform(output_points, dx=False, dp=False) # shape (Npoints, 2) -> shape (Npoints, 2)
+
     if not _skip:
         # Reshape the normalized points back to the original shape
-        undistorted_points = undistorted_points.reshape(shape) # shape (Npoints, 2) -> (..., 2)
+        output_points = output_points.reshape(shape) # shape (Npoints, 2) -> (..., 2)
 
         # Transpose the points back to the original shape if needed
         if transpose:
-            undistorted_points = numpy.moveaxis(undistorted_points, -1, 0) # (..., 2) -> (2, ...)
-    
-    return undistorted_points
+            output_points = numpy.moveaxis(output_points, -1, 0) # (..., 2) -> (2, ...)
+
+    return output_points
 

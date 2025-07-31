@@ -1788,7 +1788,6 @@ class Cv2Distortion(Distortion):
                 break
             x_N = x_N[eps_mask] # shape (NewNopt, 1)
             y_N = y_N[eps_mask] # shape (NewNopt, 1)
-
         # Return the normalized points
         return normalized_points, None, None
 

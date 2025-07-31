@@ -15,9 +15,9 @@ from .extrinsic_objects.no_extrinsic import NoExtrinsic
 
 def compute_rays(
     image_points: numpy.ndarray,
-    extrinsic: Optional[Extrinsic],
-    distortion: Optional[Distortion],
     intrinsic: Optional[Intrinsic],
+    distortion: Optional[Distortion],
+    extrinsic: Optional[Extrinsic],
     *,
     transpose: bool = False,
     _skip: bool = False,
@@ -93,7 +93,7 @@ def compute_rays(
 
         import numpy
         import cv2
-        from pydistort import compute_rays, Cv2Extrinsic, Cv2Intrinsic, Cv2Distortion
+        from pycvcam import compute_rays, Cv2Extrinsic, Cv2Intrinsic, Cv2Distortion
 
         # Read the image : 
         image = cv2.imread('image.jpg')
@@ -149,28 +149,33 @@ def compute_rays(
             raise ValueError("transpose must be a boolean value")
         
         # Create the array of points
-        points = numpy.asarray(image_points, dtype=Package.get_float_dtype())
+        image_points = numpy.asarray(image_points, dtype=Package.get_float_dtype())
 
         # Transpose the points if needed
         if transpose:
-            points = numpy.moveaxis(points, 0, -1) # (2, ...) -> (..., 2)
+            image_points = numpy.moveaxis(image_points, 0, -1) # (2, ...) -> (..., 2)
 
         # Extract the original shape
-        shape = points.shape # (..., 2)
+        shape = image_points.shape # (..., 2)
 
         # Flatten the points along the last axis
-        points = points.reshape(-1, shape[-1]) # shape (..., 2) -> shape (Npoints, 2)
-        
-        # Check the shape of the points
-        if points.ndim !=2 or points.shape[1] != 2:
-            raise ValueError(f"The points must be in the shape (..., 2) or (2, ...) if ``transpose`` is True. Got {points.shape} instead and transpose is {transpose}.")
+        image_points = image_points.reshape(-1, shape[-1]) # shape (..., 2) -> shape (Npoints, 2)
 
-    Npoints = points.shape[0] # Npoints
+        # Check the shape of the points
+        if image_points.ndim !=2 or image_points.shape[1] != 2:
+            raise ValueError(f"The points must be in the shape (..., 2) or (2, ...) if ``transpose`` is True. Got {image_points.shape} instead and transpose is {transpose}.")
+
+    Npoints = image_points.shape[0] # Npoints
+    output_points = image_points
     
     # Realize the transformation:
-    distorted_points, _, _ = intrinsic._inverse_transform(points, dx=False, dp=False) # shape (Npoints, 2) -> shape (Npoints, 2)
-    undistorted_points, _, _ = distortion._inverse_transform(distorted_points, dx=False, dp=False, **kwargs) # shape (Npoints, 2) -> shape (Npoints, 2)
-    rays = extrinsic._compute_rays(undistorted_points) # shape (Npoints, 2) -> shape (Npoints, 6)
+    if not isinstance(intrinsic, NoIntrinsic):
+        output_points, _, _ = intrinsic._inverse_transform(output_points, dx=False, dp=False) # shape (Npoints, 2) -> shape (Npoints, 2)
+    if not isinstance(distortion, NoDistortion):
+        output_points, _, _ = distortion._inverse_transform(output_points, dx=False, dp=False, **kwargs)
+
+    # Always use the extrinsic transformation to compute the rays:
+    rays = extrinsic._compute_rays(output_points) # shape (Npoints, 2) -> shape (Npoints, 6)
     
     if not _skip:
         # Reshape the rays  back to the original shape

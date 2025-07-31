@@ -167,26 +167,27 @@ def undistort_image(
     
     # Construct the pixel points in the image coordinate system
     height, width = src.shape[:2]
-    pixel_points = numpy.indices((height, width), dtype=Package.get_float_dtype()) # shape (2, H, W)
-
-    image_points = pixel_points.copy() # shape (2, H, W) [2, Y, X]
-    image_points = image_points.reshape(2, -1).T  # shape (2, H, W) [2, Y, X] -> shape (Npoints, 2) [Y, X]
-    image_points = image_points[:, [1, 0]]  # Switch to [X, Y] format, shape (Npoints, 2) [Y, X] -> shape (Npoints, 2) [X, Y]
+    points = numpy.indices((height, width), dtype=Package.get_float_dtype()) # shape (2, H, W)
+    points = points.reshape(2, -1).T  # shape (2, H, W) [2, Y, X] -> shape (Npoints, 2) [Y, X]
+    points = points[:, [1, 0]]  # Switch to [X, Y] format, shape (Npoints, 2) [Y, X] -> shape (Npoints, 2) [X, Y]
 
     # Distort the pixel points using the distortion model
-    normalized_points, _, _ = intrinsic._inverse_transform(image_points, dx=False, dp=False) # shape (Npoints, 2) [X, Y] -> shape (Npoints, 2) [X/Z, Y/Z]
-    distorted_points, _, _ = distortion._transform(normalized_points, dx=False, dp=False, **kwargs) # shape (Npoints, 2) [X/Z, Y/Z] -> shape (Npoints, 2) [X'/Z', Y'/Z']
-    distorted_image_points, _, _ = intrinsic._transform(distorted_points, dx=False, dp=False) # shape (Npoints, 2) [X'/Z', Y'/Z'] -> shape (Npoints, 2) [X', Y']
+    if not isinstance(intrinsic, NoIntrinsic):
+        points, _, _ = intrinsic._inverse_transform(points, dx=False, dp=False) # shape (Npoints, 2) [X, Y] -> shape (Npoints, 2) [X/Z, Y/Z]
+    if not isinstance(distortion, NoDistortion):
+        points, _, _ = distortion._transform(points, dx=False, dp=False, **kwargs) # shape (Npoints, 2) [X/Z, Y/Z] -> shape (Npoints, 2) [X'/Z', Y'/Z']
+    if not isinstance(intrinsic, NoIntrinsic):
+        points, _, _ = intrinsic._transform(points, dx=False, dp=False) # shape (Npoints, 2) [X'/Z', Y'/Z'] -> shape (Npoints, 2) [X', Y']
 
     # Reshape the distorted image points for cv2.remap
-    distorted_image_points = distorted_image_points[:, [1, 0]]  # Switch to [Y, X] format, shape (Npoints, 2) [X', Y'] -> shape (Npoints, 2) [Y', X']
-    distorted_pixel_points = distorted_image_points.T.reshape(2, height, width) # shape (Npoints, 2) [Y', X'] -> shape (2, H, W) [Y', X']
+    points = points[:, [1, 0]]  # Switch to [Y, X] format, shape (Npoints, 2) [X', Y'] -> shape (Npoints, 2) [Y', X']
+    points = points.T.reshape(2, height, width) # shape (Npoints, 2) [Y', X'] -> shape (2, H, W) [Y', X']
 
     if use_remap:
         # Create the map for cv2.remap
         # dst(x, y) = src(map_x(x, y), map_y(x, y))
-        map_x = distorted_pixel_points[1, :, :]  # X' coordinates, shape (H, W)
-        map_y = distorted_pixel_points[0, :, :]  # Y' coordinates, shape (H, W)
+        map_x = points[1, :, :]  # X' coordinates, shape (H, W)
+        map_y = points[0, :, :]  # Y' coordinates, shape (H, W)
 
         # Remap the image using OpenCV
         undistorted_image = cv2.remap(src, map_x.astype(numpy.float32), map_y.astype(numpy.float32), interpolation=interpolation_method, borderMode=cv2.BORDER_CONSTANT, borderValue=(0,0,0))
@@ -212,10 +213,10 @@ def undistort_image(
             )
 
             # Create the mask for points that are within the image bounds and finite
-            mask = numpy.isfinite(distorted_pixel_points[0, :, :]) & numpy.isfinite(distorted_pixel_points[1, :, :]) & (0.0 <= distorted_pixel_points[0, :, :]) & (distorted_pixel_points[0, :, :] <= height-1.0) & (0.0 <= distorted_pixel_points[1, :, :]) & (distorted_pixel_points[1, :, :] <= width-1.0)
+            mask = numpy.isfinite(points[0, :, :]) & numpy.isfinite(points[1, :, :]) & (0.0 <= points[0, :, :]) & (points[0, :, :] <= height-1.0) & (0.0 <= points[1, :, :]) & (points[1, :, :] <= width-1.0)
 
             # Interpolate the pixel points in the distorted image
-            result = interp.ev(distorted_pixel_points[0, mask], distorted_pixel_points[1, mask])
+            result = interp.ev(points[0, mask], points[1, mask])
             undistorted_image[mask, i] = result
 
         # Reshape the distorted image to the original shape
