@@ -24,7 +24,7 @@ pixel_points = pixel_points.reshape(2, -1).T  # shape (H*W, 2) WARNING: [H, W ->
 image_points = pixel_points[:, [1, 0]]  # Swap to [X, Y] format
 
 # Throw rays from the image points to the scene:
-rays = compute_rays(image_points, None, distortion, extrinsic, transpose=False).rays
+rays = compute_rays(image_points, intrinsic, distortion, extrinsic, transpose=False).rays
 
 # Here `rays` will contain the origin and direction of the rays in the world coordinate system with shape (..., 6).
 # rays[i, :] = [origin_x, origin_y, origin_z, direction_x, direction_y, direction_z]
