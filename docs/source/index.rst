@@ -4,7 +4,11 @@ Welcome to pycvcam's documentation!
 Description of the package
 --------------------------
 
-Python Computer Vision Cameras Operations and Models
+Python Computer Vision Cameras transformations and models.
+
+.. include:: ../../pycvcam/resources/definition.rst
+
+These notations are used throughout the documentation.
 
 Contents
 --------
@@ -22,7 +26,6 @@ The documentation is divided into the following sections:
    ./installation
    ./api
    ./usage
-
 
 Author
 ------

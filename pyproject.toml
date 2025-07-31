@@ -24,7 +24,7 @@ include = ["pycvcam", "pycvcam*"]
 exclude = ["laboratory", "laboratory.*", "tests", "tests*", "examples", "examples*"]
 
 [tool.setuptools.package-data]
-"pycvcam.ressources" = ["*"]
+"pycvcam.resources" = ["*"]
 
 [project.scripts]
 pycvcam = "pycvcam.__main__:__main__"

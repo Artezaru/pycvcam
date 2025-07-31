@@ -1,0 +1,149 @@
+from typing import Optional, Tuple
+import numpy
+
+from ..core import Distortion
+
+
+class NoDistortion(Distortion):
+    r"""
+
+    Subclass of the :class:`pycvcam.core.Distortion` class that represents a no distortion model.
+
+    .. note::
+
+        This class represents the distortion transformation, which is the middle step of the process from the ``world_points`` to the ``image_points``.
+
+    The ``NoDistortion`` model is a special case of the distortion transformation where no distortion transformations are applied.
+
+    Lets consider ``normalized_points`` in the camera normalized coordinate system :math:`\vec{x}_n = (x_n, y_n)`, the corresponding ``distorted_points`` in the camera normalized coordinate system are given by :math:`\vec{x}_d = (x_n, y_n)`. 
+    Simply applying an identity transformation, which means that the distorted points are equal to the normalized points.
+
+    """
+    def __init__(self):
+        super().__init__(parameters=None, constants=None)
+
+    # =============================================
+    # Overwritten properties
+    # =============================================
+    @property
+    def parameters(self) -> None:
+        r"""
+        Always returns None, as there are no parameters for the no distortion model.
+        """
+        return None
+    
+    @parameters.setter
+    def parameters(self, value: None):
+        if value is not None:
+            raise ValueError("NoDistortion model has no parameters, must be set to None.")
+        self._parameters = None
+
+    @property
+    def constants(self) -> None:
+        r"""
+        Always returns None, as there are no constants for the no distortion model.
+        """
+        return None
+    
+    @constants.setter
+    def constants(self, value: None):
+        if value is not None:
+            raise ValueError("NoDistortion model has no constants, must be set to None.")
+        self._constants = None
+
+    def is_set(self) -> bool:
+        r"""
+        Always returns True, as the no distortion model is always set and does not require any parameters or constants.
+        """
+        return True
+    
+    # =============================================
+    # Implementing the transform and inverse_transform methods
+    # =============================================
+    def _transform(self, normalized_points: numpy.ndarray, *, dx = False, dp = False) -> Tuple[numpy.ndarray, Optional[numpy.ndarray], Optional[numpy.ndarray]]:
+        r"""
+        Compute the transformation from the ``normalized_points`` to the ``distorted_points``.
+
+        Lets consider ``normalized_points`` in the camera normalized coordinate system :math:`\vec{x}_n = (x_n, y_n)`, the corresponding ``distorted_points`` in the camera normalized coordinate system are given by :math:`\vec{x}_d = (x_n, y_n)`. 
+        Simply applying an identity transformation, which means that the distorted points are equal to the normalized points.
+
+        The jacobians with respect to the distortion parameters is an empty array with shape (Npoints, 2, 0), as there are no parameters to compute the jacobian for.
+        The jacobian with respect to the normalized points is set to the identity matrix, as the distorted points are equal to the normalized points.
+
+        .. warning::
+
+            This method is not intended to be used directly, but rather through the :meth:`pycvcam.core.Transform.transform` method.
+            Please ensure, the shape of the input ``normalized_points`` is (Npoints, 2) before calling this method.
+
+        Parameters
+        ----------
+        normalized_points : numpy.ndarray
+            The normalized points in camera normalized coordinates to be transformed. Shape (Npoints, 2).
+
+        dx : bool, optional
+            If True, the jacobian with respect to the normalized points is computed. Default is False
+
+        dp : bool, optional
+            If True, the jacobian with respect to the distortion parameters is computed. Default is False
+
+        Returns
+        -------
+        distorted_points : numpy.ndarray
+            The distorted points in camera normalized coordinates, which are equal to the x and y components of the normalized points. Shape (Npoints, 2).
+
+        jacobian_dx : Optional[numpy.ndarray]
+            The jacobian of the distorted points with respect to the normalized points. Shape (Npoints, 2, 2) if dx is True, otherwise None.
+
+        jacobian_dp : Optional[numpy.ndarray]
+            The jacobian of the distorted points with respect to the distortion parameters. Shape (Npoints, 2, 0) if dp is True, otherwise None.
+        """
+        distorted_points = normalized_points.copy() # shape (Npoints, 2)
+        jacobian_dx = None # shape (Npoints, 2, 2)
+        jacobian_dp = None # shape (Npoints, 2, Nparams)
+        if dx:
+            jacobian_dx = numpy.zeros((distorted_points.shape[0], 2, 2), dtype=numpy.float64) # shape (Npoints, 2, 2)
+            jacobian_dx[:, 0, 0] = 1.0
+            jacobian_dx[:, 1, 1] = 1.0
+        if dp:
+            jacobian_dp = numpy.empty((distorted_points.shape[0], 2, 0), dtype=numpy.float64) # shape (Npoints, 2, 0)
+        return distorted_points, jacobian_dx, jacobian_dp
+
+
+    def _inverse_transform(self, distorted_points: numpy.ndarray, *, dx = False, dp = False) -> Tuple[numpy.ndarray, Optional[numpy.ndarray], Optional[numpy.ndarray]]:
+        r"""
+        Compute the inverse transformation from the ``distorted_points`` to the ``normalized_points``.
+
+        Lets consider ``distorted_points`` in the camera normalized coordinate system :math:`\vec{x}_d = (x_d, y_d)`, the corresponding ``normalized_points`` in the camera normalized coordinate system are given by :math:`\vec{x}_n = (x_d, y_d)`. 
+        Simply applying an identity transformation, which means that the normalized points are equal to the distorted points.
+
+        The jacobians with respect to the distortion parameters is an empty array with shape (Npoints, 2, 0), as there are no parameters to compute the jacobian for.
+        The jacobian with respect to the distorted points is set to the identity matrix, as the distorted points are equal to the normalized points.
+
+        .. warning::
+
+            This method is not intended to be used directly, but rather through the :meth:`pycvcam.core.Transform.transform` method.
+            Please ensure, the shape of the input ``distorted_points`` is (Npoints, 2) before calling this method.
+
+        Parameters
+        ----------
+        distorted_points : numpy.ndarray
+            The distorted points in camera normalized coordinates to be transformed. Shape (Npoints, 2).
+
+        dx : bool, optional
+            If True, the jacobian with respect to the distorted points is computed. Default is False
+
+        dp : bool, optional
+            If True, the jacobian with respect to the distortion parameters is computed. Default is False
+
+        Returns
+        -------
+        normalized_points : numpy.ndarray
+            The normalized points in camera normalized coordinates, which are equal to the x and y components of the image points. Shape (Npoints, 2).
+
+        jacobian_dx : Optional[numpy.ndarray]
+            The jacobian of the normalized points with respect to the distorted points. Shape (Npoints, 2, 2) if dx is True, otherwise None.
+
+        jacobian_dp : Optional[numpy.ndarray]
+            The jacobian of the normalized points with respect to the distortion parameters. Shape (Npoints, 2, 0) if dp is True, otherwise None.
+        """
+        return self._transform(distorted_points, dx=dx, dp=dp)
