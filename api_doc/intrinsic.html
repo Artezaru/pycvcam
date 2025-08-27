@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pycvcam.core.Intrinsic &#8212; pycvcam 1.1.2 documentation</title>
+    <title>pycvcam.core.Intrinsic &#8212; pycvcam 1.2.0 documentation</title>
   
   
   
@@ -38,8 +38,8 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=6f037312"></script>
-    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/documentation_options.js?v=6efca38a"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'api_doc/intrinsic';</script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">pycvcam 1.1.2 documentation</p>
+    <p class="title logo__title">pycvcam 1.2.0 documentation</p>
   
 </a></div>
     
@@ -365,6 +365,168 @@
                   
   <section id="pycvcam-core-intrinsic">
 <h1>pycvcam.core.Intrinsic<a class="headerlink" href="#pycvcam-core-intrinsic" title="Link to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="pycvcam.core.Intrinsic">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pycvcam.core.</span></span><span class="sig-name descname"><span class="pre">Intrinsic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constants</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pycvcam/core/intrinsic.html#Intrinsic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.core.Intrinsic" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="transform.html#pycvcam.core.Transform" title="pycvcam.core.transform.Transform"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transform</span></code></a></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This class represents the intrinsic transformation, which is the last step of the process from the <code class="docutils literal notranslate"><span class="pre">world_points</span></code> to the <code class="docutils literal notranslate"><span class="pre">image_points</span></code>.
+This is the abstract class that defines the interface for intrinsic transformations.</p>
+</div>
+<p>This base class, set the <code class="docutils literal notranslate"><span class="pre">input_dim</span></code> and <code class="docutils literal notranslate"><span class="pre">output_dim</span></code> to 2 and add the aliases :</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">image_points</span></code> and <code class="docutils literal notranslate"><span class="pre">x_i</span></code> for the result of the transformation.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">distorted_points</span></code> and <code class="docutils literal notranslate"><span class="pre">x_d</span></code> for the result of the inverse transformation.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If the camera don’t have distortion, the <code class="docutils literal notranslate"><span class="pre">distorted_points</span></code> are same as the <code class="docutils literal notranslate"><span class="pre">normalized_points</span></code>.</p>
+</div>
+<p>To process the transformation, the methods <code class="docutils literal notranslate"><span class="pre">scale</span></code> and <code class="docutils literal notranslate"><span class="pre">unscale</span></code> are provided, which are aliases for the <code class="docutils literal notranslate"><span class="pre">transform</span></code> and <code class="docutils literal notranslate"><span class="pre">inverse_transform</span></code> methods respectively.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pycvcam.core.Intrinsic._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pycvcam.core.Intrinsic._abc_impl" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pycvcam.core.Intrinsic._constants">
+<span class="sig-name descname"><span class="pre">_constants</span></span><a class="headerlink" href="#pycvcam.core.Intrinsic._constants" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycvcam.core.Intrinsic._get_inverse_transform_aliases">
+<span class="sig-name descname"><span class="pre">_get_inverse_transform_aliases</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/pycvcam/core/intrinsic.html#Intrinsic._get_inverse_transform_aliases"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.core.Intrinsic._get_inverse_transform_aliases" title="Link to this definition">#</a></dt>
+<dd><p>Property to return a list of aliases for the inverse transformed points.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">distorted_points</span></code> and <code class="docutils literal notranslate"><span class="pre">x_d</span></code> are added.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of aliases for the inverse transformed points.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycvcam.core.Intrinsic._get_transform_aliases">
+<span class="sig-name descname"><span class="pre">_get_transform_aliases</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/pycvcam/core/intrinsic.html#Intrinsic._get_transform_aliases"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.core.Intrinsic._get_transform_aliases" title="Link to this definition">#</a></dt>
+<dd><p>Property to return a list of aliases for the transformed points.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">image_points</span></code> and <code class="docutils literal notranslate"><span class="pre">x_i</span></code> are added.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of aliases for the transformed points.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pycvcam.core.Intrinsic._input_dim">
+<span class="sig-name descname"><span class="pre">_input_dim</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#pycvcam.core.Intrinsic._input_dim" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pycvcam.core.Intrinsic._output_dim">
+<span class="sig-name descname"><span class="pre">_output_dim</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#pycvcam.core.Intrinsic._output_dim" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pycvcam.core.Intrinsic._parameters">
+<span class="sig-name descname"><span class="pre">_parameters</span></span><a class="headerlink" href="#pycvcam.core.Intrinsic._parameters" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycvcam.core.Intrinsic.scale">
+<span class="sig-name descname"><span class="pre">scale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distorted_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="transform_result.html#pycvcam.core.TransformResult" title="pycvcam.core.transform_result.TransformResult"><span class="pre">TransformResult</span></a></span></span><a class="reference internal" href="../_modules/pycvcam/core/intrinsic.html#Intrinsic.scale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.core.Intrinsic.scale" title="Link to this definition">#</a></dt>
+<dd><p>Alias for the <code class="docutils literal notranslate"><span class="pre">transform</span></code> method, which applies the intrinsic transformation to the points.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="transform.html#pycvcam.core.Transform.transform" title="pycvcam.core.Transform.transform"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pycvcam.core.Transform.transform()</span></code></a> for applying the transformation to points.</p></li>
+</ul>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">intrinsic</span> <span class="o">=</span> <span class="o">...</span> <span class="c1"># An instance of a subclass of Intrinsic</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
+
+<span class="n">distorted_points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]])</span> <span class="c1"># shape (Npoints, 2)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">intrinsic</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">distorted_points</span><span class="p">)</span>
+<span class="n">image_points</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">image_points</span>  <span class="c1"># shape (Npoints, 2)</span>
+
+<span class="c1"># SAME AS:</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">intrinsic</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">distorted_points</span><span class="p">)</span>
+<span class="n">image_points</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">transformed_points</span>  <span class="c1"># shape (Npoints, 2)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>distorted_points</strong> (<em>numpy.ndarray</em>) – The distorted points to be transformed. Shape (…, 2).</p></li>
+<li><p><strong>transpose</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, the input points are assumed to have shape (2, …) instead of (…, 2) and the output points will have shape (2, …). Default is False.</p></li>
+<li><p><strong>dx</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, the jacobian with respect to the distorted points is computed. Default is False</p></li>
+<li><p><strong>dp</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, the jacobian with respect to the intrinsic parameters is computed. Default is False</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The result of the transformation, which includes the <code class="docutils literal notranslate"><span class="pre">image_points</span></code> and the Jacobian matrices if available.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="transform_result.html#pycvcam.core.TransformResult" title="pycvcam.core.TransformResult">TransformResult</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycvcam.core.Intrinsic.unscale">
+<span class="sig-name descname"><span class="pre">unscale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="transform_result.html#pycvcam.core.TransformResult" title="pycvcam.core.transform_result.TransformResult"><span class="pre">TransformResult</span></a></span></span><a class="reference internal" href="../_modules/pycvcam/core/intrinsic.html#Intrinsic.unscale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.core.Intrinsic.unscale" title="Link to this definition">#</a></dt>
+<dd><p>Alias for the <code class="docutils literal notranslate"><span class="pre">inverse_transform</span></code> method, which applies the inverse intrinsic transformation to the points.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="transform.html#pycvcam.core.Transform.inverse_transform" title="pycvcam.core.Transform.inverse_transform"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pycvcam.core.Transform.inverse_transform()</span></code></a> for applying the inverse transformation to points.</p></li>
+</ul>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">intrinsic</span> <span class="o">=</span> <span class="o">...</span> <span class="c1"># An instance of a subclass of Intrinsic</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
+
+<span class="n">image_points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">]])</span> <span class="c1"># shape (Npoints, 2)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">intrinsic</span><span class="o">.</span><span class="n">unscale</span><span class="p">(</span><span class="n">image_points</span><span class="p">)</span>
+<span class="n">distorted_points</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">distorted_points</span>  <span class="c1"># shape (Npoints, 2)</span>
+
+<span class="c1"># SAME AS:</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">intrinsic</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">image_points</span><span class="p">)</span>
+<span class="n">distorted_points</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">transformed_points</span>  <span class="c1"># shape (Npoints, 2)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image_points</strong> (<em>numpy.ndarray</em>) – The image points to be transformed. Shape (…, 2).</p></li>
+<li><p><strong>transpose</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, the input points are assumed to have shape (2, …) instead of (…, 2) and the output points will have shape (2, …). Default is False.</p></li>
+<li><p><strong>dx</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, the jacobian with respect to the image points is computed. Default is False</p></li>
+<li><p><strong>dp</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, the jacobian with respect to the intrinsic parameters is computed. Default is False</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The result of the inverse transformation, which includes the <code class="docutils literal notranslate"><span class="pre">distorted_points</span></code> and the Jacobian matrices if available.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="transform_result.html#pycvcam.core.TransformResult" title="pycvcam.core.TransformResult">TransformResult</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -407,6 +569,29 @@
 
 
   <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.Intrinsic"><code class="docutils literal notranslate"><span class="pre">Intrinsic</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.Intrinsic._abc_impl"><code class="docutils literal notranslate"><span class="pre">Intrinsic._abc_impl</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.Intrinsic._constants"><code class="docutils literal notranslate"><span class="pre">Intrinsic._constants</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.Intrinsic._get_inverse_transform_aliases"><code class="docutils literal notranslate"><span class="pre">Intrinsic._get_inverse_transform_aliases()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.Intrinsic._get_transform_aliases"><code class="docutils literal notranslate"><span class="pre">Intrinsic._get_transform_aliases()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.Intrinsic._input_dim"><code class="docutils literal notranslate"><span class="pre">Intrinsic._input_dim</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.Intrinsic._output_dim"><code class="docutils literal notranslate"><span class="pre">Intrinsic._output_dim</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.Intrinsic._parameters"><code class="docutils literal notranslate"><span class="pre">Intrinsic._parameters</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.Intrinsic.scale"><code class="docutils literal notranslate"><span class="pre">Intrinsic.scale()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.Intrinsic.unscale"><code class="docutils literal notranslate"><span class="pre">Intrinsic.unscale()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -440,7 +625,7 @@
 
   <p class="copyright">
     
-      © Copyright 2025-%Y, Artezaru.
+      © Copyright 2025-2025, Artezaru.
       <br/>
     
   </p>
@@ -449,7 +634,7 @@
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
     <br/>
   </p>
 </div>

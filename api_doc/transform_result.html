@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pycvcam.core.TransformResult &#8212; pycvcam 1.1.2 documentation</title>
+    <title>pycvcam.core.TransformResult &#8212; pycvcam 1.2.0 documentation</title>
   
   
   
@@ -38,9 +38,10 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=6f037312"></script>
-    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/documentation_options.js?v=6efca38a"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'api_doc/transform_result';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -110,7 +111,7 @@
   
   
   
-    <p class="title logo__title">pycvcam 1.1.2 documentation</p>
+    <p class="title logo__title">pycvcam 1.2.0 documentation</p>
   
 </a></div>
     
@@ -365,6 +366,136 @@
                   
   <section id="pycvcam-core-transformresult">
 <h1>pycvcam.core.TransformResult<a class="headerlink" href="#pycvcam-core-transformresult" title="Link to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="pycvcam.core.TransformResult">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pycvcam.core.</span></span><span class="sig-name descname"><span class="pre">TransformResult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transformed_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jacobian_dx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jacobian_dp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pycvcam/core/transform_result.html#TransformResult"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.core.TransformResult" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to represent the result of a transformation.</p>
+<p>This class is used to store the results of a transformation, including the transformed points and the Jacobian matrices.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="transform.html#pycvcam.core.Transform" title="pycvcam.core.Transform"><code class="xref py py-class docutils literal notranslate"><span class="pre">pycvcam.core.Transform</span></code></a> for the base class of all transformations.</p></li>
+<li><p><a class="reference internal" href="transform.html#pycvcam.core.Transform.transform" title="pycvcam.core.Transform.transform"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pycvcam.core.Transform.transform()</span></code></a> for applying the transformation to points.</p></li>
+<li><p><a class="reference internal" href="transform.html#pycvcam.core.Transform.inverse_transform" title="pycvcam.core.Transform.inverse_transform"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pycvcam.core.Transform.inverse_transform()</span></code></a> for applying the inverse transformation to points (<cite>output_dim</cite> and <cite>input_dim</cite> are swapped).</p></li>
+</ul>
+</div>
+<p>For a transformation from <span class="math notranslate nohighlight">\(\mathbb{R}^{input\_dim}\)</span> to <span class="math notranslate nohighlight">\(\mathbb{R}^{output\_dim}\)</span>, the input points are assumed to have shape (…, input_dim) and the output points will have shape (…, output_dim).</p>
+<p>The Jacobian matrices are computed with respect to the input points and the parameters of the transformation:</p>
+<ul class="simple">
+<li><p>The Jacobian with respect to the input points has shape (…, output_dim, input_dim).</p></li>
+<li><p>The Jacobian with respect to the parameters has shape (…, output_dim, Nparams), where Nparams is the number of parameters of the transformation.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">transpose</span></code> is set to True during the transformation, the output points will have shape (output_dim, …) instead of (…, output_dim), same for the Jacobian matrices (ie. shape (output_dim, …, input_dim) and (output_dim, …, Nparams) respectively).</p>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pycvcam.core.TransformResult.transformed_points">
+<span class="sig-name descname"><span class="pre">transformed_points</span></span><a class="headerlink" href="#pycvcam.core.TransformResult.transformed_points" title="Link to this definition">#</a></dt>
+<dd><p>The transformed points after applying the transformation.
+Shape (…, output_dim).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pycvcam.core.TransformResult.jacobian_dx">
+<span class="sig-name descname"><span class="pre">jacobian_dx</span></span><a class="headerlink" href="#pycvcam.core.TransformResult.jacobian_dx" title="Link to this definition">#</a></dt>
+<dd><p>The Jacobian matrix with respect to the input points.
+Shape (…, output_dim, input_dim).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[numpy.ndarray]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pycvcam.core.TransformResult.jacobian_dp">
+<span class="sig-name descname"><span class="pre">jacobian_dp</span></span><a class="headerlink" href="#pycvcam.core.TransformResult.jacobian_dp" title="Link to this definition">#</a></dt>
+<dd><p>The Jacobian matrix with respect to the parameters of the transformation.
+Shape (…, output_dim, Nparams).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[numpy.ndarray]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pycvcam.core.TransformResult.transpose">
+<span class="sig-name descname"><span class="pre">transpose</span></span><a class="headerlink" href="#pycvcam.core.TransformResult.transpose" title="Link to this definition">#</a></dt>
+<dd><p>If True, the output points and Jacobian matrices will have shape (output_dim, …) instead of (…, output_dim). True if set during the transformation, otherwise False.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="jacobians-short-hand-notations">
+<h2>Jacobians Short-hand Notations<a class="headerlink" href="#jacobians-short-hand-notations" title="Link to this heading">#</a></h2>
+<p>Short-hand notations for the Jacobian matrices can be added to the <cite>TransformResult</cite> class using the <cite>add_jacobian</cite> method. This allows adding custom views of the <code class="docutils literal notranslate"><span class="pre">jacobian_dp</span></code> matrix with respect to the parameters of the transformation.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">TransformResult</span><span class="p">(</span><span class="n">transformed_points</span><span class="p">,</span> <span class="n">jacobian_dx</span><span class="p">,</span> <span class="n">jacobian_dp</span><span class="p">)</span>
+<span class="n">result</span><span class="o">.</span><span class="n">add_jacobian</span><span class="p">(</span><span class="s2">&quot;dk&quot;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;Custom Jacobian view for the first two parameters related to k1 and k2&quot;</span><span class="p">)</span>
+
+<span class="n">result</span><span class="o">.</span><span class="n">jacobian_dk</span>  <span class="c1"># Returns a view of the jacobian_dp matrix for parameters k1 and k2, i.e., jacobian_dp[..., 0:2]</span>
+</pre></div>
+</div>
+</section>
+<section id="aliases-for-transformed-points">
+<h2>Aliases for Transformed Points<a class="headerlink" href="#aliases-for-transformed-points" title="Link to this heading">#</a></h2>
+<p>Aliases can be added to the <cite>TransformResult</cite> class to provide more convenient access to the transformed points, depending on the context of the transformation, via the <cite>add_alias</cite> method.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">TransformResult</span><span class="p">(</span><span class="n">transformed_points</span><span class="p">,</span> <span class="n">jacobian_dx</span><span class="p">,</span> <span class="n">jacobian_dp</span><span class="p">)</span>
+<span class="n">result</span><span class="o">.</span><span class="n">add_alias</span><span class="p">(</span><span class="s2">&quot;image_points&quot;</span><span class="p">)</span>
+
+<span class="n">result</span><span class="o">.</span><span class="n">image_points</span>  <span class="c1"># Returns the transformed_points array</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="pycvcam.core.TransformResult.add_alias">
+<span class="sig-name descname"><span class="pre">add_alias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/pycvcam/core/transform_result.html#TransformResult.add_alias"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.core.TransformResult.add_alias" title="Link to this definition">#</a></dt>
+<dd><p>Add an alias for the transformed points in the <cite>TransformResult</cite> object.</p>
+<p>This method allows to add an alias for the transformed points, which can be used to access the transformed points using a more convenient name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – The name of the alias to add.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycvcam.core.TransformResult.add_jacobian">
+<span class="sig-name descname"><span class="pre">add_jacobian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/pycvcam/core/transform_result.html#TransformResult.add_jacobian"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.core.TransformResult.add_jacobian" title="Link to this definition">#</a></dt>
+<dd><p>Add a custom view of the <cite>jacobian_dp</cite> matrix to the <cite>TransformResult</cite> object.</p>
+<p>This method allows to add custom views of the <cite>jacobian_dp</cite> matrix with respect to the parameters of the transformation.
+The custom Jacobian can be accessed using the <cite>name</cite> attribute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – The name of the custom Jacobian view.</p></li>
+<li><p><strong>start</strong> (<em>int</em>) – The starting index of the parameters to include in the custom Jacobian view.</p></li>
+<li><p><strong>end</strong> (<em>int</em>) – The ending index of the parameters to include in the custom Jacobian view.</p></li>
+<li><p><strong>doc</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – A documentation string for the custom Jacobian view. Default is None.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycvcam.core.TransformResult.print_help">
+<span class="sig-name descname"><span class="pre">print_help</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pycvcam/core/transform_result.html#TransformResult.print_help"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.core.TransformResult.print_help" title="Link to this definition">#</a></dt>
+<dd><p>Print the descriptions of the properties and custom Jacobian views.</p>
+<p>This method prints the names and documentation strings of the custom Jacobian views added to the <cite>TransformResult</cite> object.</p>
+</dd></dl>
+
+</section>
+</dd></dl>
+
 </section>
 
 
@@ -407,6 +538,27 @@
 
 
   <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.TransformResult"><code class="docutils literal notranslate"><span class="pre">TransformResult</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.TransformResult.transformed_points"><code class="docutils literal notranslate"><span class="pre">TransformResult.transformed_points</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.TransformResult.jacobian_dx"><code class="docutils literal notranslate"><span class="pre">TransformResult.jacobian_dx</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.TransformResult.jacobian_dp"><code class="docutils literal notranslate"><span class="pre">TransformResult.jacobian_dp</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.TransformResult.transpose"><code class="docutils literal notranslate"><span class="pre">TransformResult.transpose</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.TransformResult.add_alias"><code class="docutils literal notranslate"><span class="pre">TransformResult.add_alias()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.TransformResult.add_jacobian"><code class="docutils literal notranslate"><span class="pre">TransformResult.add_jacobian()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.TransformResult.print_help"><code class="docutils literal notranslate"><span class="pre">TransformResult.print_help()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -440,7 +592,7 @@
 
   <p class="copyright">
     
-      © Copyright 2025-%Y, Artezaru.
+      © Copyright 2025-2025, Artezaru.
       <br/>
     
   </p>
@@ -449,7 +601,7 @@
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
     <br/>
   </p>
 </div>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pycvcam.NoExtrinsic &#8212; pycvcam 1.1.2 documentation</title>
+    <title>pycvcam.NoExtrinsic &#8212; pycvcam 1.2.0 documentation</title>
   
   
   
@@ -38,9 +38,10 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=6f037312"></script>
-    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/documentation_options.js?v=6efca38a"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'api_doc/no_extrinsic';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -110,7 +111,7 @@
   
   
   
-    <p class="title logo__title">pycvcam 1.1.2 documentation</p>
+    <p class="title logo__title">pycvcam 1.2.0 documentation</p>
   
 </a></div>
     
@@ -365,6 +366,139 @@
                   
   <section id="pycvcam-noextrinsic">
 <h1>pycvcam.NoExtrinsic<a class="headerlink" href="#pycvcam-noextrinsic" title="Link to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="pycvcam.NoExtrinsic">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pycvcam.</span></span><span class="sig-name descname"><span class="pre">NoExtrinsic</span></span><a class="reference internal" href="../_modules/pycvcam/extrinsic_objects/no_extrinsic.html#NoExtrinsic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.NoExtrinsic" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="extrinsic.html#pycvcam.core.Extrinsic" title="pycvcam.core.extrinsic.Extrinsic"><code class="xref py py-class docutils literal notranslate"><span class="pre">Extrinsic</span></code></a></p>
+<p>Subclass of the <a class="reference internal" href="extrinsic.html#pycvcam.core.Extrinsic" title="pycvcam.core.Extrinsic"><code class="xref py py-class docutils literal notranslate"><span class="pre">pycvcam.core.Extrinsic</span></code></a> class that represents a no extrinsic model.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This class represents the extrinsic transformation, which is the first step of the process from the <code class="docutils literal notranslate"><span class="pre">world_points</span></code> to the <code class="docutils literal notranslate"><span class="pre">image_points</span></code>.</p>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">NoExtrinsic</span></code> model is a special case of the extrinsic transformation where no extrinsic transformations are applied.</p>
+<p>Lets consider <code class="docutils literal notranslate"><span class="pre">world_points</span></code> in the global coordinate system <span class="math notranslate nohighlight">\(\vec{X}_w = (X_w, Y_w, Z_w)\)</span>, the corresponding <code class="docutils literal notranslate"><span class="pre">normalized_points</span></code> in the camera normalized coordinate system are given by <span class="math notranslate nohighlight">\(\vec{x}_n = (X_w, Y_w)\)</span>.
+Simply ignoring the z-coordinate, which is always set to 1 for the normalization plane.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pycvcam.NoExtrinsic._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pycvcam.NoExtrinsic._abc_impl" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycvcam.NoExtrinsic._compute_rays">
+<span class="sig-name descname"><span class="pre">_compute_rays</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">normalized_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../_modules/pycvcam/extrinsic_objects/no_extrinsic.html#NoExtrinsic._compute_rays"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.NoExtrinsic._compute_rays" title="Link to this definition">#</a></dt>
+<dd><p>Computes the rays from the camera to the scene for the no extrinsic model in the world coordinate system.</p>
+<p>The ray structure is as follows:</p>
+<ul class="simple">
+<li><p>The first 3 elements are the origin of the ray in the world coordinate system (the normalized points with z=1)</p></li>
+<li><p>The last 3 elements are the direction of the ray in the world coordinate system, which is always (0, 0, 1) for the no extrinsic model. The direction vector is normalized.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>normalized_points</strong> (<em>numpy.ndarray</em>) – The normalized points in the camera coordinate system. Shape (Npoints, 2).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>rays</strong> – The rays in the world coordinate system. Shape (Npoints, 6).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pycvcam.NoExtrinsic._constants">
+<span class="sig-name descname"><span class="pre">_constants</span></span><a class="headerlink" href="#pycvcam.NoExtrinsic._constants" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycvcam.NoExtrinsic._inverse_transform">
+<span class="sig-name descname"><span class="pre">_inverse_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">normalized_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/pycvcam/extrinsic_objects/no_extrinsic.html#NoExtrinsic._inverse_transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.NoExtrinsic._inverse_transform" title="Link to this definition">#</a></dt>
+<dd><p>Compute the inverse transformation from the <code class="docutils literal notranslate"><span class="pre">normalized_points</span></code> to the <code class="docutils literal notranslate"><span class="pre">world_points</span></code>.</p>
+<p>Lets consider <code class="docutils literal notranslate"><span class="pre">normalized_points</span></code> in the camera normalized coordinate system <span class="math notranslate nohighlight">\(\vec{x}_n = (x_n, y_n)\)</span>, the corresponding <code class="docutils literal notranslate"><span class="pre">world_points</span></code> in the global coordinate system are given by <span class="math notranslate nohighlight">\(\vec{X}_w = (x_n, y_n, 1)\)</span>.
+Simply adding a z-coordinate of 1 for the normalization plane.</p>
+<p>The jacobians with respect to the extrinsic parameters is an empty array with shape (Npoints, 2, 0), as there are no parameters to compute the jacobian for.
+The jacobian with respect to the normalized points is set to the identity matrix (for x and y), as the normalized points are equal to the world points.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This method is not intended to be used directly, but rather through the <a class="reference internal" href="transform.html#pycvcam.core.Transform.transform" title="pycvcam.core.Transform.transform"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pycvcam.core.Transform.transform()</span></code></a> method.
+Please ensure, the shape of the input <code class="docutils literal notranslate"><span class="pre">normalized_points</span></code> is (Npoints, 2) before calling this method.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>normalized_points</strong> (<em>numpy.ndarray</em>) – The normalized points in camera normalized coordinates to be transformed. Shape (Npoints, 2).</p></li>
+<li><p><strong>dx</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, the jacobian with respect to the normalized points is computed. Default is False</p></li>
+<li><p><strong>dp</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, the jacobian with respect to the extrinsic parameters is computed. Default is False</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>world_points</strong> (<em>numpy.ndarray</em>) – The world 3D points in global coordinates, which are equal to the normalized points with z=1. Shape (Npoints, 3).</p></li>
+<li><p><strong>jacobian_dx</strong> (<em>Optional[numpy.ndarray]</em>) – The jacobian of the world 3D points with respect to the normalized points. Shape (Npoints, 3, 2) if dx is True, otherwise None.</p></li>
+<li><p><strong>jacobian_dp</strong> (<em>Optional[numpy.ndarray]</em>) – The jacobian of the world 3D points with respect to the extrinsic parameters. Shape (Npoints, 3, 0) if dp is True, otherwise None.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pycvcam.NoExtrinsic._parameters">
+<span class="sig-name descname"><span class="pre">_parameters</span></span><a class="headerlink" href="#pycvcam.NoExtrinsic._parameters" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycvcam.NoExtrinsic._transform">
+<span class="sig-name descname"><span class="pre">_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">world_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/pycvcam/extrinsic_objects/no_extrinsic.html#NoExtrinsic._transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.NoExtrinsic._transform" title="Link to this definition">#</a></dt>
+<dd><p>Compute the transformation from the <code class="docutils literal notranslate"><span class="pre">world_points</span></code> to the <code class="docutils literal notranslate"><span class="pre">normalized_points</span></code>.</p>
+<p>Lets consider <code class="docutils literal notranslate"><span class="pre">world_points</span></code> in the global coordinate system <span class="math notranslate nohighlight">\(\vec{X}_w = (X_w, Y_w, Z_w)\)</span>, the corresponding <code class="docutils literal notranslate"><span class="pre">normalized_points</span></code> in the camera normalized coordinate system are given by <span class="math notranslate nohighlight">\(\vec{x}_n = (X_w, Y_w)\)</span>.
+Simply ignoring the z-coordinate, which is always set to 1 for the normalization plane.</p>
+<p>The jacobians with respect to the extrinsic parameters is an empty array with shape (Npoints, 2, 0), as there are no parameters to compute the jacobian for.
+The jacobian with respect to the world points is set to the identity matrix (for x and y) and zero for z, as the world points are equal to the normalized points.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This method is not intended to be used directly, but rather through the <a class="reference internal" href="transform.html#pycvcam.core.Transform.transform" title="pycvcam.core.Transform.transform"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pycvcam.core.Transform.transform()</span></code></a> method.
+Please ensure, the shape of the input <code class="docutils literal notranslate"><span class="pre">world_points</span></code> is (Npoints, 3) before calling this method.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>world_points</strong> (<em>numpy.ndarray</em>) – The world points in global coordinates to be transformed. Shape (Npoints, 3).</p></li>
+<li><p><strong>dx</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, the jacobian with respect to the world points is computed. Default is False</p></li>
+<li><p><strong>dp</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, the jacobian with respect to the extrinsic parameters is computed. Default is False</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>normalized_points</strong> (<em>numpy.ndarray</em>) – The normalized points in camera normalized coordinates, which are equal to the x and y componants of the world points. Shape (Npoints, 2).</p></li>
+<li><p><strong>jacobian_dx</strong> (<em>Optional[numpy.ndarray]</em>) – The jacobian of the normalized points with respect to the world points. Shape (Npoints, 2, 3) if dx is True, otherwise None.</p></li>
+<li><p><strong>jacobian_dp</strong> (<em>Optional[numpy.ndarray]</em>) – The jacobian of the normalized points with respect to the extrinsic parameters. Shape (Npoints, 2, 0) if dp is True, otherwise None.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pycvcam.NoExtrinsic.constants">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">constants</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pycvcam.NoExtrinsic.constants" title="Link to this definition">#</a></dt>
+<dd><p>Always returns None, as there are no constants for the no extrinsic model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycvcam.NoExtrinsic.is_set">
+<span class="sig-name descname"><span class="pre">is_set</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/pycvcam/extrinsic_objects/no_extrinsic.html#NoExtrinsic.is_set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.NoExtrinsic.is_set" title="Link to this definition">#</a></dt>
+<dd><p>Always returns True, as the no extrinsic model is always set and does not require any parameters or constants.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pycvcam.NoExtrinsic.parameters">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parameters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pycvcam.NoExtrinsic.parameters" title="Link to this definition">#</a></dt>
+<dd><p>Always returns None, as there are no parameters for the no extrinsic model.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -407,6 +541,29 @@
 
 
   <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.NoExtrinsic"><code class="docutils literal notranslate"><span class="pre">NoExtrinsic</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.NoExtrinsic._abc_impl"><code class="docutils literal notranslate"><span class="pre">NoExtrinsic._abc_impl</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.NoExtrinsic._compute_rays"><code class="docutils literal notranslate"><span class="pre">NoExtrinsic._compute_rays()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.NoExtrinsic._constants"><code class="docutils literal notranslate"><span class="pre">NoExtrinsic._constants</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.NoExtrinsic._inverse_transform"><code class="docutils literal notranslate"><span class="pre">NoExtrinsic._inverse_transform()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.NoExtrinsic._parameters"><code class="docutils literal notranslate"><span class="pre">NoExtrinsic._parameters</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.NoExtrinsic._transform"><code class="docutils literal notranslate"><span class="pre">NoExtrinsic._transform()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.NoExtrinsic.constants"><code class="docutils literal notranslate"><span class="pre">NoExtrinsic.constants</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.NoExtrinsic.is_set"><code class="docutils literal notranslate"><span class="pre">NoExtrinsic.is_set()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.NoExtrinsic.parameters"><code class="docutils literal notranslate"><span class="pre">NoExtrinsic.parameters</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -440,7 +597,7 @@
 
   <p class="copyright">
     
-      © Copyright 2025-%Y, Artezaru.
+      © Copyright 2025-2025, Artezaru.
       <br/>
     
   </p>
@@ -449,7 +606,7 @@
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
     <br/>
   </p>
 </div>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pycvcam.core.Transform &#8212; pycvcam 1.1.2 documentation</title>
+    <title>pycvcam.core.Transform &#8212; pycvcam 1.2.0 documentation</title>
   
   
   
@@ -38,9 +38,10 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=6f037312"></script>
-    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/documentation_options.js?v=6efca38a"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'api_doc/transform';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -110,7 +111,7 @@
   
   
   
-    <p class="title logo__title">pycvcam 1.1.2 documentation</p>
+    <p class="title logo__title">pycvcam 1.2.0 documentation</p>
   
 </a></div>
     
@@ -365,6 +366,549 @@
                   
   <section id="pycvcam-core-transform">
 <h1>pycvcam.core.Transform<a class="headerlink" href="#pycvcam-core-transform" title="Link to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="pycvcam.core.Transform">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pycvcam.core.</span></span><span class="sig-name descname"><span class="pre">Transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constants</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pycvcam/core/transform.html#Transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.core.Transform" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Transform is the base class to manage transformations from <span class="math notranslate nohighlight">\(\mathbb{R}^{input\_dim}\)</span> to <span class="math notranslate nohighlight">\(\mathbb{R}^{output\_dim}\)</span>.</p>
+<p>A tranformation is a function that maps points from an input space to an output space.
+The transformation is defined by:</p>
+<ul class="simple">
+<li><p>a set of <code class="docutils literal notranslate"><span class="pre">Nparams</span></code> parameters <span class="math notranslate nohighlight">\(\{\lambda_1, \lambda_2, \ldots, \lambda_N\}\)</span> that define the transformation.</p></li>
+<li><p>a set of <code class="docutils literal notranslate"><span class="pre">Nconstants</span></code> constants that are constant for the transformation. (Can not be optimized and no jacobian with respect to these constants).</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\vec{X}_O = T(\vec{X}_I, \lambda_1, \lambda_2, \ldots, \lambda_N)\]</div>
+<p>where <span class="math notranslate nohighlight">\(\vec{X}_O\)</span> are the output points, <span class="math notranslate nohighlight">\(\vec{X}_I\)</span> are the input points, and <span class="math notranslate nohighlight">\(\{\lambda_1, \lambda_2, \ldots, \lambda_N\}\)</span> are the parameters of the transformation.</p>
+<p>This class provides the base for all transformations. It defines the interface for extrinsic, distortion, and intrinsic transformations.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="extrinsic.html#pycvcam.core.Extrinsic" title="pycvcam.core.Extrinsic"><code class="xref py py-class docutils literal notranslate"><span class="pre">pycvcam.core.Extrinsic</span></code></a> for extrinsic transformations.</p></li>
+<li><p><a class="reference internal" href="distortion.html#pycvcam.core.Distortion" title="pycvcam.core.Distortion"><code class="xref py py-class docutils literal notranslate"><span class="pre">pycvcam.core.Distortion</span></code></a> for distortion transformations.</p></li>
+<li><p><a class="reference internal" href="intrinsic.html#pycvcam.core.Intrinsic" title="pycvcam.core.Intrinsic"><code class="xref py py-class docutils literal notranslate"><span class="pre">pycvcam.core.Intrinsic</span></code></a> for intrinsic transformations.</p></li>
+</ul>
+</div>
+<p>Each sub-classes must implement the following methods and properties:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">_input_dim</span></code>: (class attribute) The dimension of the input points as integer (example: 2 for 2D points).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_output_dim</span></code>: (class attribute) The dimension of the output points as integer (example: 2 for 2D points).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_transform</span></code>: (method) Apply the transformation to the given points with shape (Npoints, input_dim) and return the transformed points with shape (Npoints, output_dim), and optionally the Jacobian matrices if requested.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_inverse_transform</span></code>: (method) Apply the inverse transformation to the given points with shape (Npoints, output_dim) and return the transformed points with shape (Npoints, input_dim), and optionally the Jacobian matrices if requested.</p></li>
+</ul>
+<p>The following properties are not required but can be overwritting to provide additional information about the transformation:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">parameters</span></code> (property and setter) The parameters of the transformation in a 1D numpy array of shape (Nparams,) or None if the transformation does not have parameters or they are not set. Default only impose 1D array of floats or None.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">constants</span></code> (property and setter) The constants of the transformation in a 1D numpy array of shape (Nconsts,) or None if the transformation does not have constants or they are not set. Default only impose 1D array of floats or None.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">is_set</span></code>: (method) Check if the transformation is set (i.e., if the parameters are initialized). Default is to return True if the parameters and constants are not None. Default is to return True if the parameters and constants are not None.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_result_class</span></code>: (class attribute) The class used for the result of the transformation (sub-class of <code class="docutils literal notranslate"><span class="pre">TransformResult</span></code>). Default is <a class="reference internal" href="transform_result.html#pycvcam.core.TransformResult" title="pycvcam.core.TransformResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">pycvcam.core.TransformResult</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_inverse_result_class</span></code>: (class attribute) The class used for the result of the inverse transformation (sub-class of <code class="docutils literal notranslate"><span class="pre">TransformResult</span></code>). Default is <a class="reference internal" href="transform_result.html#pycvcam.core.TransformResult" title="pycvcam.core.TransformResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">pycvcam.core.TransformResult</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_get_jacobian_short_hand</span></code>: (method) A dictionary of short-hand notation for the Jacobian matrices, which can be used to add custom views of the <code class="docutils literal notranslate"><span class="pre">jacobian_dp</span></code> matrix with respect to the parameters of the transformation. Default is an empty dictionary.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_get_transform_aliases</span></code>: (method) A dictionary of aliases for the transformation, which can be used to add custom names for the transformation parameters. Default is an empty list.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_get_inverse_transform_aliases</span></code>: (method) A dictionary of aliases for the inverse transformation, which can be used to add custom names for the inverse transformation parameters. Default is an empty list.</p></li>
+</ul>
+<p>More details on the transformation methods are provided in the <cite>transform</cite> and <cite>inverse_transform</cite> methods.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#pycvcam.core.Transform.transform" title="pycvcam.core.Transform.transform"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pycvcam.core.Transform.transform()</span></code></a> for applying the transformation to points.</p></li>
+<li><p><a class="reference internal" href="#pycvcam.core.Transform.inverse_transform" title="pycvcam.core.Transform.inverse_transform"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pycvcam.core.Transform.inverse_transform()</span></code></a> for applying the inverse transformation to points.</p></li>
+<li><p><a class="reference internal" href="transform_result.html#pycvcam.core.TransformResult" title="pycvcam.core.TransformResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">pycvcam.core.TransformResult</span></code></a> for the result of the transformation.</p></li>
+</ul>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">...</span></code> in the shape of the attributes indicates that the shape can have any number of leading dimensions, which is useful for batch processing of points.</p>
+</div>
+<dl class="py property">
+<dt class="sig sig-object py" id="pycvcam.core.Transform.Nconstants">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Nconstants</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pycvcam.core.Transform.Nconstants" title="Link to this definition">#</a></dt>
+<dd><p>Property to return the number of coefficients of the transformation.</p>
+<p>The number of coefficients must be a non-negative integer representing the number of coefficients of the transformation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The number of constants of the transformation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pycvcam.core.Transform.Nparams">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Nparams</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pycvcam.core.Transform.Nparams" title="Link to this definition">#</a></dt>
+<dd><p>Property to return the number of parameters of the transformation.</p>
+<p>The number of parameters must be a non-negative integer representing the number of parameters of the transformation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The number of parameters of the transformation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pycvcam.core.Transform._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pycvcam.core.Transform._abc_impl" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pycvcam.core.Transform._constants">
+<span class="sig-name descname"><span class="pre">_constants</span></span><a class="headerlink" href="#pycvcam.core.Transform._constants" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycvcam.core.Transform._get_inverse_transform_aliases">
+<span class="sig-name descname"><span class="pre">_get_inverse_transform_aliases</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/pycvcam/core/transform.html#Transform._get_inverse_transform_aliases"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.core.Transform._get_inverse_transform_aliases" title="Link to this definition">#</a></dt>
+<dd><p>Property to return a list of aliases for the inverse transformed points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of aliases for the inverse transformed points.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycvcam.core.Transform._get_jacobian_short_hand">
+<span class="sig-name descname"><span class="pre">_get_jacobian_short_hand</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/pycvcam/core/transform.html#Transform._get_jacobian_short_hand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.core.Transform._get_jacobian_short_hand" title="Link to this definition">#</a></dt>
+<dd><p>Property to return a dictionary of short-hand notation for the Jacobian matrices.</p>
+<p>This dictionary can be used to add custom views of the <cite>jacobian_dp</cite> matrix with respect to the parameters of the transformation.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;dk&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;Custom Jacobian view for two first parameters related to k1 and k2&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;dother&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;Custom Jacobian view for other parameters related to k3 and k4&quot;</span><span class="p">),</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><p>A dictionary where keys are names of the custom Jacobian views and values are tuples containing:</p>
+<ul class="simple">
+<li><p>start index (int): The starting index of the parameters to include in the custom Jacobian view.</p></li>
+<li><p>end index (int): The ending index of the parameters to include in the custom Jacobian view.</p></li>
+<li><p>doc (Optional[str]): A documentation string for the custom Jacobian view.</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, Tuple[int, int, Optional[str]]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycvcam.core.Transform._get_transform_aliases">
+<span class="sig-name descname"><span class="pre">_get_transform_aliases</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/pycvcam/core/transform.html#Transform._get_transform_aliases"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.core.Transform._get_transform_aliases" title="Link to this definition">#</a></dt>
+<dd><p>Property to return a list of aliases for the transformed points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of aliases for the transformed points.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pycvcam.core.Transform._input_dim">
+<span class="sig-name descname"><span class="pre">_input_dim</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pycvcam.core.Transform._input_dim" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pycvcam.core.Transform._inverse_result_class">
+<span class="sig-name descname"><span class="pre">_inverse_result_class</span></span><a class="headerlink" href="#pycvcam.core.Transform._inverse_result_class" title="Link to this definition">#</a></dt>
+<dd><p>alias of <a class="reference internal" href="transform_result.html#pycvcam.core.TransformResult" title="pycvcam.core.transform_result.TransformResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">TransformResult</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycvcam.core.Transform._inverse_transform">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_inverse_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/pycvcam/core/transform.html#Transform._inverse_transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.core.Transform._inverse_transform" title="Link to this definition">#</a></dt>
+<dd><p>Apply the inverse transformation to the given points.</p>
+<p>This method must be implemented by subclasses to apply the inverse transformation to the input points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>points</strong> (<em>numpy.ndarray</em>) – The input points to be transformed. Shape (Npoints, output_dim).</p></li>
+<li><p><strong>dx</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, compute the Jacobian of the transformed points with respect to the input points. Default is False.</p></li>
+<li><p><strong>dp</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, compute the Jacobian of the transformed points with respect to the parameters of the transformation. Default is False.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments for the transformation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>A tuple containing:</p>
+<ul class="simple">
+<li><p><cite>transformed_points</cite>: The transformed points of shape (Npoints, input_dim).</p></li>
+<li><p><cite>jacobian_dx</cite>: The Jacobian matrix with respect to the input points of shape (Npoints, input_dim, output_dim) if <cite>dx</cite> is True, otherwise None.</p></li>
+<li><p><cite>jacobian_dp</cite>: The Jacobian matrix with respect to the parameters of the transformation of shape (Npoints, input_dim, Nparams) if <cite>dp</cite> is True, otherwise None.</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple[numpy.ndarray, Optional[numpy.ndarray], Optional[numpy.ndarray]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pycvcam.core.Transform._output_dim">
+<span class="sig-name descname"><span class="pre">_output_dim</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pycvcam.core.Transform._output_dim" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pycvcam.core.Transform._parameters">
+<span class="sig-name descname"><span class="pre">_parameters</span></span><a class="headerlink" href="#pycvcam.core.Transform._parameters" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pycvcam.core.Transform._result_class">
+<span class="sig-name descname"><span class="pre">_result_class</span></span><a class="headerlink" href="#pycvcam.core.Transform._result_class" title="Link to this definition">#</a></dt>
+<dd><p>alias of <a class="reference internal" href="transform_result.html#pycvcam.core.TransformResult" title="pycvcam.core.transform_result.TransformResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">TransformResult</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycvcam.core.Transform._return_inverse_transform_result">
+<span class="sig-name descname"><span class="pre">_return_inverse_transform_result</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transform_result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="transform_result.html#pycvcam.core.TransformResult" title="pycvcam.core.transform_result.TransformResult"><span class="pre">TransformResult</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="transform_result.html#pycvcam.core.TransformResult" title="pycvcam.core.transform_result.TransformResult"><span class="pre">TransformResult</span></a></span></span><a class="reference internal" href="../_modules/pycvcam/core/transform.html#Transform._return_inverse_transform_result"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.core.Transform._return_inverse_transform_result" title="Link to this definition">#</a></dt>
+<dd><p>Return the result of the inverse transformation as a <code class="docutils literal notranslate"><span class="pre">TransformResult</span></code> object.</p>
+<p>This method is used to return the result of the inverse transformation, including the transformed points and the Jacobian matrices if requested.</p>
+<p>This method also adds the custom Jacobian views to the <cite>TransformResult</cite> object using the <cite>add_jacobian</cite> method and the custom aliases using the <cite>add_alias</cite> method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>transform_result</strong> (<a class="reference internal" href="transform_result.html#pycvcam.core.TransformResult" title="pycvcam.core.TransformResult"><em>TransformResult</em></a>) – The result of the inverse transformation containing the transformed points and the Jacobian matrices.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The result of the inverse transformation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="transform_result.html#pycvcam.core.TransformResult" title="pycvcam.core.TransformResult">TransformResult</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycvcam.core.Transform._return_transform_result">
+<span class="sig-name descname"><span class="pre">_return_transform_result</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transform_result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="transform_result.html#pycvcam.core.TransformResult" title="pycvcam.core.transform_result.TransformResult"><span class="pre">TransformResult</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="transform_result.html#pycvcam.core.TransformResult" title="pycvcam.core.transform_result.TransformResult"><span class="pre">TransformResult</span></a></span></span><a class="reference internal" href="../_modules/pycvcam/core/transform.html#Transform._return_transform_result"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.core.Transform._return_transform_result" title="Link to this definition">#</a></dt>
+<dd><p>Return the result of the transformation as a <code class="docutils literal notranslate"><span class="pre">TransformResult</span></code> object.</p>
+<p>This method is used to return the result of the transformation, including the transformed points and the Jacobian matrices if requested.</p>
+<p>This method also adds the custom Jacobian views to the <cite>TransformResult</cite> object using the <cite>add_jacobian</cite> method and the custom aliases using the <cite>add_alias</cite> method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>transform_result</strong> (<a class="reference internal" href="transform_result.html#pycvcam.core.TransformResult" title="pycvcam.core.TransformResult"><em>TransformResult</em></a>) – The result of the transformation containing the transformed points and the Jacobian matrices.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The result of the transformation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="transform_result.html#pycvcam.core.TransformResult" title="pycvcam.core.TransformResult">TransformResult</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycvcam.core.Transform._transform">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/pycvcam/core/transform.html#Transform._transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.core.Transform._transform" title="Link to this definition">#</a></dt>
+<dd><p>Apply the transformation to the given points.</p>
+<p>This method must be implemented by subclasses to apply the transformation to the input points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>points</strong> (<em>numpy.ndarray</em>) – The input points to be transformed. Shape (Npoints, input_dim).</p></li>
+<li><p><strong>dx</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, compute the Jacobian of the transformed points with respect to the input points. Default is False.</p></li>
+<li><p><strong>dp</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, compute the Jacobian of the transformed points with respect to the parameters of the transformation. Default is False.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments for the transformation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>A tuple containing:</p>
+<ul class="simple">
+<li><p><cite>transformed_points</cite>: The transformed points of shape (Npoints, output_dim).</p></li>
+<li><p><cite>jacobian_dx</cite>: The Jacobian matrix with respect to the input points of shape (Npoints, output_dim, input_dim) if <cite>dx</cite> is True, otherwise None.</p></li>
+<li><p><cite>jacobian_dp</cite>: The Jacobian matrix with respect to the parameters of the transformation of shape (Npoints, output_dim, Nparams) if <cite>dp</cite> is True, otherwise None.</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple[numpy.ndarray, Optional[numpy.ndarray], Optional[numpy.ndarray]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pycvcam.core.Transform.constants">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">constants</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pycvcam.core.Transform.constants" title="Link to this definition">#</a></dt>
+<dd><p>Property to return the constants of the transformation.</p>
+<p>The constants must be a 1-D float numpy array of shape (Nconstants,) where Nconstants is the number of constants of the transformation.</p>
+<p>If the transformation does not have constants or they are not set, this property should return None.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The constants of the transformation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[numpy.ndarray]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pycvcam.core.Transform.input_dim">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_dim</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pycvcam.core.Transform.input_dim" title="Link to this definition">#</a></dt>
+<dd><p>Property to return the input dimension of the transformation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The number of dimensions of the input points.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>NotImplementedError</strong> – If the input dimension is not defined in the subclass.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pycvcam.core.Transform.inverse_result_class">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">inverse_result_class</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">type</span></em><a class="headerlink" href="#pycvcam.core.Transform.inverse_result_class" title="Link to this definition">#</a></dt>
+<dd><p>Property to return the class used for the result of the inverse transformation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The class used for the result of the inverse transformation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>type</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycvcam.core.Transform.inverse_transform">
+<span class="sig-name descname"><span class="pre">inverse_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_skip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../_modules/pycvcam/core/transform.html#Transform.inverse_transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.core.Transform.inverse_transform" title="Link to this definition">#</a></dt>
+<dd><p>The given points <code class="docutils literal notranslate"><span class="pre">points</span></code> are assumed to be with shape (…, output_dim) or (output_dim, …), depending on the value of <code class="docutils literal notranslate"><span class="pre">transpose</span></code>.</p>
+<p>The output <code class="docutils literal notranslate"><span class="pre">transformed_points</span></code> will have shape (…, input_dim) if <code class="docutils literal notranslate"><span class="pre">transpose</span></code> is False, or (input_dim, …) if <code class="docutils literal notranslate"><span class="pre">transpose</span></code> is True.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The points are converting to float before applying the inverse transformation.
+See <a class="reference internal" href="package.html#pycvcam.core.Package" title="pycvcam.core.Package"><code class="xref py py-class docutils literal notranslate"><span class="pre">pycvcam.core.Package</span></code></a> for more details on the default data types used in the package.</p>
+</div>
+<p>The method also computes 2 Jacobian matrices if requested:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">dx</span></code>: Jacobian of the transformed points with respect to the input points.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dp</span></code>: Jacobian of the transformed points with respect to the parameters of the transformation.</p></li>
+</ul>
+<p>The jacobian matrice with respect to the input points is a (…, input_dim, output_dim) matrix where:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">jacobian_dx</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># ∂X_i/∂X_o -&gt; Jacobian of the coordinates X_i with respect to the coordinates X_o.</span>
+<span class="n">jacobian_dx</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>  <span class="c1"># ∂X_i/∂Y_o</span>
+<span class="o">...</span>
+
+<span class="n">jacobian_dx</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># ∂Y_i/∂X_o -&gt; Jacobian of the coordinates Y_i with respect to the coordinates X_o.</span>
+<span class="n">jacobian_dx</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>  <span class="c1"># ∂Y_i/∂Y_o</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+<p>The Jacobian matrice with respect to the parameters is a (…, input_dim, Nparams) matrix where:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">jacobian_dp</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># ∂X_i/∂λ_1 -&gt; Jacobian of the coordinates X_i with respect to the first parameter λ_1.</span>
+<span class="n">jacobian_dp</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>  <span class="c1"># ∂X_i/∂λ_2</span>
+<span class="o">...</span>
+
+<span class="n">jacobian_dp</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># ∂Y_i/∂λ_1 -&gt; Jacobian of the coordinates Y_i with respect to the first parameter λ_1.</span>
+<span class="n">jacobian_dp</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>  <span class="c1"># ∂Y_i/∂λ_2</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+<p>The Jacobian matrices are computed only if <code class="docutils literal notranslate"><span class="pre">dx</span></code> or <code class="docutils literal notranslate"><span class="pre">dp</span></code> are set to True, respectively.</p>
+<p>The output will be a <cite>TransformResult</cite> object containing the transformed points and the Jacobian matrices if requested.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The _skip parameter is used to skip the checks for the transformation parameters and assume the points are given in the (Npoints, output_dim) float format.
+Please use this parameter with caution, as it may lead to unexpected results if the transformation parameters are not set correctly.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>points</strong> (<em>numpy.ndarray</em>) – The input points to be transformed. Shape (…, output_dim) (or (output_dim, …) if <cite>transpose</cite> is True).</p></li>
+<li><p><strong>transpose</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, the input points are transposed to shape (output_dim, …). Default is False.</p></li>
+<li><p><strong>dx</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, compute the Jacobian of the transformed points with respect to the input points. Default is False.</p></li>
+<li><p><strong>dp</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, compute the Jacobian of the transformed points with respect to the parameters of the transformation. Default is False.</p></li>
+<li><p><strong>_skip</strong> (<em>bool</em><em>, </em><em>optional</em>) – [INTERNAL USE], If True, skip the checks for the transformation parameters and assume the points are given in the (Npoints, output_dim) float format.
+<cite>transpose</cite> is ignored if this parameter is set to True.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments for the transformation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An object containing the transformed points and the Jacobian matrices if requested.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="transform_result.html#pycvcam.core.TransformResult" title="pycvcam.core.TransformResult">TransformResult</a></p>
+</dd>
+</dl>
+<section id="developer-notes">
+<h2>Developer Notes<a class="headerlink" href="#developer-notes" title="Link to this heading">#</a></h2>
+<p>The subclasses must implement the <cite>_inverse_transform</cite> method to apply the inverse transformation to the input points.</p>
+<p>The <cite>_inverse_transform</cite> method should:</p>
+<ul>
+<li><p>take the input points as a numpy array of shape (Npoints, output_dim)</p></li>
+<li><p>return 3 numpy arrays:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><cite>transformed_points</cite>: The transformed points of shape (Npoints, input_dim).</p></li>
+<li><p><cite>jacobian_dx</cite>: The Jacobian matrix with respect to the input points of shape (Npoints, input_dim, output_dim) if <cite>dx</cite> is True, otherwise None.</p></li>
+<li><p><cite>jacobian_dp</cite>: The Jacobian matrix with respect to the parameters of the transformation of shape (Npoints, input_dim, Nparams) if <cite>dp</cite> is True, otherwise None.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycvcam.core.Transform.is_set">
+<span class="sig-name descname"><span class="pre">is_set</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/pycvcam/core/transform.html#Transform.is_set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.core.Transform.is_set" title="Link to this definition">#</a></dt>
+<dd><p>Method to check if the transformation parameters and constants are set.</p>
+<p>This method returns True if the parameters and constants are not None, otherwise False.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the transformation parameters and constants are set, otherwise False.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pycvcam.core.Transform.output_dim">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_dim</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pycvcam.core.Transform.output_dim" title="Link to this definition">#</a></dt>
+<dd><p>Property to return the output dimension of the transformation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The number of dimensions of the output points.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>NotImplementedError</strong> – If the output dimension is not defined in the subclass.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pycvcam.core.Transform.parameters">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parameters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pycvcam.core.Transform.parameters" title="Link to this definition">#</a></dt>
+<dd><p>Property to return the parameters of the transformation.</p>
+<p>The parameters must be a 1-D numpy array of shape (Nparams,) where Nparams is the number of parameters of the transformation.</p>
+<p>If the transformation does not have parameters or they are not set, this property should return None.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The parameters of the transformation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[numpy.ndarray]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pycvcam.core.Transform.result_class">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">result_class</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">type</span></em><a class="headerlink" href="#pycvcam.core.Transform.result_class" title="Link to this definition">#</a></dt>
+<dd><p>Property to return the class used for the result of the transformation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The class used for the result of the transformation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>type</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycvcam.core.Transform.transform">
+<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_skip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../_modules/pycvcam/core/transform.html#Transform.transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.core.Transform.transform" title="Link to this definition">#</a></dt>
+<dd><p>The given points <code class="docutils literal notranslate"><span class="pre">points</span></code> are assumed to be with shape (…, input_dim) or (input_dim, …), depending on the value of <code class="docutils literal notranslate"><span class="pre">transpose</span></code>.</p>
+<p>The output <code class="docutils literal notranslate"><span class="pre">transformed_points</span></code> will have shape (…, output_dim) if <code class="docutils literal notranslate"><span class="pre">transpose</span></code> is False, or (output_dim, …) if <code class="docutils literal notranslate"><span class="pre">transpose</span></code> is True.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The points are converting to float before applying the transformation.
+See <a class="reference internal" href="package.html#pycvcam.core.Package" title="pycvcam.core.Package"><code class="xref py py-class docutils literal notranslate"><span class="pre">pycvcam.core.Package</span></code></a> for more details on the default data types used in the package.</p>
+</div>
+<p>The method also computes 2 Jacobian matrices if requested:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">dx</span></code>: Jacobian of the transformed points with respect to the input points.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dp</span></code>: Jacobian of the transformed points with respect to the parameters of the transformation.</p></li>
+</ul>
+<p>The jacobian matrice with respect to the input points is a (…, output_dim, input_dim) matrix where:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">jacobian_dx</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># ∂X_o/∂X_i -&gt; Jacobian of the coordinates X_o with respect to the coordinates X_i.</span>
+<span class="n">jacobian_dx</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>  <span class="c1"># ∂X_o/∂Y_i</span>
+<span class="o">...</span>
+
+<span class="n">jacobian_dx</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># ∂Y_o/∂X_i -&gt; Jacobian of the coordinates Y_o with respect to the coordinates X_i.</span>
+<span class="n">jacobian_dx</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>  <span class="c1"># ∂Y_o/∂Y_i</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+<p>The Jacobian matrice with respect to the parameters is a (…, output_dim, Nparams) matrix where:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">jacobian_dp</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># ∂X_o/∂λ_1 -&gt; Jacobian of the coordinates X_o with respect to the first parameter λ_1.</span>
+<span class="n">jacobian_dp</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>  <span class="c1"># ∂X_o/∂λ_2</span>
+<span class="o">...</span>
+
+<span class="n">jacobian_dp</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># ∂Y_o/∂λ_1 -&gt; Jacobian of the coordinates Y_o with respect to the first parameter λ_1.</span>
+<span class="n">jacobian_dp</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>  <span class="c1"># ∂Y_o/∂λ_2</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+<p>The Jacobian matrices are computed only if <code class="docutils literal notranslate"><span class="pre">dx</span></code> or <code class="docutils literal notranslate"><span class="pre">dp</span></code> are set to True, respectively.</p>
+<p>The output will be a <cite>TransformResult</cite> object containing the transformed points and the Jacobian matrices if requested.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The _skip parameter is used to skip the checks for the transformation parameters and assume the points are given in the (Npoints, input_dim) float format.
+Please use this parameter with caution, as it may lead to unexpected results if the transformation parameters are not set correctly.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>points</strong> (<em>numpy.ndarray</em>) – The input points to be transformed. Shape (…, input_dim) (or (input_dim, …) if <cite>transpose</cite> is True).</p></li>
+<li><p><strong>transpose</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, the input points are transposed to shape (input_dim, …). Default is False.</p></li>
+<li><p><strong>dx</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, compute the Jacobian of the transformed points with respect to the input points. Default is False.</p></li>
+<li><p><strong>dp</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, compute the Jacobian of the transformed points with respect to the parameters of the transformation. Default is False.</p></li>
+<li><p><strong>_skip</strong> (<em>bool</em><em>, </em><em>optional</em>) – [INTERNAL USE], If True, skip the checks for the transformation parameters and assume the points are given in the (Npoints, input_dim) float format.
+<cite>transpose</cite> is ignored if this parameter is set to True.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments for the transformation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An object containing the transformed points and the Jacobian matrices if requested.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="transform_result.html#pycvcam.core.TransformResult" title="pycvcam.core.TransformResult">TransformResult</a></p>
+</dd>
+</dl>
+<section id="id1">
+<h2>Developer Notes<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<p>The subclasses must implement the <cite>_transform</cite> method to apply the transformation to the input points.</p>
+<p>The <cite>_transform</cite> method should:</p>
+<ul>
+<li><p>take the input points as a numpy array of shape (Npoints, input_dim)</p></li>
+<li><p>return 3 numpy arrays:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><cite>transformed_points</cite>: The transformed points of shape (Npoints, output_dim).</p></li>
+<li><p><cite>jacobian_dx</cite>: The Jacobian matrix with respect to the input points of shape (Npoints, output_dim, input_dim) if <cite>dx</cite> is True, otherwise None.</p></li>
+<li><p><cite>jacobian_dp</cite>: The Jacobian matrix with respect to the parameters of the transformation of shape (Npoints, output_dim, Nparams) if <cite>dp</cite> is True, otherwise None.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -407,6 +951,45 @@
 
 
   <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.Transform"><code class="docutils literal notranslate"><span class="pre">Transform</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.Transform.Nconstants"><code class="docutils literal notranslate"><span class="pre">Transform.Nconstants</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.Transform.Nparams"><code class="docutils literal notranslate"><span class="pre">Transform.Nparams</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.Transform._abc_impl"><code class="docutils literal notranslate"><span class="pre">Transform._abc_impl</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.Transform._constants"><code class="docutils literal notranslate"><span class="pre">Transform._constants</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.Transform._get_inverse_transform_aliases"><code class="docutils literal notranslate"><span class="pre">Transform._get_inverse_transform_aliases()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.Transform._get_jacobian_short_hand"><code class="docutils literal notranslate"><span class="pre">Transform._get_jacobian_short_hand()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.Transform._get_transform_aliases"><code class="docutils literal notranslate"><span class="pre">Transform._get_transform_aliases()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.Transform._input_dim"><code class="docutils literal notranslate"><span class="pre">Transform._input_dim</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.Transform._inverse_result_class"><code class="docutils literal notranslate"><span class="pre">Transform._inverse_result_class</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.Transform._inverse_transform"><code class="docutils literal notranslate"><span class="pre">Transform._inverse_transform()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.Transform._output_dim"><code class="docutils literal notranslate"><span class="pre">Transform._output_dim</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.Transform._parameters"><code class="docutils literal notranslate"><span class="pre">Transform._parameters</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.Transform._result_class"><code class="docutils literal notranslate"><span class="pre">Transform._result_class</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.Transform._return_inverse_transform_result"><code class="docutils literal notranslate"><span class="pre">Transform._return_inverse_transform_result()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.Transform._return_transform_result"><code class="docutils literal notranslate"><span class="pre">Transform._return_transform_result()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.Transform._transform"><code class="docutils literal notranslate"><span class="pre">Transform._transform()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.Transform.constants"><code class="docutils literal notranslate"><span class="pre">Transform.constants</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.Transform.input_dim"><code class="docutils literal notranslate"><span class="pre">Transform.input_dim</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.Transform.inverse_result_class"><code class="docutils literal notranslate"><span class="pre">Transform.inverse_result_class</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.Transform.inverse_transform"><code class="docutils literal notranslate"><span class="pre">Transform.inverse_transform()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.Transform.is_set"><code class="docutils literal notranslate"><span class="pre">Transform.is_set()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.Transform.output_dim"><code class="docutils literal notranslate"><span class="pre">Transform.output_dim</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.Transform.parameters"><code class="docutils literal notranslate"><span class="pre">Transform.parameters</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.Transform.result_class"><code class="docutils literal notranslate"><span class="pre">Transform.result_class</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.core.Transform.transform"><code class="docutils literal notranslate"><span class="pre">Transform.transform()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -440,7 +1023,7 @@
 
   <p class="copyright">
     
-      © Copyright 2025-%Y, Artezaru.
+      © Copyright 2025-2025, Artezaru.
       <br/>
     
   </p>
@@ -449,7 +1032,7 @@
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
     <br/>
   </p>
 </div>

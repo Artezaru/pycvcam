@@ -1,0 +1,1201 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pycvcam.core.transform &#8212; pycvcam 1.2.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=6efca38a"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pycvcam/core/transform';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">pycvcam 1.2.0 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../usage.html">
+    Usage
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../usage.html">
+    Usage
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pycvcam.core.transform</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for pycvcam.core.transform</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">ClassVar</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.transform_result</span><span class="w"> </span><span class="kn">import</span> <span class="n">TransformResult</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.package</span><span class="w"> </span><span class="kn">import</span> <span class="n">Package</span>
+
+
+<div class="viewcode-block" id="Transform">
+<a class="viewcode-back" href="../../../api_doc/transform.html#pycvcam.core.Transform">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Transform</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Transform is the base class to manage transformations from :math:`\mathbb{R}^{input\_dim}` to :math:`\mathbb{R}^{output\_dim}`.</span>
+
+<span class="sd">    A tranformation is a function that maps points from an input space to an output space.</span>
+<span class="sd">    The transformation is defined by:</span>
+<span class="sd">    </span>
+<span class="sd">    - a set of ``Nparams`` parameters :math:`\{\lambda_1, \lambda_2, \ldots, \lambda_N\}` that define the transformation.</span>
+<span class="sd">    - a set of ``Nconstants`` constants that are constant for the transformation. (Can not be optimized and no jacobian with respect to these constants).</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \vec{X}_O = T(\vec{X}_I, \lambda_1, \lambda_2, \ldots, \lambda_N)</span>
+
+<span class="sd">    where :math:`\vec{X}_O` are the output points, :math:`\vec{X}_I` are the input points, and :math:`\{\lambda_1, \lambda_2, \ldots, \lambda_N\}` are the parameters of the transformation.</span>
+
+<span class="sd">    This class provides the base for all transformations. It defines the interface for extrinsic, distortion, and intrinsic transformations.</span>
+
+<span class="sd">    .. seealso::</span>
+
+<span class="sd">        - :class:`pycvcam.core.Extrinsic` for extrinsic transformations.</span>
+<span class="sd">        - :class:`pycvcam.core.Distortion` for distortion transformations.</span>
+<span class="sd">        - :class:`pycvcam.core.Intrinsic` for intrinsic transformations.</span>
+
+<span class="sd">    Each sub-classes must implement the following methods and properties:</span>
+
+<span class="sd">    - ``_input_dim``: (class attribute) The dimension of the input points as integer (example: 2 for 2D points).</span>
+<span class="sd">    - ``_output_dim``: (class attribute) The dimension of the output points as integer (example: 2 for 2D points).</span>
+<span class="sd">    - ``_transform``: (method) Apply the transformation to the given points with shape (Npoints, input_dim) and return the transformed points with shape (Npoints, output_dim), and optionally the Jacobian matrices if requested.</span>
+<span class="sd">    - ``_inverse_transform``: (method) Apply the inverse transformation to the given points with shape (Npoints, output_dim) and return the transformed points with shape (Npoints, input_dim), and optionally the Jacobian matrices if requested.</span>
+
+<span class="sd">    The following properties are not required but can be overwritting to provide additional information about the transformation:</span>
+
+<span class="sd">    - ``parameters`` (property and setter) The parameters of the transformation in a 1D numpy array of shape (Nparams,) or None if the transformation does not have parameters or they are not set. Default only impose 1D array of floats or None.</span>
+<span class="sd">    - ``constants`` (property and setter) The constants of the transformation in a 1D numpy array of shape (Nconsts,) or None if the transformation does not have constants or they are not set. Default only impose 1D array of floats or None.</span>
+<span class="sd">    - ``is_set``: (method) Check if the transformation is set (i.e., if the parameters are initialized). Default is to return True if the parameters and constants are not None. Default is to return True if the parameters and constants are not None.</span>
+<span class="sd">    - ``_result_class``: (class attribute) The class used for the result of the transformation (sub-class of ``TransformResult``). Default is :class:`pycvcam.core.TransformResult`.</span>
+<span class="sd">    - ``_inverse_result_class``: (class attribute) The class used for the result of the inverse transformation (sub-class of ``TransformResult``). Default is :class:`pycvcam.core.TransformResult`.</span>
+<span class="sd">    - ``_get_jacobian_short_hand``: (method) A dictionary of short-hand notation for the Jacobian matrices, which can be used to add custom views of the ``jacobian_dp`` matrix with respect to the parameters of the transformation. Default is an empty dictionary.</span>
+<span class="sd">    - ``_get_transform_aliases``: (method) A dictionary of aliases for the transformation, which can be used to add custom names for the transformation parameters. Default is an empty list.</span>
+<span class="sd">    - ``_get_inverse_transform_aliases``: (method) A dictionary of aliases for the inverse transformation, which can be used to add custom names for the inverse transformation parameters. Default is an empty list.</span>
+
+<span class="sd">    More details on the transformation methods are provided in the `transform` and `inverse_transform` methods. </span>
+
+<span class="sd">    .. seealso::</span>
+
+<span class="sd">        - :meth:`pycvcam.core.Transform.transform` for applying the transformation to points.</span>
+<span class="sd">        - :meth:`pycvcam.core.Transform.inverse_transform` for applying the inverse transformation to points.</span>
+<span class="sd">        - :class:`pycvcam.core.TransformResult` for the result of the transformation.</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">        ``...`` in the shape of the attributes indicates that the shape can have any number of leading dimensions, which is useful for batch processing of points.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;_parameters&quot;</span><span class="p">,</span> <span class="s2">&quot;_constants&quot;</span><span class="p">]</span>
+
+    <span class="n">_input_dim</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_output_dim</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_result_class</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="n">TransformResult</span>
+    <span class="n">_inverse_result_class</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="n">TransformResult</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">constants</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">constants</span> <span class="o">=</span> <span class="n">constants</span>
+
+
+    <span class="c1"># =============================================</span>
+    <span class="c1"># Properties for Transform Class</span>
+    <span class="c1"># =============================================</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">result_class</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property to return the class used for the result of the transformation.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        type</span>
+<span class="sd">            The class used for the result of the transformation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_result_class</span><span class="p">,</span> <span class="n">TransformResult</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;result_class must be a subclass of TransformResult, got </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_result_class</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result_class</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">inverse_result_class</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property to return the class used for the result of the inverse transformation.</span>
+<span class="sd">                </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        type</span>
+<span class="sd">            The class used for the result of the inverse transformation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_inverse_result_class</span><span class="p">,</span> <span class="n">TransformResult</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;inverse_result_class must be a subclass of TransformResult, got </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_inverse_result_class</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inverse_result_class</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">input_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property to return the input dimension of the transformation.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            The number of dimensions of the input points.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        -------</span>
+<span class="sd">        NotImplementedError</span>
+<span class="sd">            If the input dimension is not defined in the subclass.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_dim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Subclasses must define the ``_input_dim`` class attribute.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_dim</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property to return the output dimension of the transformation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            The number of dimensions of the output points.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        -------</span>
+<span class="sd">        NotImplementedError</span>
+<span class="sd">            If the output dimension is not defined in the subclass.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_dim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Subclasses must define the ``_output_dim`` class attribute.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_dim</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property to return the parameters of the transformation.</span>
+<span class="sd">        </span>
+<span class="sd">        The parameters must be a 1-D numpy array of shape (Nparams,) where Nparams is the number of parameters of the transformation.</span>
+
+<span class="sd">        If the transformation does not have parameters or they are not set, this property should return None.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Optional[numpy.ndarray]</span>
+<span class="sd">            The parameters of the transformation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span>
+    
+    <span class="nd">@parameters</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Setter for the parameters of the transformation.</span>
+<span class="sd">        </span>
+<span class="sd">        The parameters must be a 1-D float numpy array of shape (Nparams,) where Nparams is the number of parameters of the transformation.</span>
+
+<span class="sd">        If the transformation does not have parameters or they are not set, this setter should set the parameters to None.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        value : Optional[numpy.ndarray]</span>
+<span class="sd">            The parameters of the transformation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">parameters</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span> <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">parameters</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">parameters</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Parameters must be a 1-D numpy array, got shape </span><span class="si">{</span><span class="n">parameters</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="n">parameters</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">constants</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property to return the constants of the transformation.</span>
+
+<span class="sd">        The constants must be a 1-D float numpy array of shape (Nconstants,) where Nconstants is the number of constants of the transformation.</span>
+
+<span class="sd">        If the transformation does not have constants or they are not set, this property should return None.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Optional[numpy.ndarray]</span>
+<span class="sd">            The constants of the transformation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constants</span>
+
+    <span class="nd">@constants</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">constants</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Setter for the constants of the transformation.</span>
+
+<span class="sd">        The constants must be a 1-D float numpy array of shape (Nconstants,) where Nconstants is the number of constants of the transformation.</span>
+
+<span class="sd">        If the transformation does not have constants or they are not set, this setter should set the constants to None.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        value : Optional[numpy.ndarray]</span>
+<span class="sd">            The constants of the transformation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">constants</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span> <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">constants</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">constants</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Constants must be a 1-D numpy array, got shape </span><span class="si">{</span><span class="n">constants</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_constants</span> <span class="o">=</span> <span class="n">constants</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">Nparams</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property to return the number of parameters of the transformation.</span>
+<span class="sd">        </span>
+<span class="sd">        The number of parameters must be a non-negative integer representing the number of parameters of the transformation.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            The number of parameters of the transformation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">size</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">0</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">Nconstants</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property to return the number of coefficients of the transformation.</span>
+<span class="sd">        </span>
+<span class="sd">        The number of coefficients must be a non-negative integer representing the number of coefficients of the transformation.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            The number of constants of the transformation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">constants</span><span class="o">.</span><span class="n">size</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">constants</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">0</span>
+    
+    <span class="c1"># =============================================</span>
+    <span class="c1"># Methods for Transform Class</span>
+    <span class="c1"># =============================================</span>
+<div class="viewcode-block" id="Transform._get_jacobian_short_hand">
+<a class="viewcode-back" href="../../../api_doc/transform.html#pycvcam.core.Transform._get_jacobian_short_hand">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_jacobian_short_hand</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property to return a dictionary of short-hand notation for the Jacobian matrices.</span>
+<span class="sd">        </span>
+<span class="sd">        This dictionary can be used to add custom views of the `jacobian_dp` matrix with respect to the parameters of the transformation.</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &quot;dk&quot;: (0, 2, &quot;Custom Jacobian view for two first parameters related to k1 and k2&quot;),</span>
+<span class="sd">                &quot;dother&quot;: (2, 4, &quot;Custom Jacobian view for other parameters related to k3 and k4&quot;),</span>
+<span class="sd">            }</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Dict[str, Tuple[int, int, Optional[str]]]</span>
+<span class="sd">            A dictionary where keys are names of the custom Jacobian views and values are tuples containing:</span>
+
+<span class="sd">            - start index (int): The starting index of the parameters to include in the custom Jacobian view.</span>
+<span class="sd">            - end index (int): The ending index of the parameters to include in the custom Jacobian view.</span>
+<span class="sd">            - doc (Optional[str]): A documentation string for the custom Jacobian view.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{}</span> </div>
+
+    
+<div class="viewcode-block" id="Transform._get_transform_aliases">
+<a class="viewcode-back" href="../../../api_doc/transform.html#pycvcam.core.Transform._get_transform_aliases">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_transform_aliases</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property to return a list of aliases for the transformed points.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        List[str]</span>
+<span class="sd">            A list of aliases for the transformed points.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[]</span></div>
+
+    
+<div class="viewcode-block" id="Transform._get_inverse_transform_aliases">
+<a class="viewcode-back" href="../../../api_doc/transform.html#pycvcam.core.Transform._get_inverse_transform_aliases">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_inverse_transform_aliases</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property to return a list of aliases for the inverse transformed points.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        List[str]</span>
+<span class="sd">            A list of aliases for the inverse transformed points.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[]</span></div>
+
+    
+<div class="viewcode-block" id="Transform.is_set">
+<a class="viewcode-back" href="../../../api_doc/transform.html#pycvcam.core.Transform.is_set">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_set</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method to check if the transformation parameters and constants are set.</span>
+
+<span class="sd">        This method returns True if the parameters and constants are not None, otherwise False.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the transformation parameters and constants are set, otherwise False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">constants</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        String representation of the Transform class.</span>
+
+<span class="sd">        .. code-block:: console</span>
+
+<span class="sd">            {class name} with {Nparams} parameters and {Nconstants} constants.</span>
+<span class="sd">            Parameters: {parameters}</span>
+<span class="sd">            Constants: {constants}</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            A string representation of the transformation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">Nparams</span><span class="si">}</span><span class="s2"> parameters and </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">Nconstants</span><span class="si">}</span><span class="s2"> constants.</span><span class="se">\n</span><span class="s2">Parameters: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="si">}</span><span class="se">\n</span><span class="s2">Constants: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">constants</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<div class="viewcode-block" id="Transform._return_transform_result">
+<a class="viewcode-back" href="../../../api_doc/transform.html#pycvcam.core.Transform._return_transform_result">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_return_transform_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transform_result</span><span class="p">:</span> <span class="n">TransformResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TransformResult</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the result of the transformation as a ``TransformResult`` object.</span>
+
+<span class="sd">        This method is used to return the result of the transformation, including the transformed points and the Jacobian matrices if requested.</span>
+
+<span class="sd">        This method also adds the custom Jacobian views to the `TransformResult` object using the `add_jacobian` method and the custom aliases using the `add_alias` method.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        transform_result : TransformResult</span>
+<span class="sd">            The result of the transformation containing the transformed points and the Jacobian matrices.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        TransformResult</span>
+<span class="sd">            The result of the transformation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">transform_result</span><span class="p">,</span> <span class="n">TransformResult</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;transform_result must be an instance of TransformResult, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">transform_result</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># Add custom Jacobian views to the TransformResult object</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">doc</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_jacobian_short_hand</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">transform_result</span><span class="o">.</span><span class="n">add_jacobian</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="n">doc</span><span class="p">)</span>
+
+        <span class="c1"># Add custom aliases to the TransformResult object</span>
+        <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_transform_aliases</span><span class="p">():</span>
+            <span class="n">transform_result</span><span class="o">.</span><span class="n">add_alias</span><span class="p">(</span><span class="n">alias</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">transform_result</span></div>
+
+
+<div class="viewcode-block" id="Transform._return_inverse_transform_result">
+<a class="viewcode-back" href="../../../api_doc/transform.html#pycvcam.core.Transform._return_inverse_transform_result">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_return_inverse_transform_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transform_result</span><span class="p">:</span> <span class="n">TransformResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TransformResult</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the result of the inverse transformation as a ``TransformResult`` object.</span>
+
+<span class="sd">        This method is used to return the result of the inverse transformation, including the transformed points and the Jacobian matrices if requested.</span>
+
+<span class="sd">        This method also adds the custom Jacobian views to the `TransformResult` object using the `add_jacobian` method and the custom aliases using the `add_alias` method.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        transform_result : TransformResult</span>
+<span class="sd">            The result of the inverse transformation containing the transformed points and the Jacobian matrices.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        TransformResult</span>
+<span class="sd">            The result of the inverse transformation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">transform_result</span><span class="p">,</span> <span class="n">TransformResult</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;transform_result must be an instance of TransformResult, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">transform_result</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># Add custom Jacobian views to the TransformResult object</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">doc</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_jacobian_short_hand</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">transform_result</span><span class="o">.</span><span class="n">add_jacobian</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="n">doc</span><span class="p">)</span>
+
+        <span class="c1"># Add custom aliases to the TransformResult object</span>
+        <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_inverse_transform_aliases</span><span class="p">():</span>
+            <span class="n">transform_result</span><span class="o">.</span><span class="n">add_alias</span><span class="p">(</span><span class="n">alias</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">transform_result</span></div>
+
+
+
+    <span class="c1"># =============================================</span>
+    <span class="c1"># To be implemented by subclasses</span>
+    <span class="c1"># =============================================</span>
+<div class="viewcode-block" id="Transform._transform">
+<a class="viewcode-back" href="../../../api_doc/transform.html#pycvcam.core.Transform._transform">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_transform</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">points</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">dx</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">dp</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply the transformation to the given points.</span>
+
+<span class="sd">        This method must be implemented by subclasses to apply the transformation to the input points.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        points : numpy.ndarray</span>
+<span class="sd">            The input points to be transformed. Shape (Npoints, input_dim).</span>
+
+<span class="sd">        dx : bool, optional</span>
+<span class="sd">            If True, compute the Jacobian of the transformed points with respect to the input points. Default is False.</span>
+
+<span class="sd">        dp : bool, optional</span>
+<span class="sd">            If True, compute the Jacobian of the transformed points with respect to the parameters of the transformation. Default is False.</span>
+
+<span class="sd">        **kwargs</span>
+<span class="sd">            Additional keyword arguments for the transformation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Tuple[numpy.ndarray, Optional[numpy.ndarray], Optional[numpy.ndarray]]</span>
+<span class="sd">            A tuple containing:</span>
+
+<span class="sd">            - `transformed_points`: The transformed points of shape (Npoints, output_dim).</span>
+<span class="sd">            - `jacobian_dx`: The Jacobian matrix with respect to the input points of shape (Npoints, output_dim, input_dim) if `dx` is True, otherwise None.</span>
+<span class="sd">            - `jacobian_dp`: The Jacobian matrix with respect to the parameters of the transformation of shape (Npoints, output_dim, Nparams) if `dp` is True, otherwise None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Subclasses must implement the _transform method.&quot;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="Transform._inverse_transform">
+<a class="viewcode-back" href="../../../api_doc/transform.html#pycvcam.core.Transform._inverse_transform">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_inverse_transform</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">points</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">dx</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">dp</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply the inverse transformation to the given points.</span>
+
+<span class="sd">        This method must be implemented by subclasses to apply the inverse transformation to the input points.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        points : numpy.ndarray</span>
+<span class="sd">            The input points to be transformed. Shape (Npoints, output_dim).</span>
+
+<span class="sd">        dx : bool, optional</span>
+<span class="sd">            If True, compute the Jacobian of the transformed points with respect to the input points. Default is False.</span>
+
+<span class="sd">        dp : bool, optional</span>
+<span class="sd">            If True, compute the Jacobian of the transformed points with respect to the parameters of the transformation. Default is False.</span>
+
+<span class="sd">        **kwargs</span>
+<span class="sd">            Additional keyword arguments for the transformation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Tuple[numpy.ndarray, Optional[numpy.ndarray], Optional[numpy.ndarray]]</span>
+<span class="sd">            A tuple containing:</span>
+
+<span class="sd">            - `transformed_points`: The transformed points of shape (Npoints, input_dim).</span>
+<span class="sd">            - `jacobian_dx`: The Jacobian matrix with respect to the input points of shape (Npoints, input_dim, output_dim) if `dx` is True, otherwise None.</span>
+<span class="sd">            - `jacobian_dp`: The Jacobian matrix with respect to the parameters of the transformation of shape (Npoints, input_dim, Nparams) if `dp` is True, otherwise None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Subclasses must implement the _inverse_transform method.&quot;</span><span class="p">)</span></div>
+
+
+    
+    <span class="c1"># =============================================</span>
+    <span class="c1"># Transformation Methods</span>
+    <span class="c1"># =============================================</span>
+<div class="viewcode-block" id="Transform.transform">
+<a class="viewcode-back" href="../../../api_doc/transform.html#pycvcam.core.Transform.transform">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transform</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">points</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">transpose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">dx</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">dp</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">_skip</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The given points ``points`` are assumed to be with shape (..., input_dim) or (input_dim, ...), depending on the value of ``transpose``.</span>
+
+<span class="sd">        The output ``transformed_points`` will have shape (..., output_dim) if ``transpose`` is False, or (output_dim, ...) if ``transpose`` is True.</span>
+
+<span class="sd">        .. warning::</span>
+
+<span class="sd">            The points are converting to float before applying the transformation.</span>
+<span class="sd">            See :class:`pycvcam.core.Package` for more details on the default data types used in the package.</span>
+
+<span class="sd">        The method also computes 2 Jacobian matrices if requested:</span>
+
+<span class="sd">        - ``dx``: Jacobian of the transformed points with respect to the input points.</span>
+<span class="sd">        - ``dp``: Jacobian of the transformed points with respect to the parameters of the transformation.</span>
+
+<span class="sd">        The jacobian matrice with respect to the input points is a (..., output_dim, input_dim) matrix where:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            jacobian_dx[..., 0, 0]  # ∂X_o/∂X_i -&gt; Jacobian of the coordinates X_o with respect to the coordinates X_i.</span>
+<span class="sd">            jacobian_dx[..., 0, 1]  # ∂X_o/∂Y_i</span>
+<span class="sd">            ...</span>
+
+<span class="sd">            jacobian_dx[..., 1, 0]  # ∂Y_o/∂X_i -&gt; Jacobian of the coordinates Y_o with respect to the coordinates X_i.</span>
+<span class="sd">            jacobian_dx[..., 1, 1]  # ∂Y_o/∂Y_i</span>
+<span class="sd">            ...</span>
+
+<span class="sd">        The Jacobian matrice with respect to the parameters is a (..., output_dim, Nparams) matrix where:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            jacobian_dp[..., 0, 0]  # ∂X_o/∂λ_1 -&gt; Jacobian of the coordinates X_o with respect to the first parameter λ_1.</span>
+<span class="sd">            jacobian_dp[..., 0, 1]  # ∂X_o/∂λ_2</span>
+<span class="sd">            ...</span>
+
+<span class="sd">            jacobian_dp[..., 1, 0]  # ∂Y_o/∂λ_1 -&gt; Jacobian of the coordinates Y_o with respect to the first parameter λ_1.</span>
+<span class="sd">            jacobian_dp[..., 1, 1]  # ∂Y_o/∂λ_2</span>
+<span class="sd">            ...</span>
+
+<span class="sd">        The Jacobian matrices are computed only if ``dx`` or ``dp`` are set to True, respectively.</span>
+
+<span class="sd">        The output will be a `TransformResult` object containing the transformed points and the Jacobian matrices if requested.</span>
+
+<span class="sd">        .. note::</span>
+
+<span class="sd">            The _skip parameter is used to skip the checks for the transformation parameters and assume the points are given in the (Npoints, input_dim) float format.</span>
+<span class="sd">            Please use this parameter with caution, as it may lead to unexpected results if the transformation parameters are not set correctly.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        points : numpy.ndarray</span>
+<span class="sd">            The input points to be transformed. Shape (..., input_dim) (or (input_dim, ...) if `transpose` is True).</span>
+
+<span class="sd">        transpose : bool, optional</span>
+<span class="sd">            If True, the input points are transposed to shape (input_dim, ...). Default is False.</span>
+
+<span class="sd">        dx : bool, optional</span>
+<span class="sd">            If True, compute the Jacobian of the transformed points with respect to the input points. Default is False.</span>
+
+<span class="sd">        dp : bool, optional</span>
+<span class="sd">            If True, compute the Jacobian of the transformed points with respect to the parameters of the transformation. Default is False.</span>
+
+<span class="sd">        _skip : bool, optional</span>
+<span class="sd">            [INTERNAL USE], If True, skip the checks for the transformation parameters and assume the points are given in the (Npoints, input_dim) float format.</span>
+<span class="sd">            `transpose` is ignored if this parameter is set to True.</span>
+
+<span class="sd">        **kwargs</span>
+<span class="sd">            Additional keyword arguments for the transformation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        TransformResult</span>
+<span class="sd">            An object containing the transformed points and the Jacobian matrices if requested.</span>
+
+<span class="sd">            </span>
+<span class="sd">        Developer Notes</span>
+<span class="sd">        ----------------</span>
+<span class="sd">        The subclasses must implement the `_transform` method to apply the transformation to the input points.</span>
+<span class="sd">        </span>
+<span class="sd">        The `_transform` method should:</span>
+
+<span class="sd">        - take the input points as a numpy array of shape (Npoints, input_dim)</span>
+<span class="sd">        - return 3 numpy arrays:</span>
+
+<span class="sd">            - `transformed_points`: The transformed points of shape (Npoints, output_dim).</span>
+<span class="sd">            - `jacobian_dx`: The Jacobian matrix with respect to the input points of shape (Npoints, output_dim, input_dim) if `dx` is True, otherwise None.</span>
+<span class="sd">            - `jacobian_dp`: The Jacobian matrix with respect to the parameters of the transformation of shape (Npoints, output_dim, Nparams) if `dp` is True, otherwise None.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_skip</span><span class="p">:</span>
+            <span class="c1"># Check the boolean flags</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dx must be a boolean, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">dx</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dp</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dp must be a boolean, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">dp</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">transpose</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;transpose must be a boolean, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">transpose</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            
+            <span class="c1"># Check if the transformation is set</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Transformation parameters are not set. Please set the parameters before transforming points.&quot;</span><span class="p">)</span>
+        
+            <span class="c1"># Convert input points to float</span>
+            <span class="n">points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span>
+
+            <span class="c1"># Check the shape of the input points</span>
+            <span class="k">if</span> <span class="n">points</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Input points must have at least 2 dimensions, got </span><span class="si">{</span><span class="n">points</span><span class="o">.</span><span class="n">ndim</span><span class="si">}</span><span class="s2"> dimensions.&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Transpose the input points if requested</span>
+            <span class="k">if</span> <span class="n">transpose</span><span class="p">:</span>
+                <span class="n">points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">moveaxis</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># (input_dim, ...) -&gt; (..., input_dim)</span>
+
+            <span class="c1"># Save the shape of the input points</span>
+            <span class="n">shape</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">shape</span> <span class="c1"># (..., input_dim)</span>
+
+            <span class="c1"># Check the last dimension of the input points</span>
+            <span class="k">if</span> <span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Input points must have </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span><span class="si">}</span><span class="s2"> dimensions, got </span><span class="si">{</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> dimensions.&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Flatten the input points to 2D for processing</span>
+            <span class="n">points</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span><span class="p">)</span> <span class="c1"># (..., input_dim) -&gt; (Npoints, input_dim)</span>
+
+        <span class="c1"># Apply the transformation</span>
+        <span class="n">transformed_points</span><span class="p">,</span> <span class="n">jacobian_dx</span><span class="p">,</span> <span class="n">jacobian_dp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dx</span><span class="p">,</span> <span class="n">dp</span><span class="o">=</span><span class="n">dp</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="c1"># (Npoints, output_dim), (Npoints, output_dim, input_dim), (Npoints, output_dim, Nparams)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_skip</span><span class="p">:</span>
+            <span class="c1"># Reshape the transformed points to the original shape</span>
+            <span class="n">transformed_points</span> <span class="o">=</span> <span class="n">transformed_points</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span><span class="p">)</span>  <span class="c1"># (Npoints, output_dim) -&gt; (..., output_dim)</span>
+            <span class="n">jacobian_dx</span> <span class="o">=</span> <span class="n">jacobian_dx</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span><span class="p">)</span> <span class="k">if</span> <span class="n">jacobian_dx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>  <span class="c1"># (Npoints, output_dim, input_dim) -&gt; (..., output_dim, input_dim)</span>
+            <span class="n">jacobian_dp</span> <span class="o">=</span> <span class="n">jacobian_dp</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nparams</span><span class="p">)</span> <span class="k">if</span> <span class="n">jacobian_dp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span> <span class="c1"># (Npoints, output_dim, Nparams) -&gt; (..., output_dim, Nparams)</span>
+
+            <span class="c1"># Transpose the transformed points if requested</span>
+            <span class="k">if</span> <span class="n">transpose</span><span class="p">:</span>
+                <span class="n">transformed_points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">moveaxis</span><span class="p">(</span><span class="n">transformed_points</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="c1"># (..., output_dim) -&gt; (output_dim, ...)</span>
+                <span class="n">jacobian_dx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">moveaxis</span><span class="p">(</span><span class="n">jacobian_dx</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">jacobian_dx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span> <span class="c1"># (..., output_dim, input_dim) -&gt; (output_dim, ..., input_dim)</span>
+                <span class="n">jacobian_dp</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">moveaxis</span><span class="p">(</span><span class="n">jacobian_dp</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">jacobian_dp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span> <span class="c1"># (..., output_dim, Nparams) -&gt; (output_dim, ..., Nparams)</span>
+
+        <span class="c1"># Return the result as a TransformResult object</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_transform_result</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">result_class</span><span class="p">(</span>
+            <span class="n">transformed_points</span><span class="o">=</span><span class="n">transformed_points</span><span class="p">,</span>
+            <span class="n">jacobian_dx</span><span class="o">=</span><span class="n">jacobian_dx</span><span class="p">,</span>
+            <span class="n">jacobian_dp</span><span class="o">=</span><span class="n">jacobian_dp</span><span class="p">,</span>
+            <span class="n">transpose</span><span class="o">=</span><span class="n">transpose</span><span class="p">,</span>
+        <span class="p">))</span></div>
+
+    
+
+<div class="viewcode-block" id="Transform.inverse_transform">
+<a class="viewcode-back" href="../../../api_doc/transform.html#pycvcam.core.Transform.inverse_transform">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">inverse_transform</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">points</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">transpose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">dx</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">dp</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">_skip</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The given points ``points`` are assumed to be with shape (..., output_dim) or (output_dim, ...), depending on the value of ``transpose``.</span>
+
+<span class="sd">        The output ``transformed_points`` will have shape (..., input_dim) if ``transpose`` is False, or (input_dim, ...) if ``transpose`` is True.</span>
+
+<span class="sd">        .. warning::</span>
+
+<span class="sd">            The points are converting to float before applying the inverse transformation.</span>
+<span class="sd">            See :class:`pycvcam.core.Package` for more details on the default data types used in the package.</span>
+
+<span class="sd">        The method also computes 2 Jacobian matrices if requested:</span>
+
+<span class="sd">        - ``dx``: Jacobian of the transformed points with respect to the input points.</span>
+<span class="sd">        - ``dp``: Jacobian of the transformed points with respect to the parameters of the transformation.</span>
+
+<span class="sd">        The jacobian matrice with respect to the input points is a (..., input_dim, output_dim) matrix where:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            jacobian_dx[..., 0, 0]  # ∂X_i/∂X_o -&gt; Jacobian of the coordinates X_i with respect to the coordinates X_o.</span>
+<span class="sd">            jacobian_dx[..., 0, 1]  # ∂X_i/∂Y_o</span>
+<span class="sd">            ...</span>
+
+<span class="sd">            jacobian_dx[..., 1, 0]  # ∂Y_i/∂X_o -&gt; Jacobian of the coordinates Y_i with respect to the coordinates X_o.</span>
+<span class="sd">            jacobian_dx[..., 1, 1]  # ∂Y_i/∂Y_o</span>
+<span class="sd">            ...</span>
+
+<span class="sd">        The Jacobian matrice with respect to the parameters is a (..., input_dim, Nparams) matrix where:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            jacobian_dp[..., 0, 0]  # ∂X_i/∂λ_1 -&gt; Jacobian of the coordinates X_i with respect to the first parameter λ_1.</span>
+<span class="sd">            jacobian_dp[..., 0, 1]  # ∂X_i/∂λ_2</span>
+<span class="sd">            ...</span>
+
+<span class="sd">            jacobian_dp[..., 1, 0]  # ∂Y_i/∂λ_1 -&gt; Jacobian of the coordinates Y_i with respect to the first parameter λ_1.</span>
+<span class="sd">            jacobian_dp[..., 1, 1]  # ∂Y_i/∂λ_2</span>
+<span class="sd">            ...</span>
+
+<span class="sd">        The Jacobian matrices are computed only if ``dx`` or ``dp`` are set to True, respectively.</span>
+
+<span class="sd">        The output will be a `TransformResult` object containing the transformed points and the Jacobian matrices if requested.</span>
+
+<span class="sd">        .. note::</span>
+
+<span class="sd">            The _skip parameter is used to skip the checks for the transformation parameters and assume the points are given in the (Npoints, output_dim) float format.</span>
+<span class="sd">            Please use this parameter with caution, as it may lead to unexpected results if the transformation parameters are not set correctly.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        points : numpy.ndarray</span>
+<span class="sd">            The input points to be transformed. Shape (..., output_dim) (or (output_dim, ...) if `transpose` is True).</span>
+
+<span class="sd">        transpose : bool, optional</span>
+<span class="sd">            If True, the input points are transposed to shape (output_dim, ...). Default is False.</span>
+
+<span class="sd">        dx : bool, optional</span>
+<span class="sd">            If True, compute the Jacobian of the transformed points with respect to the input points. Default is False.</span>
+
+<span class="sd">        dp : bool, optional</span>
+<span class="sd">            If True, compute the Jacobian of the transformed points with respect to the parameters of the transformation. Default is False.</span>
+
+<span class="sd">        _skip : bool, optional</span>
+<span class="sd">            [INTERNAL USE], If True, skip the checks for the transformation parameters and assume the points are given in the (Npoints, output_dim) float format.</span>
+<span class="sd">            `transpose` is ignored if this parameter is set to True.</span>
+
+<span class="sd">        **kwargs</span>
+<span class="sd">            Additional keyword arguments for the transformation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        TransformResult</span>
+<span class="sd">            An object containing the transformed points and the Jacobian matrices if requested.</span>
+
+<span class="sd">            </span>
+<span class="sd">        Developer Notes</span>
+<span class="sd">        ----------------</span>
+<span class="sd">        The subclasses must implement the `_inverse_transform` method to apply the inverse transformation to the input points.</span>
+
+<span class="sd">        The `_inverse_transform` method should:</span>
+
+<span class="sd">        - take the input points as a numpy array of shape (Npoints, output_dim)</span>
+<span class="sd">        - return 3 numpy arrays:</span>
+
+<span class="sd">            - `transformed_points`: The transformed points of shape (Npoints, input_dim).</span>
+<span class="sd">            - `jacobian_dx`: The Jacobian matrix with respect to the input points of shape (Npoints, input_dim, output_dim) if `dx` is True, otherwise None.</span>
+<span class="sd">            - `jacobian_dp`: The Jacobian matrix with respect to the parameters of the transformation of shape (Npoints, input_dim, Nparams) if `dp` is True, otherwise None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_skip</span><span class="p">:</span>
+            <span class="c1"># Check the boolean flags</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dx must be a boolean, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">dx</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dp</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dp must be a boolean, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">dp</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">transpose</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;transpose must be a boolean, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">transpose</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            
+            <span class="c1"># Check if the transformation is set</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Transformation parameters are not set. Please set the parameters before transforming points.&quot;</span><span class="p">)</span>
+            
+            <span class="c1"># Convert input points to float</span>
+            <span class="n">points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span>
+
+            <span class="c1"># Check the shape of the input points</span>
+            <span class="k">if</span> <span class="n">points</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Input points must have at least 2 dimensions, got </span><span class="si">{</span><span class="n">points</span><span class="o">.</span><span class="n">ndim</span><span class="si">}</span><span class="s2"> dimensions.&quot;</span><span class="p">)</span>
+            
+            <span class="c1"># Transpose the input points if requested</span>
+            <span class="k">if</span> <span class="n">transpose</span><span class="p">:</span>
+                <span class="n">points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">moveaxis</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># (output_dim, ...) -&gt; (..., output_dim)</span>
+            
+            <span class="c1"># Save the shape of the input points</span>
+            <span class="n">shape</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">shape</span> <span class="c1"># (..., output_dim)</span>
+
+            <span class="c1"># Check the last dimension of the input points</span>
+            <span class="k">if</span> <span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Input points must have </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span><span class="si">}</span><span class="s2"> dimensions, got </span><span class="si">{</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> dimensions.&quot;</span><span class="p">)</span>
+            
+            <span class="c1"># Flatten the input points to 2D for processing</span>
+            <span class="n">points</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span><span class="p">)</span> <span class="c1"># (Npoints, output_dim)</span>
+
+        <span class="c1"># Apply the inverse transformation</span>
+        <span class="n">transformed_points</span><span class="p">,</span> <span class="n">jacobian_dx</span><span class="p">,</span> <span class="n">jacobian_dp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inverse_transform</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dx</span><span class="p">,</span> <span class="n">dp</span><span class="o">=</span><span class="n">dp</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="c1"># (Npoints, input_dim), (Npoints, input_dim, output_dim), (Npoints, input_dim, Nparams)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_skip</span><span class="p">:</span>
+            <span class="c1"># Reshape the transformed points to the original shape</span>
+            <span class="n">transformed_points</span> <span class="o">=</span> <span class="n">transformed_points</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span><span class="p">)</span>  <span class="c1"># (Npoints, input_dim) -&gt; (..., input_dim)</span>
+            <span class="n">jacobian_dx</span> <span class="o">=</span> <span class="n">jacobian_dx</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span><span class="p">)</span> <span class="k">if</span> <span class="n">jacobian_dx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>  <span class="c1"># (..., input_dim, output_dim)</span>
+            <span class="n">jacobian_dp</span> <span class="o">=</span> <span class="n">jacobian_dp</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nparams</span><span class="p">)</span> <span class="k">if</span> <span class="n">jacobian_dp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span> <span class="c1"># (..., input_dim, Nparams)</span>
+
+            <span class="c1"># Transpose the transformed points if requested</span>
+            <span class="k">if</span> <span class="n">transpose</span><span class="p">:</span>
+                <span class="n">transformed_points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">moveaxis</span><span class="p">(</span><span class="n">transformed_points</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="c1"># (..., input_dim) -&gt; (input_dim, ...)</span>
+                <span class="n">jacobian_dx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">moveaxis</span><span class="p">(</span><span class="n">jacobian_dx</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">jacobian_dx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span> <span class="c1"># (..., input_dim, output_dim) -&gt; (input_dim, ..., output_dim)</span>
+                <span class="n">jacobian_dp</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">moveaxis</span><span class="p">(</span><span class="n">jacobian_dp</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">jacobian_dp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span> <span class="c1"># (..., input_dim, Nparams) -&gt; (input_dim, ..., Nparams)</span>
+
+        <span class="c1"># Return the result as a InverseTransformResult object</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_inverse_transform_result</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inverse_result_class</span><span class="p">(</span>
+            <span class="n">transformed_points</span><span class="o">=</span><span class="n">transformed_points</span><span class="p">,</span>
+            <span class="n">jacobian_dx</span><span class="o">=</span><span class="n">jacobian_dx</span><span class="p">,</span>
+            <span class="n">jacobian_dp</span><span class="o">=</span><span class="n">jacobian_dp</span><span class="p">,</span>
+            <span class="n">transpose</span><span class="o">=</span><span class="n">transpose</span>
+        <span class="p">))</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025-2025, Artezaru.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
