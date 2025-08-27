@@ -57,7 +57,7 @@ intrinsic = Cv2Intrinsic.from_matrix(K)
 distortion = Cv2Distortion(parameters=[0.1, 0.2, 0.3, 0.4, 0.5])
 
 # Project the 3D points to 2D image points
-result = project_points(world_points, extrinsic=extrinsic, distortion=distortion, intrinsic=intrinsic)
+result = project_points(world_points, intrinsic=intrinsic, distortion=distortion, extrinsic=extrinsic)
 print("Projected image points:")
 print(result.image_points)  # shape (5, 2)
 ```
@@ -66,7 +66,7 @@ You can also compute the Jacobians of the image points with respect to the input
 
 ```python
 # Project the 3D points to 2D image points with Jacobians
-result = project_points(world_points, extrinsic=extrinsic, distortion=distortion, intrinsic=intrinsic, dx=True, dp=True)
+result = project_points(world_points, intrinsic=intrinsic, distortion=distortion, extrinsic=extrinsic, dx=True, dp=True)
 
 print("Jacobian with respect to 3D points:")
 print(result.jacobian_dx)  # shape (5, 2, 3)
