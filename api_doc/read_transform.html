@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pycvcam.read_transform &#8212; pycvcam 1.3.0 documentation</title>
+    <title>pycvcam.read_transform &#8212; pycvcam 1.3.2 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=1f29e9d3"></script>
+    <script src="../_static/documentation_options.js?v=8ca9e7a0"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'api_doc/read_transform';</script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">pycvcam 1.3.0 documentation</p>
+    <p class="title logo__title">pycvcam 1.3.2 documentation</p>
   
 </a></div>
     
@@ -370,7 +370,8 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="pycvcam.read_transform">
 <span class="sig-prename descclassname"><span class="pre">pycvcam.</span></span><span class="sig-name descname"><span class="pre">read_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="transform.html#pycvcam.core.Transform" title="pycvcam.core.transform.Transform"><span class="pre">Transform</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="transform.html#pycvcam.core.Transform" title="pycvcam.core.transform.Transform"><span class="pre">Transform</span></a></span></span><a class="reference internal" href="../_modules/pycvcam/read_transform.html#read_transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.read_transform" title="Link to this definition">#</a></dt>
-<dd><p>Reads a json files containing a transformation.</p>
+<dd><p>Reads a json files containing a transformation.
+The JSON file must contain the following keys: ‘parameters’, ‘constants’, and optional ‘type’.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pycvcam</span><span class="w"> </span><span class="kn">import</span> <span class="n">Cv2Distortion</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pycvcam</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_transform</span>
 
