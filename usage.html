@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Usage &#8212; pycvcam 1.2.0 documentation</title>
+    <title>Usage &#8212; pycvcam 1.3.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=6efca38a"></script>
+    <script src="_static/documentation_options.js?v=1f29e9d3"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">pycvcam 1.2.0 documentation</p>
+    <p class="title logo__title">pycvcam 1.3.0 documentation</p>
   
 </a></div>
     
@@ -328,7 +328,7 @@
 <li><p><strong>Distortion</strong>: The transformation from the normalized camera coordinate system to the distorted camera coordinate system (<code class="docutils literal notranslate"><span class="pre">normalized_points</span></code> to <code class="docutils literal notranslate"><span class="pre">distorted_points</span></code>)</p></li>
 <li><p><strong>Intrinsic</strong>: The transformation from the distorted camera coordinate system to the image coordinate system (<code class="docutils literal notranslate"><span class="pre">distorted_points</span></code> to <code class="docutils literal notranslate"><span class="pre">image_points</span></code>)</p></li>
 </ol>
-<p>As describe in the figure below, the package <code class="docutils literal notranslate"><span class="pre">pycvcam</span></code> uses the following notation:</p>
+<p>As described in the figure below, the package <code class="docutils literal notranslate"><span class="pre">pycvcam</span></code> uses the following notation:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">world_points</span></code>: The 3-D points <span class="math notranslate nohighlight">\(\vec{X}_w\)</span> with shape (…,3) expressed in the world coordinate system <span class="math notranslate nohighlight">\((\vec{E}_x, \vec{E}_y, \vec{E}_z)\)</span>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">normalized_points</span></code>: The 2-D points <span class="math notranslate nohighlight">\(\vec{x}_n\)</span> with shape (…,2) expressed in the normalized camera coordinate system <span class="math notranslate nohighlight">\((\vec{I}, \vec{J})\)</span> with a unit distance along the optical axis <span class="math notranslate nohighlight">\((\vec{K})\)</span>.</p></li>
@@ -354,6 +354,185 @@
 </pre></div>
 </div>
 <p>To model a camera without distortion (or intrinsic respectively), simply use an identity transformation.</p>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
+<p>The examples are provided in the <cite>examples</cite> directory of the package.</p>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">Example of Projecting Points</span><a class="headerlink" href="#id1" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pycvcam</span><span class="w"> </span><span class="kn">import</span> <span class="n">project_points</span><span class="p">,</span> <span class="n">Cv2Distortion</span><span class="p">,</span> <span class="n">Cv2Extrinsic</span><span class="p">,</span> <span class="n">Cv2Intrinsic</span>
+
+<span class="c1"># Define the 3D points in the world coordinate system</span>
+<span class="n">world_points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">],</span>
+                            <span class="p">[</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">],</span>
+                            <span class="p">[</span><span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">]])</span> <span class="c1"># shape (5, 3)</span>
+
+<span class="c1"># Define the rotation vector and translation vector</span>
+<span class="n">rvec</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">])</span>  <span class="c1"># small rotation</span>
+<span class="n">tvec</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">])</span>    <span class="c1"># small translation</span>
+<span class="n">extrinsic</span> <span class="o">=</span> <span class="n">Cv2Extrinsic</span><span class="o">.</span><span class="n">from_rt</span><span class="p">(</span><span class="n">rvec</span><span class="p">,</span> <span class="n">tvec</span><span class="p">)</span>
+
+<span class="c1"># Define the intrinsic camera matrix</span>
+<span class="n">K</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1000.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">320.0</span><span class="p">],</span>
+                <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1000.0</span><span class="p">,</span> <span class="mf">240.0</span><span class="p">],</span>
+                <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]])</span>
+
+<span class="n">intrinsic</span> <span class="o">=</span> <span class="n">Cv2Intrinsic</span><span class="o">.</span><span class="n">from_matrix</span><span class="p">(</span><span class="n">K</span><span class="p">)</span>
+
+<span class="c1"># Define the distortion model (optional)</span>
+<span class="n">distortion</span> <span class="o">=</span> <span class="n">Cv2Distortion</span><span class="p">(</span><span class="n">parameters</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+
+<span class="c1"># Project the 3D points to 2D image points</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">project_points</span><span class="p">(</span><span class="n">world_points</span><span class="p">,</span> <span class="n">intrinsic</span><span class="o">=</span><span class="n">intrinsic</span><span class="p">,</span> <span class="n">distortion</span><span class="o">=</span><span class="n">distortion</span><span class="p">,</span> <span class="n">extrinsic</span><span class="o">=</span><span class="n">extrinsic</span><span class="p">,</span> <span class="n">transpose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dp</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Projected image points:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">image_points</span><span class="p">)</span> <span class="c1"># shape (5, 2)</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">Example of Undistorting Points</span><a class="headerlink" href="#id2" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pycvcam</span><span class="w"> </span><span class="kn">import</span> <span class="n">undistort_points</span><span class="p">,</span> <span class="n">Cv2Distortion</span><span class="p">,</span> <span class="n">Cv2Intrinsic</span>
+
+<span class="c1"># Define the 2D image points in the camera coordinate system</span>
+<span class="n">image_points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">320.0</span><span class="p">,</span> <span class="mf">240.0</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mf">420.0</span><span class="p">,</span> <span class="mf">440.0</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mf">520.0</span><span class="p">,</span> <span class="mf">540.0</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mf">620.0</span><span class="p">,</span> <span class="mf">640.0</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mf">720.0</span><span class="p">,</span> <span class="mf">740.0</span><span class="p">]])</span> <span class="c1"># shape (5, 2)</span>
+
+<span class="c1"># Define the intrinsic camera matrix</span>
+<span class="n">K</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1000.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">320.0</span><span class="p">],</span>
+                <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1000.0</span><span class="p">,</span> <span class="mf">240.0</span><span class="p">],</span>
+                <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]])</span>
+
+<span class="c1"># Create the intrinsic object</span>
+<span class="n">intrinsic</span> <span class="o">=</span> <span class="n">Cv2Intrinsic</span><span class="o">.</span><span class="n">from_matrix</span><span class="p">(</span><span class="n">K</span><span class="p">)</span>
+
+<span class="c1"># Define the distortion model (optional)</span>
+<span class="n">distortion</span> <span class="o">=</span> <span class="n">Cv2Distortion</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+
+<span class="c1"># Undistort the 2D image points</span>
+<span class="n">normalized_points</span> <span class="o">=</span> <span class="n">undistort_points</span><span class="p">(</span><span class="n">image_points</span><span class="p">,</span> <span class="n">intrinsic</span><span class="o">=</span><span class="n">intrinsic</span><span class="p">,</span> <span class="n">distortion</span><span class="o">=</span><span class="n">distortion</span><span class="p">,</span> <span class="n">_skip</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Normalized points:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">normalized_points</span><span class="p">)</span>  <span class="c1"># shape (5, 2)</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">Example of Distorting an Image</span><a class="headerlink" href="#id3" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pycvcam</span><span class="w"> </span><span class="kn">import</span> <span class="n">distort_image</span><span class="p">,</span> <span class="n">ZernikeDistortion</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pycvcam</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_transform</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="c1"># Load the image to be distorted</span>
+<span class="n">src</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;image.png&#39;</span><span class="p">))</span>
+
+<span class="n">H</span><span class="p">,</span> <span class="n">W</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+
+<span class="c1"># Define the distortion parameters</span>
+<span class="n">distortion</span> <span class="o">=</span> <span class="n">read_transform</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;zernike_transform.json&#39;</span><span class="p">),</span> <span class="n">ZernikeDistortion</span><span class="p">)</span>
+
+<span class="c1"># Distort the image</span>
+<span class="n">distorted_image</span> <span class="o">=</span> <span class="n">distort_image</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">intrinsic</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">distortion</span><span class="o">=</span><span class="n">distortion</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s2">&quot;spline3&quot;</span><span class="p">)</span>
+<span class="n">distorted_image</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">distorted_image</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>  <span class="c1"># Ensure pixel values are valid</span>
+
+<span class="c1"># Save the distorted image</span>
+<span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;distorted_image.png&#39;</span><span class="p">),</span> <span class="n">distorted_image</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">Example of Undistorting an Image</span><a class="headerlink" href="#id4" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pycvcam</span><span class="w"> </span><span class="kn">import</span> <span class="n">undistort_image</span><span class="p">,</span> <span class="n">ZernikeDistortion</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pycvcam</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_transform</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="c1"># Load the image to be distorted</span>
+<span class="n">src</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;image.png&#39;</span><span class="p">))</span>
+
+<span class="n">H</span><span class="p">,</span> <span class="n">W</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+
+<span class="c1"># Define the distortion parameters</span>
+<span class="n">distortion</span> <span class="o">=</span> <span class="n">read_transform</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;zernike_transform.json&#39;</span><span class="p">),</span> <span class="n">ZernikeDistortion</span><span class="p">)</span>
+
+<span class="c1"># Distort the image</span>
+<span class="n">undistorted_image</span> <span class="o">=</span> <span class="n">undistort_image</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">intrinsic</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">distortion</span><span class="o">=</span><span class="n">distortion</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s2">&quot;spline3&quot;</span><span class="p">)</span>
+<span class="n">undistorted_image</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">undistorted_image</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>  <span class="c1"># Ensure pixel values are valid</span>
+
+<span class="c1"># Save the undistorted image</span>
+<span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;undistorted_image.png&#39;</span><span class="p">),</span> <span class="n">undistorted_image</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">Example of Computing Rays</span><a class="headerlink" href="#id5" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pycvcam</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_rays</span><span class="p">,</span> <span class="n">Cv2Extrinsic</span><span class="p">,</span> <span class="n">Cv2Intrinsic</span><span class="p">,</span> <span class="n">Cv2Distortion</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="c1"># Read the image : </span>
+<span class="n">image</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;image.png&#39;</span><span class="p">))</span>
+<span class="n">image_height</span><span class="p">,</span> <span class="n">image_width</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+
+<span class="c1"># Construct the intrinsic transformation :</span>
+<span class="n">intrinsic</span> <span class="o">=</span> <span class="n">Cv2Intrinsic</span><span class="o">.</span><span class="n">from_matrix</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">image_width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">],</span>
+                                                    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">image_height</span> <span class="o">/</span> <span class="mi">2</span><span class="p">],</span>
+                                                    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]))</span>
+
+<span class="c1"># Construct the distortion transformation:</span>
+<span class="n">distortion</span> <span class="o">=</span> <span class="n">Cv2Distortion</span><span class="p">(</span><span class="n">parameters</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.05</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>
+
+<span class="c1"># Construct the extrinsic transformation:</span>
+<span class="n">extrinsic</span> <span class="o">=</span> <span class="n">Cv2Extrinsic</span><span class="o">.</span><span class="n">from_rt</span><span class="p">(</span><span class="n">rvec</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span> <span class="n">tvec</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+
+<span class="c1"># Define the image points (e.g., pixels in the image):</span>
+<span class="n">pixel_points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">indices</span><span class="p">((</span><span class="n">image_height</span><span class="p">,</span> <span class="n">image_width</span><span class="p">))</span> <span class="c1"># shape (2, H, W)</span>
+<span class="n">pixel_points</span> <span class="o">=</span> <span class="n">pixel_points</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>  <span class="c1"># shape (H*W, 2) WARNING: [H, W -&gt; Y, X]</span>
+<span class="n">image_points</span> <span class="o">=</span> <span class="n">pixel_points</span><span class="p">[:,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>  <span class="c1"># Swap to [X, Y] format</span>
+
+<span class="c1"># Throw rays from the image points to the scene:</span>
+<span class="n">rays</span> <span class="o">=</span> <span class="n">compute_rays</span><span class="p">(</span><span class="n">image_points</span><span class="p">,</span> <span class="n">intrinsic</span><span class="p">,</span> <span class="n">distortion</span><span class="p">,</span> <span class="n">extrinsic</span><span class="p">,</span> <span class="n">transpose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">rays</span>
+
+<span class="c1"># Here `rays` will contain the origin and direction of the rays in the world coordinate system with shape (..., 6).</span>
+<span class="c1"># rays[i, :] = [origin_x, origin_y, origin_z, direction_x, direction_y, direction_z]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">rays</span><span class="p">)</span>  <span class="c1"># Output the rays for further processing or visualization</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="visualizers">
+<h2>Visualizers<a class="headerlink" href="#visualizers" title="Link to this heading">#</a></h2>
+<p>The package provides a set of visualizer UIs that can be used to interact with the transformations.
+The visualizers are located in the <code class="docutils literal notranslate"><span class="pre">pycvcam.visualizers</span></code> module.</p>
+<section id="zernike-distortion">
+<h3>zernike_distortion<a class="headerlink" href="#zernike-distortion" title="Link to this heading">#</a></h3>
+<p>Run the following command to display the Zernike Distortion parameters.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pycvcam</span><span class="o">-</span><span class="n">gui</span> <span class="o">-</span><span class="n">zernike</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For now, the Zernike Distortion visualizer is the only one available. New work is being done to add more visualizers in the future and make them more user-friendly.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>PyQt5 file dialog crash when launched from integrated terminal and when json files are used.
+Run the command line in a standalone terminal instead to avoid this issue.</p>
+</div>
+</section>
+</section>
 </section>
 
 
@@ -385,6 +564,22 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizers">Visualizers</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#zernike-distortion">zernike_distortion</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

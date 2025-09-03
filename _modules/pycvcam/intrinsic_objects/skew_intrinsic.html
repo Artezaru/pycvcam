@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pycvcam.intrinsic_objects.skew_intrinsic &#8212; pycvcam 1.2.0 documentation</title>
+    <title>pycvcam.intrinsic_objects.skew_intrinsic &#8212; pycvcam 1.3.0 documentation</title>
   
   
   
@@ -37,7 +37,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=6efca38a"></script>
+    <script src="../../../_static/documentation_options.js?v=1f29e9d3"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pycvcam/intrinsic_objects/skew_intrinsic';</script>
@@ -107,7 +107,7 @@
   
   
   
-    <p class="title logo__title">pycvcam 1.2.0 documentation</p>
+    <p class="title logo__title">pycvcam 1.3.0 documentation</p>
   
 </a></div>
     
@@ -311,7 +311,7 @@
                   
   <h1>Source code for pycvcam.intrinsic_objects.skew_intrinsic</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">numbers</span><span class="w"> </span><span class="kn">import</span> <span class="n">Number</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
 
@@ -428,8 +428,8 @@
 
 <span class="sd">        For more information about the transformation process, see:</span>
 
-<span class="sd">        - :meth:`pycvcam.Cv2Intrinsic._transform` to transform the ``distorted_points`` to ``image_points``.</span>
-<span class="sd">        - :meth:`pycvcam.Cv2Intrinsic._inverse_transform` to transform the ``image_points`` back to ``distorted_points``.</span>
+<span class="sd">        - :meth:`pycvcam.SkewIntrinsic._transform` to transform the ``distorted_points`` to ``image_points``.</span>
+<span class="sd">        - :meth:`pycvcam.SkewIntrinsic._inverse_transform` to transform the ``image_points`` back to ``distorted_points``.</span>
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;_fx&quot;</span><span class="p">,</span> <span class="s2">&quot;_fy&quot;</span><span class="p">,</span> <span class="s2">&quot;_cx&quot;</span><span class="p">,</span> <span class="s2">&quot;_cy&quot;</span><span class="p">,</span> <span class="s2">&quot;_s&quot;</span><span class="p">]</span>
@@ -526,15 +526,34 @@
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">constants</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Always returns None for the Cv2Intrinsic class, as it does not have any constants.</span>
+<span class="sd">        Always returns None for the SkewIntrinsic class, as it does not have any constants.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="kc">None</span>
     
     <span class="nd">@constants</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">constants</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cv2Intrinsic model has no constants, must be set to None.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;SkewIntrinsic model has no constants, must be set to None.&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_constants</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parameter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the names of the parameters of the intrinsic transformation : [&quot;fx&quot;, &quot;fy&quot;, &quot;cx&quot;, &quot;cy&quot;, &quot;s&quot;]</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        List[str]</span>
+<span class="sd">            The names of the parameters of the intrinsic transformation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;fx&quot;</span><span class="p">,</span> <span class="s2">&quot;fy&quot;</span><span class="p">,</span> <span class="s2">&quot;cx&quot;</span><span class="p">,</span> <span class="s2">&quot;cy&quot;</span><span class="p">,</span> <span class="s2">&quot;s&quot;</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">constant_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Always returns an empty list for the SkewIntrinsic class, as it does not have any constants.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[]</span>
 
 <div class="viewcode-block" id="SkewIntrinsic.is_set">
 <a class="viewcode-back" href="../../../api_doc/skew_intrinsic.html#pycvcam.SkewIntrinsic.is_set">[docs]</a>
@@ -568,7 +587,7 @@
 
 <span class="sd">        .. seealso::</span>
 
-<span class="sd">            - :meth:`pycvcam.Cv2Intrinsic.focal_length_y` or ``fy`` to set the focal length in pixels in y direction.</span>
+<span class="sd">            - :meth:`pycvcam.SkewIntrinsic.focal_length_y` or ``fy`` to set the focal length in pixels in y direction.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -614,7 +633,7 @@
 
 <span class="sd">        .. seealso::</span>
 
-<span class="sd">            - :meth:`pycvcam.Cv2Intrinsic.focal_length_x` or ``fx`` to set the focal length in pixels in x direction.</span>
+<span class="sd">            - :meth:`pycvcam.SkewIntrinsic.focal_length_x` or ``fx`` to set the focal length in pixels in x direction.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -662,7 +681,7 @@
 
 <span class="sd">        .. seealso::</span>
 
-<span class="sd">            - :meth:`pycvcam.Cv2Intrinsic.principal_point_y` or ``cy`` to set the principal point in pixels in y direction.</span>
+<span class="sd">            - :meth:`pycvcam.SkewIntrinsic.principal_point_y` or ``cy`` to set the principal point in pixels in y direction.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -705,7 +724,7 @@
 
 <span class="sd">        .. seealso::</span>
 
-<span class="sd">            - :meth:`pycvcam.Cv2Intrinsic.principal_point_x` or ``cx`` to set the principal point in pixels in x direction.</span>
+<span class="sd">            - :meth:`pycvcam.SkewIntrinsic.principal_point_x` or ``cx`` to set the principal point in pixels in x direction.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -799,7 +818,7 @@
 
 <span class="sd">        .. seealso::</span>
 
-<span class="sd">            - :meth:`pycvcam.Cv2Intrinsic.intrinsic_vector` or ``k`` to get the intrinsic vector of the camera.</span>
+<span class="sd">            - :meth:`pycvcam.SkewIntrinsic.intrinsic_vector` or ``k`` to get the intrinsic vector of the camera.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -867,7 +886,7 @@
 
 <span class="sd">        .. seealso::</span>
 
-<span class="sd">            - :meth:`pycvcam.Cv2Intrinsic.intrinsic_matrix` or ``K`` to set the intrinsic matrix of the camera.</span>
+<span class="sd">            - :meth:`pycvcam.SkewIntrinsic.intrinsic_matrix` or ``K`` to set the intrinsic matrix of the camera.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -905,8 +924,8 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        Cv2Intrinsic</span>
-<span class="sd">            A new instance of the Cv2Intrinsic class with the specified intrinsic matrix.</span>
+<span class="sd">        SkewIntrinsic</span>
+<span class="sd">            A new instance of the SkewIntrinsic class with the specified intrinsic matrix.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -915,7 +934,7 @@
 <span class="sd">        .. code-block:: python</span>
 
 <span class="sd">            import numpy as np</span>
-<span class="sd">            from pycvcam import Cv2Intrinsic</span>
+<span class="sd">            from pycvcam import SkewIntrinsic</span>
 
 <span class="sd">            intrinsic_matrix = numpy.array([[1000, 5, 320],</span>
 <span class="sd">                                         [0, 1000, 240],</span>

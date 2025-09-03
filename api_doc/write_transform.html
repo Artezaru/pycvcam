@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pycvcam.distort_image &#8212; pycvcam 1.3.0 documentation</title>
+    <title>pycvcam.write_transform &#8212; pycvcam 1.3.0 documentation</title>
   
   
   
@@ -41,12 +41,11 @@
     <script src="../_static/documentation_options.js?v=1f29e9d3"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'api_doc/distort_image';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api_doc/write_transform';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="pycvcam.read_transform" href="read_transform.html" />
-    <link rel="prev" title="pycvcam.compute_rays" href="compute_rays.html" />
+    <link rel="next" title="pycvcam.optimize.optimize_parameters" href="optimize_parameters.html" />
+    <link rel="prev" title="pycvcam.read_transform" href="read_transform.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -298,9 +297,9 @@
 <li class="toctree-l1"><a class="reference internal" href="undistort_points.html">pycvcam.undistort_points</a></li>
 <li class="toctree-l1"><a class="reference internal" href="project_points.html">pycvcam.project_points</a></li>
 <li class="toctree-l1"><a class="reference internal" href="compute_rays.html">pycvcam.compute_rays</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">pycvcam.distort_image</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distort_image.html">pycvcam.distort_image</a></li>
 <li class="toctree-l1"><a class="reference internal" href="read_transform.html">pycvcam.read_transform</a></li>
-<li class="toctree-l1"><a class="reference internal" href="write_transform.html">pycvcam.write_transform</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">pycvcam.write_transform</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Optimisation Processes:</span></p>
 <ul class="nav bd-sidenav">
@@ -349,7 +348,7 @@
     
     <li class="breadcrumb-item"><a href="../api.html" class="nav-link">API Reference</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pycvcam.distort_image</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pycvcam.write_transform</span></li>
   </ul>
 </nav>
 </div>
@@ -366,180 +365,41 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="pycvcam-distort-image">
-<h1>pycvcam.distort_image<a class="headerlink" href="#pycvcam-distort-image" title="Link to this heading">#</a></h1>
+  <section id="pycvcam-write-transform">
+<h1>pycvcam.write_transform<a class="headerlink" href="#pycvcam-write-transform" title="Link to this heading">#</a></h1>
 <dl class="py function">
-<dt class="sig sig-object py" id="pycvcam.distort_image">
-<span class="sig-prename descclassname"><span class="pre">pycvcam.</span></span><span class="sig-name descname"><span class="pre">distort_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intrinsic</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="intrinsic.html#pycvcam.core.Intrinsic" title="pycvcam.core.intrinsic.Intrinsic"><span class="pre">Intrinsic</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distortion</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="distortion.html#pycvcam.core.Distortion" title="pycvcam.core.distortion.Distortion"><span class="pre">Distortion</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'undistort'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../_modules/pycvcam/distort_image.html#distort_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.distort_image" title="Link to this definition">#</a></dt>
-<dd><p>Distort an image using the camera intrinsic and distortion coefficients.</p>
-<p>The process to undistort an image is as follows:</p>
-<ol class="arabic simple">
-<li><p>The output pixels are converted to a normalized coordinate system using the inverse intrinsic transformation.</p></li>
-<li><p>The normalized points are undistorted by the distortion model using the coefficients <span class="math notranslate nohighlight">\(\{\lambda_1, \lambda_2, \lambda_3, \ldots\}\)</span>.</p></li>
-<li><p>The undistorted points are projected back to the input image coordinate system using the same intrinsic transformation.</p></li>
-<li><p>The distorted image is obtained by mapping the pixels from the original image to the distorted points.</p></li>
-</ol>
-<p>The given image <code class="docutils literal notranslate"><span class="pre">src</span></code> is assumed to be in the image coordinate system and expressed in 2D coordinates with shape (H, W, [C], [D]).
-If the user gives an identity matrix K, it is equivalent to giving directly the normalized points.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<ul class="simple">
-<li><p>For an image the X dimension corresponds to the width and the Y dimension corresponds to the height.</p></li>
-<li><p>Pixel [0, 1] is at XY = [1, 0] in the image coordinate system.</p></li>
-</ul>
-</div>
-<p>Linear interpolation is used for each method to compute the pixel values in the distorted image.</p>
-<p>Fill Values for the output image are set to 0.0.</p>
-<section id="method-1-undistort">
-<h2>METHOD 1 : Undistort<a class="headerlink" href="#method-1-undistort" title="Link to this heading">#</a></h2>
-<p>The mapping is performed using OpenCV’s <cite>cv2.remap</cite> function (or <code class="docutils literal notranslate"><span class="pre">scipy.interpolate</span></code>), which requires the source image and the mapping of pixel coordinates.
-The mapping of pixel coordinates is performed using the <code class="docutils literal notranslate"><span class="pre">undistort</span></code> method of the distortion model, which applies the inverse distortion to the normalized points.</p>
-<p>In this case, the output pixels (<code class="docutils literal notranslate"><span class="pre">distorted_image</span></code>) are projected back to the input image coordinate system using the intrinsic matrix K.
-Then an interpolation is performed in the input image where the known points are a perfect regular grid of pixels !</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<ul class="simple">
-<li><p>Iterative non-linear optimization is used to find the undistorted points.</p></li>
-<li><p>For scipy, output values are not positive integer values (even if the input image is integer).</p></li>
-</ul>
-</div>
-<p>Different interpolation methods can be used, such as “linear”, “nearest”, etc. The default is “linear”.
-The table below shows the available interpolation methods for METHOD 1:</p>
-<div class="pst-scrollable-table-container"><table class="table">
-<thead>
-<tr class="row-odd"><th class="head"><p>Interpolation</p></th>
-<th class="head"><p>Description</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>“linear”</p></td>
-<td><p>Linear interpolation (default). Use cv2.INTER_LINEAR.</p></td>
-</tr>
-<tr class="row-odd"><td><p>“nearest”</p></td>
-<td><p>Nearest neighbor interpolation. Use cv2.INTER_NEAREST.</p></td>
-</tr>
-<tr class="row-even"><td><p>“cubic”</p></td>
-<td><p>Bicubic interpolation. Use cv2.INTER_CUBIC.</p></td>
-</tr>
-<tr class="row-odd"><td><p>“area”</p></td>
-<td><p>Resampling using pixel area relation. Use cv2.INTER_AREA.</p></td>
-</tr>
-<tr class="row-even"><td><p>“lanczos4”</p></td>
-<td><p>Lanczos interpolation over 8x8 pixel neighborhood. Use cv2.INTER_LANCZOS4.</p></td>
-</tr>
-<tr class="row-odd"><td><p>“spline3”</p></td>
-<td><p>Spline interpolation. Use scipy.interpolate.RectBivariateSpline for kx=ky=3</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="method-2-distort">
-<h2>METHOD 2 : Distort<a class="headerlink" href="#method-2-distort" title="Link to this heading">#</a></h2>
-<p>The mapping is performed using scipy <cite>scipy.interpolate</cite> function, which requires the source image and the mapping of pixel coordinates.
-The mapping of pixel coordinates is performed using the <code class="docutils literal notranslate"><span class="pre">distort</span></code> method of the distortion model, which applies the distortion to the normalized points.</p>
-<p>In this case, the input pixels (<code class="docutils literal notranslate"><span class="pre">src</span></code>) are projected to the output image coordinate system using the intrinsic matrix K.
-Then an interpolation is performed in the output image for all the output pixels where the known points are a irregular cloud of points.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<ul class="simple">
-<li><p>Time computation is higher than the first method.</p></li>
-<li><p>Output values are not integer values (even if the input image is integer), so the user must apply (numpy.round) to the output image to get integer values.</p></li>
-</ul>
-</div>
-<p>Different interpolation methods can be used, such as “linear”, etc. The default is “linear”.
-The table below shows the available interpolation methods for METHOD 2:</p>
-<div class="pst-scrollable-table-container"><table class="table">
-<thead>
-<tr class="row-odd"><th class="head"><p>Interpolation</p></th>
-<th class="head"><p>Description</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>“linear”</p></td>
-<td><p>Linear interpolation (default). Use scipy.interpolate.LinearNDInterpolator</p></td>
-</tr>
-<tr class="row-odd"><td><p>“nearest”</p></td>
-<td><p>Nearest neighbor interpolation. Use scipy.interpolate.NearestNDInterpolator</p></td>
-</tr>
-<tr class="row-even"><td><p>“clough”</p></td>
-<td><p>Piecewise cubic interpolation. Use scipy.interpolate.CloughTocher2DInterpolator.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">param src<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The input image to be undistorted. Shape (H, W, …) where H is the height, W is the width.</p>
-</dd>
-<dt class="field-even">type src<span class="colon">:</span></dt>
-<dd class="field-even"><p>numpy.ndarray</p>
-</dd>
-<dt class="field-odd">param intrinsic<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The intrinsic transformation to be applied to the image points.
-If None, a zero intrinsic is applied (i.e., identity transformation).</p>
-</dd>
-<dt class="field-even">type intrinsic<span class="colon">:</span></dt>
-<dd class="field-even"><p>Optional[Intrinsic]</p>
-</dd>
-<dt class="field-odd">param distortion<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The distortion model to be applied. If None, no distortion is applied.</p>
-</dd>
-<dt class="field-even">type distortion<span class="colon">:</span></dt>
-<dd class="field-even"><p>Optional[Distortion]</p>
-</dd>
-<dt class="field-odd">param method<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The method to use for undistortion. The value can be “undistort” or “distort”.</p>
-<ul class="simple">
-<li><p>“undistort”: Uses OpenCV’s <cite>cv2.remap</cite> and the <code class="docutils literal notranslate"><span class="pre">undistort</span></code> method of the distortion model.</p></li>
-<li><p>“distort”: Uses <cite>scipy.interpolate</cite> and the <code class="docutils literal notranslate"><span class="pre">distort</span></code> method of the distortion model.</p></li>
-</ul>
-</dd>
-<dt class="field-even">type method<span class="colon">:</span></dt>
-<dd class="field-even"><p>str</p>
-</dd>
-<dt class="field-odd">param interpolation<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The interpolation method to be used for remapping the pixels. Default is “linear”.</p>
-</dd>
-<dt class="field-even">type interpolation<span class="colon">:</span></dt>
-<dd class="field-even"><p>str, optional</p>
-</dd>
-<dt class="field-odd">param **kwargs<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Additional keyword arguments to be passed. [warning]</p>
-</dd>
-<dt class="field-even">type **kwargs<span class="colon">:</span></dt>
-<dd class="field-even"><p>dict</p>
-</dd>
-<dt class="field-odd">returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The undistorted image. Shape (H, W, …) where H is the height.</p>
-</dd>
-<dt class="field-even">rtype<span class="colon">:</span></dt>
-<dd class="field-even"><p>numpy.ndarray</p>
-</dd>
-</dl>
-<p class="rubric">Example</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pycvcam</span><span class="w"> </span><span class="kn">import</span> <span class="n">distort_image</span><span class="p">,</span> <span class="n">Cv2Distortion</span><span class="p">,</span> <span class="n">Cv2Intrinsic</span>
+<dt class="sig sig-object py" id="pycvcam.write_transform">
+<span class="sig-prename descclassname"><span class="pre">pycvcam.</span></span><span class="sig-name descname"><span class="pre">write_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="transform.html#pycvcam.core.Transform" title="pycvcam.core.transform.Transform"><span class="pre">Transform</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/pycvcam/write_transform.html#write_transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.write_transform" title="Link to this definition">#</a></dt>
+<dd><p>Writes the Transform object to a JSON file.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pycvcam</span><span class="w"> </span><span class="kn">import</span> <span class="n">Cv2Distortion</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pycvcam</span><span class="w"> </span><span class="kn">import</span> <span class="n">write_transform</span>
 
-<span class="c1"># Define the intrinsic camera matrix</span>
-<span class="n">K</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1000.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">320.0</span><span class="p">],</span>
-                <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1000.0</span><span class="p">,</span> <span class="mf">240.0</span><span class="p">],</span>
-                <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]])</span>
-
-<span class="c1"># Create the intrinsic object</span>
-<span class="n">intrinsic</span> <span class="o">=</span> <span class="n">Cv2Intrinsic</span><span class="o">.</span><span class="n">from_matrix</span><span class="p">(</span><span class="n">K</span><span class="p">)</span>
-
-<span class="c1"># Define the distortion model (optional)</span>
-<span class="n">distortion</span> <span class="o">=</span> <span class="n">Cv2Distortion</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
-
-<span class="c1"># Load the image to be distorted</span>
-<span class="n">src</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s1">&#39;image.jpg&#39;</span><span class="p">)</span>
-
-<span class="c1"># Distort the image</span>
-<span class="n">distorted_image</span> <span class="o">=</span> <span class="n">distort_image</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">intrinsic</span><span class="o">=</span><span class="n">intrinsic</span><span class="p">,</span> <span class="n">distortion</span><span class="o">=</span><span class="n">distortion</span><span class="p">)</span>
+<span class="n">distortion</span> <span class="o">=</span> <span class="n">Cv2Distortion</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">write_transform</span><span class="p">(</span><span class="s2">&quot;transform.json&quot;</span><span class="p">,</span> <span class="n">distortion</span><span class="p">)</span>
 </pre></div>
 </div>
-</section>
+<p>The content of the JSON file will be similar to:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Cv2Distortion&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.3.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2023-01-01T00:00:00&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;parameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span><span class="w"> </span><span class="mf">0.2</span><span class="p">,</span><span class="w"> </span><span class="mf">0.3</span><span class="p">,</span><span class="w"> </span><span class="mf">0.01</span><span class="p">,</span><span class="w"> </span><span class="mf">0.5</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;constants&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="read_transform.html#pycvcam.read_transform" title="pycvcam.read_transform"><code class="xref py py-func docutils literal notranslate"><span class="pre">pycvcam.read_transform()</span></code></a> for the corresponding read function.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_path</strong> (<em>str</em>) – The path to the JSON file to write to.</p></li>
+<li><p><strong>transform</strong> (<a class="reference internal" href="transform.html#pycvcam.core.Transform" title="pycvcam.core.Transform"><em>Transform</em></a>) – The Transform object to write.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -555,20 +415,20 @@ If None, a zero intrinsic is applied (i.e., identity transformation).</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="compute_rays.html"
+       href="read_transform.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">pycvcam.compute_rays</p>
+        <p class="prev-next-title">pycvcam.read_transform</p>
       </div>
     </a>
     <a class="right-next"
-       href="read_transform.html"
+       href="optimize_parameters.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">pycvcam.read_transform</p>
+        <p class="prev-next-title">pycvcam.optimize.optimize_parameters</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -591,7 +451,7 @@ If None, a zero intrinsic is applied (i.e., identity transformation).</p>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.distort_image"><code class="docutils literal notranslate"><span class="pre">distort_image()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.write_transform"><code class="docutils literal notranslate"><span class="pre">write_transform()</span></code></a></li>
 </ul>
   </nav></div>
 
@@ -599,7 +459,7 @@ If None, a zero intrinsic is applied (i.e., identity transformation).</p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/api_doc/distort_image.rst.txt"
+      <li><a href="../_sources/api_doc/write_transform.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div></div>

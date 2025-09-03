@@ -62,6 +62,8 @@ The package provides a set of transformation processes that can be used to apply
    ./api_doc/project_points.rst
    ./api_doc/compute_rays.rst
    ./api_doc/distort_image.rst
+   ./api_doc/read_transform.rst
+   ./api_doc/write_transform.rst
 
 
 Optimisation processes
@@ -76,3 +78,6 @@ The optimisations are located in the ``pycvcam.optimize`` module.
 
    ./api_doc/optimize_parameters.rst
    ./api_doc/optimize_input_points.rst
+
+
+

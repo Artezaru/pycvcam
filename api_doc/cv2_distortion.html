@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pycvcam.Cv2Distortion &#8212; pycvcam 1.2.0 documentation</title>
+    <title>pycvcam.Cv2Distortion &#8212; pycvcam 1.3.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=6efca38a"></script>
+    <script src="../_static/documentation_options.js?v=1f29e9d3"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -111,7 +111,7 @@
   
   
   
-    <p class="title logo__title">pycvcam 1.2.0 documentation</p>
+    <p class="title logo__title">pycvcam 1.3.0 documentation</p>
   
 </a></div>
     
@@ -299,6 +299,8 @@
 <li class="toctree-l1"><a class="reference internal" href="project_points.html">pycvcam.project_points</a></li>
 <li class="toctree-l1"><a class="reference internal" href="compute_rays.html">pycvcam.compute_rays</a></li>
 <li class="toctree-l1"><a class="reference internal" href="distort_image.html">pycvcam.distort_image</a></li>
+<li class="toctree-l1"><a class="reference internal" href="read_transform.html">pycvcam.read_transform</a></li>
+<li class="toctree-l1"><a class="reference internal" href="write_transform.html">pycvcam.write_transform</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Optimisation Processes:</span></p>
 <ul class="nav bd-sidenav">
@@ -802,6 +804,12 @@ Default is False.</p></li>
 </dd></dl>
 
 <dl class="py property">
+<dt class="sig sig-object py" id="pycvcam.Cv2Distortion.constant_names">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">constant_names</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pycvcam.Cv2Distortion.constant_names" title="Link to this definition">#</a></dt>
+<dd><p>Always returns an empty list for the Cv2Distortion class, as it does not have any constants.</p>
+</dd></dl>
+
+<dl class="py property">
 <dt class="sig sig-object py" id="pycvcam.Cv2Distortion.constants">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">constants</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pycvcam.Cv2Distortion.constants" title="Link to this definition">#</a></dt>
 <dd><p>Always returns None for the Cv2Distortion class, as it does not have any constants.</p>
@@ -999,6 +1007,23 @@ Set the number of parameters to 4 or more before getting the value.</p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ValueError</strong> – If the number of parameters is less than 4.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pycvcam.Cv2Distortion.parameter_names">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parameter_names</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pycvcam.Cv2Distortion.parameter_names" title="Link to this definition">#</a></dt>
+<dd><p>[“k_1”, “k_2”, “p_1”, “p_2”, “k_3”, …]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The names of the parameters of the distortion transformation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Get the names of the parameters of the distortion transformation</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1223,6 +1248,7 @@ Set the number of parameters to 14 or more before getting the value.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Distortion._parameters"><code class="docutils literal notranslate"><span class="pre">Cv2Distortion._parameters</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Distortion._transform"><code class="docutils literal notranslate"><span class="pre">Cv2Distortion._transform()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Distortion._transform_opencv"><code class="docutils literal notranslate"><span class="pre">Cv2Distortion._transform_opencv()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Distortion.constant_names"><code class="docutils literal notranslate"><span class="pre">Cv2Distortion.constant_names</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Distortion.constants"><code class="docutils literal notranslate"><span class="pre">Cv2Distortion.constants</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Distortion.is_set"><code class="docutils literal notranslate"><span class="pre">Cv2Distortion.is_set()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Distortion.k1"><code class="docutils literal notranslate"><span class="pre">Cv2Distortion.k1</span></code></a></li>
@@ -1234,6 +1260,7 @@ Set the number of parameters to 14 or more before getting the value.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Distortion.make_empty"><code class="docutils literal notranslate"><span class="pre">Cv2Distortion.make_empty()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Distortion.p1"><code class="docutils literal notranslate"><span class="pre">Cv2Distortion.p1</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Distortion.p2"><code class="docutils literal notranslate"><span class="pre">Cv2Distortion.p2</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Distortion.parameter_names"><code class="docutils literal notranslate"><span class="pre">Cv2Distortion.parameter_names</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Distortion.parameters"><code class="docutils literal notranslate"><span class="pre">Cv2Distortion.parameters</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Distortion.s1"><code class="docutils literal notranslate"><span class="pre">Cv2Distortion.s1</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Distortion.s2"><code class="docutils literal notranslate"><span class="pre">Cv2Distortion.s2</span></code></a></li>

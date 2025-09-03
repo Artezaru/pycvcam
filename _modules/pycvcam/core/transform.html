@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pycvcam.core.transform &#8212; pycvcam 1.2.0 documentation</title>
+    <title>pycvcam.core.transform &#8212; pycvcam 1.3.0 documentation</title>
   
   
   
@@ -37,7 +37,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=6efca38a"></script>
+    <script src="../../../_static/documentation_options.js?v=1f29e9d3"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pycvcam/core/transform';</script>
@@ -107,7 +107,7 @@
   
   
   
-    <p class="title logo__title">pycvcam 1.2.0 documentation</p>
+    <p class="title logo__title">pycvcam 1.3.0 documentation</p>
   
 </a></div>
     
@@ -355,6 +355,8 @@
 
 <span class="sd">    - ``parameters`` (property and setter) The parameters of the transformation in a 1D numpy array of shape (Nparams,) or None if the transformation does not have parameters or they are not set. Default only impose 1D array of floats or None.</span>
 <span class="sd">    - ``constants`` (property and setter) The constants of the transformation in a 1D numpy array of shape (Nconsts,) or None if the transformation does not have constants or they are not set. Default only impose 1D array of floats or None.</span>
+<span class="sd">    - ``parameter_names`` (property) The names of the parameters as a list of strings or None if the transformation does not have parameters or they are not set. Default is None.</span>
+<span class="sd">    - ``constant_names`` (property) The names of the constants as a list of strings or None if the transformation does not have constants or they are not set. Default is None.</span>
 <span class="sd">    - ``is_set``: (method) Check if the transformation is set (i.e., if the parameters are initialized). Default is to return True if the parameters and constants are not None. Default is to return True if the parameters and constants are not None.</span>
 <span class="sd">    - ``_result_class``: (class attribute) The class used for the result of the transformation (sub-class of ``TransformResult``). Default is :class:`pycvcam.core.TransformResult`.</span>
 <span class="sd">    - ``_inverse_result_class``: (class attribute) The class used for the result of the inverse transformation (sub-class of ``TransformResult``). Default is :class:`pycvcam.core.TransformResult`.</span>
@@ -556,6 +558,42 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">constants</span><span class="o">.</span><span class="n">size</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">constants</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">0</span>
     
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parameter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property to return the names of the parameters of the transformation.</span>
+
+<span class="sd">        The names must be a list of strings of length Nparams where Nparams is the number of parameters of the transformation.</span>
+
+<span class="sd">        If the transformation does not have parameters should return an empty list.</span>
+
+<span class="sd">        By default, the parameter names are generated as &quot;p_0&quot;, &quot;p_1&quot;, ..., &quot;p_{Nparams-1}&quot;.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        List[str]</span>
+<span class="sd">            The names of the parameters of the transformation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;p_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Nparams</span><span class="p">)]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">constant_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property to return the names of the constants of the transformation.</span>
+
+<span class="sd">        The names must be a list of strings of length Nconstants where Nconstants is the number of constants of the transformation.</span>
+
+<span class="sd">        If the transformation does not have constants, this property should return an empty list.</span>
+
+<span class="sd">        By default, the constant names are generated as &quot;c_0&quot;, &quot;c_1&quot;, ..., &quot;c_{Nconstants-1}&quot;.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        List[str]</span>
+<span class="sd">            The names of the constants of the transformation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;c_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Nconstants</span><span class="p">)]</span>
+
     <span class="c1"># =============================================</span>
     <span class="c1"># Methods for Transform Class</span>
     <span class="c1"># =============================================</span>
