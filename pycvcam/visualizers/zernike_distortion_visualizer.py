@@ -9,7 +9,7 @@ from ..read_transform import read_transform
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout,
     QListWidget, QLabel, QSplitter, QPushButton, QFileDialog,
-    QMessageBox, QHBoxLayout, QComboBox, QListWidgetItem
+    QMessageBox, QHBoxLayout, QComboBox, QListWidgetItem, QCheckBox
 )
 from PyQt5.QtCore import Qt, QUrl
 
@@ -31,7 +31,7 @@ class MplCanvas(FigureCanvas):
 # ============================================================
 # Bar plot on an axes
 # ============================================================
-def plot_bar_chart(mpl_canvas: MplCanvas, distortions: List[ZernikeDistortion], labels: List[str], mode: str = "x") -> MplCanvas:
+def plot_bar_chart(mpl_canvas: MplCanvas, distortions: List[ZernikeDistortion], labels: List[str], mode: str = "x", absolute: bool = False) -> MplCanvas:
     """Plot a bar chart of the Zernike coefficients for various models"""
     # Check the inputs
     if not isinstance(mpl_canvas, MplCanvas):
@@ -71,12 +71,15 @@ def plot_bar_chart(mpl_canvas: MplCanvas, distortions: List[ZernikeDistortion], 
     for i, distortion in enumerate(distortions):
         parameters = distortion.parameters_x if mode == "x" else distortion.parameters_y
         parameters = numpy.concatenate([parameters, numpy.zeros(len(ticklabels) - len(parameters))])
+        if absolute:
+            parameters = numpy.abs(parameters)
         mpl_canvas.axes.bar(x + x_shift + i * x_width, parameters, width=x_width, label=labels[i], color=colormap(i / len(distortions)))
 
-    mpl_canvas.axes.set_xticks(x + x_shift + x_width / 2)
+    mpl_canvas.axes.set_xticks(x)
     mpl_canvas.axes.set_xticklabels(ticklabels, rotation=75)
     mpl_canvas.axes.set_title(f"Zernike Coefficients [{mode}-axis]")
     mpl_canvas.axes.legend()
+    mpl_canvas.axes.grid(True, linestyle='--', alpha=0.5)
     mpl_canvas.draw()
     return mpl_canvas
 
@@ -198,7 +201,6 @@ class DropWidget(QWidget):
 class ZernikeDistortionVisualizerUI(QMainWindow):
     """
     Main application window for visualizing Zernike distortion files.
-
     Supports multiple file selection for superimposed plotting and deletion.
     """
 
@@ -210,7 +212,7 @@ class ZernikeDistortionVisualizerUI(QMainWindow):
 
         # --- File list ---
         self.file_list = QListWidget()
-        self.file_list.setSelectionMode(QListWidget.ExtendedSelection)  # Standard multi-selection behavior
+        self.file_list.setSelectionMode(QListWidget.ExtendedSelection)
         self.file_list.itemSelectionChanged.connect(self.update_plot)
 
         # --- Figure selector ---
@@ -218,13 +220,17 @@ class ZernikeDistortionVisualizerUI(QMainWindow):
         self.figure_selector.addItems(["Figure 1 : parameters (X)", "Figure 2 : parameters (Y)"])
         self.figure_selector.currentTextChanged.connect(self.update_plot)
 
+        # --- Absolute value checkbox ---
+        self.abs_checkbox = QCheckBox("Absolute values")
+        self.abs_checkbox.stateChanged.connect(self.update_plot)
+
         # --- Status bar ---
         self.statusbar = self.statusBar()
 
         # --- Drop area ---
         self.drop_area = DropWidget(self.file_list, self.file_data, self.statusbar)
 
-        # --- Left panel (buttons + drop area + list + combo) ---
+        # --- Left panel ---
         left_panel = QWidget()
         left_panel.setMinimumWidth(100)
         left_panel.setMaximumWidth(300)
@@ -244,6 +250,7 @@ class ZernikeDistortionVisualizerUI(QMainWindow):
         left_layout.addWidget(self.file_list)
         left_layout.addWidget(QLabel("Select figure:"))
         left_layout.addWidget(self.figure_selector)
+        left_layout.addWidget(self.abs_checkbox)  # <-- checkbox
 
         splitter.addWidget(left_panel)
 
@@ -256,7 +263,6 @@ class ZernikeDistortionVisualizerUI(QMainWindow):
 
     # --- File management ---
     def remove_selected_files(self):
-        """Delete all selected files from the list and internal data."""
         selected_items = self.file_list.selectedItems()
         for item in selected_items:
             file_path = item.text()
@@ -266,22 +272,15 @@ class ZernikeDistortionVisualizerUI(QMainWindow):
         self.update_plot()
 
     def open_files(self):
-        """
-        Open files via a QFileDialog and load them as ZernikeDistortion.
-        Avoids crashes when .json files are present in the folder by using
-        the Qt internal file dialog instead of the native one.
-        Already loaded files are not duplicated, only selected.
-        """
         dialog = QFileDialog(self, "Select files")
         dialog.setFileMode(QFileDialog.ExistingFiles)
         dialog.setNameFilters(["JSON Files (*.json)", "All Files (*)"])
-        dialog.setOption(QFileDialog.DontUseNativeDialog, True)  # Avoid native dialog crash
+        dialog.setOption(QFileDialog.DontUseNativeDialog, True)
 
         if dialog.exec_():
             paths = dialog.selectedFiles()
             for p in paths:
                 if p in self.file_data:
-                    # File already loaded → select it in the list
                     items = self.file_list.findItems(p, Qt.MatchExactly)
                     if items:
                         self.file_list.setCurrentItem(items[0])
@@ -294,7 +293,6 @@ class ZernikeDistortionVisualizerUI(QMainWindow):
                 except Exception as e:
                     QMessageBox.warning(self, "File Read Error", f"Unable to read {p}:\n{e}")
 
-            # Select all newly added files
             for p in paths:
                 items = self.file_list.findItems(p, Qt.MatchExactly)
                 if items:
@@ -304,7 +302,6 @@ class ZernikeDistortionVisualizerUI(QMainWindow):
 
     # --- Plot update ---
     def update_plot(self):
-        """Update the matplotlib figure with currently selected files."""
         selected_items = self.file_list.selectedItems()
         self.canvas.axes.clear()
 
@@ -313,6 +310,7 @@ class ZernikeDistortionVisualizerUI(QMainWindow):
             return
 
         fig_choice = self.figure_selector.currentText()
+        use_abs = self.abs_checkbox.isChecked()  # <-- lire le checkbox
 
         distortions = []
         labels = []
@@ -329,6 +327,6 @@ class ZernikeDistortionVisualizerUI(QMainWindow):
             return
 
         if fig_choice.startswith("Figure 1"):
-            self.canvas = plot_bar_chart(self.canvas, distortions, labels, mode="x")
+            self.canvas = plot_bar_chart(self.canvas, distortions, labels, mode="x", absolute=use_abs)
         elif fig_choice.startswith("Figure 2"):
-            self.canvas = plot_bar_chart(self.canvas, distortions, labels, mode="y")
+            self.canvas = plot_bar_chart(self.canvas, distortions, labels, mode="y", absolute=use_abs)

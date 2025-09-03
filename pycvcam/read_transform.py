@@ -7,6 +7,7 @@ from .core.transform import Transform
 def read_transform(file_path, cls: Type[Transform]) -> Transform:
     """
     Reads a json files containing a transformation.
+    The JSON file must contain the following keys: 'parameters', 'constants', and optional 'type'.
 
     .. code-block:: python
 
@@ -38,7 +39,16 @@ def read_transform(file_path, cls: Type[Transform]) -> Transform:
     with open(file_path, 'r') as f:
         transform_data = json.load(f)
 
-    if not transform_data["type"] == cls.__name__:
+    if not "parameters" in transform_data:
+        raise ValueError("Missing 'parameters' key in transform data.")
+
+    if not "constants" in transform_data:
+        raise ValueError("Missing 'constants' key in transform data.")
+
+    if not "type" in transform_data:
+        print("[pycvcam] Missing 'type' key in transform data. Loading without type verification.")
+
+    if "type" in transform_data and not transform_data["type"] == cls.__name__:
         raise ValueError(f"Transform type mismatch, expected {cls.__name__} but got {transform_data['type']}")
 
     # Create an instance of the Transform subclass
