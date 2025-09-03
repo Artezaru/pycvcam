@@ -583,11 +583,11 @@ class ZernikeDistortion(Distortion):
         self._constants[2] = float(value)
 
     @property
-    def center_x0(self) -> float:
+    def x0(self) -> float:
         return self.center_x
 
-    @center_x0.setter
-    def center_x0(self, value: Number) -> None:
+    @x0.setter
+    def x0(self, value: Number) -> None:
         self.center_x = value
 
     @property
@@ -617,11 +617,11 @@ class ZernikeDistortion(Distortion):
         self._constants[3] = float(value)
 
     @property
-    def center_y0(self) -> float:
+    def y0(self) -> float:
         return self.center_y
-    
-    @center_y0.setter
-    def center_y0(self, value: Number) -> None:
+
+    @y0.setter
+    def y0(self, value: Number) -> None:
         self.center_y = value
 
     def is_set(self) -> bool:
