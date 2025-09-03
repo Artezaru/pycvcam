@@ -41,6 +41,8 @@ class Transform(ABC):
 
     - ``parameters`` (property and setter) The parameters of the transformation in a 1D numpy array of shape (Nparams,) or None if the transformation does not have parameters or they are not set. Default only impose 1D array of floats or None.
     - ``constants`` (property and setter) The constants of the transformation in a 1D numpy array of shape (Nconsts,) or None if the transformation does not have constants or they are not set. Default only impose 1D array of floats or None.
+    - ``parameter_names`` (property) The names of the parameters as a list of strings or None if the transformation does not have parameters or they are not set. Default is None.
+    - ``constant_names`` (property) The names of the constants as a list of strings or None if the transformation does not have constants or they are not set. Default is None.
     - ``is_set``: (method) Check if the transformation is set (i.e., if the parameters are initialized). Default is to return True if the parameters and constants are not None. Default is to return True if the parameters and constants are not None.
     - ``_result_class``: (class attribute) The class used for the result of the transformation (sub-class of ``TransformResult``). Default is :class:`pycvcam.core.TransformResult`.
     - ``_inverse_result_class``: (class attribute) The class used for the result of the inverse transformation (sub-class of ``TransformResult``). Default is :class:`pycvcam.core.TransformResult`.
@@ -242,6 +244,42 @@ class Transform(ABC):
         """
         return self.constants.size if self.constants is not None else 0
     
+    @property
+    def parameter_names(self) -> List[str]:
+        r"""
+        Property to return the names of the parameters of the transformation.
+
+        The names must be a list of strings of length Nparams where Nparams is the number of parameters of the transformation.
+
+        If the transformation does not have parameters should return an empty list.
+
+        By default, the parameter names are generated as "p_0", "p_1", ..., "p_{Nparams-1}".
+
+        Returns
+        -------
+        List[str]
+            The names of the parameters of the transformation.
+        """
+        return [f"p_{i}" for i in range(self.Nparams)]
+
+    @property
+    def constant_names(self) -> List[str]:
+        r"""
+        Property to return the names of the constants of the transformation.
+
+        The names must be a list of strings of length Nconstants where Nconstants is the number of constants of the transformation.
+
+        If the transformation does not have constants, this property should return an empty list.
+
+        By default, the constant names are generated as "c_0", "c_1", ..., "c_{Nconstants-1}".
+
+        Returns
+        -------
+        List[str]
+            The names of the constants of the transformation.
+        """
+        return [f"c_{i}" for i in range(self.Nconstants)]
+
     # =============================================
     # Methods for Transform Class
     # =============================================

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, Tuple, Dict
+from typing import Optional, Tuple, Dict, List
 from numbers import Number
 import numpy
 
@@ -114,8 +114,8 @@ class SkewIntrinsic(Intrinsic):
 
         For more information about the transformation process, see:
 
-        - :meth:`pycvcam.Cv2Intrinsic._transform` to transform the ``distorted_points`` to ``image_points``.
-        - :meth:`pycvcam.Cv2Intrinsic._inverse_transform` to transform the ``image_points`` back to ``distorted_points``.
+        - :meth:`pycvcam.SkewIntrinsic._transform` to transform the ``distorted_points`` to ``image_points``.
+        - :meth:`pycvcam.SkewIntrinsic._inverse_transform` to transform the ``image_points`` back to ``distorted_points``.
     
     """
     __slots__ = ["_fx", "_fy", "_cx", "_cy", "_s"]
@@ -209,15 +209,34 @@ class SkewIntrinsic(Intrinsic):
     @property
     def constants(self) -> Optional[numpy.ndarray]:
         r"""
-        Always returns None for the Cv2Intrinsic class, as it does not have any constants.
+        Always returns None for the SkewIntrinsic class, as it does not have any constants.
         """
         return None
     
     @constants.setter
     def constants(self, value: Optional[numpy.ndarray]) -> None:
         if value is not None:
-            raise ValueError("Cv2Intrinsic model has no constants, must be set to None.")
+            raise ValueError("SkewIntrinsic model has no constants, must be set to None.")
         self._constants = None
+
+    @property
+    def parameter_names(self) -> List[str]:
+        r"""
+        Get the names of the parameters of the intrinsic transformation : ["fx", "fy", "cx", "cy", "s"]
+
+        Returns
+        -------
+        List[str]
+            The names of the parameters of the intrinsic transformation.
+        """
+        return ["fx", "fy", "cx", "cy", "s"]
+
+    @property
+    def constant_names(self) -> List[str]:
+        r"""
+        Always returns an empty list for the SkewIntrinsic class, as it does not have any constants.
+        """
+        return []
 
     def is_set(self) -> bool:
         r"""
@@ -248,7 +267,7 @@ class SkewIntrinsic(Intrinsic):
 
         .. seealso::
 
-            - :meth:`pycvcam.Cv2Intrinsic.focal_length_y` or ``fy`` to set the focal length in pixels in y direction.
+            - :meth:`pycvcam.SkewIntrinsic.focal_length_y` or ``fy`` to set the focal length in pixels in y direction.
 
         Returns
         -------
@@ -294,7 +313,7 @@ class SkewIntrinsic(Intrinsic):
 
         .. seealso::
 
-            - :meth:`pycvcam.Cv2Intrinsic.focal_length_x` or ``fx`` to set the focal length in pixels in x direction.
+            - :meth:`pycvcam.SkewIntrinsic.focal_length_x` or ``fx`` to set the focal length in pixels in x direction.
 
         Returns
         -------
@@ -342,7 +361,7 @@ class SkewIntrinsic(Intrinsic):
 
         .. seealso::
 
-            - :meth:`pycvcam.Cv2Intrinsic.principal_point_y` or ``cy`` to set the principal point in pixels in y direction.
+            - :meth:`pycvcam.SkewIntrinsic.principal_point_y` or ``cy`` to set the principal point in pixels in y direction.
 
         Returns
         -------
@@ -385,7 +404,7 @@ class SkewIntrinsic(Intrinsic):
 
         .. seealso::
 
-            - :meth:`pycvcam.Cv2Intrinsic.principal_point_x` or ``cx`` to set the principal point in pixels in x direction.
+            - :meth:`pycvcam.SkewIntrinsic.principal_point_x` or ``cx`` to set the principal point in pixels in x direction.
 
         Returns
         -------
@@ -479,7 +498,7 @@ class SkewIntrinsic(Intrinsic):
 
         .. seealso::
 
-            - :meth:`pycvcam.Cv2Intrinsic.intrinsic_vector` or ``k`` to get the intrinsic vector of the camera.
+            - :meth:`pycvcam.SkewIntrinsic.intrinsic_vector` or ``k`` to get the intrinsic vector of the camera.
 
         Returns
         -------
@@ -547,7 +566,7 @@ class SkewIntrinsic(Intrinsic):
 
         .. seealso::
 
-            - :meth:`pycvcam.Cv2Intrinsic.intrinsic_matrix` or ``K`` to set the intrinsic matrix of the camera.
+            - :meth:`pycvcam.SkewIntrinsic.intrinsic_matrix` or ``K`` to set the intrinsic matrix of the camera.
 
         Returns
         -------
@@ -583,8 +602,8 @@ class SkewIntrinsic(Intrinsic):
 
         Returns
         -------
-        Cv2Intrinsic
-            A new instance of the Cv2Intrinsic class with the specified intrinsic matrix.
+        SkewIntrinsic
+            A new instance of the SkewIntrinsic class with the specified intrinsic matrix.
 
         Examples
         --------
@@ -593,7 +612,7 @@ class SkewIntrinsic(Intrinsic):
         .. code-block:: python
 
             import numpy as np
-            from pycvcam import Cv2Intrinsic
+            from pycvcam import SkewIntrinsic
 
             intrinsic_matrix = numpy.array([[1000, 5, 320],
                                          [0, 1000, 240],

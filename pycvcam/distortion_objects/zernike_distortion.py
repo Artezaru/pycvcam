@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from typing import Optional, Tuple, List
 import numpy
 from numbers import Number, Integral
 import pyzernike
@@ -387,6 +387,54 @@ class ZernikeDistortion(Distortion):
         
         value = int(value)
         self.Nparams = (value + 1) * (value + 2)
+
+    @property
+    def parameter_names(self) -> List[str]:
+        r"""
+        Get the names of the parameters of the distortion transformation : ["Cx(0, 0), Cy(0, 0), Cx(1, -1), Cy(1, -1), Cx(1, 1), Cy(1, 1), ...]
+
+        Returns
+        -------
+        List[str]
+            The names of the parameters of the distortion transformation.
+        """
+        return [val for pair in zip(self.parameter_x_names, self.parameter_y_names) for val in pair]
+    
+    @property
+    def parameter_x_names(self) -> List[str]:
+        r"""
+        Get the names of the parameters along the x-axis of the distortion transformation : ["Cx(0, 0), Cx(1, -1), Cx(1, 1), ...]
+
+        Returns
+        -------
+        List[str]
+            The names of the parameters of the distortion transformation.
+        """
+        return [f"Cx({n}, {m})" for n in range(self.Nzer + 1) for m in range(-n, n + 1) if (n + m) % 2 == 0]
+
+    @property
+    def parameter_y_names(self) -> List[str]:
+        r"""
+        Get the names of the parameters along the y-axis of the distortion transformation : ["Cy(0, 0), Cy(1, -1), Cy(1, 1), ...]
+
+        Returns
+        -------
+        List[str]
+            The names of the parameters of the distortion transformation.
+        """
+        return [f"Cy({n}, {m})" for n in range(self.Nzer + 1) for m in range(-n, n + 1) if (n + m) % 2 == 0]
+
+    @property
+    def constant_names(self) -> List[str]:
+        r"""
+        Get the names of the constants of the distortion transformation : ["R_x", "R_y", "x_0", "y_0"]
+
+        Returns
+        -------
+        List[str]
+            The names of the constants of the distortion transformation.
+        """
+        return ["R_x", "R_y", "x_0", "y_0"]
 
     # =================================================================
     # Radius and center of the unit disk

@@ -4,7 +4,7 @@ A computer vision camera is modeled by three main components:
 2. **Distortion**: The transformation from the normalized camera coordinate system to the distorted camera coordinate system (``normalized_points`` to ``distorted_points``)
 3. **Intrinsic**: The transformation from the distorted camera coordinate system to the image coordinate system (``distorted_points`` to ``image_points``)
 
-As describe in the figure below, the package ``pycvcam`` uses the following notation:
+As described in the figure below, the package ``pycvcam`` uses the following notation:
 
 - ``world_points``: The 3-D points :math:`\vec{X}_w` with shape (...,3) expressed in the world coordinate system :math:`(\vec{E}_x, \vec{E}_y, \vec{E}_z)`.
 - ``normalized_points``: The 2-D points :math:`\vec{x}_n` with shape (...,2) expressed in the normalized camera coordinate system :math:`(\vec{I}, \vec{J})` with a unit distance along the optical axis :math:`(\vec{K})`.

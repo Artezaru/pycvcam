@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, Tuple, Dict
+from typing import Optional, Tuple, Dict, List
 import numpy
 from py3dframe import Frame
 import cv2
@@ -210,6 +210,25 @@ class Cv2Extrinsic(Extrinsic):
         if value is not None:
             raise ValueError("Cv2Extrinsic model has no constants, must be set to None.")
         self._constants = None
+
+    @property
+    def parameter_names(self) -> List[str]:
+        r"""
+        Get the names of the parameters of the extrinsic transformation : ["r_x", "r_y", "r_z", "t_x", "t_y", "t_z"]
+
+        Returns
+        -------
+        List[str]
+            The names of the parameters of the extrinsic transformation.
+        """
+        return ["r_x", "r_y", "r_z", "t_x", "t_y", "t_z"]
+
+    @property
+    def constant_names(self) -> List[str]:
+        r"""
+        Always returns an empty list for the SkewIntrinsic class, as it does not have any constants.
+        """
+        return []
 
     def is_set(self) -> bool:
         r"""

@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from typing import Optional, Tuple, List
 import numpy
 from numbers import Number, Integral
 import cv2
@@ -267,6 +267,26 @@ class Cv2Distortion(Distortion):
             self.parameters = self.parameters[:value]
         elif value > self.Nparams:
             self.parameters = numpy.concatenate((self.parameters, numpy.zeros(value - self.Nparams)))
+
+    @property
+    def parameter_names(self) -> List[str]:
+        r"""
+        Get the names of the parameters of the distortion transformation : ["k_1", "k_2", "p_1", "p_2", "k_3", ...]
+
+        Returns
+        -------
+        List[str]
+            The names of the parameters of the distortion transformation.
+        """
+        params = ["k_1", "k_2", "p_1", "p_2", "k_3", "k_4", "k_5", "k_6", "s_1", "s_2", "s_3", "s_4", "t_x", "t_y"]
+        return params[:self.Nparams]
+
+    @property
+    def constant_names(self) -> List[str]:
+        r"""
+        Always returns an empty list for the Cv2Distortion class, as it does not have any constants.
+        """
+        return []
 
     def is_set(self) -> bool:
         r"""

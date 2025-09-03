@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, Tuple, Dict
+from typing import Optional, Tuple, Dict, List
 from numbers import Number
 import numpy
 
@@ -214,6 +214,25 @@ class Cv2Intrinsic(Intrinsic):
         if value is not None:
             raise ValueError("Cv2Intrinsic model has no constants, must be set to None.")
         self._constants = None
+
+    @property
+    def parameter_names(self) -> List[str]:
+        r"""
+        Get the names of the parameters of the intrinsic transformation : ["fx", "fy", "cx", "cy"]
+
+        Returns
+        -------
+        List[str]
+            The names of the parameters of the intrinsic transformation.
+        """
+        return ["fx", "fy", "cx", "cy"]
+    
+    @property
+    def constant_names(self) -> List[str]:
+        r"""
+        Always returns an empty list for the Cv2Intrinsic class, as it does not have any constants.
+        """
+        return []
 
     def is_set(self) -> bool:
         r"""
