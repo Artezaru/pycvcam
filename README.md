@@ -18,7 +18,8 @@ As described in the figure below, the package `pycvcam` uses the following notat
 - `image_points`: The 2-D points **x_i** (`(..., 2)`) expressed in the image coordinate system *(ex, ey)* in the sensor plane.
 - `pixel_points`: The 2-D points **x_p** (`(..., 2)`) expressed in the pixel coordinate system *(u, v)* in the matrix of pixels.
 
-![Definition of quantities in pycvcam](./pycvcam/resources/definition.png)
+
+![Definition of quantities in pycvcam](https://raw.githubusercontent.com/Artezaru/pyzernike/master/pycvcam/resources/definition.png)
 
 To convert the `image_points` to the `pixel_points`, a simple switch of coordinate system can be performed.
 
@@ -107,4 +108,16 @@ git clone https://github.com/Artezaru/pycvcam.git
 
 ## License
 
-See LICENSE
+Copyright 2025 Artezaru
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.

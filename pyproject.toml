@@ -8,15 +8,30 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "pycvcam"
 requires-python = ">= 3.10"
-dynamic = ["dependencies", "version"]
+dynamic = ["version"]
 description = "Python Computer Vision Cameras Operations and Models"
 license = {file = "LICENSE"}
 authors = [
 {name = "Artezaru", email = "artezaru.github@proton.me"}
 ]
 classifiers = [
-  "Programming Language :: Python"
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
 ]
+dependencies = [
+    "numpy>=1.26",
+    "opencv-python-headless>=4.9",
+    "scipy>=1.12",
+    "pyzernike-polynomials>=2.0.5",
+    "py3dframe>=0.2.1",
+]
+
+[project.urls]
+Homepage = "https://github.com/Artezaru/pycvcam"
+Documentation = "https://Artezaru.github.io/pycvcam"
+Source = "https://github.com/Artezaru/pycvcam"
+Tracker = "https://github.com/Artezaru/pycvcam/issues"
 
 [tool.setuptools.packages.find]
 where = ["."]
@@ -26,14 +41,7 @@ exclude = ["laboratory", "laboratory.*", "tests", "tests*", "examples", "example
 [tool.setuptools.package-data]
 "pycvcam.resources" = ["*"]
 
-[project.scripts]
-pycvcam = "pycvcam.__main__:__main__"
-
-[project.gui-scripts]
-pycvcam-gui = "pycvcam.__main__:__main_gui__"
-
 [tool.setuptools.dynamic]
-dependencies = {file = ["requirements.txt"]}
 version = {attr = "pycvcam.__version__.__version__"}
 
 [project.optional-dependencies]
@@ -42,8 +50,19 @@ dev = [
     "pydata-sphinx-theme",
     "numpydoc",
     "pytest",
-    "pyinstaller",
     "pytest-cov",
     "bumpver",
-    "pyinstaller"
+    "twine",
+    "wheel",
+    "build",
+    "setuptools",
+    "setuptools-scm",
 ]
+
+[project.readme]
+file = "README.md"
+content-type = "text/markdown"
+
+
+
+
