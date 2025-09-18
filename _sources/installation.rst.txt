@@ -5,9 +5,18 @@ To install ``pycvcam``, you can use the following command:
 
 .. code-block:: bash
 
+    pip install pycvcam
+
+Or install it directly from the GitHub repository using:
+
+.. code-block:: bash
+
     pip install git+https://github.com/Artezaru/pycvcam.git
 
-Or clone the repository and install it manually:
+Development Installation
+------------------------------
+
+To install the package for development, first clone the repository using:
 
 .. code-block:: bash
 
@@ -20,4 +29,3 @@ Then, go to the directory and run the following command:
     pip install -e .
 
 Use ``-e .[dev]`` to install it with the development dependencies.
-
