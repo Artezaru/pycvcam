@@ -19,7 +19,7 @@ As described in the figure below, the package `pycvcam` uses the following notat
 - `pixel_points`: The 2-D points **x_p** (`(..., 2)`) expressed in the pixel coordinate system *(u, v)* in the matrix of pixels.
 
 
-![Definition of quantities in pycvcam](https://raw.githubusercontent.com/Artezaru/pyzernike/master/pycvcam/resources/definition.png)
+![Definition of quantities in pycvcam](https://raw.githubusercontent.com/Artezaru/pycvcam/master/pycvcam/resources/definition.png)
 
 To convert the `image_points` to the `pixel_points`, a simple switch of coordinate system can be performed.
 
