@@ -97,6 +97,10 @@ print(result.jacobian_dintrinsic)  # shape (5, 2, Nintrinsic)
 Install with pip
 
 ```
+pip install pycvcam
+```
+
+```
 pip install git+https://github.com/Artezaru/pycvcam.git
 ```
 
