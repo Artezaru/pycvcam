@@ -13,8 +13,10 @@
 # limitations under the License.
 
 import numpy
+import time
 import copy
 from typing import Optional
+from numbers import Number
 
 from ..core.transform import Transform
 from ..core.package import Package
@@ -27,9 +29,12 @@ def optimize_parameters(
     *,
     transpose: bool = False,
     max_iter: int = 10,
-    eps: float = 1e-8,
-    cond_cutoff: float = 1e5,
-    reg_factor: float = 0.0,
+    delta_p_threshold: Optional[float] = None,
+    eps_threshold: Optional[float] = None,
+    gradient_threshold: Optional[float] = None,
+    max_time: Optional[float] = None,
+    cond_cutoff: Optional[float] = None,
+    reg_factor: Optional[float] = None,
     precond_jacobi: bool = False,
     verbose: bool = False,
     _skip: bool = False,
@@ -105,22 +110,32 @@ def optimize_parameters(
         If True, the input and output points are transposed to shape (input_dim, ...) and (output_dim, ...), respectively. Default is False.
 
     max_iter : int, optional
-        The maximum number of iterations for the optimization. Default is 10.
+        The maximum number of iterations for the optimization. Default is 10. The optimization stops if the maximum number of iterations is reached.
 
-    eps : float, optional
-        The convergence threshold for the optimization. Default is 1e-8.
+    delta_p_threshold : Optional[float], optional
+        If given, the optimization compute :math:`\|\delta \lambda\|` at each iteration and stops if :math:`\|\delta \lambda\| < \text{delta_p_threshold}`. Default is None, which means no threshold is applied.
 
-    verbose : bool, optional
-        If True, print the optimization progress and diagnostics. Default is False.
+    eps_threshold : Optional[float], optional
+        If given, the optimization compute the mean of :math:`\|\vec{X}_O - T(\vec{X}_I, \lambda)\|` at each iteration. All points with a difference lower than `eps_threshold` are considered converged.
+        The optimization stops if all points are converged. Default is None, which means no threshold is applied.
 
-    cond_cutoff : float, optional
-        The cutoff value for the condition number of the Jacobian matrix. If the condition number is greater than this value, the optimization will be considered unstable and will raise a warning and return NaN array. This is used to detect ill-conditioned problems. Default is 1e5.
+    gradient_threshold : Optional[float], optional
+        If given, the optimization compute :math:`\|J^{T} R\|` at each iteration and stops if :math:`\|J^{T} R\| < \text{gradient_threshold}`. Default is None, which means no threshold is applied.
 
-    reg_factor : float, optional
-        The regularization factor for the optimization. If greater than 0, it adds a tikhonov regularization term to the optimization problem to improve stability :math:`J^{T} J + \text{regfactor} I`. Default is 0.0.
+    max_time : Optional[float], optional
+        If given, the optimization stops if the elapsed time is greater than `max_time` seconds. Default is None, which means no time limit is applied.
+
+    cond_cutoff : Optional[float], optional
+        The cutoff value for the condition number of the Jacobian matrix. If the condition number is greater than this value, the optimization will be considered unstable and will raise a warning and return NaN array. This is used to detect ill-conditioned problems. Default is None, which means no cutoff is applied.
+
+    reg_factor : Optional[float], optional
+        The regularization factor for the optimization. If greater than 0, it adds a tikhonov regularization term to the optimization problem to improve stability :math:`J^{T} J + \text{regfactor} I`. Default is None, which means no regularization is applied.
 
     precond_jacobi : bool, optional
         If True, apply a preconditioner to the Jacobian matrix to improve the conditioning of the problem. This is done by applying the Jacobi preconditioner to the Jacobian matrix before solving the optimization problem. Default is False.
+    
+    verbose : bool, optional
+        If True, print the optimization progress and diagnostics. Default is False.
 
     _skip : bool, optional
         If True, skip the checks for the transformation parameters and assume the input and output points are given in the (Npoints, input_dim) and (Npoints, output_dim) float format, respectively.
@@ -178,16 +193,22 @@ def optimize_parameters(
             raise TypeError(f"transpose must be a boolean, got {type(transpose)}")
         if not isinstance(max_iter, int) or max_iter <= 0:
             raise TypeError(f"max_iter must be an integer greater than 0, got {max_iter}")
-        if not isinstance(eps, float) or eps <= 0:
-            raise TypeError(f"eps must be a positive float, got {eps}")
         if not isinstance(verbose, bool):
             raise TypeError(f"verbose must be a boolean, got {type(verbose)}")
-        if not isinstance(cond_cutoff, float) or cond_cutoff <= 0:
+        if cond_cutoff is not None and (not isinstance(cond_cutoff, Number) or cond_cutoff <= 0):
             raise TypeError(f"cond_cutoff must be a positive float, got {cond_cutoff}")
-        if not isinstance(reg_factor, float) or reg_factor < 0:
+        if reg_factor is not None and (not isinstance(reg_factor, Number) or reg_factor < 0):
             raise TypeError(f"reg_factor must be a non-negative float, got {reg_factor}")
         if not isinstance(precond_jacobi, bool):
             raise TypeError(f"precond_jacobi must be a boolean, got {type(precond_jacobi)}")
+        if max_time is not None and (not isinstance(max_time, float) or max_time <= 0):
+            raise TypeError(f"max_time must be a positive float, got {max_time}")
+        if eps_threshold is not None and (not isinstance(eps_threshold, float) or eps_threshold <= 0):
+            raise TypeError(f"eps_threshold must be a positive float, got {eps_threshold}")
+        if delta_p_threshold is not None and (not isinstance(delta_p_threshold, float) or delta_p_threshold <= 0):
+            raise TypeError(f"delta_p_threshold must be a positive float, got {delta_p_threshold}")
+        if gradient_threshold is not None and (not isinstance(gradient_threshold, float) or gradient_threshold <= 0):
+            raise TypeError(f"gradient_threshold must be a positive float, got {gradient_threshold}")
 
         # Convert input and output points to float
         input_points = numpy.asarray(input_points, dtype=Package.get_float_dtype())
@@ -257,28 +278,29 @@ def optimize_parameters(
         if jacobian_dp is None:
             raise ValueError("Jacobian with respect to the parameters is not available. Please implement the _transform method to return the Jacobian with respect to the parameters.")
 
+        # Compute the operator residual
+        R = output_points - transformed_points_itk  # shape (Npoints, output_dim)
+        J = jacobian_dp  # shape (Npoints, output_dim, Nparams)
+
         # Check the convergence of the optimization
-        diff = numpy.linalg.norm(transformed_points_itk - output_points, axis=1)  # shape (Npoints,)
+        if verbose or eps_threshold is not None:
+            diff = numpy.linalg.norm(R, axis=1)  # shape (Npoints,)
+
         if verbose:
             print(f"Iteration {it}: |X_O - X_I| - Max difference: {numpy.nanmax(diff)}, Mean difference: {numpy.nanmean(diff)}")
 
-        if numpy.all(diff[~numpy.isnan(diff)] < eps):
+        if eps_threshold is not None and numpy.all(diff[~numpy.isnan(diff)] < eps_threshold):
             if verbose:
-                print(f"Optimization converged in {it} iterations.")
+                print(f"|X_0 - X_I| < {eps_threshold} - [eps_threshold flag reached] Optimization converged in {it} iterations.")
             break
         
         #===================================================
-        # Create the residual vector and Jacobian matrix
+        # Assembly the residual vector and Jacobian matrix
         #===================================================
-
         if verbose:
             print("\n#=====================================================")
             print(f"STARTING ITERATION {it+1} OF THE OPTIMIZATION PROCESS")
-            print("#=====================================================")
-
-        # Construct the residual vector R and the Jacobian J
-        R = output_points - transformed_points_itk  # shape (Npoints, output_dim)
-        J = jacobian_dp  # shape (Npoints, output_dim, Nparams)
+            print("#=======================================================")
 
         # Create masks to filter out invalid points
         mask_R = numpy.isfinite(R).all(axis=1)  # Create a mask for finite values in R
@@ -300,17 +322,32 @@ def optimize_parameters(
         JTJ = numpy.dot(J_flat.T, J_flat)  # shape (Nparams, Nparams)
         JTR = numpy.dot(J_flat.T, R_flat)  # shape (Nparams,)
 
+        # Check the gradient threshold
+        if verbose or gradient_threshold is not None:
+            grad_norm = numpy.linalg.norm(JTR)  # shape ()
+
+        if verbose:
+            print(f"Iteration {it+1}: |J^T R| - Gradient norm: {grad_norm}")
+
+        if gradient_threshold is not None and grad_norm < gradient_threshold:
+            if verbose:
+                print(f"|J^T R| < {gradient_threshold} - [gradient_threshold flag reached] Optimization converged in {it} iterations.")
+            break
+
 
         #===================================================
         # Regularization and conditioning part
         #===================================================
+        make_reg = reg_factor is not None or precond_jacobi is True
 
         # Display the condition number of the Jacobian matrix without regularization
-        if verbose:
+        if verbose and make_reg:
             print(f"Iteration {it+1}: Condition number of JTJ before preconditionning and regularization: {numpy.linalg.cond(JTJ)}")
+            eigvals, eigvecs = numpy.linalg.eig(JTJ)
+            print(f"Iteration {it+1}: Eigenvalues of JTJ before preconditionning and regularization:\n{eigvals}")
 
         # Add regularization if requested
-        if reg_factor > 0.0:
+        if reg_factor is not None:
             JTJ += reg_factor * numpy.eye(transform.Nparams, dtype=Package.get_float_dtype())
 
             if verbose:
@@ -331,22 +368,22 @@ def optimize_parameters(
             if verbose:
                 print(f"Iteration {it+1}: Condition number of JTJ after Jacobi preconditioning: {numpy.linalg.cond(JTJ)}")
 
-        # Display more information if verbose is True.
-        if verbose:
-            eigvals, eigvecs = numpy.linalg.eig(JTJ)
-            print(f"Iteration {it+1}: Eigenvalues of JTJ:\n{eigvals}")
-
         # ===================================================
         # Condition number check
         # ===================================================
 
         # Condition number check
-        cond_number = numpy.linalg.cond(JTJ)
+        if verbose or cond_cutoff is not None:
+            cond_number = numpy.linalg.cond(JTJ)  # shape ()
 
         if verbose:
             print(f"Iteration {it+1}: Condition number of JTJ: {cond_number}")
 
-        if cond_number > cond_cutoff:
+        if verbose:
+            eigvals, eigvecs = numpy.linalg.eig(JTJ)
+            print(f"Iteration {it+1}: Eigenvalues of JTJ:\n{eigvals}")
+
+        if cond_cutoff is not None and cond_number > cond_cutoff:
             print(f"Warning: Condition number {cond_number} exceeds cutoff {cond_cutoff}. Optimization may be unstable. skipping iteration {it+1} and returning NaN array.")
             return numpy.full(transform.Nparams, numpy.nan, dtype=Package.get_float_dtype())
 
@@ -365,5 +402,14 @@ def optimize_parameters(
 
         if verbose:
             print(f"Iteration {it+1}: Updated parameters:\n{object_class.parameters}")
+
+        # Check the delta_p_threshold
+        if delta_p_threshold is not None:
+            delta_norm = numpy.linalg.norm(delta_itk)  # shape ()
+
+            if delta_norm < delta_p_threshold:
+                if verbose:
+                    print(f"|delta_p| < {delta_p_threshold} - [delta_p_threshold flag reached] Optimization converged in {it+1} iterations.")
+                break
     
     return object_class.parameters  # shape (Nparams,)
