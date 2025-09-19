@@ -293,7 +293,7 @@ def optimize_parameters(
         log_verbose(verbose_level, 2, f"#=====================================================")
 
         # Compute the transformed points and the Jacobian with respect to the parameters
-        if R_precomputed is not None or J_precomputed is not None:
+        if R_precomputed is None or J_precomputed is None:
             transformed_points_itk, _, jacobian_dp = object_class._transform(input_points, dx=False, dp=True)  # shape (Npoints, output_dim), None, (Npoints, output_dim, Nparams)
 
             # Check if the jacobian_dp is None
