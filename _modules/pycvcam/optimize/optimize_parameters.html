@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pycvcam.optimize.optimize_parameters &#8212; pycvcam 1.4.0 documentation</title>
+    <title>pycvcam.optimize.optimize_parameters &#8212; pycvcam 1.4.1 documentation</title>
   
   
   
@@ -37,7 +37,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=9172181d"></script>
+    <script src="../../../_static/documentation_options.js?v=350a9c04"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pycvcam/optimize/optimize_parameters';</script>
@@ -107,7 +107,7 @@
   
   
   
-    <p class="title logo__title">pycvcam 1.4.0 documentation</p>
+    <p class="title logo__title">pycvcam 1.4.1 documentation</p>
   
 </a></div>
     
@@ -333,6 +333,10 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">..core.transform</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transform</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..core.package</span><span class="w"> </span><span class="kn">import</span> <span class="n">Package</span>
 
+<span class="k">def</span><span class="w"> </span><span class="nf">log_verbose</span><span class="p">(</span><span class="n">verbose_level</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">criterion</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">verbose_level</span> <span class="o">&gt;=</span> <span class="n">criterion</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
 <div class="viewcode-block" id="optimize_parameters">
 <a class="viewcode-back" href="../../../api_doc/optimize_parameters.html#pycvcam.optimize.optimize_parameters.optimize_parameters">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">optimize_parameters</span><span class="p">(</span>
@@ -343,14 +347,15 @@
     <span class="o">*</span><span class="p">,</span>
     <span class="n">transpose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="n">max_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">delta_p_threshold</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">eps_threshold</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">eps_sum_threshold</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">gradient_threshold</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">max_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">cond_cutoff</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">reg_factor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">precond_jacobi</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">verbose_level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="n">_skip</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -425,6 +430,9 @@
 
 <span class="sd">    max_iter : int, optional</span>
 <span class="sd">        The maximum number of iterations for the optimization. Default is 10. The optimization stops if the maximum number of iterations is reached.</span>
+<span class="sd">    </span>
+<span class="sd">    max_time : Optional[float], optional</span>
+<span class="sd">        If given, the optimization stops if the elapsed time is greater than `max_time` seconds. Default is None, which means no time limit is applied.</span>
 
 <span class="sd">    delta_p_threshold : Optional[float], optional</span>
 <span class="sd">        If given, the optimization compute :math:`\|\delta \lambda\|` at each iteration and stops if :math:`\|\delta \lambda\| &lt; \text{delta_p_threshold}`. Default is None, which means no threshold is applied.</span>
@@ -433,11 +441,11 @@
 <span class="sd">        If given, the optimization compute the mean of :math:`\|\vec{X}_O - T(\vec{X}_I, \lambda)\|` at each iteration. All points with a difference lower than `eps_threshold` are considered converged.</span>
 <span class="sd">        The optimization stops if all points are converged. Default is None, which means no threshold is applied.</span>
 
+<span class="sd">    eps_sum_threshold : Optional[float], optional</span>
+<span class="sd">        If given, the optimization compute the sum of :math:`\|\vec{X}_O - T(\vec{X}_I, \lambda)\|` at each iteration and stops if :math:`\sum \|\vec{X}_O - T(\vec{X}_I, \lambda)\| &lt; \text{eps_sum_threshold}`. Default is None, which means no threshold is applied.</span>
+
 <span class="sd">    gradient_threshold : Optional[float], optional</span>
 <span class="sd">        If given, the optimization compute :math:`\|J^{T} R\|` at each iteration and stops if :math:`\|J^{T} R\| &lt; \text{gradient_threshold}`. Default is None, which means no threshold is applied.</span>
-
-<span class="sd">    max_time : Optional[float], optional</span>
-<span class="sd">        If given, the optimization stops if the elapsed time is greater than `max_time` seconds. Default is None, which means no time limit is applied.</span>
 
 <span class="sd">    cond_cutoff : Optional[float], optional</span>
 <span class="sd">        The cutoff value for the condition number of the Jacobian matrix. If the condition number is greater than this value, the optimization will be considered unstable and will raise a warning and return NaN array. This is used to detect ill-conditioned problems. Default is None, which means no cutoff is applied.</span>
@@ -448,8 +456,15 @@
 <span class="sd">    precond_jacobi : bool, optional</span>
 <span class="sd">        If True, apply a preconditioner to the Jacobian matrix to improve the conditioning of the problem. This is done by applying the Jacobi preconditioner to the Jacobian matrix before solving the optimization problem. Default is False.</span>
 <span class="sd">    </span>
+<span class="sd">    verboose_level : int, optional</span>
+<span class="sd">        The level of verbosity for the optimization process.</span>
+<span class="sd">        - 0: No output (default)</span>
+<span class="sd">        - 1: Print warnings, flags reached.</span>
+<span class="sd">        - 2: Print iteration result summary (mean, max of residuals and delta parameters norm).</span>
+<span class="sd">        - 3: All the above + print condition number and eigenvalues of the Jacobian matrix.    </span>
+
 <span class="sd">    verbose : bool, optional</span>
-<span class="sd">        If True, print the optimization progress and diagnostics. Default is False.</span>
+<span class="sd">        If True, print the optimization progress and diagnostics. Default is False. This can be useful for debugging and understanding the optimization process but may slow down the optimization.</span>
 
 <span class="sd">    _skip : bool, optional</span>
 <span class="sd">        If True, skip the checks for the transformation parameters and assume the input and output points are given in the (Npoints, input_dim) and (Npoints, output_dim) float format, respectively.</span>
@@ -507,8 +522,8 @@
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;transpose must be a boolean, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">transpose</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">max_iter</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">max_iter</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;max_iter must be an integer greater than 0, got </span><span class="si">{</span><span class="n">max_iter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;verbose must be a boolean, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">verbose</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">verbose_level</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">verbose_level</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">verbose_level</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;verbose_level must be an integer between 0 and 3, got </span><span class="si">{</span><span class="n">verbose_level</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">cond_cutoff</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cond_cutoff</span><span class="p">,</span> <span class="n">Number</span><span class="p">)</span> <span class="ow">or</span> <span class="n">cond_cutoff</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cond_cutoff must be a positive float, got </span><span class="si">{</span><span class="n">cond_cutoff</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">reg_factor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reg_factor</span><span class="p">,</span> <span class="n">Number</span><span class="p">)</span> <span class="ow">or</span> <span class="n">reg_factor</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
@@ -519,6 +534,8 @@
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;max_time must be a positive float, got </span><span class="si">{</span><span class="n">max_time</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">eps_threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">eps_threshold</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">or</span> <span class="n">eps_threshold</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;eps_threshold must be a positive float, got </span><span class="si">{</span><span class="n">eps_threshold</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">eps_sum_threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">eps_sum_threshold</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">or</span> <span class="n">eps_sum_threshold</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;eps_sum_threshold must be a positive float, got </span><span class="si">{</span><span class="n">eps_sum_threshold</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">delta_p_threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">delta_p_threshold</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">or</span> <span class="n">delta_p_threshold</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;delta_p_threshold must be a positive float, got </span><span class="si">{</span><span class="n">delta_p_threshold</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">gradient_threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gradient_threshold</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">or</span> <span class="n">gradient_threshold</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
@@ -577,52 +594,52 @@
     <span class="c1"># Set the parameters of the object class to the guess</span>
     <span class="n">object_class</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">guess</span>
     <span class="n">delta_itk</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">object_class</span><span class="o">.</span><span class="n">parameters</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span>
+    <span class="n">starting_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="n">R_precomputed</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">J_precomputed</span> <span class="o">=</span> <span class="kc">None</span>
 
+    <span class="c1"># ---------------------------------------------</span>
     <span class="c1"># Run the iterative algorithm</span>
+    <span class="c1"># ---------------------------------------------</span>
     <span class="k">for</span> <span class="n">it</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_iter</span><span class="p">):</span>
-
-        <span class="c1">#============================================</span>
-        <span class="c1"># Transformation and Jacobian computation</span>
-        <span class="c1">#============================================</span>
+        <span class="n">log_verbose</span><span class="p">(</span><span class="n">verbose_level</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">#=====================================================&quot;</span><span class="p">)</span>
+        <span class="n">log_verbose</span><span class="p">(</span><span class="n">verbose_level</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;STARTING ITERATION </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2"> OF THE OPTIMIZATION PROCESS&quot;</span><span class="p">)</span>
+        <span class="n">log_verbose</span><span class="p">(</span><span class="n">verbose_level</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;#=====================================================&quot;</span><span class="p">)</span>
 
         <span class="c1"># Compute the transformed points and the Jacobian with respect to the parameters</span>
-        <span class="n">transformed_points_itk</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">jacobian_dp</span> <span class="o">=</span> <span class="n">object_class</span><span class="o">.</span><span class="n">_transform</span><span class="p">(</span><span class="n">input_points</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dp</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># shape (Npoints, output_dim), None, (Npoints, output_dim, Nparams)</span>
+        <span class="k">if</span> <span class="n">R_precomputed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">J_precomputed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">transformed_points_itk</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">jacobian_dp</span> <span class="o">=</span> <span class="n">object_class</span><span class="o">.</span><span class="n">_transform</span><span class="p">(</span><span class="n">input_points</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dp</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># shape (Npoints, output_dim), None, (Npoints, output_dim, Nparams)</span>
 
-        <span class="c1"># Check if the jacobian_dp is None$</span>
-        <span class="k">if</span> <span class="n">jacobian_dp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Jacobian with respect to the parameters is not available. Please implement the _transform method to return the Jacobian with respect to the parameters.&quot;</span><span class="p">)</span>
+            <span class="c1"># Check if the jacobian_dp is None</span>
+            <span class="k">if</span> <span class="n">jacobian_dp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Jacobian with respect to the parameters is not available. Please implement the _transform method to return the Jacobian with respect to the parameters.&quot;</span><span class="p">)</span>
 
-        <span class="c1"># Compute the operator residual</span>
-        <span class="n">R</span> <span class="o">=</span> <span class="n">output_points</span> <span class="o">-</span> <span class="n">transformed_points_itk</span>  <span class="c1"># shape (Npoints, output_dim)</span>
-        <span class="n">J</span> <span class="o">=</span> <span class="n">jacobian_dp</span>  <span class="c1"># shape (Npoints, output_dim, Nparams)</span>
+            <span class="c1"># Compute the operator residual</span>
+            <span class="n">R</span> <span class="o">=</span> <span class="n">output_points</span> <span class="o">-</span> <span class="n">transformed_points_itk</span>  <span class="c1"># shape (Npoints, output_dim)</span>
+            <span class="n">J</span> <span class="o">=</span> <span class="n">jacobian_dp</span>  <span class="c1"># shape (Npoints, output_dim, Nparams)</span>
 
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">R</span> <span class="o">=</span> <span class="n">R_precomputed</span>
+            <span class="n">J</span> <span class="o">=</span> <span class="n">J_precomputed</span>
+        
         <span class="c1"># Check the convergence of the optimization</span>
-        <span class="k">if</span> <span class="n">verbose</span> <span class="ow">or</span> <span class="n">eps_threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbose_level</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">eps_threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">eps_sum_threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">diff</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># shape (Npoints,)</span>
-
-        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">it</span><span class="si">}</span><span class="s2">: |X_O - X_I| - Max difference: </span><span class="si">{</span><span class="n">numpy</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span><span class="si">}</span><span class="s2">, Mean difference: </span><span class="si">{</span><span class="n">numpy</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">log_verbose</span><span class="p">(</span><span class="n">verbose_level</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2"> [Before updating]: |X_O - X_I| - Max difference: </span><span class="si">{</span><span class="n">numpy</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span><span class="si">}</span><span class="s2">, Mean difference: </span><span class="si">{</span><span class="n">numpy</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">eps_threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">numpy</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">diff</span><span class="p">[</span><span class="o">~</span><span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">diff</span><span class="p">)]</span> <span class="o">&lt;</span> <span class="n">eps_threshold</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;|X_0 - X_I| &lt; </span><span class="si">{</span><span class="n">eps_threshold</span><span class="si">}</span><span class="s2"> - [eps_threshold flag reached] Optimization converged in </span><span class="si">{</span><span class="n">it</span><span class="si">}</span><span class="s2"> iterations.&quot;</span><span class="p">)</span>
+            <span class="n">log_verbose</span><span class="p">(</span><span class="n">verbose_level</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;[eps_threshold flag reached] : |X_0 - X_I| &lt; </span><span class="si">{</span><span class="n">eps_threshold</span><span class="si">}</span><span class="s2"> - Optimization converged in </span><span class="si">{</span><span class="n">it</span><span class="si">}</span><span class="s2"> iterations.&quot;</span><span class="p">)</span>
             <span class="k">break</span>
-        
-        <span class="c1">#===================================================</span>
-        <span class="c1"># Assembly the residual vector and Jacobian matrix</span>
-        <span class="c1">#===================================================</span>
-        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">#=====================================================&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;STARTING ITERATION </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2"> OF THE OPTIMIZATION PROCESS&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;#=======================================================&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">eps_sum_threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">numpy</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">eps_sum_threshold</span><span class="p">:</span>
+            <span class="n">log_verbose</span><span class="p">(</span><span class="n">verbose_level</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;[eps_sum_threshold flag reached] : sum(|X_0 - X_I|) &lt; </span><span class="si">{</span><span class="n">eps_sum_threshold</span><span class="si">}</span><span class="s2"> - Optimization converged in </span><span class="si">{</span><span class="n">it</span><span class="si">}</span><span class="s2"> iterations.&quot;</span><span class="p">)</span>
+            <span class="k">break</span>
 
         <span class="c1"># Create masks to filter out invalid points</span>
         <span class="n">mask_R</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">R</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Create a mask for finite values in R</span>
         <span class="n">mask_J</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">J</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>  <span class="c1"># Create a mask for finite values in each row of J</span>
         <span class="n">mask</span> <span class="o">=</span> <span class="n">mask_R</span> <span class="o">&amp;</span> <span class="n">mask_J</span>  <span class="c1"># Combine the masks to filter out invalid points</span>
-
-        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span><span class="si">}</span><span class="s2"> valid points out of </span><span class="si">{</span><span class="n">Npoints</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="n">log_verbose</span><span class="p">(</span><span class="n">verbose_level</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span><span class="si">}</span><span class="s2"> valid points out of </span><span class="si">{</span><span class="n">Npoints</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
 
         <span class="c1"># Apply the masks to R_flat and J_flat</span>
         <span class="n">R</span> <span class="o">=</span> <span class="n">R</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1"># shape (Nvalid_points, output_dim)</span>
@@ -637,35 +654,17 @@
         <span class="n">JTR</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">J_flat</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">R_flat</span><span class="p">)</span>  <span class="c1"># shape (Nparams,)</span>
 
         <span class="c1"># Check the gradient threshold</span>
-        <span class="k">if</span> <span class="n">verbose</span> <span class="ow">or</span> <span class="n">gradient_threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbose_level</span> <span class="o">&gt;=</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">gradient_threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">grad_norm</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">JTR</span><span class="p">)</span>  <span class="c1"># shape ()</span>
-
-        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: |J^T R| - Gradient norm: </span><span class="si">{</span><span class="n">grad_norm</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
+            <span class="n">log_verbose</span><span class="p">(</span><span class="n">verbose_level</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: |J^T R| - Gradient norm: </span><span class="si">{</span><span class="n">grad_norm</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            
         <span class="k">if</span> <span class="n">gradient_threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">grad_norm</span> <span class="o">&lt;</span> <span class="n">gradient_threshold</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;|J^T R| &lt; </span><span class="si">{</span><span class="n">gradient_threshold</span><span class="si">}</span><span class="s2"> - [gradient_threshold flag reached] Optimization converged in </span><span class="si">{</span><span class="n">it</span><span class="si">}</span><span class="s2"> iterations.&quot;</span><span class="p">)</span>
+            <span class="n">log_verbose</span><span class="p">(</span><span class="n">verbose_level</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;[gradient_threshold flag reached] : |J^T R| &lt; </span><span class="si">{</span><span class="n">gradient_threshold</span><span class="si">}</span><span class="s2"> - Optimization converged in </span><span class="si">{</span><span class="n">it</span><span class="si">}</span><span class="s2"> iterations.&quot;</span><span class="p">)</span>
             <span class="k">break</span>
-
-
-        <span class="c1">#===================================================</span>
-        <span class="c1"># Regularization and conditioning part</span>
-        <span class="c1">#===================================================</span>
-        <span class="n">make_reg</span> <span class="o">=</span> <span class="n">reg_factor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">precond_jacobi</span> <span class="ow">is</span> <span class="kc">True</span>
-
-        <span class="c1"># Display the condition number of the Jacobian matrix without regularization</span>
-        <span class="k">if</span> <span class="n">verbose</span> <span class="ow">and</span> <span class="n">make_reg</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: Condition number of JTJ before preconditionning and regularization: </span><span class="si">{</span><span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cond</span><span class="p">(</span><span class="n">JTJ</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">eigvals</span><span class="p">,</span> <span class="n">eigvecs</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="n">JTJ</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: Eigenvalues of JTJ before preconditionning and regularization:</span><span class="se">\n</span><span class="si">{</span><span class="n">eigvals</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="c1"># Add regularization if requested</span>
         <span class="k">if</span> <span class="n">reg_factor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">JTJ</span> <span class="o">+=</span> <span class="n">reg_factor</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">transform</span><span class="o">.</span><span class="n">Nparams</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span>
-
-            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: Condition number of JTJ after regularization: </span><span class="si">{</span><span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cond</span><span class="p">(</span><span class="n">JTJ</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="c1"># Apply preconditioning if requested</span>
         <span class="k">if</span> <span class="n">precond_jacobi</span><span class="p">:</span>
@@ -673,57 +672,50 @@
             <span class="n">diag_JTJ</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">JTJ</span><span class="p">)</span>
             
             <span class="k">if</span> <span class="n">numpy</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">diag_JTJ</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Jacobi preconditioner cannot be applied because the diagonal of JTJ contains zeros.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Jacobi preconditioner cannot be applied because the diagonal of (J^T J) contains zeros.&quot;</span><span class="p">)</span>
 
             <span class="c1"># Apply the Jacobi preconditioner</span>
             <span class="n">JTJ</span> <span class="o">=</span> <span class="n">JTJ</span> <span class="o">/</span> <span class="n">diag_JTJ</span><span class="p">[:,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>  <span class="c1"># Normalize each row by the diagonal element</span>
             <span class="n">JTR</span> <span class="o">=</span> <span class="n">JTR</span> <span class="o">/</span> <span class="n">diag_JTJ</span>  <span class="c1"># Normalize the residual vector by the diagonal elements</span>
 
-            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: Condition number of JTJ after Jacobi preconditioning: </span><span class="si">{</span><span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cond</span><span class="p">(</span><span class="n">JTJ</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-        <span class="c1"># ===================================================</span>
         <span class="c1"># Condition number check</span>
-        <span class="c1"># ===================================================</span>
-
-        <span class="c1"># Condition number check</span>
-        <span class="k">if</span> <span class="n">verbose</span> <span class="ow">or</span> <span class="n">cond_cutoff</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbose_level</span> <span class="o">&gt;=</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">cond_cutoff</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">cond_number</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cond</span><span class="p">(</span><span class="n">JTJ</span><span class="p">)</span>  <span class="c1"># shape ()</span>
-
-        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: Condition number of JTJ: </span><span class="si">{</span><span class="n">cond_number</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="n">eigvals</span><span class="p">,</span> <span class="n">eigvecs</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="n">JTJ</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: Eigenvalues of JTJ:</span><span class="se">\n</span><span class="si">{</span><span class="n">eigvals</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">log_verbose</span><span class="p">(</span><span class="n">verbose_level</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: Condition number of (J^T J): </span><span class="si">{</span><span class="n">cond_number</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">log_verbose</span><span class="p">(</span><span class="n">verbose_level</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: Eigenvalues of (J^T J):</span><span class="se">\n</span><span class="si">{</span><span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigvals</span><span class="p">(</span><span class="n">JTJ</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">cond_cutoff</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">cond_number</span> <span class="o">&gt;</span> <span class="n">cond_cutoff</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: Condition number </span><span class="si">{</span><span class="n">cond_number</span><span class="si">}</span><span class="s2"> exceeds cutoff </span><span class="si">{</span><span class="n">cond_cutoff</span><span class="si">}</span><span class="s2">. Optimization may be unstable. skipping iteration </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2"> and returning NaN array.&quot;</span><span class="p">)</span>
+            <span class="n">log_verbose</span><span class="p">(</span><span class="n">verbose_level</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;[cond_number flag reached] : Warning Condition number </span><span class="si">{</span><span class="n">cond_number</span><span class="si">}</span><span class="s2"> exceeds cutoff </span><span class="si">{</span><span class="n">cond_cutoff</span><span class="si">}</span><span class="s2">. Optimization may be unstable. skipping iteration </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2"> and returning NaN array.&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">transform</span><span class="o">.</span><span class="n">Nparams</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span>
-
-        <span class="c1"># ====================================================</span>
-        <span class="c1"># Solve the linear system to find the delta</span>
-        <span class="c1"># ====================================================</span>
 
         <span class="c1"># Solve the linear system to find the delta</span>
         <span class="n">delta_itk</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">JTJ</span><span class="p">,</span> <span class="n">JTR</span><span class="p">)</span> <span class="c1"># shape (Nparams,)</span>
+        <span class="n">log_verbose</span><span class="p">(</span><span class="n">verbose_level</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: Solved delta parameters:</span><span class="se">\n</span><span class="si">{</span><span class="n">delta_itk</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: Delta parameters:</span><span class="se">\n</span><span class="si">{</span><span class="n">delta_itk</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            
         <span class="c1"># Update the parameters of the object class</span>
         <span class="n">object_class</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">object_class</span><span class="o">.</span><span class="n">parameters</span> <span class="o">+</span> <span class="n">delta_itk</span>  <span class="c1"># shape (Nparams,)</span>
+        <span class="n">log_verbose</span><span class="p">(</span><span class="n">verbose_level</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: Updated parameters:</span><span class="se">\n</span><span class="si">{</span><span class="n">object_class</span><span class="o">.</span><span class="n">parameters</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: Updated parameters:</span><span class="se">\n</span><span class="si">{</span><span class="n">object_class</span><span class="o">.</span><span class="n">parameters</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># If full verbose is True, compute the new residuals after updating the parameters</span>
+        <span class="k">if</span> <span class="n">verbose_level</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">transformed_points_itk</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">jacobian_dp</span> <span class="o">=</span> <span class="n">object_class</span><span class="o">.</span><span class="n">_transform</span><span class="p">(</span><span class="n">input_points</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dp</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># shape (Npoints, output_dim), None, (Npoints, output_dim, Nparams)</span>
+            <span class="n">R_precomputed</span> <span class="o">=</span> <span class="n">output_points</span> <span class="o">-</span> <span class="n">transformed_points_itk</span>  <span class="c1"># shape (Npoints, output_dim)</span>
+            <span class="n">J_precomputed</span> <span class="o">=</span> <span class="n">jacobian_dp</span>  <span class="c1"># shape (Npoints, output_dim, Nparams)</span>
+            <span class="n">log_verbose</span><span class="p">(</span><span class="n">verbose_level</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2"> [After updating]: |X_O - X_I| - Max difference: </span><span class="si">{</span><span class="n">numpy</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">R_precomputed</span><span class="p">)</span><span class="si">}</span><span class="s2">, Mean difference: </span><span class="si">{</span><span class="n">numpy</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">R_precomputed</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="c1"># Check the delta_p_threshold</span>
         <span class="k">if</span> <span class="n">delta_p_threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">delta_norm</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">delta_itk</span><span class="p">)</span>  <span class="c1"># shape ()</span>
 
             <span class="k">if</span> <span class="n">delta_norm</span> <span class="o">&lt;</span> <span class="n">delta_p_threshold</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;|delta_p| &lt; </span><span class="si">{</span><span class="n">delta_p_threshold</span><span class="si">}</span><span class="s2"> - [delta_p_threshold flag reached] Optimization converged in </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2"> iterations.&quot;</span><span class="p">)</span>
+                <span class="n">log_verbose</span><span class="p">(</span><span class="n">verbose_level</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;[delta_p_threshold flag reached] : |delta_p| &lt; </span><span class="si">{</span><span class="n">delta_p_threshold</span><span class="si">}</span><span class="s2"> - Optimization converged in </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2"> iterations.&quot;</span><span class="p">)</span>
+                <span class="k">break</span>
+
+        <span class="c1"># Check the max_time</span>
+        <span class="k">if</span> <span class="n">max_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">elapsed_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">starting_time</span>  <span class="c1"># shape ()</span>
+            <span class="k">if</span> <span class="n">elapsed_time</span> <span class="o">&gt;</span> <span class="n">max_time</span><span class="p">:</span>
+                <span class="n">log_verbose</span><span class="p">(</span><span class="n">verbose_level</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;[max_time flag reached] : Warning Elapsed time </span><span class="si">{</span><span class="n">elapsed_time</span><span class="si">}</span><span class="s2"> seconds exceeds max_time </span><span class="si">{</span><span class="n">max_time</span><span class="si">}</span><span class="s2"> seconds - Optimization stopped at iteration </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
                 <span class="k">break</span>
     
     <span class="k">return</span> <span class="n">object_class</span><span class="o">.</span><span class="n">parameters</span>  <span class="c1"># shape (Nparams,)</span></div>
