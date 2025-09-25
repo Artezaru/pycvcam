@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pycvcam.extrinsic_objects.cv2_extrinsic &#8212; pycvcam 1.5.0 documentation</title>
+    <title>pycvcam.extrinsic_objects.orthographic_extrinsic &#8212; pycvcam 1.5.0 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
     <script src="../../../_static/documentation_options.js?v=e0a75244"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pycvcam/extrinsic_objects/cv2_extrinsic';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pycvcam/extrinsic_objects/orthographic_extrinsic';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -292,7 +292,7 @@
     
     <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pycvcam.extrinsic_objects.cv2_extrinsic</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pycvcam.extrinsic_objects.orthographic_extrinsic</span></li>
   </ul>
 </nav>
 </div>
@@ -309,7 +309,7 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <h1>Source code for pycvcam.extrinsic_objects.cv2_extrinsic</h1><div class="highlight"><pre>
+  <h1>Source code for pycvcam.extrinsic_objects.orthographic_extrinsic</h1><div class="highlight"><pre>
 <span></span>
 <span class="c1"># Copyright 2025 Artezaru</span>
 <span class="c1">#</span>
@@ -334,18 +334,19 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">..core</span><span class="w"> </span><span class="kn">import</span> <span class="n">Extrinsic</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..core.package</span><span class="w"> </span><span class="kn">import</span> <span class="n">Package</span>
 
-<div class="viewcode-block" id="Cv2Extrinsic">
-<a class="viewcode-back" href="../../../api_doc/cv2_extrinsic.html#pycvcam.Cv2Extrinsic">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">Cv2Extrinsic</span><span class="p">(</span><span class="n">Extrinsic</span><span class="p">):</span>
+
+<div class="viewcode-block" id="OrthographicExtrinsic">
+<a class="viewcode-back" href="../../../api_doc/orthographic_extrinsic.html#pycvcam.OrthographicExtrinsic">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">OrthographicExtrinsic</span><span class="p">(</span><span class="n">Extrinsic</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 
-<span class="sd">    Subclass of the :class:`pycvcam.core.Extrinsic` class that represents the OpenCV extrinsic model.</span>
+<span class="sd">    Subclass of the :class:`pycvcam.core.Extrinsic` class that represents the orthographic extrinsic transformation.</span>
 
 <span class="sd">    .. note::</span>
 
 <span class="sd">        This class represents the extrinsic transformation, which is the first step of the process from the ``world_points`` to the ``image_points``.</span>
 
-<span class="sd">    The ``Cv2Extrinsic`` model in the composition of a changement in reference frame and a normalisation.</span>
+<span class="sd">    The ``OrthographicExtrinsic`` model in the composition of a changement in reference frame and an orthographic projection.</span>
 
 <span class="sd">    Lets consider ``world_points`` in the global coordinate system :math:`\vec{X}_w = (X_w, Y_w, Z_w)`, the corresponding ``normalized_points`` in the camera normalized coordinate system are given :math:`\vec{x}_n` can be optained by :</span>
 
@@ -355,9 +356,9 @@
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        \vec{x}_n = \frac{\vec{X_c}}{Z_c}</span>
+<span class="sd">        \vec{x}_n = (X_c, Y_c)</span>
 
-<span class="sd">    where :math:`R` is the rotation matrix, :math:`T` is the translation vector, and :math:`Z_c` is the depth of the point in the camera coordinate system.</span>
+<span class="sd">    where :math:`R` is the rotation matrix, :math:`T` is the translation vector, and :math:`Z_c` the depth of the point in the camera coordinate system is ignored.</span>
 
 <span class="sd">    .. note::</span>
 
@@ -379,7 +380,7 @@
 
 <span class="sd">    .. note::</span>
 
-<span class="sd">        The ``Cv2Extrinsic`` class can be instantiated with 3 different ways:</span>
+<span class="sd">        The ``OrthographicExtrinsic`` class can be instantiated with 3 different ways:</span>
 
 <span class="sd">        - Setting directly the parameters as a numpy array of shape (6,) (__init__ method) containing the rotation vector and translation vector concatenated.</span>
 <span class="sd">        - Using the classmethod ``from_rt`` to set the rotation vector and translation vector.</span>
@@ -397,12 +398,12 @@
 <span class="sd">    .. code-block:: python</span>
 
 <span class="sd">        import numpy</span>
-<span class="sd">        from pycvcam import Cv2Extrinsic</span>
+<span class="sd">        from pycvcam import OrthographicExtrinsic</span>
 
 <span class="sd">        rvec = numpy.array([0.1, 0.2, 0.3])</span>
 <span class="sd">        tvec = numpy.array([0.5, 0.5, 0.5])</span>
 
-<span class="sd">        extrinsic = Cv2Extrinsic.from_rt(rvec, tvec)</span>
+<span class="sd">        extrinsic = OrthographicExtrinsic.from_rt(rvec, tvec)</span>
 
 <span class="sd">    Then you can use the extrinsic object to transform ``world_points`` to ``normalized_points``:</span>
 
@@ -446,8 +447,8 @@
 
 <span class="sd">        For more information about the transformation process, see:</span>
 
-<span class="sd">        - :meth:`pycvcam.Cv2Extrinsic._transform` to transform the ``world_points`` to ``normalized_points``.</span>
-<span class="sd">        - :meth:`pycvcam.Cv2Extrinsic._inverse_transform` to transform the ``normalized_points`` back to ``world_points``.</span>
+<span class="sd">        - :meth:`pycvcam.OrthographicExtrinsic._transform` to transform the ``world_points`` to ``normalized_points``.</span>
+<span class="sd">        - :meth:`pycvcam.OrthographicExtrinsic._inverse_transform` to transform the ``normalized_points`` back to ``world_points``.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;_rvec&quot;</span><span class="p">,</span> <span class="s2">&quot;_tvec&quot;</span><span class="p">]</span>
@@ -459,8 +460,8 @@
     <span class="c1"># =============================================</span>
     <span class="c1"># Overwrite some properties from the base class</span>
     <span class="c1"># =============================================</span>
-<div class="viewcode-block" id="Cv2Extrinsic._get_jacobian_short_hand">
-<a class="viewcode-back" href="../../../api_doc/cv2_extrinsic.html#pycvcam.Cv2Extrinsic._get_jacobian_short_hand">[docs]</a>
+<div class="viewcode-block" id="OrthographicExtrinsic._get_jacobian_short_hand">
+<a class="viewcode-back" href="../../../api_doc/orthographic_extrinsic.html#pycvcam.OrthographicExtrinsic._get_jacobian_short_hand">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_jacobian_short_hand</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Short-hand notation for the Jacobian matrices with respect to the extrinsic parameters.</span>
@@ -491,7 +492,7 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        int</span>
-<span class="sd">            The number of parameters of the extrinsic transformation. It is always 6 for the Cv2Extrinsic class.</span>
+<span class="sd">            The number of parameters of the extrinsic transformation. It is always 6 for the OrthographicExtrinsic class.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="mi">6</span>
 
@@ -504,8 +505,8 @@
 
 <span class="sd">        .. seealso::</span>
 
-<span class="sd">            - :meth:`pycvcam.Cv2Extrinsic.rotation_vector` or ``rvec`` to set the rotation vector of the extrinsic transformation.</span>
-<span class="sd">            - :meth:`pycvcam.Cv2Extrinsic.translation_vector` or ``tvec`` to set the translation vector of the extrinsic transformation.</span>
+<span class="sd">            - :meth:`pycvcam.OrthographicExtrinsic.rotation_vector` or ``rvec`` to set the rotation vector of the extrinsic transformation.</span>
+<span class="sd">            - :meth:`pycvcam.OrthographicExtrinsic.translation_vector` or ``tvec`` to set the translation vector of the extrinsic transformation.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -533,14 +534,14 @@
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">constants</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Always returns None for the Cv2Extrinsic class, as it does not have any constants.</span>
+<span class="sd">        Always returns None for the OrthographicExtrinsic class, as it does not have any constants.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="kc">None</span>
     
     <span class="nd">@constants</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">constants</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cv2Extrinsic model has no constants, must be set to None.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;OrthographicExtrinsic model has no constants, must be set to None.&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_constants</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
@@ -558,12 +559,12 @@
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">constant_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Always returns an empty list for the Cv2Extrinsic class, as it does not have any constants.</span>
+<span class="sd">        Always returns an empty list for the OrthographicExtrinsic class, as it does not have any constants.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">[]</span>
 
-<div class="viewcode-block" id="Cv2Extrinsic.is_set">
-<a class="viewcode-back" href="../../../api_doc/cv2_extrinsic.html#pycvcam.Cv2Extrinsic.is_set">[docs]</a>
+<div class="viewcode-block" id="OrthographicExtrinsic.is_set">
+<a class="viewcode-back" href="../../../api_doc/orthographic_extrinsic.html#pycvcam.OrthographicExtrinsic.is_set">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_set</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if the extrinsic parameters are set.</span>
@@ -592,7 +593,7 @@
 
 <span class="sd">        .. seealso::</span>
 
-<span class="sd">            - :meth:`pycvcam.Cv2Extrinsic.rotation_vector` or ``rvec`` to set the rotation vector of the extrinsic transformation.</span>
+<span class="sd">            - :meth:`pycvcam.OrthographicExtrinsic.rotation_vector` or ``rvec`` to set the rotation vector of the extrinsic transformation.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -637,7 +638,7 @@
 
 <span class="sd">        .. seealso::</span>
 
-<span class="sd">            - :meth:`pycvcam.Cv2Extrinsic.translation_vector` or ``tvec`` to set the translation vector of the extrinsic transformation.</span>
+<span class="sd">            - :meth:`pycvcam.OrthographicExtrinsic.translation_vector` or ``tvec`` to set the translation vector of the extrinsic transformation.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -748,12 +749,12 @@
     <span class="c1"># =============================================</span>
     <span class="c1"># Instantiation methods</span>
     <span class="c1"># =============================================</span>
-<div class="viewcode-block" id="Cv2Extrinsic.from_rt">
-<a class="viewcode-back" href="../../../api_doc/cv2_extrinsic.html#pycvcam.Cv2Extrinsic.from_rt">[docs]</a>
+<div class="viewcode-block" id="OrthographicExtrinsic.from_rt">
+<a class="viewcode-back" href="../../../api_doc/orthographic_extrinsic.html#pycvcam.OrthographicExtrinsic.from_rt">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">from_rt</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">rvec</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">tvec</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Cv2Extrinsic</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_rt</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">rvec</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">tvec</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OrthographicExtrinsic</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Class method to create a Cv2Extrinsic object from a rotation vector and a translation vector.</span>
+<span class="sd">        Class method to create a OrthographicExtrinsic object from a rotation vector and a translation vector.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -765,8 +766,8 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        Cv2Extrinsic</span>
-<span class="sd">            A new instance of the Cv2Extrinsic class with the specified rotation and translation vectors.</span>
+<span class="sd">        OrthographicExtrinsic</span>
+<span class="sd">            A new instance of the OrthographicExtrinsic class with the specified rotation and translation vectors.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -776,12 +777,12 @@
 
 <span class="sd">            import numpy as np</span>
 
-<span class="sd">            from pycvcam import Cv2Extrinsic</span>
+<span class="sd">            from pycvcam import OrthographicExtrinsic</span>
 
 <span class="sd">            rvec = numpy.array([0.1, 0.2, 0.3])</span>
 <span class="sd">            tvec = numpy.array([0.5, 0.5, 0.5])</span>
 
-<span class="sd">            extrinsic = Cv2Extrinsic.from_rt(rvec, tvec)</span>
+<span class="sd">            extrinsic = OrthographicExtrinsic.from_rt(rvec, tvec)</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">extrinsic</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
@@ -790,12 +791,12 @@
         <span class="k">return</span> <span class="n">extrinsic</span></div>
 
     
-<div class="viewcode-block" id="Cv2Extrinsic.from_frame">
-<a class="viewcode-back" href="../../../api_doc/cv2_extrinsic.html#pycvcam.Cv2Extrinsic.from_frame">[docs]</a>
+<div class="viewcode-block" id="OrthographicExtrinsic.from_frame">
+<a class="viewcode-back" href="../../../api_doc/orthographic_extrinsic.html#pycvcam.OrthographicExtrinsic.from_frame">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">from_frame</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="n">Frame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Cv2Extrinsic</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_frame</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="n">Frame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OrthographicExtrinsic</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Class method to create a Cv2Extrinsic object from a 3D frame.</span>
+<span class="sd">        Class method to create a OrthographicExtrinsic object from a 3D frame.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -804,8 +805,8 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        Cv2Extrinsic</span>
-<span class="sd">            A new instance of the Cv2Extrinsic class with the specified 3D frame.</span>
+<span class="sd">        OrthographicExtrinsic</span>
+<span class="sd">            A new instance of the OrthographicExtrinsic class with the specified 3D frame.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -814,10 +815,10 @@
 <span class="sd">        .. code-block:: python</span>
 
 <span class="sd">            from py3dframe import Frame</span>
-<span class="sd">            from pycvcam import Cv2Extrinsic</span>
+<span class="sd">            from pycvcam import OrthographicExtrinsic</span>
 
 <span class="sd">            frame = Frame(translation=[0.5, 0.5, 0.5], rotation_vector=[0.1, 0.2, 0.3], convention=4)</span>
-<span class="sd">            extrinsic = Cv2Extrinsic.from_frame(frame)</span>
+<span class="sd">            extrinsic = OrthographicExtrinsic.from_frame(frame)</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">extrinsic</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
@@ -828,8 +829,8 @@
     <span class="c1"># =============================================</span>
     <span class="c1"># Transform methods</span>
     <span class="c1"># =============================================</span>
-<div class="viewcode-block" id="Cv2Extrinsic._transform">
-<a class="viewcode-back" href="../../../api_doc/cv2_extrinsic.html#pycvcam.Cv2Extrinsic._transform">[docs]</a>
+<div class="viewcode-block" id="OrthographicExtrinsic._transform">
+<a class="viewcode-back" href="../../../api_doc/orthographic_extrinsic.html#pycvcam.OrthographicExtrinsic._transform">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">world_points</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">dx</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">dp</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the transformation from the ``world_points`` to the ``normalized_points``.</span>
@@ -842,9 +843,9 @@
 
 <span class="sd">        .. math::</span>
 
-<span class="sd">            \vec{x}_n = \frac{\vec{X}_c}{Z_c}</span>
+<span class="sd">            \vec{x}_n = (X_c, Y_c)</span>
 
-<span class="sd">        where :math:`R` is the rotation matrix, :math:`T` is the translation vector, and :math:`Z_c` is the depth of the point in the camera coordinate system.</span>
+<span class="sd">        where :math:`R` is the rotation matrix, :math:`T` is the translation vector, and :math:`Z_c` the depth of the point in the camera coordinate system is ignored.</span>
 
 <span class="sd">        The jacobians with respect to the extrinsic parameters is an array with shape (Npoints, 2, 6), where the last dimension contains the jacobian with respect to the rotation vector and translation vector.</span>
 <span class="sd">        The jacobian with respect to the world points is an array with shape (Npoints, 2, 3).</span>
@@ -892,16 +893,10 @@
         <span class="c1"># ==================</span>
         <span class="c1"># Compute the camera points</span>
         <span class="n">points_camera_flat</span> <span class="o">=</span> <span class="n">world_points</span> <span class="o">@</span> <span class="n">rmat</span><span class="o">.</span><span class="n">T</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tvec</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span> <span class="c1"># shape (Npoints, 3)</span>
-        <span class="n">X_C</span> <span class="o">=</span> <span class="n">points_camera_flat</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="c1"># shape (Npoints,)</span>
-        <span class="n">Y_C</span> <span class="o">=</span> <span class="n">points_camera_flat</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="c1"># shape (Npoints,)</span>
-        <span class="n">Z_C</span> <span class="o">=</span> <span class="n">points_camera_flat</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="c1"># shape (Npoints,)</span>
 
         <span class="c1"># Compute the jacobian with respect to the world points</span>
         <span class="k">if</span> <span class="n">dx</span><span class="p">:</span>
             <span class="n">points_camera_flat_dx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span><span class="n">rmat</span><span class="p">,</span> <span class="p">(</span><span class="n">Npoints</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-            <span class="n">X_C_dx</span> <span class="o">=</span> <span class="n">points_camera_flat_dx</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="c1"># shape (Npoints, 3)</span>
-            <span class="n">Y_C_dx</span> <span class="o">=</span> <span class="n">points_camera_flat_dx</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="c1"># shape (Npoints, 3)</span>
-            <span class="n">Z_C_dx</span> <span class="o">=</span> <span class="n">points_camera_flat_dx</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">,</span> <span class="p">:]</span> <span class="c1"># shape (Npoints, 3)</span>
 
         <span class="c1"># Compute the jacobian with respect to the extrinsic parameters</span>
         <span class="k">if</span> <span class="n">dp</span><span class="p">:</span>
@@ -911,37 +906,19 @@
             <span class="n">points_camera_flat_dp</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())[</span><span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span> <span class="c1"># shape (Npoints, 3)</span>
             <span class="n">points_camera_flat_dp</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())[</span><span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span> <span class="c1"># shape (Npoints, 3)</span>
             <span class="n">points_camera_flat_dp</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())[</span><span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span> <span class="c1"># shape (Npoints, 3)</span>
-            <span class="n">X_C_dp</span> <span class="o">=</span> <span class="n">points_camera_flat_dp</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="c1"># shape (Npoints, 6)</span>
-            <span class="n">Y_C_dp</span> <span class="o">=</span> <span class="n">points_camera_flat_dp</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="c1"># shape (Npoints, 6)</span>
-            <span class="n">Z_C_dp</span> <span class="o">=</span> <span class="n">points_camera_flat_dp</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">,</span> <span class="p">:]</span> <span class="c1"># shape (Npoints, 6)</span>
 
         <span class="c1"># ==================</span>
         <span class="c1"># Normalized points</span>
         <span class="c1"># ==================</span>
-        <span class="k">if</span> <span class="n">numpy</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">points_camera_flat</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mf">1e-6</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The Z coordinate of the camera points is too close to zero. This may cause numerical instability.&quot;</span><span class="p">)</span>
-
-        <span class="c1"># Compute the normalized points</span>
-        <span class="n">iZ_C</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">Z_C</span> <span class="c1"># shape (Npoints,)</span>
-
-        <span class="n">normalized_points_flat</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">Npoints</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span> <span class="c1"># shape (Npoints, 2)</span>
-        <span class="n">x_N</span> <span class="o">=</span> <span class="n">X_C</span> <span class="o">*</span> <span class="n">iZ_C</span>
-        <span class="n">y_N</span> <span class="o">=</span> <span class="n">Y_C</span> <span class="o">*</span> <span class="n">iZ_C</span>
-        <span class="n">normalized_points_flat</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">x_N</span>
-        <span class="n">normalized_points_flat</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">y_N</span>
+        <span class="n">normalized_points_flat</span> <span class="o">=</span> <span class="n">points_camera_flat</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="c1"># shape (Npoints, 2)</span>
 
         <span class="c1"># Compute the jacobian with respect to the camera points</span>
         <span class="k">if</span> <span class="n">dx</span><span class="p">:</span>
-            <span class="n">jacobian_flat_dx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">Npoints</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span> <span class="c1"># shape (Npoints, 2, 3)</span>
-            <span class="n">jacobian_flat_dx</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">(</span><span class="n">X_C_dx</span> <span class="o">-</span> <span class="n">x_N</span><span class="p">[:,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">*</span> <span class="n">Z_C_dx</span><span class="p">)</span> <span class="o">*</span> <span class="n">iZ_C</span><span class="p">[:,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="c1"># shape (Npoints, 3)</span>
-            <span class="n">jacobian_flat_dx</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Y_C_dx</span> <span class="o">-</span> <span class="n">y_N</span><span class="p">[:,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">*</span> <span class="n">Z_C_dx</span><span class="p">)</span> <span class="o">*</span> <span class="n">iZ_C</span><span class="p">[:,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="c1"># shape (Npoints, 3)</span>
+            <span class="n">jacobian_flat_dx</span> <span class="o">=</span> <span class="n">points_camera_flat_dx</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="p">:]</span> <span class="c1"># shape (Npoints, 2, 3)</span>
 
         <span class="c1"># Compute the jacobian with respect to the extrinsic parameters</span>
         <span class="k">if</span> <span class="n">dp</span><span class="p">:</span>
-            <span class="n">jacobian_flat_dp</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">Npoints</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span> <span class="c1"># shape (Npoints, 2, 6)</span>
-            <span class="n">jacobian_flat_dp</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">(</span><span class="n">X_C_dp</span> <span class="o">-</span> <span class="n">x_N</span><span class="p">[:,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">*</span> <span class="n">Z_C_dp</span><span class="p">)</span> <span class="o">*</span> <span class="n">iZ_C</span><span class="p">[:,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="c1"># shape (Npoints, 6)</span>
-            <span class="n">jacobian_flat_dp</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Y_C_dp</span> <span class="o">-</span> <span class="n">y_N</span><span class="p">[:,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">*</span> <span class="n">Z_C_dp</span><span class="p">)</span> <span class="o">*</span> <span class="n">iZ_C</span><span class="p">[:,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="c1"># shape (Npoints, 6)</span>
-
+            <span class="n">jacobian_flat_dp</span> <span class="o">=</span> <span class="n">points_camera_flat_dp</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="p">:]</span> <span class="c1"># shape (Npoints, 2, 6)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">dx</span><span class="p">:</span>
             <span class="n">jacobian_flat_dx</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">dp</span><span class="p">:</span>
@@ -951,8 +928,8 @@
 
     
 
-<div class="viewcode-block" id="Cv2Extrinsic._inverse_transform">
-<a class="viewcode-back" href="../../../api_doc/cv2_extrinsic.html#pycvcam.Cv2Extrinsic._inverse_transform">[docs]</a>
+<div class="viewcode-block" id="OrthographicExtrinsic._inverse_transform">
+<a class="viewcode-back" href="../../../api_doc/orthographic_extrinsic.html#pycvcam.OrthographicExtrinsic._inverse_transform">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">_inverse_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">normalized_points</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">dx</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">dp</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">depth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the transformation from the ``normalized_points`` to the ``world_points``.</span>
@@ -961,7 +938,7 @@
 
 <span class="sd">        .. math::</span>
 
-<span class="sd">            \vec{X}_c = \vec{x}_n \cdot Z_c</span>
+<span class="sd">            \vec{X}_c = (x_n, y_n, Z_c)</span>
 
 <span class="sd">        .. math::</span>
 
@@ -1030,8 +1007,8 @@
         <span class="c1"># Camera points</span>
         <span class="c1"># ==================</span>
         <span class="c1"># Compute the camera points</span>
-        <span class="n">X_C</span> <span class="o">=</span> <span class="n">normalized_points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">depth</span> <span class="c1"># shape (Npoints,)</span>
-        <span class="n">Y_C</span> <span class="o">=</span> <span class="n">normalized_points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">depth</span> <span class="c1"># shape (Npoints,)</span>
+        <span class="n">X_C</span> <span class="o">=</span> <span class="n">normalized_points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="c1"># shape (Npoints,)</span>
+        <span class="n">Y_C</span> <span class="o">=</span> <span class="n">normalized_points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="c1"># shape (Npoints,)</span>
         <span class="n">Z_C</span> <span class="o">=</span> <span class="n">depth</span> <span class="c1"># shape (Npoints,)</span>
 
         <span class="n">points_camera_flat</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">Npoints</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span> <span class="c1"># shape (Npoints, 3)</span>
@@ -1042,10 +1019,10 @@
         <span class="c1"># Compute the jacobian with respect to the normalized points</span>
         <span class="k">if</span> <span class="n">dx</span><span class="p">:</span>
             <span class="n">points_camera_flat_dx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">Npoints</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span> <span class="c1"># shape (Npoints, 3, 2)</span>
-            <span class="n">points_camera_flat_dx</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">depth</span> <span class="c1"># shape (Npoints, 2)</span>
+            <span class="n">points_camera_flat_dx</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="c1"># shape (Npoints, 2)</span>
             <span class="n">points_camera_flat_dx</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
             <span class="n">points_camera_flat_dx</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
-            <span class="n">points_camera_flat_dx</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">depth</span> <span class="c1"># shape (Npoints, 2)</span>
+            <span class="n">points_camera_flat_dx</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="c1"># shape (Npoints, 2)</span>
             <span class="n">points_camera_flat_dx</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
             <span class="n">points_camera_flat_dx</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
 
@@ -1079,8 +1056,8 @@
 
 
 
-<div class="viewcode-block" id="Cv2Extrinsic._compute_rays">
-<a class="viewcode-back" href="../../../api_doc/cv2_extrinsic.html#pycvcam.Cv2Extrinsic._compute_rays">[docs]</a>
+<div class="viewcode-block" id="OrthographicExtrinsic._compute_rays">
+<a class="viewcode-back" href="../../../api_doc/orthographic_extrinsic.html#pycvcam.OrthographicExtrinsic._compute_rays">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">_compute_rays</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">normalized_points</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes the rays from the camera to the scene for the the extrinsic model in the world coordinate system.</span>
@@ -1088,10 +1065,9 @@
 <span class="sd">        The ray structure is as follows:</span>
 
 <span class="sd">        - The first 3 elements are the origin of the ray in the world coordinate system (the normalized points with z=1 and a change of coordinate system).</span>
-<span class="sd">        - The last 3 elements are the direction of the ray in the world coordinate system, which is obtained by the vector from the origin to the normalized point in the world coordinate system.</span>
+<span class="sd">        - The last 3 elements are the direction of the ray in the world coordinate system, which is always (0, 0, 1) in the camera coordinate system.</span>
 
 <span class="sd">        Lets :math:`\vec{X}_n` the 3D normalized points, with coordinates :math:`(x_n, y_n, 1.0)` in the camera coordinate system.</span>
-<span class="sd">        Lets :math:`\vec{O}` the camera position with coordinates :math:`(0, 0, 0)` in the camera coordinate system.</span>
 
 <span class="sd">        The points in the world coordinate system are computed as follows:</span>
 
@@ -1102,7 +1078,7 @@
 <span class="sd">            \vec{O}_w &amp;= - R^{-1} \cdot T </span>
 <span class="sd">            \end{align*}</span>
 
-<span class="sd">        The origin of the ray in the world coordinate system is the normalized points :math:`\vec{X}_w` in world coordinates and the direction of the ray is the normalized vector from the origin to the point :math:`(\vec{X}_w - \vec{O}_w)/\|\vec{X}_w - \vec{O}_w\|` in world coordinates.</span>
+<span class="sd">        The origin of the ray in the world coordinate system is the normalized points :math:`\vec{X}_w` in world coordinates and the direction of the ray is the normalized vector (0, 0, 1) in which the transformation is applied.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1123,18 +1099,20 @@
         <span class="n">tvec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tvec</span>
 
         <span class="c1"># Compute the origin of the ray in the world coordinate system</span>
-        <span class="n">origin_world</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span> <span class="n">tvec</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span> <span class="o">@</span> <span class="n">rmat_inv</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>  <span class="c1"># shape (3,)</span>
+        <span class="n">vector_camera</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span> <span class="c1"># shape (3,)</span>
+        <span class="n">vector_world</span> <span class="o">=</span> <span class="n">vector_camera</span> <span class="o">@</span> <span class="n">rmat_inv</span><span class="o">.</span><span class="n">T</span>  <span class="c1"># shape (3,)</span>
+        <span class="n">direction_world</span> <span class="o">=</span> <span class="n">vector_world</span> <span class="o">/</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">vector_world</span><span class="p">)</span>  <span class="c1"># shape (3,)</span>
 
         <span class="c1"># Compute the normalized points in the world coordinate system</span>
         <span class="n">normalized_points_world</span> <span class="o">=</span> <span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">normalized_points</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">Npoints</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">tvec</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:])</span> <span class="o">@</span> <span class="n">rmat_inv</span><span class="o">.</span><span class="n">T</span> <span class="c1"># shape (Npoints, 3)</span>
 
         <span class="c1"># Compute the direction of the ray in the world coordinate system</span>
-        <span class="n">direction_world</span> <span class="o">=</span> <span class="n">normalized_points_world</span> <span class="o">-</span> <span class="n">origin_world</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1"># shape (Npoints, 3)</span>
+        <span class="n">direction_world</span> <span class="o">=</span> <span class="n">direction_world</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">Npoints</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># shape (Npoints, 3)</span>
 
         <span class="c1"># Create the rays in the world coordinate system</span>
         <span class="n">rays</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">Npoints</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span> <span class="c1"># shape (Npoints, 6)</span>
         <span class="n">rays</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">normalized_points_world</span> <span class="c1"># The first 3 elements are the origin of the ray in the world coordinate system</span>
-        <span class="n">rays</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">:]</span> <span class="o">=</span> <span class="n">direction_world</span> <span class="o">/</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">direction_world</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="c1"># The last 3 elements are the direction of the ray in the world coordinate system</span>
+        <span class="n">rays</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">:]</span> <span class="o">=</span> <span class="n">direction_world</span> <span class="c1"># The last 3 elements are the direction of the ray in the world coordinate system</span>
 
         <span class="k">return</span> <span class="n">rays</span></div>
 </div>

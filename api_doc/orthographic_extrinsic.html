@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pycvcam.Cv2Extrinsic &#8212; pycvcam 1.5.0 documentation</title>
+    <title>pycvcam.OrthographicExtrinsic &#8212; pycvcam 1.5.0 documentation</title>
   
   
   
@@ -42,11 +42,11 @@
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'api_doc/cv2_extrinsic';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api_doc/orthographic_extrinsic';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="pycvcam.OrthographicExtrinsic" href="orthographic_extrinsic.html" />
-    <link rel="prev" title="pycvcam.core.Rays" href="rays.html" />
+    <link rel="next" title="pycvcam.NoExtrinsic" href="no_extrinsic.html" />
+    <link rel="prev" title="pycvcam.Cv2Extrinsic" href="cv2_extrinsic.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -277,8 +277,8 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Extrinsic Models:</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">pycvcam.Cv2Extrinsic</a></li>
-<li class="toctree-l1"><a class="reference internal" href="orthographic_extrinsic.html">pycvcam.OrthographicExtrinsic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cv2_extrinsic.html">pycvcam.Cv2Extrinsic</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">pycvcam.OrthographicExtrinsic</a></li>
 <li class="toctree-l1"><a class="reference internal" href="no_extrinsic.html">pycvcam.NoExtrinsic</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Distortion Models:</span></p>
@@ -351,7 +351,7 @@
     
     <li class="breadcrumb-item"><a href="../api.html" class="nav-link">API Reference</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pycvcam.Cv2Extrinsic</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pycvcam.OrthographicExtrinsic</span></li>
   </ul>
 </nav>
 </div>
@@ -368,24 +368,24 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="pycvcam-cv2extrinsic">
-<h1>pycvcam.Cv2Extrinsic<a class="headerlink" href="#pycvcam-cv2extrinsic" title="Link to this heading">#</a></h1>
+  <section id="pycvcam-orthographicextrinsic">
+<h1>pycvcam.OrthographicExtrinsic<a class="headerlink" href="#pycvcam-orthographicextrinsic" title="Link to this heading">#</a></h1>
 <dl class="py class">
-<dt class="sig sig-object py" id="pycvcam.Cv2Extrinsic">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pycvcam.</span></span><span class="sig-name descname"><span class="pre">Cv2Extrinsic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pycvcam/extrinsic_objects/cv2_extrinsic.html#Cv2Extrinsic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.Cv2Extrinsic" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="pycvcam.OrthographicExtrinsic">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pycvcam.</span></span><span class="sig-name descname"><span class="pre">OrthographicExtrinsic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pycvcam/extrinsic_objects/orthographic_extrinsic.html#OrthographicExtrinsic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.OrthographicExtrinsic" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="extrinsic.html#pycvcam.core.Extrinsic" title="pycvcam.core.extrinsic.Extrinsic"><code class="xref py py-class docutils literal notranslate"><span class="pre">Extrinsic</span></code></a></p>
-<p>Subclass of the <a class="reference internal" href="extrinsic.html#pycvcam.core.Extrinsic" title="pycvcam.core.Extrinsic"><code class="xref py py-class docutils literal notranslate"><span class="pre">pycvcam.core.Extrinsic</span></code></a> class that represents the OpenCV extrinsic model.</p>
+<p>Subclass of the <a class="reference internal" href="extrinsic.html#pycvcam.core.Extrinsic" title="pycvcam.core.Extrinsic"><code class="xref py py-class docutils literal notranslate"><span class="pre">pycvcam.core.Extrinsic</span></code></a> class that represents the orthographic extrinsic transformation.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This class represents the extrinsic transformation, which is the first step of the process from the <code class="docutils literal notranslate"><span class="pre">world_points</span></code> to the <code class="docutils literal notranslate"><span class="pre">image_points</span></code>.</p>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">Cv2Extrinsic</span></code> model in the composition of a changement in reference frame and a normalisation.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">OrthographicExtrinsic</span></code> model in the composition of a changement in reference frame and an orthographic projection.</p>
 <p>Lets consider <code class="docutils literal notranslate"><span class="pre">world_points</span></code> in the global coordinate system <span class="math notranslate nohighlight">\(\vec{X}_w = (X_w, Y_w, Z_w)\)</span>, the corresponding <code class="docutils literal notranslate"><span class="pre">normalized_points</span></code> in the camera normalized coordinate system are given <span class="math notranslate nohighlight">\(\vec{x}_n\)</span> can be optained by :</p>
 <div class="math notranslate nohighlight">
 \[\vec{X_c} = R \cdot \vec{X_w} + T\]</div>
 <div class="math notranslate nohighlight">
-\[\vec{x}_n = \frac{\vec{X_c}}{Z_c}\]</div>
-<p>where <span class="math notranslate nohighlight">\(R\)</span> is the rotation matrix, <span class="math notranslate nohighlight">\(T\)</span> is the translation vector, and <span class="math notranslate nohighlight">\(Z_c\)</span> is the depth of the point in the camera coordinate system.</p>
+\[\vec{x}_n = (X_c, Y_c)\]</div>
+<p>where <span class="math notranslate nohighlight">\(R\)</span> is the rotation matrix, <span class="math notranslate nohighlight">\(T\)</span> is the translation vector, and <span class="math notranslate nohighlight">\(Z_c\)</span> the depth of the point in the camera coordinate system is ignored.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>To compute the translation vector and the rotation vector, you can use <code class="docutils literal notranslate"><span class="pre">cv2.Rodrigues()</span></code> or <code class="docutils literal notranslate"><span class="pre">py3dframe.Frame</span></code> with convention 4.</p>
@@ -406,7 +406,7 @@
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">Cv2Extrinsic</span></code> class can be instantiated with 3 different ways:</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">OrthographicExtrinsic</span></code> class can be instantiated with 3 different ways:</p>
 <ul class="simple">
 <li><p>Setting directly the parameters as a numpy array of shape (6,) (__init__ method) containing the rotation vector and translation vector concatenated.</p></li>
 <li><p>Using the classmethod <code class="docutils literal notranslate"><span class="pre">from_rt</span></code> to set the rotation vector and translation vector.</p></li>
@@ -421,12 +421,12 @@
 <p class="rubric">Examples</p>
 <p>Create an extrinsic object with a rotation vector and a translation vector:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pycvcam</span><span class="w"> </span><span class="kn">import</span> <span class="n">Cv2Extrinsic</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pycvcam</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrthographicExtrinsic</span>
 
 <span class="n">rvec</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">])</span>
 <span class="n">tvec</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
 
-<span class="n">extrinsic</span> <span class="o">=</span> <span class="n">Cv2Extrinsic</span><span class="o">.</span><span class="n">from_rt</span><span class="p">(</span><span class="n">rvec</span><span class="p">,</span> <span class="n">tvec</span><span class="p">)</span>
+<span class="n">extrinsic</span> <span class="o">=</span> <span class="n">OrthographicExtrinsic</span><span class="o">.</span><span class="n">from_rt</span><span class="p">(</span><span class="n">rvec</span><span class="p">,</span> <span class="n">tvec</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Then you can use the extrinsic object to transform <code class="docutils literal notranslate"><span class="pre">world_points</span></code> to <code class="docutils literal notranslate"><span class="pre">normalized_points</span></code>:</p>
@@ -465,17 +465,17 @@ By default, the depth is assumed to be 1.0 for all points, but you can provide a
 <p class="admonition-title">See also</p>
 <p>For more information about the transformation process, see:</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="#pycvcam.Cv2Extrinsic._transform" title="pycvcam.Cv2Extrinsic._transform"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pycvcam.Cv2Extrinsic._transform()</span></code></a> to transform the <code class="docutils literal notranslate"><span class="pre">world_points</span></code> to <code class="docutils literal notranslate"><span class="pre">normalized_points</span></code>.</p></li>
-<li><p><a class="reference internal" href="#pycvcam.Cv2Extrinsic._inverse_transform" title="pycvcam.Cv2Extrinsic._inverse_transform"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pycvcam.Cv2Extrinsic._inverse_transform()</span></code></a> to transform the <code class="docutils literal notranslate"><span class="pre">normalized_points</span></code> back to <code class="docutils literal notranslate"><span class="pre">world_points</span></code>.</p></li>
+<li><p><a class="reference internal" href="#pycvcam.OrthographicExtrinsic._transform" title="pycvcam.OrthographicExtrinsic._transform"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pycvcam.OrthographicExtrinsic._transform()</span></code></a> to transform the <code class="docutils literal notranslate"><span class="pre">world_points</span></code> to <code class="docutils literal notranslate"><span class="pre">normalized_points</span></code>.</p></li>
+<li><p><a class="reference internal" href="#pycvcam.OrthographicExtrinsic._inverse_transform" title="pycvcam.OrthographicExtrinsic._inverse_transform"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pycvcam.OrthographicExtrinsic._inverse_transform()</span></code></a> to transform the <code class="docutils literal notranslate"><span class="pre">normalized_points</span></code> back to <code class="docutils literal notranslate"><span class="pre">world_points</span></code>.</p></li>
 </ul>
 </div>
 <dl class="py property">
-<dt class="sig sig-object py" id="pycvcam.Cv2Extrinsic.Nparams">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Nparams</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pycvcam.Cv2Extrinsic.Nparams" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="pycvcam.OrthographicExtrinsic.Nparams">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Nparams</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pycvcam.OrthographicExtrinsic.Nparams" title="Link to this definition">#</a></dt>
 <dd><p>Get the number of parameters of the extrinsic transformation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The number of parameters of the extrinsic transformation. It is always 6 for the Cv2Extrinsic class.</p>
+<dd class="field-odd"><p>The number of parameters of the extrinsic transformation. It is always 6 for the OrthographicExtrinsic class.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>int</p>
@@ -484,28 +484,27 @@ By default, the depth is assumed to be 1.0 for all points, but you can provide a
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="pycvcam.Cv2Extrinsic._abc_impl">
-<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pycvcam.Cv2Extrinsic._abc_impl" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="pycvcam.OrthographicExtrinsic._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pycvcam.OrthographicExtrinsic._abc_impl" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pycvcam.Cv2Extrinsic._compute_rays">
-<span class="sig-name descname"><span class="pre">_compute_rays</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">normalized_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../_modules/pycvcam/extrinsic_objects/cv2_extrinsic.html#Cv2Extrinsic._compute_rays"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.Cv2Extrinsic._compute_rays" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="pycvcam.OrthographicExtrinsic._compute_rays">
+<span class="sig-name descname"><span class="pre">_compute_rays</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">normalized_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../_modules/pycvcam/extrinsic_objects/orthographic_extrinsic.html#OrthographicExtrinsic._compute_rays"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.OrthographicExtrinsic._compute_rays" title="Link to this definition">#</a></dt>
 <dd><p>Computes the rays from the camera to the scene for the the extrinsic model in the world coordinate system.</p>
 <p>The ray structure is as follows:</p>
 <ul class="simple">
 <li><p>The first 3 elements are the origin of the ray in the world coordinate system (the normalized points with z=1 and a change of coordinate system).</p></li>
-<li><p>The last 3 elements are the direction of the ray in the world coordinate system, which is obtained by the vector from the origin to the normalized point in the world coordinate system.</p></li>
+<li><p>The last 3 elements are the direction of the ray in the world coordinate system, which is always (0, 0, 1) in the camera coordinate system.</p></li>
 </ul>
-<p>Lets <span class="math notranslate nohighlight">\(\vec{X}_n\)</span> the 3D normalized points, with coordinates <span class="math notranslate nohighlight">\((x_n, y_n, 1.0)\)</span> in the camera coordinate system.
-Lets <span class="math notranslate nohighlight">\(\vec{O}\)</span> the camera position with coordinates <span class="math notranslate nohighlight">\((0, 0, 0)\)</span> in the camera coordinate system.</p>
+<p>Lets <span class="math notranslate nohighlight">\(\vec{X}_n\)</span> the 3D normalized points, with coordinates <span class="math notranslate nohighlight">\((x_n, y_n, 1.0)\)</span> in the camera coordinate system.</p>
 <p>The points in the world coordinate system are computed as follows:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
 \vec{X}_w &amp;= R^{-1} \cdot (\vec{X}_n - T) \\
 \vec{O}_w &amp;= - R^{-1} \cdot T
 \end{align*}\end{split}\]</div>
-<p>The origin of the ray in the world coordinate system is the normalized points <span class="math notranslate nohighlight">\(\vec{X}_w\)</span> in world coordinates and the direction of the ray is the normalized vector from the origin to the point <span class="math notranslate nohighlight">\((\vec{X}_w - \vec{O}_w)/\|\vec{X}_w - \vec{O}_w\|\)</span> in world coordinates.</p>
+<p>The origin of the ray in the world coordinate system is the normalized points <span class="math notranslate nohighlight">\(\vec{X}_w\)</span> in world coordinates and the direction of the ray is the normalized vector (0, 0, 1) in which the transformation is applied.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>normalized_points</strong> (<em>numpy.ndarray</em>) – The normalized points in the camera coordinate system. Shape (Npoints, 2).</p>
@@ -520,8 +519,8 @@ Lets <span class="math notranslate nohighlight">\(\vec{O}\)</span> the camera po
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pycvcam.Cv2Extrinsic._get_jacobian_short_hand">
-<span class="sig-name descname"><span class="pre">_get_jacobian_short_hand</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/pycvcam/extrinsic_objects/cv2_extrinsic.html#Cv2Extrinsic._get_jacobian_short_hand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.Cv2Extrinsic._get_jacobian_short_hand" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="pycvcam.OrthographicExtrinsic._get_jacobian_short_hand">
+<span class="sig-name descname"><span class="pre">_get_jacobian_short_hand</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/pycvcam/extrinsic_objects/orthographic_extrinsic.html#OrthographicExtrinsic._get_jacobian_short_hand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.OrthographicExtrinsic._get_jacobian_short_hand" title="Link to this definition">#</a></dt>
 <dd><p>Short-hand notation for the Jacobian matrices with respect to the extrinsic parameters.</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">dr</span></code>: The Jacobian of the normalized points with respect to the rotation vector. It has shape (…, 2, 3).</p></li>
@@ -544,12 +543,12 @@ Lets <span class="math notranslate nohighlight">\(\vec{O}\)</span> the camera po
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pycvcam.Cv2Extrinsic._inverse_transform">
-<span class="sig-name descname"><span class="pre">_inverse_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">normalized_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/pycvcam/extrinsic_objects/cv2_extrinsic.html#Cv2Extrinsic._inverse_transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.Cv2Extrinsic._inverse_transform" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="pycvcam.OrthographicExtrinsic._inverse_transform">
+<span class="sig-name descname"><span class="pre">_inverse_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">normalized_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/pycvcam/extrinsic_objects/orthographic_extrinsic.html#OrthographicExtrinsic._inverse_transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.OrthographicExtrinsic._inverse_transform" title="Link to this definition">#</a></dt>
 <dd><p>Compute the transformation from the <code class="docutils literal notranslate"><span class="pre">normalized_points</span></code> to the <code class="docutils literal notranslate"><span class="pre">world_points</span></code>.</p>
 <p>Lets consider <code class="docutils literal notranslate"><span class="pre">normalized_points</span></code> in the camera normalized coordinate system <span class="math notranslate nohighlight">\(\vec{x}_n = (x_n, y_n)\)</span>, the corresponding <code class="docutils literal notranslate"><span class="pre">world_points</span></code> in the global coordinate system are given <span class="math notranslate nohighlight">\(\vec{X}_w\)</span> can be optained by :</p>
 <div class="math notranslate nohighlight">
-\[\vec{X}_c = \vec{x}_n \cdot Z_c\]</div>
+\[\vec{X}_c = (x_n, y_n, Z_c)\]</div>
 <div class="math notranslate nohighlight">
 \[\vec{X}_w = R^{-1} \cdot (\vec{X}_c - T)\]</div>
 <p>where <span class="math notranslate nohighlight">\(R\)</span> is the rotation matrix, <span class="math notranslate nohighlight">\(T\)</span> is the translation vector, and <span class="math notranslate nohighlight">\(Z_c\)</span> is the depth of the point in the camera coordinate system.</p>
@@ -584,20 +583,20 @@ The shape should be (…,) if provided, and it should match the number of points
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="pycvcam.Cv2Extrinsic._rvec">
-<span class="sig-name descname"><span class="pre">_rvec</span></span><a class="headerlink" href="#pycvcam.Cv2Extrinsic._rvec" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="pycvcam.OrthographicExtrinsic._rvec">
+<span class="sig-name descname"><span class="pre">_rvec</span></span><a class="headerlink" href="#pycvcam.OrthographicExtrinsic._rvec" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pycvcam.Cv2Extrinsic._transform">
-<span class="sig-name descname"><span class="pre">_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">world_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/pycvcam/extrinsic_objects/cv2_extrinsic.html#Cv2Extrinsic._transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.Cv2Extrinsic._transform" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="pycvcam.OrthographicExtrinsic._transform">
+<span class="sig-name descname"><span class="pre">_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">world_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/pycvcam/extrinsic_objects/orthographic_extrinsic.html#OrthographicExtrinsic._transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.OrthographicExtrinsic._transform" title="Link to this definition">#</a></dt>
 <dd><p>Compute the transformation from the <code class="docutils literal notranslate"><span class="pre">world_points</span></code> to the <code class="docutils literal notranslate"><span class="pre">normalized_points</span></code>.</p>
 <p>Lets consider <code class="docutils literal notranslate"><span class="pre">world_points</span></code> in the global coordinate system <span class="math notranslate nohighlight">\(\vec{X}_w = (X_w, Y_w, Z_w)\)</span>, the corresponding <code class="docutils literal notranslate"><span class="pre">normalized_points</span></code> in the camera normalized coordinate system are given <span class="math notranslate nohighlight">\(\vec{x}_n\)</span> can be optained by :</p>
 <div class="math notranslate nohighlight">
 \[\vec{X}_c = R \cdot \vec{X}_w + T\]</div>
 <div class="math notranslate nohighlight">
-\[\vec{x}_n = \frac{\vec{X}_c}{Z_c}\]</div>
-<p>where <span class="math notranslate nohighlight">\(R\)</span> is the rotation matrix, <span class="math notranslate nohighlight">\(T\)</span> is the translation vector, and <span class="math notranslate nohighlight">\(Z_c\)</span> is the depth of the point in the camera coordinate system.</p>
+\[\vec{x}_n = (X_c, Y_c)\]</div>
+<p>where <span class="math notranslate nohighlight">\(R\)</span> is the rotation matrix, <span class="math notranslate nohighlight">\(T\)</span> is the translation vector, and <span class="math notranslate nohighlight">\(Z_c\)</span> the depth of the point in the camera coordinate system is ignored.</p>
 <p>The jacobians with respect to the extrinsic parameters is an array with shape (Npoints, 2, 6), where the last dimension contains the jacobian with respect to the rotation vector and translation vector.
 The jacobian with respect to the world points is an array with shape (Npoints, 2, 3).</p>
 <div class="admonition warning">
@@ -627,25 +626,25 @@ The output will be a 2D array of shape (Npoints, 2, 6).</p></li>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="pycvcam.Cv2Extrinsic._tvec">
-<span class="sig-name descname"><span class="pre">_tvec</span></span><a class="headerlink" href="#pycvcam.Cv2Extrinsic._tvec" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="pycvcam.OrthographicExtrinsic._tvec">
+<span class="sig-name descname"><span class="pre">_tvec</span></span><a class="headerlink" href="#pycvcam.OrthographicExtrinsic._tvec" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pycvcam.Cv2Extrinsic.constant_names">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">constant_names</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pycvcam.Cv2Extrinsic.constant_names" title="Link to this definition">#</a></dt>
-<dd><p>Always returns an empty list for the Cv2Extrinsic class, as it does not have any constants.</p>
+<dt class="sig sig-object py" id="pycvcam.OrthographicExtrinsic.constant_names">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">constant_names</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pycvcam.OrthographicExtrinsic.constant_names" title="Link to this definition">#</a></dt>
+<dd><p>Always returns an empty list for the OrthographicExtrinsic class, as it does not have any constants.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pycvcam.Cv2Extrinsic.constants">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">constants</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pycvcam.Cv2Extrinsic.constants" title="Link to this definition">#</a></dt>
-<dd><p>Always returns None for the Cv2Extrinsic class, as it does not have any constants.</p>
+<dt class="sig sig-object py" id="pycvcam.OrthographicExtrinsic.constants">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">constants</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pycvcam.OrthographicExtrinsic.constants" title="Link to this definition">#</a></dt>
+<dd><p>Always returns None for the OrthographicExtrinsic class, as it does not have any constants.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pycvcam.Cv2Extrinsic.frame">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">frame</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Frame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pycvcam.Cv2Extrinsic.frame" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="pycvcam.OrthographicExtrinsic.frame">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">frame</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Frame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pycvcam.OrthographicExtrinsic.frame" title="Link to this definition">#</a></dt>
 <dd><p>Get or set the 3D frame of the extrinsic transformation.</p>
 <p>The frame is a py3dframe.Frame object representing the 3D frame of the camera in the world coordinate system.</p>
 <div class="admonition seealso">
@@ -663,35 +662,35 @@ The output will be a 2D array of shape (Npoints, 2, 6).</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pycvcam.Cv2Extrinsic.from_frame">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_frame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Frame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pycvcam.Cv2Extrinsic" title="pycvcam.extrinsic_objects.cv2_extrinsic.Cv2Extrinsic"><span class="pre">Cv2Extrinsic</span></a></span></span><a class="reference internal" href="../_modules/pycvcam/extrinsic_objects/cv2_extrinsic.html#Cv2Extrinsic.from_frame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.Cv2Extrinsic.from_frame" title="Link to this definition">#</a></dt>
-<dd><p>Class method to create a Cv2Extrinsic object from a 3D frame.</p>
+<dt class="sig sig-object py" id="pycvcam.OrthographicExtrinsic.from_frame">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_frame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Frame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pycvcam.OrthographicExtrinsic" title="pycvcam.extrinsic_objects.orthographic_extrinsic.OrthographicExtrinsic"><span class="pre">OrthographicExtrinsic</span></a></span></span><a class="reference internal" href="../_modules/pycvcam/extrinsic_objects/orthographic_extrinsic.html#OrthographicExtrinsic.from_frame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.OrthographicExtrinsic.from_frame" title="Link to this definition">#</a></dt>
+<dd><p>Class method to create a OrthographicExtrinsic object from a 3D frame.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>frame</strong> (<em>Frame</em>) – The 3D frame of the camera in the world coordinate system. It should be a py3dframe.Frame object.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A new instance of the Cv2Extrinsic class with the specified 3D frame.</p>
+<dd class="field-even"><p>A new instance of the OrthographicExtrinsic class with the specified 3D frame.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="#pycvcam.Cv2Extrinsic" title="pycvcam.Cv2Extrinsic">Cv2Extrinsic</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="#pycvcam.OrthographicExtrinsic" title="pycvcam.OrthographicExtrinsic">OrthographicExtrinsic</a></p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
 <p>Create an extrinsic object with a 3D frame:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">py3dframe</span><span class="w"> </span><span class="kn">import</span> <span class="n">Frame</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pycvcam</span><span class="w"> </span><span class="kn">import</span> <span class="n">Cv2Extrinsic</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pycvcam</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrthographicExtrinsic</span>
 
 <span class="n">frame</span> <span class="o">=</span> <span class="n">Frame</span><span class="p">(</span><span class="n">translation</span><span class="o">=</span><span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="n">rotation_vector</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span> <span class="n">convention</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-<span class="n">extrinsic</span> <span class="o">=</span> <span class="n">Cv2Extrinsic</span><span class="o">.</span><span class="n">from_frame</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+<span class="n">extrinsic</span> <span class="o">=</span> <span class="n">OrthographicExtrinsic</span><span class="o">.</span><span class="n">from_frame</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pycvcam.Cv2Extrinsic.from_rt">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_rt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rvec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tvec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pycvcam.Cv2Extrinsic" title="pycvcam.extrinsic_objects.cv2_extrinsic.Cv2Extrinsic"><span class="pre">Cv2Extrinsic</span></a></span></span><a class="reference internal" href="../_modules/pycvcam/extrinsic_objects/cv2_extrinsic.html#Cv2Extrinsic.from_rt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.Cv2Extrinsic.from_rt" title="Link to this definition">#</a></dt>
-<dd><p>Class method to create a Cv2Extrinsic object from a rotation vector and a translation vector.</p>
+<dt class="sig sig-object py" id="pycvcam.OrthographicExtrinsic.from_rt">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_rt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rvec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tvec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pycvcam.OrthographicExtrinsic" title="pycvcam.extrinsic_objects.orthographic_extrinsic.OrthographicExtrinsic"><span class="pre">OrthographicExtrinsic</span></a></span></span><a class="reference internal" href="../_modules/pycvcam/extrinsic_objects/orthographic_extrinsic.html#OrthographicExtrinsic.from_rt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.OrthographicExtrinsic.from_rt" title="Link to this definition">#</a></dt>
+<dd><p>Class method to create a OrthographicExtrinsic object from a rotation vector and a translation vector.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -700,29 +699,29 @@ The output will be a 2D array of shape (Npoints, 2, 6).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A new instance of the Cv2Extrinsic class with the specified rotation and translation vectors.</p>
+<dd class="field-even"><p>A new instance of the OrthographicExtrinsic class with the specified rotation and translation vectors.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="#pycvcam.Cv2Extrinsic" title="pycvcam.Cv2Extrinsic">Cv2Extrinsic</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="#pycvcam.OrthographicExtrinsic" title="pycvcam.OrthographicExtrinsic">OrthographicExtrinsic</a></p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
 <p>Create an extrinsic object with a rotation vector and a translation vector:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">pycvcam</span><span class="w"> </span><span class="kn">import</span> <span class="n">Cv2Extrinsic</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pycvcam</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrthographicExtrinsic</span>
 
 <span class="n">rvec</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">])</span>
 <span class="n">tvec</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
 
-<span class="n">extrinsic</span> <span class="o">=</span> <span class="n">Cv2Extrinsic</span><span class="o">.</span><span class="n">from_rt</span><span class="p">(</span><span class="n">rvec</span><span class="p">,</span> <span class="n">tvec</span><span class="p">)</span>
+<span class="n">extrinsic</span> <span class="o">=</span> <span class="n">OrthographicExtrinsic</span><span class="o">.</span><span class="n">from_rt</span><span class="p">(</span><span class="n">rvec</span><span class="p">,</span> <span class="n">tvec</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pycvcam.Cv2Extrinsic.is_set">
-<span class="sig-name descname"><span class="pre">is_set</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/pycvcam/extrinsic_objects/cv2_extrinsic.html#Cv2Extrinsic.is_set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.Cv2Extrinsic.is_set" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="pycvcam.OrthographicExtrinsic.is_set">
+<span class="sig-name descname"><span class="pre">is_set</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/pycvcam/extrinsic_objects/orthographic_extrinsic.html#OrthographicExtrinsic.is_set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.OrthographicExtrinsic.is_set" title="Link to this definition">#</a></dt>
 <dd><p>Check if the extrinsic parameters are set.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -735,8 +734,8 @@ The output will be a 2D array of shape (Npoints, 2, 6).</p></li>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pycvcam.Cv2Extrinsic.parameter_names">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parameter_names</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pycvcam.Cv2Extrinsic.parameter_names" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="pycvcam.OrthographicExtrinsic.parameter_names">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parameter_names</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pycvcam.OrthographicExtrinsic.parameter_names" title="Link to this definition">#</a></dt>
 <dd><p>[“r_x”, “r_y”, “r_z”, “t_x”, “t_y”, “t_z”]</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -752,15 +751,15 @@ The output will be a 2D array of shape (Npoints, 2, 6).</p></li>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pycvcam.Cv2Extrinsic.parameters">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parameters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pycvcam.Cv2Extrinsic.parameters" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="pycvcam.OrthographicExtrinsic.parameters">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parameters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pycvcam.OrthographicExtrinsic.parameters" title="Link to this definition">#</a></dt>
 <dd><p>Get or set the parameters of the extrinsic transformation.</p>
 <p>The parameters are a numpy array of shape (6,) representing the rotation vector and translation vector concatenated.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="#pycvcam.Cv2Extrinsic.rotation_vector" title="pycvcam.Cv2Extrinsic.rotation_vector"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pycvcam.Cv2Extrinsic.rotation_vector()</span></code></a> or <code class="docutils literal notranslate"><span class="pre">rvec</span></code> to set the rotation vector of the extrinsic transformation.</p></li>
-<li><p><a class="reference internal" href="#pycvcam.Cv2Extrinsic.translation_vector" title="pycvcam.Cv2Extrinsic.translation_vector"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pycvcam.Cv2Extrinsic.translation_vector()</span></code></a> or <code class="docutils literal notranslate"><span class="pre">tvec</span></code> to set the translation vector of the extrinsic transformation.</p></li>
+<li><p><a class="reference internal" href="#pycvcam.OrthographicExtrinsic.rotation_vector" title="pycvcam.OrthographicExtrinsic.rotation_vector"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pycvcam.OrthographicExtrinsic.rotation_vector()</span></code></a> or <code class="docutils literal notranslate"><span class="pre">rvec</span></code> to set the rotation vector of the extrinsic transformation.</p></li>
+<li><p><a class="reference internal" href="#pycvcam.OrthographicExtrinsic.translation_vector" title="pycvcam.OrthographicExtrinsic.translation_vector"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pycvcam.OrthographicExtrinsic.translation_vector()</span></code></a> or <code class="docutils literal notranslate"><span class="pre">tvec</span></code> to set the translation vector of the extrinsic transformation.</p></li>
 </ul>
 </div>
 <dl class="field-list simple">
@@ -774,13 +773,13 @@ The output will be a 2D array of shape (Npoints, 2, 6).</p></li>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pycvcam.Cv2Extrinsic.rmat">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rmat</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pycvcam.Cv2Extrinsic.rmat" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="pycvcam.OrthographicExtrinsic.rmat">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rmat</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pycvcam.OrthographicExtrinsic.rmat" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pycvcam.Cv2Extrinsic.rotation_matrix">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rotation_matrix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pycvcam.Cv2Extrinsic.rotation_matrix" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="pycvcam.OrthographicExtrinsic.rotation_matrix">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rotation_matrix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pycvcam.OrthographicExtrinsic.rotation_matrix" title="Link to this definition">#</a></dt>
 <dd><p>Get or set the rotation matrix of the extrinsic transformation.</p>
 <p>The rotation matrix is a numpy array of shape (3, 3) representing the rotation of the camera in the world coordinate system.</p>
 <div class="admonition note">
@@ -799,8 +798,8 @@ An alias for <code class="docutils literal notranslate"><span class="pre">rotati
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pycvcam.Cv2Extrinsic.rotation_vector">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rotation_vector</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pycvcam.Cv2Extrinsic.rotation_vector" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="pycvcam.OrthographicExtrinsic.rotation_vector">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rotation_vector</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pycvcam.OrthographicExtrinsic.rotation_vector" title="Link to this definition">#</a></dt>
 <dd><p>Get or set the rotation vector <code class="docutils literal notranslate"><span class="pre">rvec</span></code> of the extrinsic transformation.</p>
 <p>The rotation vector is a numpy array of shape (3,) representing the rotation of the camera in the world coordinate system.</p>
 <div class="admonition note">
@@ -810,7 +809,7 @@ An alias for <code class="docutils literal notranslate"><span class="pre">rotati
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="#pycvcam.Cv2Extrinsic.translation_vector" title="pycvcam.Cv2Extrinsic.translation_vector"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pycvcam.Cv2Extrinsic.translation_vector()</span></code></a> or <code class="docutils literal notranslate"><span class="pre">tvec</span></code> to set the translation vector of the extrinsic transformation.</p></li>
+<li><p><a class="reference internal" href="#pycvcam.OrthographicExtrinsic.translation_vector" title="pycvcam.OrthographicExtrinsic.translation_vector"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pycvcam.OrthographicExtrinsic.translation_vector()</span></code></a> or <code class="docutils literal notranslate"><span class="pre">tvec</span></code> to set the translation vector of the extrinsic transformation.</p></li>
 </ul>
 </div>
 <dl class="field-list simple">
@@ -824,13 +823,13 @@ An alias for <code class="docutils literal notranslate"><span class="pre">rotati
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pycvcam.Cv2Extrinsic.rvec">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rvec</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pycvcam.Cv2Extrinsic.rvec" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="pycvcam.OrthographicExtrinsic.rvec">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rvec</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pycvcam.OrthographicExtrinsic.rvec" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pycvcam.Cv2Extrinsic.translation_vector">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">translation_vector</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pycvcam.Cv2Extrinsic.translation_vector" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="pycvcam.OrthographicExtrinsic.translation_vector">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">translation_vector</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pycvcam.OrthographicExtrinsic.translation_vector" title="Link to this definition">#</a></dt>
 <dd><p>Get or set the translation vector <code class="docutils literal notranslate"><span class="pre">tvec</span></code> of the extrinsic transformation.</p>
 <p>The translation vector is a numpy array of shape (3,) representing the translation of the camera in the world coordinate system.</p>
 <div class="admonition note">
@@ -840,7 +839,7 @@ An alias for <code class="docutils literal notranslate"><span class="pre">rotati
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="#pycvcam.Cv2Extrinsic.rotation_vector" title="pycvcam.Cv2Extrinsic.rotation_vector"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pycvcam.Cv2Extrinsic.rotation_vector()</span></code></a> or <code class="docutils literal notranslate"><span class="pre">rvec</span></code> to set the rotation vector of the extrinsic transformation.</p></li>
+<li><p><a class="reference internal" href="#pycvcam.OrthographicExtrinsic.rotation_vector" title="pycvcam.OrthographicExtrinsic.rotation_vector"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pycvcam.OrthographicExtrinsic.rotation_vector()</span></code></a> or <code class="docutils literal notranslate"><span class="pre">rvec</span></code> to set the rotation vector of the extrinsic transformation.</p></li>
 </ul>
 </div>
 <dl class="field-list simple">
@@ -854,8 +853,8 @@ An alias for <code class="docutils literal notranslate"><span class="pre">rotati
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pycvcam.Cv2Extrinsic.tvec">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tvec</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pycvcam.Cv2Extrinsic.tvec" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="pycvcam.OrthographicExtrinsic.tvec">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tvec</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pycvcam.OrthographicExtrinsic.tvec" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -873,20 +872,20 @@ An alias for <code class="docutils literal notranslate"><span class="pre">rotati
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="rays.html"
+       href="cv2_extrinsic.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">pycvcam.core.Rays</p>
+        <p class="prev-next-title">pycvcam.Cv2Extrinsic</p>
       </div>
     </a>
     <a class="right-next"
-       href="orthographic_extrinsic.html"
+       href="no_extrinsic.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">pycvcam.OrthographicExtrinsic</p>
+        <p class="prev-next-title">pycvcam.NoExtrinsic</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -909,29 +908,29 @@ An alias for <code class="docutils literal notranslate"><span class="pre">rotati
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Extrinsic"><code class="docutils literal notranslate"><span class="pre">Cv2Extrinsic</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Extrinsic.Nparams"><code class="docutils literal notranslate"><span class="pre">Cv2Extrinsic.Nparams</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Extrinsic._abc_impl"><code class="docutils literal notranslate"><span class="pre">Cv2Extrinsic._abc_impl</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Extrinsic._compute_rays"><code class="docutils literal notranslate"><span class="pre">Cv2Extrinsic._compute_rays()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Extrinsic._get_jacobian_short_hand"><code class="docutils literal notranslate"><span class="pre">Cv2Extrinsic._get_jacobian_short_hand()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Extrinsic._inverse_transform"><code class="docutils literal notranslate"><span class="pre">Cv2Extrinsic._inverse_transform()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Extrinsic._rvec"><code class="docutils literal notranslate"><span class="pre">Cv2Extrinsic._rvec</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Extrinsic._transform"><code class="docutils literal notranslate"><span class="pre">Cv2Extrinsic._transform()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Extrinsic._tvec"><code class="docutils literal notranslate"><span class="pre">Cv2Extrinsic._tvec</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Extrinsic.constant_names"><code class="docutils literal notranslate"><span class="pre">Cv2Extrinsic.constant_names</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Extrinsic.constants"><code class="docutils literal notranslate"><span class="pre">Cv2Extrinsic.constants</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Extrinsic.frame"><code class="docutils literal notranslate"><span class="pre">Cv2Extrinsic.frame</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Extrinsic.from_frame"><code class="docutils literal notranslate"><span class="pre">Cv2Extrinsic.from_frame()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Extrinsic.from_rt"><code class="docutils literal notranslate"><span class="pre">Cv2Extrinsic.from_rt()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Extrinsic.is_set"><code class="docutils literal notranslate"><span class="pre">Cv2Extrinsic.is_set()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Extrinsic.parameter_names"><code class="docutils literal notranslate"><span class="pre">Cv2Extrinsic.parameter_names</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Extrinsic.parameters"><code class="docutils literal notranslate"><span class="pre">Cv2Extrinsic.parameters</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Extrinsic.rmat"><code class="docutils literal notranslate"><span class="pre">Cv2Extrinsic.rmat</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Extrinsic.rotation_matrix"><code class="docutils literal notranslate"><span class="pre">Cv2Extrinsic.rotation_matrix</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Extrinsic.rotation_vector"><code class="docutils literal notranslate"><span class="pre">Cv2Extrinsic.rotation_vector</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Extrinsic.rvec"><code class="docutils literal notranslate"><span class="pre">Cv2Extrinsic.rvec</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Extrinsic.translation_vector"><code class="docutils literal notranslate"><span class="pre">Cv2Extrinsic.translation_vector</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.Cv2Extrinsic.tvec"><code class="docutils literal notranslate"><span class="pre">Cv2Extrinsic.tvec</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.OrthographicExtrinsic"><code class="docutils literal notranslate"><span class="pre">OrthographicExtrinsic</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.OrthographicExtrinsic.Nparams"><code class="docutils literal notranslate"><span class="pre">OrthographicExtrinsic.Nparams</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.OrthographicExtrinsic._abc_impl"><code class="docutils literal notranslate"><span class="pre">OrthographicExtrinsic._abc_impl</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.OrthographicExtrinsic._compute_rays"><code class="docutils literal notranslate"><span class="pre">OrthographicExtrinsic._compute_rays()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.OrthographicExtrinsic._get_jacobian_short_hand"><code class="docutils literal notranslate"><span class="pre">OrthographicExtrinsic._get_jacobian_short_hand()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.OrthographicExtrinsic._inverse_transform"><code class="docutils literal notranslate"><span class="pre">OrthographicExtrinsic._inverse_transform()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.OrthographicExtrinsic._rvec"><code class="docutils literal notranslate"><span class="pre">OrthographicExtrinsic._rvec</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.OrthographicExtrinsic._transform"><code class="docutils literal notranslate"><span class="pre">OrthographicExtrinsic._transform()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.OrthographicExtrinsic._tvec"><code class="docutils literal notranslate"><span class="pre">OrthographicExtrinsic._tvec</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.OrthographicExtrinsic.constant_names"><code class="docutils literal notranslate"><span class="pre">OrthographicExtrinsic.constant_names</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.OrthographicExtrinsic.constants"><code class="docutils literal notranslate"><span class="pre">OrthographicExtrinsic.constants</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.OrthographicExtrinsic.frame"><code class="docutils literal notranslate"><span class="pre">OrthographicExtrinsic.frame</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.OrthographicExtrinsic.from_frame"><code class="docutils literal notranslate"><span class="pre">OrthographicExtrinsic.from_frame()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.OrthographicExtrinsic.from_rt"><code class="docutils literal notranslate"><span class="pre">OrthographicExtrinsic.from_rt()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.OrthographicExtrinsic.is_set"><code class="docutils literal notranslate"><span class="pre">OrthographicExtrinsic.is_set()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.OrthographicExtrinsic.parameter_names"><code class="docutils literal notranslate"><span class="pre">OrthographicExtrinsic.parameter_names</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.OrthographicExtrinsic.parameters"><code class="docutils literal notranslate"><span class="pre">OrthographicExtrinsic.parameters</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.OrthographicExtrinsic.rmat"><code class="docutils literal notranslate"><span class="pre">OrthographicExtrinsic.rmat</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.OrthographicExtrinsic.rotation_matrix"><code class="docutils literal notranslate"><span class="pre">OrthographicExtrinsic.rotation_matrix</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.OrthographicExtrinsic.rotation_vector"><code class="docutils literal notranslate"><span class="pre">OrthographicExtrinsic.rotation_vector</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.OrthographicExtrinsic.rvec"><code class="docutils literal notranslate"><span class="pre">OrthographicExtrinsic.rvec</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.OrthographicExtrinsic.translation_vector"><code class="docutils literal notranslate"><span class="pre">OrthographicExtrinsic.translation_vector</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.OrthographicExtrinsic.tvec"><code class="docutils literal notranslate"><span class="pre">OrthographicExtrinsic.tvec</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -941,7 +940,7 @@ An alias for <code class="docutils literal notranslate"><span class="pre">rotati
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/api_doc/cv2_extrinsic.rst.txt"
+      <li><a href="../_sources/api_doc/orthographic_extrinsic.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div></div>
