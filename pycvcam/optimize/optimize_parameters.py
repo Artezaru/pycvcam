@@ -367,6 +367,11 @@ def optimize_parameters(
         # Condition number check
         if verbose_level >= 3 or cond_cutoff is not None:
             cond_number = numpy.linalg.cond(JTJ)  # shape ()
+            # import matplotlib.pyplot as plt
+            # fig = plt.figure()
+            # ax = fig.add_subplot(111)
+            # cax = ax.spy(JTJ)
+            # plt.show()
             log_verbose(verbose_level, 3, f"Iteration {it+1}: Condition number of (J^T J): {cond_number}")
             log_verbose(verbose_level, 3, f"Iteration {it+1}: Eigenvalues of (J^T J):\n{numpy.linalg.eigvals(JTJ)}")
 

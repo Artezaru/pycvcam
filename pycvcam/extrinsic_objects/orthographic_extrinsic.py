@@ -22,16 +22,17 @@ import cv2
 from ..core import Extrinsic
 from ..core.package import Package
 
-class Cv2Extrinsic(Extrinsic):
+
+class OrthographicExtrinsic(Extrinsic):
     r"""
 
-    Subclass of the :class:`pycvcam.core.Extrinsic` class that represents the OpenCV extrinsic model.
+    Subclass of the :class:`pycvcam.core.Extrinsic` class that represents the orthographic extrinsic transformation.
 
     .. note::
 
         This class represents the extrinsic transformation, which is the first step of the process from the ``world_points`` to the ``image_points``.
 
-    The ``Cv2Extrinsic`` model in the composition of a changement in reference frame and a normalisation.
+    The ``OrthographicExtrinsic`` model in the composition of a changement in reference frame and an orthographic projection.
 
     Lets consider ``world_points`` in the global coordinate system :math:`\vec{X}_w = (X_w, Y_w, Z_w)`, the corresponding ``normalized_points`` in the camera normalized coordinate system are given :math:`\vec{x}_n` can be optained by :
 
@@ -41,9 +42,9 @@ class Cv2Extrinsic(Extrinsic):
 
     .. math::
 
-        \vec{x}_n = \frac{\vec{X_c}}{Z_c}
+        \vec{x}_n = (X_c, Y_c)
 
-    where :math:`R` is the rotation matrix, :math:`T` is the translation vector, and :math:`Z_c` is the depth of the point in the camera coordinate system.
+    where :math:`R` is the rotation matrix, :math:`T` is the translation vector, and :math:`Z_c` the depth of the point in the camera coordinate system is ignored.
 
     .. note::
 
@@ -65,7 +66,7 @@ class Cv2Extrinsic(Extrinsic):
 
     .. note::
 
-        The ``Cv2Extrinsic`` class can be instantiated with 3 different ways:
+        The ``OrthographicExtrinsic`` class can be instantiated with 3 different ways:
 
         - Setting directly the parameters as a numpy array of shape (6,) (__init__ method) containing the rotation vector and translation vector concatenated.
         - Using the classmethod ``from_rt`` to set the rotation vector and translation vector.
@@ -83,12 +84,12 @@ class Cv2Extrinsic(Extrinsic):
     .. code-block:: python
 
         import numpy
-        from pycvcam import Cv2Extrinsic
+        from pycvcam import OrthographicExtrinsic
 
         rvec = numpy.array([0.1, 0.2, 0.3])
         tvec = numpy.array([0.5, 0.5, 0.5])
 
-        extrinsic = Cv2Extrinsic.from_rt(rvec, tvec)
+        extrinsic = OrthographicExtrinsic.from_rt(rvec, tvec)
 
     Then you can use the extrinsic object to transform ``world_points`` to ``normalized_points``:
 
@@ -132,8 +133,8 @@ class Cv2Extrinsic(Extrinsic):
 
         For more information about the transformation process, see:
 
-        - :meth:`pycvcam.Cv2Extrinsic._transform` to transform the ``world_points`` to ``normalized_points``.
-        - :meth:`pycvcam.Cv2Extrinsic._inverse_transform` to transform the ``normalized_points`` back to ``world_points``.
+        - :meth:`pycvcam.OrthographicExtrinsic._transform` to transform the ``world_points`` to ``normalized_points``.
+        - :meth:`pycvcam.OrthographicExtrinsic._inverse_transform` to transform the ``normalized_points`` back to ``world_points``.
 
     """
     __slots__ = ["_rvec", "_tvec"]
@@ -174,7 +175,7 @@ class Cv2Extrinsic(Extrinsic):
         Returns
         -------
         int
-            The number of parameters of the extrinsic transformation. It is always 6 for the Cv2Extrinsic class.
+            The number of parameters of the extrinsic transformation. It is always 6 for the OrthographicExtrinsic class.
         """
         return 6
 
@@ -187,8 +188,8 @@ class Cv2Extrinsic(Extrinsic):
 
         .. seealso::
 
-            - :meth:`pycvcam.Cv2Extrinsic.rotation_vector` or ``rvec`` to set the rotation vector of the extrinsic transformation.
-            - :meth:`pycvcam.Cv2Extrinsic.translation_vector` or ``tvec`` to set the translation vector of the extrinsic transformation.
+            - :meth:`pycvcam.OrthographicExtrinsic.rotation_vector` or ``rvec`` to set the rotation vector of the extrinsic transformation.
+            - :meth:`pycvcam.OrthographicExtrinsic.translation_vector` or ``tvec`` to set the translation vector of the extrinsic transformation.
 
         Returns
         -------
@@ -216,14 +217,14 @@ class Cv2Extrinsic(Extrinsic):
     @property
     def constants(self) -> Optional[numpy.ndarray]:
         r"""
-        Always returns None for the Cv2Extrinsic class, as it does not have any constants.
+        Always returns None for the OrthographicExtrinsic class, as it does not have any constants.
         """
         return None
     
     @constants.setter
     def constants(self, value: Optional[numpy.ndarray]) -> None:
         if value is not None:
-            raise ValueError("Cv2Extrinsic model has no constants, must be set to None.")
+            raise ValueError("OrthographicExtrinsic model has no constants, must be set to None.")
         self._constants = None
 
     @property
@@ -241,7 +242,7 @@ class Cv2Extrinsic(Extrinsic):
     @property
     def constant_names(self) -> List[str]:
         r"""
-        Always returns an empty list for the Cv2Extrinsic class, as it does not have any constants.
+        Always returns an empty list for the OrthographicExtrinsic class, as it does not have any constants.
         """
         return []
 
@@ -272,7 +273,7 @@ class Cv2Extrinsic(Extrinsic):
 
         .. seealso::
 
-            - :meth:`pycvcam.Cv2Extrinsic.rotation_vector` or ``rvec`` to set the rotation vector of the extrinsic transformation.
+            - :meth:`pycvcam.OrthographicExtrinsic.rotation_vector` or ``rvec`` to set the rotation vector of the extrinsic transformation.
 
         Returns
         -------
@@ -317,7 +318,7 @@ class Cv2Extrinsic(Extrinsic):
 
         .. seealso::
 
-            - :meth:`pycvcam.Cv2Extrinsic.translation_vector` or ``tvec`` to set the translation vector of the extrinsic transformation.
+            - :meth:`pycvcam.OrthographicExtrinsic.translation_vector` or ``tvec`` to set the translation vector of the extrinsic transformation.
 
         Returns
         -------
@@ -429,9 +430,9 @@ class Cv2Extrinsic(Extrinsic):
     # Instantiation methods
     # =============================================
     @classmethod
-    def from_rt(cls, rvec: numpy.ndarray, tvec: numpy.ndarray) -> Cv2Extrinsic:
+    def from_rt(cls, rvec: numpy.ndarray, tvec: numpy.ndarray) -> OrthographicExtrinsic:
         r"""
-        Class method to create a Cv2Extrinsic object from a rotation vector and a translation vector.
+        Class method to create a OrthographicExtrinsic object from a rotation vector and a translation vector.
 
         Parameters
         ----------
@@ -443,8 +444,8 @@ class Cv2Extrinsic(Extrinsic):
 
         Returns
         -------
-        Cv2Extrinsic
-            A new instance of the Cv2Extrinsic class with the specified rotation and translation vectors.
+        OrthographicExtrinsic
+            A new instance of the OrthographicExtrinsic class with the specified rotation and translation vectors.
 
         Examples
         --------
@@ -454,12 +455,12 @@ class Cv2Extrinsic(Extrinsic):
 
             import numpy as np
 
-            from pycvcam import Cv2Extrinsic
+            from pycvcam import OrthographicExtrinsic
 
             rvec = numpy.array([0.1, 0.2, 0.3])
             tvec = numpy.array([0.5, 0.5, 0.5])
 
-            extrinsic = Cv2Extrinsic.from_rt(rvec, tvec)
+            extrinsic = OrthographicExtrinsic.from_rt(rvec, tvec)
         
         """
         extrinsic = cls()
@@ -468,9 +469,9 @@ class Cv2Extrinsic(Extrinsic):
         return extrinsic
     
     @classmethod
-    def from_frame(cls, frame: Frame) -> Cv2Extrinsic:
+    def from_frame(cls, frame: Frame) -> OrthographicExtrinsic:
         r"""
-        Class method to create a Cv2Extrinsic object from a 3D frame.
+        Class method to create a OrthographicExtrinsic object from a 3D frame.
 
         Parameters
         ----------
@@ -479,8 +480,8 @@ class Cv2Extrinsic(Extrinsic):
 
         Returns
         -------
-        Cv2Extrinsic
-            A new instance of the Cv2Extrinsic class with the specified 3D frame.
+        OrthographicExtrinsic
+            A new instance of the OrthographicExtrinsic class with the specified 3D frame.
 
         Examples
         --------
@@ -489,10 +490,10 @@ class Cv2Extrinsic(Extrinsic):
         .. code-block:: python
 
             from py3dframe import Frame
-            from pycvcam import Cv2Extrinsic
+            from pycvcam import OrthographicExtrinsic
 
             frame = Frame(translation=[0.5, 0.5, 0.5], rotation_vector=[0.1, 0.2, 0.3], convention=4)
-            extrinsic = Cv2Extrinsic.from_frame(frame)
+            extrinsic = OrthographicExtrinsic.from_frame(frame)
         
         """
         extrinsic = cls()
@@ -514,9 +515,9 @@ class Cv2Extrinsic(Extrinsic):
 
         .. math::
 
-            \vec{x}_n = \frac{\vec{X}_c}{Z_c}
+            \vec{x}_n = (X_c, Y_c)
 
-        where :math:`R` is the rotation matrix, :math:`T` is the translation vector, and :math:`Z_c` is the depth of the point in the camera coordinate system.
+        where :math:`R` is the rotation matrix, :math:`T` is the translation vector, and :math:`Z_c` the depth of the point in the camera coordinate system is ignored.
 
         The jacobians with respect to the extrinsic parameters is an array with shape (Npoints, 2, 6), where the last dimension contains the jacobian with respect to the rotation vector and translation vector.
         The jacobian with respect to the world points is an array with shape (Npoints, 2, 3).
@@ -564,16 +565,10 @@ class Cv2Extrinsic(Extrinsic):
         # ==================
         # Compute the camera points
         points_camera_flat = world_points @ rmat.T + self._tvec[numpy.newaxis, :] # shape (Npoints, 3)
-        X_C = points_camera_flat[:, 0] # shape (Npoints,)
-        Y_C = points_camera_flat[:, 1] # shape (Npoints,)
-        Z_C = points_camera_flat[:, 2] # shape (Npoints,)
 
         # Compute the jacobian with respect to the world points
         if dx:
             points_camera_flat_dx = numpy.broadcast_to(rmat, (Npoints, 3, 3))
-            X_C_dx = points_camera_flat_dx[:, 0, :] # shape (Npoints, 3)
-            Y_C_dx = points_camera_flat_dx[:, 1, :] # shape (Npoints, 3)
-            Z_C_dx = points_camera_flat_dx[:, 2, :] # shape (Npoints, 3)
 
         # Compute the jacobian with respect to the extrinsic parameters
         if dp:
@@ -583,37 +578,19 @@ class Cv2Extrinsic(Extrinsic):
             points_camera_flat_dp[:, :, 3] = numpy.array([1.0, 0.0, 0.0], dtype=Package.get_float_dtype())[numpy.newaxis, :] # shape (Npoints, 3)
             points_camera_flat_dp[:, :, 4] = numpy.array([0.0, 1.0, 0.0], dtype=Package.get_float_dtype())[numpy.newaxis, :] # shape (Npoints, 3)
             points_camera_flat_dp[:, :, 5] = numpy.array([0.0, 0.0, 1.0], dtype=Package.get_float_dtype())[numpy.newaxis, :] # shape (Npoints, 3)
-            X_C_dp = points_camera_flat_dp[:, 0, :] # shape (Npoints, 6)
-            Y_C_dp = points_camera_flat_dp[:, 1, :] # shape (Npoints, 6)
-            Z_C_dp = points_camera_flat_dp[:, 2, :] # shape (Npoints, 6)
 
         # ==================
         # Normalized points
         # ==================
-        if numpy.any(numpy.abs(points_camera_flat[:, 2]) < 1e-6):
-            raise ValueError("The Z coordinate of the camera points is too close to zero. This may cause numerical instability.")
-
-        # Compute the normalized points
-        iZ_C = 1.0 / Z_C # shape (Npoints,)
-
-        normalized_points_flat = numpy.empty((Npoints, 2), dtype=Package.get_float_dtype()) # shape (Npoints, 2)
-        x_N = X_C * iZ_C
-        y_N = Y_C * iZ_C
-        normalized_points_flat[:, 0] = x_N
-        normalized_points_flat[:, 1] = y_N
+        normalized_points_flat = points_camera_flat[:, :2] # shape (Npoints, 2)
 
         # Compute the jacobian with respect to the camera points
         if dx:
-            jacobian_flat_dx = numpy.empty((Npoints, 2, 3), dtype=Package.get_float_dtype()) # shape (Npoints, 2, 3)
-            jacobian_flat_dx[:, 0, :] = (X_C_dx - x_N[:, numpy.newaxis] * Z_C_dx) * iZ_C[:, numpy.newaxis] # shape (Npoints, 3)
-            jacobian_flat_dx[:, 1, :] = (Y_C_dx - y_N[:, numpy.newaxis] * Z_C_dx) * iZ_C[:, numpy.newaxis] # shape (Npoints, 3)
+            jacobian_flat_dx = points_camera_flat_dx[:, :2, :] # shape (Npoints, 2, 3)
 
         # Compute the jacobian with respect to the extrinsic parameters
         if dp:
-            jacobian_flat_dp = numpy.empty((Npoints, 2, 6), dtype=Package.get_float_dtype()) # shape (Npoints, 2, 6)
-            jacobian_flat_dp[:, 0, :] = (X_C_dp - x_N[:, numpy.newaxis] * Z_C_dp) * iZ_C[:, numpy.newaxis] # shape (Npoints, 6)
-            jacobian_flat_dp[:, 1, :] = (Y_C_dp - y_N[:, numpy.newaxis] * Z_C_dp) * iZ_C[:, numpy.newaxis] # shape (Npoints, 6)
-
+            jacobian_flat_dp = points_camera_flat_dp[:, :2, :] # shape (Npoints, 2, 6)
         if not dx:
             jacobian_flat_dx = None
         if not dp:
@@ -630,7 +607,7 @@ class Cv2Extrinsic(Extrinsic):
 
         .. math::
 
-            \vec{X}_c = \vec{x}_n \cdot Z_c
+            \vec{X}_c = (x_n, y_n, Z_c)
 
         .. math::
 
@@ -699,8 +676,8 @@ class Cv2Extrinsic(Extrinsic):
         # Camera points
         # ==================
         # Compute the camera points
-        X_C = normalized_points[:, 0] * depth # shape (Npoints,)
-        Y_C = normalized_points[:, 1] * depth # shape (Npoints,)
+        X_C = normalized_points[:, 0] # shape (Npoints,)
+        Y_C = normalized_points[:, 1] # shape (Npoints,)
         Z_C = depth # shape (Npoints,)
 
         points_camera_flat = numpy.empty((Npoints, 3), dtype=Package.get_float_dtype()) # shape (Npoints, 3)
@@ -711,10 +688,10 @@ class Cv2Extrinsic(Extrinsic):
         # Compute the jacobian with respect to the normalized points
         if dx:
             points_camera_flat_dx = numpy.empty((Npoints, 3, 2), dtype=Package.get_float_dtype()) # shape (Npoints, 3, 2)
-            points_camera_flat_dx[:, 0, 0] = depth # shape (Npoints, 2)
+            points_camera_flat_dx[:, 0, 0] = 1.0 # shape (Npoints, 2)
             points_camera_flat_dx[:, 0, 1] = 0.0
             points_camera_flat_dx[:, 1, 0] = 0.0
-            points_camera_flat_dx[:, 1, 1] = depth # shape (Npoints, 2)
+            points_camera_flat_dx[:, 1, 1] = 1.0 # shape (Npoints, 2)
             points_camera_flat_dx[:, 2, 0] = 0.0
             points_camera_flat_dx[:, 2, 1] = 0.0
 
@@ -754,10 +731,9 @@ class Cv2Extrinsic(Extrinsic):
         The ray structure is as follows:
 
         - The first 3 elements are the origin of the ray in the world coordinate system (the normalized points with z=1 and a change of coordinate system).
-        - The last 3 elements are the direction of the ray in the world coordinate system, which is obtained by the vector from the origin to the normalized point in the world coordinate system.
+        - The last 3 elements are the direction of the ray in the world coordinate system, which is always (0, 0, 1) in the camera coordinate system.
 
         Lets :math:`\vec{X}_n` the 3D normalized points, with coordinates :math:`(x_n, y_n, 1.0)` in the camera coordinate system.
-        Lets :math:`\vec{O}` the camera position with coordinates :math:`(0, 0, 0)` in the camera coordinate system.
 
         The points in the world coordinate system are computed as follows:
 
@@ -768,7 +744,7 @@ class Cv2Extrinsic(Extrinsic):
             \vec{O}_w &= - R^{-1} \cdot T 
             \end{align*}
 
-        The origin of the ray in the world coordinate system is the normalized points :math:`\vec{X}_w` in world coordinates and the direction of the ray is the normalized vector from the origin to the point :math:`(\vec{X}_w - \vec{O}_w)/\|\vec{X}_w - \vec{O}_w\|` in world coordinates.
+        The origin of the ray in the world coordinate system is the normalized points :math:`\vec{X}_w` in world coordinates and the direction of the ray is the normalized vector (0, 0, 1) in which the transformation is applied.
 
         Parameters
         ----------
@@ -789,17 +765,19 @@ class Cv2Extrinsic(Extrinsic):
         tvec = self._tvec
 
         # Compute the origin of the ray in the world coordinate system
-        origin_world = (- tvec[numpy.newaxis, :] @ rmat_inv.T).flatten()  # shape (3,)
+        vector_camera = numpy.array([0.0, 0.0, 1.0], dtype=Package.get_float_dtype()) # shape (3,)
+        vector_world = vector_camera @ rmat_inv.T  # shape (3,)
+        direction_world = vector_world / numpy.linalg.norm(vector_world)  # shape (3,)
 
         # Compute the normalized points in the world coordinate system
         normalized_points_world = (numpy.concatenate((normalized_points, numpy.ones((Npoints, 1), dtype=Package.get_float_dtype())), axis=1) - tvec[numpy.newaxis, :]) @ rmat_inv.T # shape (Npoints, 3)
 
         # Compute the direction of the ray in the world coordinate system
-        direction_world = normalized_points_world - origin_world[numpy.newaxis, :]  # shape (Npoints, 3)
+        direction_world = direction_world[numpy.newaxis, :].repeat(Npoints, axis=0) # shape (Npoints, 3)
 
         # Create the rays in the world coordinate system
         rays = numpy.empty((Npoints, 6), dtype=Package.get_float_dtype()) # shape (Npoints, 6)
         rays[:, :3] = normalized_points_world # The first 3 elements are the origin of the ray in the world coordinate system
-        rays[:, 3:] = direction_world / numpy.linalg.norm(direction_world, axis=1)[:, numpy.newaxis] # The last 3 elements are the direction of the ray in the world coordinate system
+        rays[:, 3:] = direction_world # The last 3 elements are the direction of the ray in the world coordinate system
 
         return rays

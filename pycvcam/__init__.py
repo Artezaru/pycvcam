@@ -19,9 +19,10 @@ __all__ = [
 ]
 
 from .extrinsic_objects.no_extrinsic import NoExtrinsic
-from .extrinsic_objects.cv2_extrinsic import Cv2Extrinsic   
+from .extrinsic_objects.cv2_extrinsic import Cv2Extrinsic
+from .extrinsic_objects.orthographic_extrinsic import OrthographicExtrinsic
 
-__all__.extend([ "NoExtrinsic", "Cv2Extrinsic"])
+__all__.extend([ "NoExtrinsic", "Cv2Extrinsic", "OrthographicExtrinsic"])
 
 from .intrinsic_objects.no_intrinsic import NoIntrinsic
 from .intrinsic_objects.cv2_intrinsic import Cv2Intrinsic
@@ -32,8 +33,9 @@ __all__.extend([ "NoIntrinsic", "Cv2Intrinsic", "SkewIntrinsic"])
 from .distortion_objects.no_distortion import NoDistortion
 from .distortion_objects.cv2_distortion import Cv2Distortion
 from .distortion_objects.zernike_distortion import ZernikeDistortion
+from .distortion_objects.fisheye_distortion import FisheyeDistortion
 
-__all__.extend([ "NoDistortion", "Cv2Distortion", "ZernikeDistortion"])
+__all__.extend([ "NoDistortion", "Cv2Distortion", "ZernikeDistortion", "FisheyeDistortion"])
 
 from .undistort_image import undistort_image
 from .undistort_points import undistort_points
