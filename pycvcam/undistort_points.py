@@ -194,7 +194,7 @@ def undistort_points(
 
     Npoints = image_points.shape[0] # Npoints
     output_points = image_points.copy() # shape (Npoints, 2)
-    print(intrinsic, distortion)
+
     # Realize the transformation:
     if not isinstance(intrinsic, NoIntrinsic):
         output_points, _, _ = intrinsic._inverse_transform(output_points, dx=False, dp=False) # shape (Npoints, 2) -> shape (Npoints, 2)
