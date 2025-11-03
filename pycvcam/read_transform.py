@@ -66,7 +66,8 @@ def read_transform(file_path, cls: Type[Transform]) -> Transform:
         raise ValueError(f"Transform type mismatch, expected {cls.__name__} but got {transform_data['type']}")
 
     # Create an instance of the Transform subclass
-    transform = cls(parameters=transform_data.get('parameters', None),
-                    constants=transform_data.get('constants', None))
+    transform = cls()
+    transform.parameters = transform_data.get('parameters', None)
+    transform.constants = transform_data.get('constants', None)
 
     return transform
