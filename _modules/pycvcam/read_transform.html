@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pycvcam.read_transform &#8212; pycvcam 1.5.0 documentation</title>
+    <title>pycvcam.read_transform &#8212; pycvcam 1.5.1 documentation</title>
   
   
   
@@ -37,7 +37,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=e0a75244"></script>
+    <script src="../../_static/documentation_options.js?v=44dfd65d"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pycvcam/read_transform';</script>
@@ -107,7 +107,7 @@
   
   
   
-    <p class="title logo__title">pycvcam 1.5.0 documentation</p>
+    <p class="title logo__title">pycvcam 1.5.1 documentation</p>
   
 </a></div>
     
@@ -380,8 +380,9 @@
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Transform type mismatch, expected </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> but got </span><span class="si">{</span><span class="n">transform_data</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="c1"># Create an instance of the Transform subclass</span>
-    <span class="n">transform</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">parameters</span><span class="o">=</span><span class="n">transform_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;parameters&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
-                    <span class="n">constants</span><span class="o">=</span><span class="n">transform_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;constants&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+    <span class="n">transform</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
+    <span class="n">transform</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">transform_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;parameters&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">transform</span><span class="o">.</span><span class="n">constants</span> <span class="o">=</span> <span class="n">transform_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;constants&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">transform</span></div>
 
