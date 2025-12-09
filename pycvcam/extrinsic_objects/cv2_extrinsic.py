@@ -411,7 +411,7 @@ class Cv2Extrinsic(Extrinsic):
         """
         if self._rvec is None or self._tvec is None:
             return None
-        return Frame(translation=self._tvec, rotation_vector=self._rvec, convention=4)
+        return Frame.from_rotation_vector(translation=self._tvec, rotation_vector=self._rvec, convention=4)
     
     @frame.setter
     def frame(self, frame: Optional[Frame]) -> None:
