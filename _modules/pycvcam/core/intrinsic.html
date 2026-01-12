@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pycvcam.core.intrinsic &#8212; pycvcam 1.5.3 documentation</title>
+    <title>pycvcam.core.intrinsic &#8212; pycvcam 1.5.4 documentation</title>
   
   
   
@@ -37,7 +37,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=d75fd82e"></script>
+    <script src="../../../_static/documentation_options.js?v=1cd648e3"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pycvcam/core/intrinsic';</script>
@@ -107,7 +107,7 @@
   
   
   
-    <p class="title logo__title">pycvcam 1.5.3 documentation</p>
+    <p class="title logo__title">pycvcam 1.5.4 documentation</p>
   
 </a></div>
     
@@ -333,6 +333,7 @@
 <a class="viewcode-back" href="../../../api_doc/intrinsic.html#pycvcam.core.Intrinsic">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Intrinsic</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    </span>
 <span class="sd">    .. note::</span>
 
 <span class="sd">        This class represents the intrinsic transformation, which is the last step of the process from the ``world_points`` to the ``image_points``.</span>
@@ -356,8 +357,6 @@
     <span class="c1"># =============================================</span>
     <span class="c1"># Addind aliases for the transformation</span>
     <span class="c1"># =============================================</span>
-<div class="viewcode-block" id="Intrinsic._get_transform_aliases">
-<a class="viewcode-back" href="../../../api_doc/intrinsic.html#pycvcam.core.Intrinsic._get_transform_aliases">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_transform_aliases</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Property to return a list of aliases for the transformed points.</span>
@@ -366,14 +365,12 @@
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        List[str]</span>
+<span class="sd">        :class:`List[str]`</span>
 <span class="sd">            A list of aliases for the transformed points.</span>
+<span class="sd">            </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;image_points&quot;</span><span class="p">,</span> <span class="s2">&quot;x_i&quot;</span><span class="p">]</span></div>
-
+        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;image_points&quot;</span><span class="p">,</span> <span class="s2">&quot;x_i&quot;</span><span class="p">]</span>
     
-<div class="viewcode-block" id="Intrinsic._get_inverse_transform_aliases">
-<a class="viewcode-back" href="../../../api_doc/intrinsic.html#pycvcam.core.Intrinsic._get_inverse_transform_aliases">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_inverse_transform_aliases</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Property to return a list of aliases for the inverse transformed points.</span>
@@ -382,14 +379,14 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        List[str]</span>
+<span class="sd">        :class:`List[str]`</span>
 <span class="sd">            A list of aliases for the inverse transformed points.</span>
+<span class="sd">            </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;distorted_points&quot;</span><span class="p">,</span> <span class="s2">&quot;x_d&quot;</span><span class="p">]</span></div>
-
+        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;distorted_points&quot;</span><span class="p">,</span> <span class="s2">&quot;x_d&quot;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="Intrinsic.scale">
-<a class="viewcode-back" href="../../../api_doc/intrinsic.html#pycvcam.core.Intrinsic.scale">[docs]</a>
+<a class="viewcode-back" href="../../../generated/pycvcam.core.Intrinsic.scale.html#pycvcam.core.Intrinsic.scale">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">scale</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> 
         <span class="n">distorted_points</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> 
@@ -405,45 +402,54 @@
 <span class="sd">        .. seealso::</span>
 
 <span class="sd">            - :meth:`pycvcam.core.Transform.transform` for applying the transformation to points.</span>
+<span class="sd">            </span>
+<span class="sd">        .. note::</span>
+<span class="sd">        </span>
+<span class="sd">            The :obj:`distorted_points`  is converted to a numpy array of ``dtype=numpy.float64``.</span>
 
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        distorted_points : :class:`numpy.ndarray`</span>
+<span class="sd">            The distorted points to be transformed. Shape (..., 2).</span>
+
+<span class="sd">        transpose : :class:`bool`, optional</span>
+<span class="sd">            If :obj:`True`, the input points are assumed to have shape (2, ...) instead of (..., 2) and the output points will have shape (2, ...). Default is :obj:`False`.</span>
+
+<span class="sd">        dx : :class:`bool`, optional</span>
+<span class="sd">            If :obj:`True`, the jacobian with respect to the distorted points is computed. Default is :obj:`False`</span>
+
+<span class="sd">        dp : :class:`bool`, optional</span>
+<span class="sd">            If :obj:`True`, the jacobian with respect to the intrinsic parameters is computed. Default is :obj:`False`</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :class:`TransformResult`</span>
+<span class="sd">            The result of the transformation, which includes the ``image_points`` and the Jacobian matrices if available.</span>
+<span class="sd">            </span>
+<span class="sd">        </span>
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        </span>
 <span class="sd">        .. code-block:: python</span>
 
 <span class="sd">            intrinsic = ... # An instance of a subclass of Intrinsic</span>
 
 <span class="sd">            import numpy</span>
 
-<span class="sd">            distorted_points = numpy.array([[0.0, 0.0], [1.0, 1.0], [2.0, 2.0]]) # shape (Npoints, 2)</span>
+<span class="sd">            distorted_points = numpy.array([[0.0, 0.0], [1.0, 1.0], [2.0, 2.0]]) # shape (n_points, 2)</span>
 <span class="sd">            result = intrinsic.scale(distorted_points)</span>
-<span class="sd">            image_points = result.image_points  # shape (Npoints, 2)</span>
+<span class="sd">            image_points = result.image_points  # shape (n_points, 2)</span>
 
 <span class="sd">            # SAME AS:</span>
 <span class="sd">            result = intrinsic.transform(distorted_points)</span>
-<span class="sd">            image_points = result.transformed_points  # shape (Npoints, 2)</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        distorted_points : numpy.ndarray</span>
-<span class="sd">            The distorted points to be transformed. Shape (..., 2).</span>
-
-<span class="sd">        transpose : bool, optional</span>
-<span class="sd">            If True, the input points are assumed to have shape (2, ...) instead of (..., 2) and the output points will have shape (2, ...). Default is False.</span>
-
-<span class="sd">        dx : bool, optional</span>
-<span class="sd">            If True, the jacobian with respect to the distorted points is computed. Default is False</span>
-
-<span class="sd">        dp : bool, optional</span>
-<span class="sd">            If True, the jacobian with respect to the intrinsic parameters is computed. Default is False</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        TransformResult</span>
-<span class="sd">            The result of the transformation, which includes the ``image_points`` and the Jacobian matrices if available.</span>
+<span class="sd">            image_points = result.transformed_points  # shape (n_points, 2)</span>
+<span class="sd">            </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">distorted_points</span><span class="p">,</span> <span class="n">transpose</span><span class="o">=</span><span class="n">transpose</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dx</span><span class="p">,</span> <span class="n">dp</span><span class="o">=</span><span class="n">dp</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Intrinsic.unscale">
-<a class="viewcode-back" href="../../../api_doc/intrinsic.html#pycvcam.core.Intrinsic.unscale">[docs]</a>
+<a class="viewcode-back" href="../../../generated/pycvcam.core.Intrinsic.unscale.html#pycvcam.core.Intrinsic.unscale">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">unscale</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">image_points</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
@@ -460,38 +466,46 @@
 
 <span class="sd">            - :meth:`pycvcam.core.Transform.inverse_transform` for applying the inverse transformation to points.</span>
 
+<span class="sd">        .. note::</span>
+<span class="sd">        </span>
+<span class="sd">            The :obj:`image_points`  is converted to a numpy array of ``dtype=numpy.float64``.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        image_points : :class:`numpy.ndarray`</span>
+<span class="sd">            The image points to be transformed. Shape (..., 2).</span>
+
+<span class="sd">        transpose : :class:`bool`, optional</span>
+<span class="sd">            If :obj:`True`, the input points are assumed to have shape (2, ...) instead of (..., 2) and the output points will have shape (2, ...). Default is :obj:`False`.</span>
+
+<span class="sd">        dx : :class:`bool`, optional</span>
+<span class="sd">            If :obj:`True`, the jacobian with respect to the image points is computed. Default is :obj:`False`</span>
+
+<span class="sd">        dp : :class:`bool`, optional</span>
+<span class="sd">            If :obj:`True`, the jacobian with respect to the intrinsic parameters is computed. Default is :obj:`False`</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :class:`TransformResult`</span>
+<span class="sd">            The result of the inverse transformation, which includes the ``distorted_points`` and the Jacobian matrices if available.</span>
+<span class="sd">        </span>
+<span class="sd">            </span>
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        </span>
 <span class="sd">        .. code-block:: python</span>
 
 <span class="sd">            intrinsic = ... # An instance of a subclass of Intrinsic</span>
 
 <span class="sd">            import numpy</span>
 
-<span class="sd">            image_points = numpy.array([[3.0, 3.0], [4.0, 4.0], [5.0, 5.0]]) # shape (Npoints, 2)</span>
+<span class="sd">            image_points = numpy.array([[3.0, 3.0], [4.0, 4.0], [5.0, 5.0]]) # shape (n_points, 2)</span>
 <span class="sd">            result = intrinsic.unscale(image_points)</span>
-<span class="sd">            distorted_points = result.distorted_points  # shape (Npoints, 2)</span>
+<span class="sd">            distorted_points = result.distorted_points  # shape (n_points, 2)</span>
 
 <span class="sd">            # SAME AS:</span>
 <span class="sd">            result = intrinsic.inverse_transform(image_points)</span>
-<span class="sd">            distorted_points = result.transformed_points  # shape (Npoints, 2)</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        image_points : numpy.ndarray</span>
-<span class="sd">            The image points to be transformed. Shape (..., 2).</span>
-
-<span class="sd">        transpose : bool, optional</span>
-<span class="sd">            If True, the input points are assumed to have shape (2, ...) instead of (..., 2) and the output points will have shape (2, ...). Default is False.</span>
-
-<span class="sd">        dx : bool, optional</span>
-<span class="sd">            If True, the jacobian with respect to the image points is computed. Default is False</span>
-
-<span class="sd">        dp : bool, optional</span>
-<span class="sd">            If True, the jacobian with respect to the intrinsic parameters is computed. Default is False</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        TransformResult</span>
-<span class="sd">            The result of the inverse transformation, which includes the ``distorted_points`` and the Jacobian matrices if available.</span>
+<span class="sd">            distorted_points = result.transformed_points  # shape (n_points, 2)       </span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">image_points</span><span class="p">,</span> <span class="n">transpose</span><span class="o">=</span><span class="n">transpose</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dx</span><span class="p">,</span> <span class="n">dp</span><span class="o">=</span><span class="n">dp</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
@@ -538,7 +552,7 @@
 
   <p class="copyright">
     
-      © Copyright 2025-2025, Artezaru.
+      © Copyright 2025-2026, Artezaru.
       <br/>
     
   </p>

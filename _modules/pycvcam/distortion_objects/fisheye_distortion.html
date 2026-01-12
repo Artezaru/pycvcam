@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pycvcam.distortion_objects.fisheye_distortion &#8212; pycvcam 1.5.3 documentation</title>
+    <title>pycvcam.distortion_objects.fisheye_distortion &#8212; pycvcam 1.5.4 documentation</title>
   
   
   
@@ -37,7 +37,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=d75fd82e"></script>
+    <script src="../../../_static/documentation_options.js?v=1cd648e3"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pycvcam/distortion_objects/fisheye_distortion';</script>
@@ -107,7 +107,7 @@
   
   
   
-    <p class="title logo__title">pycvcam 1.5.3 documentation</p>
+    <p class="title logo__title">pycvcam 1.5.4 documentation</p>
   
 </a></div>
     
@@ -330,7 +330,6 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">..core</span><span class="w"> </span><span class="kn">import</span> <span class="n">Distortion</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..core.package</span><span class="w"> </span><span class="kn">import</span> <span class="n">Package</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">optimize_input_points</span>
 
 <div class="viewcode-block" id="FisheyeDistortion">
@@ -376,18 +375,18 @@
 
 <span class="sd">    .. note::</span>
 
-<span class="sd">        If the number of parameters is ``Nparams``, the maximum order of the polynomial is :math:`2*Nparams + 1`. and only odd powers of :math:`\theta` are used in the polynomial.</span>
+<span class="sd">        If the number of parameters is ``n_params``, the maximum order of the polynomial is :math:`2*n_params + 1`. and only odd powers of :math:`\theta` are used in the polynomial.</span>
 <span class="sd">    </span>
 <span class="sd">    .. warning::</span>
 
-<span class="sd">        If the number of parameters ``Nparams`` is given during instantiation, the given parameters are truncated or extended to the given number of parameters.</span>
+<span class="sd">        If the number of parameters ``n_params`` is given during instantiation, the given parameters are truncated or extended to the given number of parameters.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    parameters : Optional[numpy.ndarray], optional</span>
-<span class="sd">        The parameters of the distortion transformation. It should be a numpy array of shape (Nparams,) containing the distortion coefficients ordered as described above. Default is None, which means no distortion is setted.</span>
+<span class="sd">        The parameters of the distortion transformation. It should be a numpy array of shape (n_params,) containing the distortion coefficients ordered as described above. Default is None, which means no distortion is setted.</span>
 
-<span class="sd">    Nparams : Optional[Integral], optional</span>
+<span class="sd">    n_params : Optional[Integral], optional</span>
 <span class="sd">        The number of parameters for the distortion model. If not specified, it will be inferred from the shape of the `parameters` array.</span>
 
 <span class="sd">    Examples</span>
@@ -407,10 +406,10 @@
 
 <span class="sd">    .. code-block:: python</span>
 
-<span class="sd">        normalized_points = numpy.array([[0.1, 0.2], [0.3, 0.4], [0.5, 0.6]]) # shape (Npoints, 2)</span>
+<span class="sd">        normalized_points = numpy.array([[0.1, 0.2], [0.3, 0.4], [0.5, 0.6]]) # shape (n_points, 2)</span>
 
 <span class="sd">        result = distortion.transform(normalized_points)</span>
-<span class="sd">        distorted_points = result.distorted_points # Shape (Npoints, 2)</span>
+<span class="sd">        distorted_points = result.distorted_points # Shape (n_points, 2)</span>
 <span class="sd">        print(distorted_points)</span>
 
 <span class="sd">    You can also access to the jacobian of the distortion transformation:</span>
@@ -418,8 +417,8 @@
 <span class="sd">    .. code-block:: python</span>
 
 <span class="sd">        result = distortion.transform(normalized_points, dx=True, dp=True)</span>
-<span class="sd">        distorted_points_dx = result.jacobian_dx  # Shape (Npoints, 2, 2)</span>
-<span class="sd">        distorted_points_dp = result.jacobian_dp  # Shape (Npoints, 2, Nparams = 5)</span>
+<span class="sd">        distorted_points_dx = result.jacobian_dx  # Shape (n_points, 2, 2)</span>
+<span class="sd">        distorted_points_dp = result.jacobian_dp  # Shape (n_points, 2, n_params = 5)</span>
 <span class="sd">        print(distorted_points_dx) </span>
 <span class="sd">        print(distorted_points_dp)</span>
 
@@ -428,7 +427,7 @@
 <span class="sd">    .. code-block:: python</span>
 
 <span class="sd">        inverse_result = distortion.inverse_transform(distorted_points, dx=True, dp=True)</span>
-<span class="sd">        normalized_points = inverse_result.normalized_points  # Shape (Npoints, 2)</span>
+<span class="sd">        normalized_points = inverse_result.normalized_points  # Shape (n_points, 2)</span>
 <span class="sd">        print(normalized_points)</span>
 
 <span class="sd">    .. note::</span>
@@ -443,11 +442,11 @@
 <span class="sd">        - :meth:`pycvcam.FisheyeDistortion._inverse_transform` to transform the ``distorted_points`` back to ``normalized_points``.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Nparams</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Integral</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">n_params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Integral</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># Initialize the Transform base class</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parameters</span><span class="o">=</span><span class="n">parameters</span><span class="p">,</span> <span class="n">constants</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">Nparams</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">Nparams</span> <span class="o">=</span> <span class="n">Nparams</span>
+        <span class="k">if</span> <span class="n">n_params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_params</span> <span class="o">=</span> <span class="n">n_params</span>
 
     <span class="c1"># =============================================</span>
     <span class="c1"># Overwrite some properties from the base class</span>
@@ -461,7 +460,7 @@
 
 <span class="sd">        .. note::</span>
 
-<span class="sd">            If the number of parameters is ``Nparams``, the maximum order of the polynomial is :math:`2*Nparams + 1`. and only odd powers of :math:`\theta` are used in the polynomial.</span>
+<span class="sd">            If the number of parameters is ``n_params``, the maximum order of the polynomial is :math:`2*n_params + 1`. and only odd powers of :math:`\theta` are used in the polynomial.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -478,7 +477,7 @@
     <span class="nd">@parameters</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">parameters</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">parameters</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span>
+            <span class="n">parameters</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">parameters</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The parameters should be a 1D numpy array.&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="n">parameters</span>
@@ -497,13 +496,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_constants</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">Nparams</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">n_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get or set the number of parameters of the distortion model.</span>
 
 <span class="sd">        .. note::</span>
 
-<span class="sd">            If the number of parameters is ``Nparams``, the maximum order of the polynomial is :math:`2*Nparams + 1`. and only odd powers of :math:`\theta` are used in the polynomial.</span>
+<span class="sd">            If the number of parameters is ``n_params``, the maximum order of the polynomial is :math:`2*n_params + 1`. and only odd powers of :math:`\theta` are used in the polynomial.</span>
 
 <span class="sd">        If the given number of parameters is less than the current number of parameters, the parameters are truncated.</span>
 <span class="sd">        If the given number of parameters is greater than the current number of parameters, the parameters are extended with zeros.</span>
@@ -518,8 +517,8 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">size</span>
         
-    <span class="nd">@Nparams</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">Nparams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Integral</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nd">@n_params</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">n_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Integral</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Integral</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;The number of parameters should be an integer.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -533,10 +532,10 @@
         <span class="c1"># Update the number of parameters instead of creating a new array</span>
         <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">elif</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nparams</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_params</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[:</span><span class="n">value</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nparams</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nparams</span><span class="p">)))</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_params</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_params</span><span class="p">)))</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">parameter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
@@ -548,7 +547,7 @@
 <span class="sd">        List[str]</span>
 <span class="sd">            The names of the parameters of the distortion transformation.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;d_</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Nparams</span><span class="p">)]</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;d_</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_params</span><span class="p">)]</span>
         <span class="k">return</span> <span class="n">params</span>
     
     <span class="nd">@property</span>
@@ -598,7 +597,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">Integral</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;The index of the distortion coefficient should be an integer.&quot;</span><span class="p">)</span>
         <span class="n">i_min</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="n">i_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nparams</span>
+        <span class="n">i_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_params</span>
         <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">i_min</span> <span class="ow">or</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="n">i_max</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The index of the distortion coefficient should be between </span><span class="si">{</span><span class="n">i_min</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">i_max</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
@@ -629,7 +628,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">Integral</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;The index of the distortion coefficient should be an integer.&quot;</span><span class="p">)</span>
         <span class="n">i_min</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="n">i_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nparams</span>
+        <span class="n">i_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_params</span>
         <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">i_min</span> <span class="ow">or</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="n">i_max</span><span class="p">:</span> 
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The index of the distortion coefficient should be between </span><span class="si">{</span><span class="n">i_min</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">i_max</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span></div>
@@ -641,7 +640,7 @@
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set to zero the parameters of the distortion model.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">Nparams</span><span class="p">,</span> <span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">n_params</span><span class="p">,</span> <span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span></div>
 
 
     <span class="c1"># =================================================================</span>
@@ -653,8 +652,8 @@
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert cartesian coordinates to polar coordinates.</span>
 <span class="sd">        </span>
-<span class="sd">        The input ``cartesian`` points are given in the form :math:`(x, y)` with shape (Npoints, 2).</span>
-<span class="sd">        The output ``polar`` points are given in the form :math:`(r, \theta)` with shape (Npoints, 2), where :math:`r = \sqrt{x^2 + y^2}` and :math:`\theta = \arctan2(y, x)`.</span>
+<span class="sd">        The input ``cartesian`` points are given in the form :math:`(x, y)` with shape (n_points, 2).</span>
+<span class="sd">        The output ``polar`` points are given in the form :math:`(r, \theta)` with shape (n_points, 2), where :math:`r = \sqrt{x^2 + y^2}` and :math:`\theta = \arctan2(y, x)`.</span>
 
 <span class="sd">        .. math::</span>
 
@@ -668,7 +667,7 @@
 <span class="sd">            \arctan2(y, x) \\</span>
 <span class="sd">            \end{bmatrix}</span>
 
-<span class="sd">        The jacobian with respect to the cartesian points is an array with shape (Npoints, 2, 2).</span>
+<span class="sd">        The jacobian with respect to the cartesian points is an array with shape (n_points, 2, 2).</span>
 
 <span class="sd">        .. math::</span>
 
@@ -684,12 +683,12 @@
 
 <span class="sd">        .. warning::</span>
 <span class="sd">            This method is not intended to be used directly, but rather through the :meth:`pycvcam.core.Transform.transform` method.</span>
-<span class="sd">            Please ensure, the shape of the input ``cartesian`` is (Npoints, 2) before calling this method.</span>
+<span class="sd">            Please ensure, the shape of the input ``cartesian`` is (n_points, 2) before calling this method.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        cartesian : numpy.ndarray</span>
-<span class="sd">            The cartesian points to be converted. Shape (Npoints, 2).</span>
+<span class="sd">            The cartesian points to be converted. Shape (n_points, 2).</span>
 <span class="sd">        </span>
 <span class="sd">        dx : bool, optional</span>
 <span class="sd">            If True, the jacobian with respect to the cartesian points is computed. Default is True.</span>
@@ -697,33 +696,33 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        polar : numpy.ndarray</span>
-<span class="sd">            The polar points. Shape (Npoints, 2).</span>
+<span class="sd">            The polar points. Shape (n_points, 2).</span>
 <span class="sd">        </span>
 <span class="sd">        jacobian_dx : Optional[numpy.ndarray]</span>
-<span class="sd">            The jacobian of the polar points with respect to the cartesian points. Shape (Npoints, 2, 2) if dx is True, otherwise None.</span>
+<span class="sd">            The jacobian of the polar points with respect to the cartesian points. Shape (n_points, 2, 2) if dx is True, otherwise None.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;The dx parameter must be a boolean.&quot;</span><span class="p">)</span>
 
         <span class="c1"># Extract the cartesian coordinates</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">cartesian</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="c1"># shape (Npoints,)</span>
-        <span class="n">y</span> <span class="o">=</span> <span class="n">cartesian</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="c1"># shape (Npoints,)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">cartesian</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="c1"># shape (n_points,)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">cartesian</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="c1"># shape (n_points,)</span>
         
         <span class="c1"># Compute the polar coordinates</span>
-        <span class="n">r</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># shape (Npoints,)</span>
-        <span class="n">theta</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="c1"># shape (Npoints,)</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># shape (n_points,)</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="c1"># shape (n_points,)</span>
 
-        <span class="n">polar</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">cartesian</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span> <span class="c1"># shape (Npoints, 2)</span>
+        <span class="n">polar</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">cartesian</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="c1"># shape (n_points, 2)</span>
         <span class="n">polar</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span>
         <span class="n">polar</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">theta</span>
 
         <span class="c1"># Compute the jacobian with respect to the cartesian points</span>
         <span class="n">jacobian_dx</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">dx</span><span class="p">:</span>
-            <span class="n">jacobian_dx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">cartesian</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span> <span class="c1"># shape (Npoints, 2, 2)</span>
+            <span class="n">jacobian_dx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">cartesian</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="c1"># shape (n_points, 2, 2)</span>
             <span class="n">r_safe</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">r</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1e-8</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span> <span class="c1"># Avoid division by zero</span>
-            <span class="n">r2</span> <span class="o">=</span> <span class="n">r_safe</span> <span class="o">**</span> <span class="mi">2</span> <span class="c1"># shape (Npoints,)</span>
+            <span class="n">r2</span> <span class="o">=</span> <span class="n">r_safe</span> <span class="o">**</span> <span class="mi">2</span> <span class="c1"># shape (n_points,)</span>
             <span class="n">jacobian_dx</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span> <span class="o">/</span> <span class="n">r_safe</span> <span class="c1"># dr/dx</span>
             <span class="n">jacobian_dx</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span> <span class="o">/</span> <span class="n">r_safe</span> <span class="c1"># dr/dy</span>
             <span class="n">jacobian_dx</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">y</span> <span class="o">/</span> <span class="n">r2</span> <span class="c1"># dtheta/dx</span>
@@ -739,8 +738,8 @@
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert polar coordinates to cartesian coordinates.</span>
 <span class="sd">        </span>
-<span class="sd">        The input ``polar`` points are given in the form :math:`(r, \theta)` with shape (Npoints, 2), where :math:`r = \sqrt{x^2 + y^2}` and :math:`\theta = \arctan2(y, x)`.</span>
-<span class="sd">        The output ``cartesian`` points are given in the form :math:`(x, y)` with shape (Npoints, 2).</span>
+<span class="sd">        The input ``polar`` points are given in the form :math:`(r, \theta)` with shape (n_points, 2), where :math:`r = \sqrt{x^2 + y^2}` and :math:`\theta = \arctan2(y, x)`.</span>
+<span class="sd">        The output ``cartesian`` points are given in the form :math:`(x, y)` with shape (n_points, 2).</span>
 
 <span class="sd">        .. math::</span>
 
@@ -754,7 +753,7 @@
 <span class="sd">            r \sin(\theta) \\</span>
 <span class="sd">            \end{bmatrix}</span>
 
-<span class="sd">        The jacobian with respect to the polar points is an array with shape (Npoints, 2, 2).</span>
+<span class="sd">        The jacobian with respect to the polar points is an array with shape (n_points, 2, 2).</span>
 
 <span class="sd">        .. math::</span>
 
@@ -770,12 +769,12 @@
 
 <span class="sd">        .. warning::</span>
 <span class="sd">            This method is not intended to be used directly, but rather through the :meth:`pycvcam.core.Transform.transform` method.</span>
-<span class="sd">            Please ensure, the shape of the input ``polar`` is (Npoints, 2) before calling this method.</span>
+<span class="sd">            Please ensure, the shape of the input ``polar`` is (n_points, 2) before calling this method.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        polar : numpy.ndarray</span>
-<span class="sd">            The polar points to be converted. Shape (Npoints, 2).</span>
+<span class="sd">            The polar points to be converted. Shape (n_points, 2).</span>
 <span class="sd">        </span>
 <span class="sd">        dx : bool, optional</span>
 <span class="sd">            If True, the jacobian with respect to the polar points is computed. Default is True.</span>
@@ -783,31 +782,31 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        cartesian : numpy.ndarray</span>
-<span class="sd">            The cartesian points. Shape (Npoints, 2).</span>
+<span class="sd">            The cartesian points. Shape (n_points, 2).</span>
 <span class="sd">        </span>
 <span class="sd">        jacobian_dx : Optional[numpy.ndarray]</span>
-<span class="sd">            The jacobian of the cartesian points with respect to the polar points. Shape (Npoints, 2, 2) if dx is True, otherwise None.</span>
+<span class="sd">            The jacobian of the cartesian points with respect to the polar points. Shape (n_points, 2, 2) if dx is True, otherwise None.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;The dx parameter must be a boolean.&quot;</span><span class="p">)</span>
         
         <span class="c1"># Extract the polar coordinates</span>
-        <span class="n">r</span> <span class="o">=</span> <span class="n">polar</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="c1"># shape (Npoints,)</span>
-        <span class="n">theta</span> <span class="o">=</span> <span class="n">polar</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="c1"># shape (Npoints,)</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">polar</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="c1"># shape (n_points,)</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="n">polar</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="c1"># shape (n_points,)</span>
 
         <span class="c1"># Compute the cartesian coordinates</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="c1"># shape (Npoints,)</span>
-        <span class="n">y</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="c1"># shape (Npoints,)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="c1"># shape (n_points,)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="c1"># shape (n_points,)</span>
 
-        <span class="n">cartesian</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">polar</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span> <span class="c1"># shape (Npoints, 2)</span>
+        <span class="n">cartesian</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">polar</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="c1"># shape (n_points, 2)</span>
         <span class="n">cartesian</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
         <span class="n">cartesian</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span>
 
         <span class="c1"># Compute the jacobian with respect to the polar points</span>
         <span class="n">jacobian_dx</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">dx</span><span class="p">:</span>
-            <span class="n">jacobian_dx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">polar</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span> <span class="c1"># shape (Npoints, 2, 2)</span>
+            <span class="n">jacobian_dx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">polar</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="c1"># shape (n_points, 2, 2)</span>
             <span class="n">jacobian_dx</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="c1"># dx/dr</span>
             <span class="n">jacobian_dx</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">r</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="c1"># dx/dtheta</span>
             <span class="n">jacobian_dx</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="c1"># dy/dr</span>
@@ -852,18 +851,18 @@
 
 <span class="sd">            \theta_d = \theta(1 + d_1\theta^2 + d_2\theta^4 + d_3\theta^6 + \ldots)</span>
 
-<span class="sd">        The jacobians with respect to the distortion parameters is an array with shape (Npoints, 2, Nparams), where the last dimension represents the parameters in the order of the class attributes (d1, d2, d3, ...).</span>
-<span class="sd">        The jacobian with respect to the normalized points is an array with shape (Npoints, 2, 2).</span>
+<span class="sd">        The jacobians with respect to the distortion parameters is an array with shape (n_points, 2, n_params), where the last dimension represents the parameters in the order of the class attributes (d1, d2, d3, ...).</span>
+<span class="sd">        The jacobian with respect to the normalized points is an array with shape (n_points, 2, 2).</span>
 
 <span class="sd">        .. warning::</span>
 
 <span class="sd">            This method is not intended to be used directly, but rather through the :meth:`pycvcam.core.Transform.transform` method.</span>
-<span class="sd">            Please ensure, the shape of the input ``normalized_points`` is (Npoints, 2) before calling this method.</span>
+<span class="sd">            Please ensure, the shape of the input ``normalized_points`` is (n_points, 2) before calling this method.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        normalized_points : numpy.ndarray</span>
-<span class="sd">            The normalized points in camera normalized coordinates to be transformed. Shape (Npoints, 2).</span>
+<span class="sd">            The normalized points in camera normalized coordinates to be transformed. Shape (n_points, 2).</span>
 
 <span class="sd">        dx : bool, optional</span>
 <span class="sd">            If True, the jacobian with respect to the normalized points is computed. Default is False</span>
@@ -879,61 +878,61 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        distorted_points : numpy.ndarray</span>
-<span class="sd">            The distorted points in camera normalized coordinates. Shape (Npoints, 2).</span>
+<span class="sd">            The distorted points in camera normalized coordinates. Shape (n_points, 2).</span>
 
 <span class="sd">        jacobian_dx : Optional[numpy.ndarray]</span>
-<span class="sd">            The jacobian of the distorted points with respect to the normalized points. Shape (Npoints, 2, 2) if dx is True, otherwise None.</span>
+<span class="sd">            The jacobian of the distorted points with respect to the normalized points. Shape (n_points, 2, 2) if dx is True, otherwise None.</span>
 
 <span class="sd">        jacobian_dp : Optional[numpy.ndarray]</span>
-<span class="sd">            The jacobian of the distorted points with respect to the distortion parameters. Shape (Npoints, 2, Nparams) if dp is True, otherwise None.</span>
+<span class="sd">            The jacobian of the distorted points with respect to the distortion parameters. Shape (n_points, 2, n_params) if dp is True, otherwise None.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Prepare the inputs data for distortion</span>
-        <span class="n">x_N</span> <span class="o">=</span> <span class="n">normalized_points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="c1"># shape (Npoints,)</span>
-        <span class="n">y_N</span> <span class="o">=</span> <span class="n">normalized_points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="c1"># shape (Npoints,)</span>
-        <span class="n">Npoints</span> <span class="o">=</span> <span class="n">normalized_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">Nparams</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nparams</span>
+        <span class="n">x_N</span> <span class="o">=</span> <span class="n">normalized_points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="c1"># shape (n_points,)</span>
+        <span class="n">y_N</span> <span class="o">=</span> <span class="n">normalized_points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="c1"># shape (n_points,)</span>
+        <span class="n">n_points</span> <span class="o">=</span> <span class="n">normalized_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">n_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_params</span>
 
         <span class="c1"># Convert to polar coordinates</span>
-        <span class="n">polar</span><span class="p">,</span> <span class="n">jacobian_dx_cart2pol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cartesian_to_polar</span><span class="p">(</span><span class="n">normalized_points</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dx</span><span class="p">)</span> <span class="c1"># shape (Npoints, 2), (Npoints, 2, 2) or None</span>
+        <span class="n">polar</span><span class="p">,</span> <span class="n">jacobian_dx_cart2pol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cartesian_to_polar</span><span class="p">(</span><span class="n">normalized_points</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dx</span><span class="p">)</span> <span class="c1"># shape (n_points, 2), (n_points, 2, 2) or None</span>
 
-        <span class="n">r</span> <span class="o">=</span> <span class="n">polar</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="c1"># shape (Npoints,)</span>
-        <span class="n">theta</span> <span class="o">=</span> <span class="n">polar</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="c1"># shape (Npoints,)</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">polar</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="c1"># shape (n_points,)</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="n">polar</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="c1"># shape (n_points,)</span>
 
         <span class="c1"># Apply the distortion model</span>
-        <span class="n">theta_powers</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">theta</span><span class="p">[:,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">],</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">Nparams</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span> <span class="c1"># shape (Npoints, Nparams) # theta^2, theta^4, theta^6, ...</span>
-        <span class="n">theta_d</span> <span class="o">=</span> <span class="n">theta</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">theta_powers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">))</span> <span class="c1"># shape (Npoints,)</span>
+        <span class="n">theta_powers</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">theta</span><span class="p">[:,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">],</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_params</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span> <span class="c1"># shape (n_points, n_params) # theta^2, theta^4, theta^6, ...</span>
+        <span class="n">theta_d</span> <span class="o">=</span> <span class="n">theta</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">theta_powers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">))</span> <span class="c1"># shape (n_points,)</span>
 
         <span class="k">if</span> <span class="n">dx</span><span class="p">:</span>
-            <span class="n">theta_d_dx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">Npoints</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span> <span class="c1"># shape (Npoints, 1, 2)</span>
+            <span class="n">theta_d_dx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n_points</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="c1"># shape (n_points, 1, 2)</span>
             <span class="c1"># dtheta_d/dtheta = 1 + 3 * d1 * theta^2 + 5 * d2 * theta^4 + 7 * d3 * theta^6 + ...</span>
-            <span class="n">coefficients</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="o">*</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">Nparams</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span> <span class="c1"># shape (Nparams,)</span>
-            <span class="n">dtheta_d_dtheta</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">theta_powers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">*</span> <span class="n">coefficients</span><span class="p">)</span> <span class="c1"># shape (Npoints,)</span>
-            <span class="n">theta_d_dx</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">dtheta_d_dtheta</span><span class="p">[:,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">*</span> <span class="n">jacobian_dx_cart2pol</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="c1"># shape (Npoints, 2)</span>
+            <span class="n">coefficients</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="o">*</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_params</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="c1"># shape (n_params,)</span>
+            <span class="n">dtheta_d_dtheta</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">theta_powers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">*</span> <span class="n">coefficients</span><span class="p">)</span> <span class="c1"># shape (n_points,)</span>
+            <span class="n">theta_d_dx</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">dtheta_d_dtheta</span><span class="p">[:,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">*</span> <span class="n">jacobian_dx_cart2pol</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="c1"># shape (n_points, 2)</span>
     
-        <span class="k">if</span> <span class="n">dp</span> <span class="ow">and</span> <span class="n">Nparams</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">theta_d_dp</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">Npoints</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Nparams</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span> <span class="c1"># shape (Npoints, 1, Nparams)</span>
-            <span class="n">theta_d_dp</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">theta</span><span class="p">[:,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">*</span> <span class="n">theta_powers</span> <span class="c1"># shape (Npoints, Nparams)</span>
+        <span class="k">if</span> <span class="n">dp</span> <span class="ow">and</span> <span class="n">n_params</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">theta_d_dp</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n_points</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_params</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="c1"># shape (n_points, 1, n_params)</span>
+            <span class="n">theta_d_dp</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">theta</span><span class="p">[:,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">*</span> <span class="n">theta_powers</span> <span class="c1"># shape (n_points, n_params)</span>
         
         <span class="c1"># Convert back to cartesian coordinates</span>
-        <span class="n">distorted_points</span><span class="p">,</span> <span class="n">jacobian_dx_pol2cart</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_polar_to_cartesian</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">r</span><span class="p">,</span> <span class="n">theta_d</span><span class="p">)),</span> <span class="n">dx</span><span class="o">=</span><span class="n">dx</span><span class="p">)</span> <span class="c1"># shape (Npoints, 2), (Npoints, 2, 2) or None</span>
+        <span class="n">distorted_points</span><span class="p">,</span> <span class="n">jacobian_dx_pol2cart</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_polar_to_cartesian</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">r</span><span class="p">,</span> <span class="n">theta_d</span><span class="p">)),</span> <span class="n">dx</span><span class="o">=</span><span class="n">dx</span><span class="p">)</span> <span class="c1"># shape (n_points, 2), (n_points, 2, 2) or None</span>
 
         <span class="c1"># Compute the jacobians</span>
         <span class="n">jacobian_dx</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">dx</span><span class="p">:</span>
-            <span class="n">jacobian_dx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">Npoints</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span> <span class="c1"># shape (Npoints, 2, 2)</span>
+            <span class="n">jacobian_dx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n_points</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="c1"># shape (n_points, 2, 2)</span>
             <span class="n">jacobian_dx</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">jacobian_dx_pol2cart</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">jacobian_dx_cart2pol</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">jacobian_dx_pol2cart</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">theta_d_dx</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="c1"># dx/dx_N</span>
             <span class="n">jacobian_dx</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">jacobian_dx_pol2cart</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">jacobian_dx_cart2pol</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">jacobian_dx_pol2cart</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">theta_d_dx</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="c1"># dx/dy_N</span>
             <span class="n">jacobian_dx</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">jacobian_dx_pol2cart</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">jacobian_dx_cart2pol</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">jacobian_dx_pol2cart</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">theta_d_dx</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="c1"># dy/dx_N</span>
             <span class="n">jacobian_dx</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">jacobian_dx_pol2cart</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">jacobian_dx_cart2pol</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">jacobian_dx_pol2cart</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">theta_d_dx</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="c1"># dy/dy_N</span>
 
         <span class="n">jacobian_dp</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="n">dp</span> <span class="ow">and</span> <span class="n">Nparams</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">jacobian_dp</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">Npoints</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Nparams</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span> <span class="c1"># shape (Npoints, 2, Nparams)</span>
+        <span class="k">if</span> <span class="n">dp</span> <span class="ow">and</span> <span class="n">n_params</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">jacobian_dp</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n_points</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">n_params</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="c1"># shape (n_points, 2, n_params)</span>
             <span class="n">jacobian_dp</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">jacobian_dx_pol2cart</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">][:,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">*</span> <span class="n">theta_d_dp</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="c1"># dx/dp</span>
             <span class="n">jacobian_dp</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">jacobian_dx_pol2cart</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">][:,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">*</span> <span class="n">theta_d_dp</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="c1"># dy/dp</span>
         
-        <span class="k">if</span> <span class="n">dp</span> <span class="ow">and</span> <span class="n">Nparams</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">jacobian_dp</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">Npoints</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span> <span class="c1"># shape (Npoints, 2, 0)</span>
+        <span class="k">if</span> <span class="n">dp</span> <span class="ow">and</span> <span class="n">n_params</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">jacobian_dp</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n_points</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="c1"># shape (n_points, 2, 0)</span>
         
         <span class="k">return</span> <span class="n">distorted_points</span><span class="p">,</span> <span class="n">jacobian_dx</span><span class="p">,</span> <span class="n">jacobian_dp</span></div>
 
@@ -955,14 +954,14 @@
 <span class="sd">        .. warning::</span>
 
 <span class="sd">            This method is not intended to be used directly, but rather through the :meth:`pycvcam.core.Transform.transform` method.</span>
-<span class="sd">            Please ensure, the shape of the input ``image_points`` is (Npoints, 2) before calling this method.</span>
+<span class="sd">            Please ensure, the shape of the input ``image_points`` is (n_points, 2) before calling this method.</span>
 
 <span class="sd">            The jacobians with respect to the distortion parameters and the distorted points are always None, since it is an iterative algorithm.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        distorted_points : numpy.ndarray</span>
-<span class="sd">            The distorted points in camera normalized coordinates to be transformed. Shape (Npoints, 2).</span>
+<span class="sd">            The distorted points in camera normalized coordinates to be transformed. Shape (n_points, 2).</span>
 
 <span class="sd">        dx : bool, optional</span>
 <span class="sd">            If True, the jacobian with respect to the distorted points is computed. Default is False</span>
@@ -976,7 +975,7 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        normalized_points : numpy.ndarray</span>
-<span class="sd">            The normalized points in camera normalized coordinates, which are equal to the x and y components of the image points. Shape (Npoints, 2).</span>
+<span class="sd">            The normalized points in camera normalized coordinates, which are equal to the x and y components of the image points. Shape (n_points, 2).</span>
 
 <span class="sd">        jacobian_dx : Optional[numpy.ndarray]</span>
 <span class="sd">            Always None, since the jacobian with respect to the distorted points is not computed by an iterative algorithm.</span>
@@ -1039,7 +1038,7 @@
 
   <p class="copyright">
     
-      © Copyright 2025-2025, Artezaru.
+      © Copyright 2025-2026, Artezaru.
       <br/>
     
   </p>

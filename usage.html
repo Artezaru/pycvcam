@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Usage &#8212; pycvcam 1.5.3 documentation</title>
+    <title>Usage &#8212; pycvcam 1.5.4 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=d75fd82e"></script>
+    <script src="_static/documentation_options.js?v=1cd648e3"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">pycvcam 1.5.3 documentation</p>
+    <p class="title logo__title">pycvcam 1.5.4 documentation</p>
   
 </a></div>
     
@@ -388,6 +388,21 @@
 <span class="n">result</span> <span class="o">=</span> <span class="n">project_points</span><span class="p">(</span><span class="n">world_points</span><span class="p">,</span> <span class="n">intrinsic</span><span class="o">=</span><span class="n">intrinsic</span><span class="p">,</span> <span class="n">distortion</span><span class="o">=</span><span class="n">distortion</span><span class="p">,</span> <span class="n">extrinsic</span><span class="o">=</span><span class="n">extrinsic</span><span class="p">,</span> <span class="n">transpose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dp</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Projected image points:&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">image_points</span><span class="p">)</span> <span class="c1"># shape (5, 2)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Jacobian w.r.t. 3D world points:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">jacobian_dx</span><span class="p">)</span> <span class="c1"># shape (5, 2, 3)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Jacobian w.r.t. projection parameters:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">jacobian_dp</span><span class="p">)</span> <span class="c1"># shape (5, 2, n_params)</span>
+
+
+
+<span class="c1"># Project the 3D points to 2D image points</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">project_points</span><span class="p">(</span><span class="n">world_points</span><span class="p">,</span> <span class="n">intrinsic</span><span class="o">=</span><span class="n">intrinsic</span><span class="p">,</span> <span class="n">distortion</span><span class="o">=</span><span class="n">distortion</span><span class="p">,</span> <span class="n">extrinsic</span><span class="o">=</span><span class="n">extrinsic</span><span class="p">,</span> <span class="n">transpose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dextrinsic</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Projected image points:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">image_points</span><span class="p">)</span> <span class="c1"># shape (5, 2)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Jacobian w.r.t. 3D world points:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">jacobian_dx</span><span class="p">)</span> <span class="c1"># shape (5, 2, 3)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Jacobian w.r.t. projection parameters:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">jacobian_dp</span><span class="p">)</span> <span class="c1"># shape (5, 2, n_params)</span>
 </pre></div>
 </div>
 </div>
@@ -590,7 +605,7 @@
 
   <p class="copyright">
     
-      © Copyright 2025-2025, Artezaru.
+      © Copyright 2025-2026, Artezaru.
       <br/>
     
   </p>

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pycvcam.optimize.optimize_parameters &#8212; pycvcam 1.5.3 documentation</title>
+    <title>pycvcam.optimize.optimize_parameters &#8212; pycvcam 1.5.4 documentation</title>
   
   
   
@@ -37,7 +37,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=d75fd82e"></script>
+    <script src="../../../_static/documentation_options.js?v=1cd648e3"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pycvcam/optimize/optimize_parameters';</script>
@@ -107,7 +107,7 @@
   
   
   
-    <p class="title logo__title">pycvcam 1.5.3 documentation</p>
+    <p class="title logo__title">pycvcam 1.5.4 documentation</p>
   
 </a></div>
     
@@ -331,7 +331,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">numbers</span><span class="w"> </span><span class="kn">import</span> <span class="n">Number</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">..core.transform</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transform</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..core.package</span><span class="w"> </span><span class="kn">import</span> <span class="n">Package</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">log_verbose</span><span class="p">(</span><span class="n">verbose_level</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">criterion</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">verbose_level</span> <span class="o">&gt;=</span> <span class="n">criterion</span><span class="p">:</span>
@@ -396,7 +395,7 @@
 
 <span class="sd">    .. note::</span>
 
-<span class="sd">        The ``_skip`` parameter is used to skip the checks for the transformation parameters and assume the input and output points are given in the (Npoints, input_dim) and (Npoints, output_dim) float format, respectively.</span>
+<span class="sd">        The ``_skip`` parameter is used to skip the checks for the transformation parameters and assume the input and output points are given in the (n_points, input_dim) and (n_points, output_dim) float format, respectively.</span>
 <span class="sd">        Please use this parameter with caution, as it may lead to unexpected results if the transformation parameters are not set correctly.</span>
 
 <span class="sd">    For conditioning, the following steps are applied:</span>
@@ -423,7 +422,7 @@
 <span class="sd">        The output points to be matched. Shape (..., output_dim) (or (output_dim, ...) if `transpose` is True).</span>
 
 <span class="sd">    guess : Optional[numpy.ndarray], optional</span>
-<span class="sd">        The initial guess for the parameters of the transformation with shape (Nparams,). If None, the current parameters of the transformation are used (or a zero vector if the parameters are not set). Default is None.</span>
+<span class="sd">        The initial guess for the parameters of the transformation with shape (n_params,). If None, the current parameters of the transformation are used (or a zero vector if the parameters are not set). Default is None.</span>
 
 <span class="sd">    transpose : bool, optional</span>
 <span class="sd">        If True, the input and output points are transposed to shape (input_dim, ...) and (output_dim, ...), respectively. Default is False.</span>
@@ -467,14 +466,14 @@
 <span class="sd">        If True, print the optimization progress and diagnostics. Default is False. This can be useful for debugging and understanding the optimization process but may slow down the optimization.</span>
 
 <span class="sd">    _skip : bool, optional</span>
-<span class="sd">        If True, skip the checks for the transformation parameters and assume the input and output points are given in the (Npoints, input_dim) and (Npoints, output_dim) float format, respectively.</span>
-<span class="sd">        The guess must be given in the (Nparams,) float format.</span>
+<span class="sd">        If True, skip the checks for the transformation parameters and assume the input and output points are given in the (n_points, input_dim) and (n_points, output_dim) float format, respectively.</span>
+<span class="sd">        The guess must be given in the (n_params,) float format.</span>
 <span class="sd">        `transpose` is ignored if this parameter is set to True.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    numpy.ndarray</span>
-<span class="sd">        The optimized parameters of the transformation with shape (Nparams,).</span>
+<span class="sd">        The optimized parameters of the transformation with shape (n_params,).</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
@@ -510,7 +509,7 @@
 <span class="sd">            guess=numpy.zeros_like(zernike_distortion.parameters),  # Initial guess for the parameters</span>
 <span class="sd">        )</span>
 
-<span class="sd">        print(&quot;Optimized parameters:&quot;, optimized_parameters) # Shape (Nparams,)</span>
+<span class="sd">        print(&quot;Optimized parameters:&quot;, optimized_parameters) # Shape (n_params,)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">transform</span><span class="p">,</span> <span class="n">Transform</span><span class="p">):</span>
@@ -542,8 +541,8 @@
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;gradient_threshold must be a positive float, got </span><span class="si">{</span><span class="n">gradient_threshold</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="c1"># Convert input and output points to float</span>
-        <span class="n">input_points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">input_points</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span>
-        <span class="n">output_points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">output_points</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span>
+        <span class="n">input_points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">input_points</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">output_points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">output_points</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
 
         <span class="c1"># Check the shape of the input and output points</span>
         <span class="k">if</span> <span class="n">input_points</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">output_points</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
@@ -555,8 +554,8 @@
             <span class="n">output_points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">moveaxis</span><span class="p">(</span><span class="n">output_points</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># (output_dim, ...) -&gt; (..., output_dim)</span>
 
         <span class="c1"># Flatten the input and output points to 2D for processing</span>
-        <span class="n">input_points</span> <span class="o">=</span> <span class="n">input_points</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">transform</span><span class="o">.</span><span class="n">input_dim</span><span class="p">)</span>  <span class="c1"># (..., input_dim) -&gt; (Npoints, input_dim)</span>
-        <span class="n">output_points</span> <span class="o">=</span> <span class="n">output_points</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">transform</span><span class="o">.</span><span class="n">output_dim</span><span class="p">)</span>  <span class="c1"># (..., output_dim) -&gt; (Npoints, output_dim)</span>
+        <span class="n">input_points</span> <span class="o">=</span> <span class="n">input_points</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">transform</span><span class="o">.</span><span class="n">input_dim</span><span class="p">)</span>  <span class="c1"># (..., input_dim) -&gt; (n_points, input_dim)</span>
+        <span class="n">output_points</span> <span class="o">=</span> <span class="n">output_points</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">transform</span><span class="o">.</span><span class="n">output_dim</span><span class="p">)</span>  <span class="c1"># (..., output_dim) -&gt; (n_points, output_dim)</span>
 
         <span class="c1"># Check the number of points</span>
         <span class="k">if</span> <span class="n">input_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">output_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
@@ -573,27 +572,27 @@
 
         <span class="c1"># Check the guess</span>
         <span class="k">if</span> <span class="n">guess</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">guess</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">guess</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span>
+            <span class="n">guess</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">guess</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">guess</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Guess must be a 1D array, got </span><span class="si">{</span><span class="n">guess</span><span class="o">.</span><span class="n">ndim</span><span class="si">}</span><span class="s2"> dimensions.&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">guess</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">transform</span><span class="o">.</span><span class="n">Nparams</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Guess must have </span><span class="si">{</span><span class="n">transform</span><span class="o">.</span><span class="n">Nparams</span><span class="si">}</span><span class="s2"> parameters, got </span><span class="si">{</span><span class="n">guess</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> parameters.&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">guess</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">transform</span><span class="o">.</span><span class="n">n_params</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Guess must have </span><span class="si">{</span><span class="n">transform</span><span class="o">.</span><span class="n">n_params</span><span class="si">}</span><span class="s2"> parameters, got </span><span class="si">{</span><span class="n">guess</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> parameters.&quot;</span><span class="p">)</span>
         
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Use the current parameters as the guess</span>
-            <span class="n">guess</span> <span class="o">=</span> <span class="n">transform</span><span class="o">.</span><span class="n">parameters</span> <span class="k">if</span> <span class="n">transform</span><span class="o">.</span><span class="n">is_set</span><span class="p">()</span> <span class="k">else</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">transform</span><span class="o">.</span><span class="n">Nparams</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span>
+            <span class="n">guess</span> <span class="o">=</span> <span class="n">transform</span><span class="o">.</span><span class="n">parameters</span> <span class="k">if</span> <span class="n">transform</span><span class="o">.</span><span class="n">is_set</span><span class="p">()</span> <span class="k">else</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">transform</span><span class="o">.</span><span class="n">n_params</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
 
-    <span class="c1"># Return empty arrays if Nparams is 0</span>
-    <span class="k">if</span> <span class="n">transform</span><span class="o">.</span><span class="n">Nparams</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span>
+    <span class="c1"># Return empty arrays if n_params is 0</span>
+    <span class="k">if</span> <span class="n">transform</span><span class="o">.</span><span class="n">n_params</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
 
     <span class="c1"># Create a perfect copy of the current class to avoid modifying the original one</span>
     <span class="n">object_class</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">transform</span><span class="p">)</span>
-    <span class="n">Npoints</span> <span class="o">=</span> <span class="n">input_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># Number of points in computation</span>
+    <span class="n">n_points</span> <span class="o">=</span> <span class="n">input_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># Number of points in computation</span>
 
     <span class="c1"># Set the parameters of the object class to the guess</span>
     <span class="n">object_class</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">guess</span>
-    <span class="n">delta_itk</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">object_class</span><span class="o">.</span><span class="n">parameters</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span>
+    <span class="n">delta_itk</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">object_class</span><span class="o">.</span><span class="n">parameters</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
     <span class="n">starting_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
     <span class="n">R_precomputed</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">J_precomputed</span> <span class="o">=</span> <span class="kc">None</span>
@@ -608,15 +607,15 @@
 
         <span class="c1"># Compute the transformed points and the Jacobian with respect to the parameters</span>
         <span class="k">if</span> <span class="n">R_precomputed</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">J_precomputed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">transformed_points_itk</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">jacobian_dp</span> <span class="o">=</span> <span class="n">object_class</span><span class="o">.</span><span class="n">_transform</span><span class="p">(</span><span class="n">input_points</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dp</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># shape (Npoints, output_dim), None, (Npoints, output_dim, Nparams)</span>
+            <span class="n">transformed_points_itk</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">jacobian_dp</span> <span class="o">=</span> <span class="n">object_class</span><span class="o">.</span><span class="n">_transform</span><span class="p">(</span><span class="n">input_points</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dp</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># shape (n_points, output_dim), None, (n_points, output_dim, n_params)</span>
 
             <span class="c1"># Check if the jacobian_dp is None</span>
             <span class="k">if</span> <span class="n">jacobian_dp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Jacobian with respect to the parameters is not available. Please implement the _transform method to return the Jacobian with respect to the parameters.&quot;</span><span class="p">)</span>
 
             <span class="c1"># Compute the operator residual</span>
-            <span class="n">R</span> <span class="o">=</span> <span class="n">output_points</span> <span class="o">-</span> <span class="n">transformed_points_itk</span>  <span class="c1"># shape (Npoints, output_dim)</span>
-            <span class="n">J</span> <span class="o">=</span> <span class="n">jacobian_dp</span>  <span class="c1"># shape (Npoints, output_dim, Nparams)</span>
+            <span class="n">R</span> <span class="o">=</span> <span class="n">output_points</span> <span class="o">-</span> <span class="n">transformed_points_itk</span>  <span class="c1"># shape (n_points, output_dim)</span>
+            <span class="n">J</span> <span class="o">=</span> <span class="n">jacobian_dp</span>  <span class="c1"># shape (n_points, output_dim, n_params)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="n">R</span> <span class="o">=</span> <span class="n">R_precomputed</span>
@@ -624,7 +623,7 @@
         
         <span class="c1"># Check the convergence of the optimization</span>
         <span class="k">if</span> <span class="n">verbose_level</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">eps_threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">eps_sum_threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">diff</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># shape (Npoints,)</span>
+            <span class="n">diff</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># shape (n_points,)</span>
             <span class="n">log_verbose</span><span class="p">(</span><span class="n">verbose_level</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2"> [Before updating]: |X_O - X_I| - Max difference: </span><span class="si">{</span><span class="n">numpy</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span><span class="si">}</span><span class="s2">, Mean difference: </span><span class="si">{</span><span class="n">numpy</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">eps_threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">numpy</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">diff</span><span class="p">[</span><span class="o">~</span><span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">diff</span><span class="p">)]</span> <span class="o">&lt;</span> <span class="n">eps_threshold</span><span class="p">):</span>
@@ -639,19 +638,19 @@
         <span class="n">mask_R</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">R</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Create a mask for finite values in R</span>
         <span class="n">mask_J</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">J</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>  <span class="c1"># Create a mask for finite values in each row of J</span>
         <span class="n">mask</span> <span class="o">=</span> <span class="n">mask_R</span> <span class="o">&amp;</span> <span class="n">mask_J</span>  <span class="c1"># Combine the masks to filter out invalid points</span>
-        <span class="n">log_verbose</span><span class="p">(</span><span class="n">verbose_level</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span><span class="si">}</span><span class="s2"> valid points out of </span><span class="si">{</span><span class="n">Npoints</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="n">log_verbose</span><span class="p">(</span><span class="n">verbose_level</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span><span class="si">}</span><span class="s2"> valid points out of </span><span class="si">{</span><span class="n">n_points</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
 
         <span class="c1"># Apply the masks to R_flat and J_flat</span>
         <span class="n">R</span> <span class="o">=</span> <span class="n">R</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1"># shape (Nvalid_points, output_dim)</span>
-        <span class="n">J</span> <span class="o">=</span> <span class="n">J</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>  <span class="c1"># shape (Nvalid_points, output_dim, Nparams)</span>
+        <span class="n">J</span> <span class="o">=</span> <span class="n">J</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>  <span class="c1"># shape (Nvalid_points, output_dim, n_params)</span>
 
         <span class="c1"># Flatten the residual vector and Jacobian matrix</span>
-        <span class="n">R_flat</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>  <span class="c1"># Flatten the residual vector to shape (Npoints * output_dim,)</span>
-        <span class="n">J_flat</span> <span class="o">=</span> <span class="n">J</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">Npoints</span> <span class="o">*</span> <span class="n">transform</span><span class="o">.</span><span class="n">output_dim</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Flatten the Jacobian to shape (Npoints * output_dim, Nparams)</span>
+        <span class="n">R_flat</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>  <span class="c1"># Flatten the residual vector to shape (n_points * output_dim,)</span>
+        <span class="n">J_flat</span> <span class="o">=</span> <span class="n">J</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_points</span> <span class="o">*</span> <span class="n">transform</span><span class="o">.</span><span class="n">output_dim</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Flatten the Jacobian to shape (n_points * output_dim, n_params)</span>
 
         <span class="c1"># Compute the delta using the normal equations: J^T J delta = J^T R</span>
-        <span class="n">JTJ</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">J_flat</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">J_flat</span><span class="p">)</span>  <span class="c1"># shape (Nparams, Nparams)</span>
-        <span class="n">JTR</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">J_flat</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">R_flat</span><span class="p">)</span>  <span class="c1"># shape (Nparams,)</span>
+        <span class="n">JTJ</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">J_flat</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">J_flat</span><span class="p">)</span>  <span class="c1"># shape (n_params, n_params)</span>
+        <span class="n">JTR</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">J_flat</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">R_flat</span><span class="p">)</span>  <span class="c1"># shape (n_params,)</span>
 
         <span class="c1"># Check the gradient threshold</span>
         <span class="k">if</span> <span class="n">verbose_level</span> <span class="o">&gt;=</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">gradient_threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -664,7 +663,7 @@
 
         <span class="c1"># Add regularization if requested</span>
         <span class="k">if</span> <span class="n">reg_factor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">JTJ</span> <span class="o">+=</span> <span class="n">reg_factor</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">transform</span><span class="o">.</span><span class="n">Nparams</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span>
+            <span class="n">JTJ</span> <span class="o">+=</span> <span class="n">reg_factor</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">transform</span><span class="o">.</span><span class="n">n_params</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
 
         <span class="c1"># Apply preconditioning if requested</span>
         <span class="k">if</span> <span class="n">precond_jacobi</span><span class="p">:</span>
@@ -691,21 +690,21 @@
 
         <span class="k">if</span> <span class="n">cond_cutoff</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">cond_number</span> <span class="o">&gt;</span> <span class="n">cond_cutoff</span><span class="p">:</span>
             <span class="n">log_verbose</span><span class="p">(</span><span class="n">verbose_level</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;[cond_number flag reached] : Warning Condition number </span><span class="si">{</span><span class="n">cond_number</span><span class="si">}</span><span class="s2"> exceeds cutoff </span><span class="si">{</span><span class="n">cond_cutoff</span><span class="si">}</span><span class="s2">. Optimization may be unstable. skipping iteration </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2"> and returning NaN array.&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">transform</span><span class="o">.</span><span class="n">Nparams</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span>
+            <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">transform</span><span class="o">.</span><span class="n">n_params</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
 
         <span class="c1"># Solve the linear system to find the delta</span>
-        <span class="n">delta_itk</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">JTJ</span><span class="p">,</span> <span class="n">JTR</span><span class="p">)</span> <span class="c1"># shape (Nparams,)</span>
+        <span class="n">delta_itk</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">JTJ</span><span class="p">,</span> <span class="n">JTR</span><span class="p">)</span> <span class="c1"># shape (n_params,)</span>
         <span class="n">log_verbose</span><span class="p">(</span><span class="n">verbose_level</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: Solved delta parameters:</span><span class="se">\n</span><span class="si">{</span><span class="n">delta_itk</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="c1"># Update the parameters of the object class</span>
-        <span class="n">object_class</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">object_class</span><span class="o">.</span><span class="n">parameters</span> <span class="o">+</span> <span class="n">delta_itk</span>  <span class="c1"># shape (Nparams,)</span>
+        <span class="n">object_class</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">object_class</span><span class="o">.</span><span class="n">parameters</span> <span class="o">+</span> <span class="n">delta_itk</span>  <span class="c1"># shape (n_params,)</span>
         <span class="n">log_verbose</span><span class="p">(</span><span class="n">verbose_level</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: Updated parameters:</span><span class="se">\n</span><span class="si">{</span><span class="n">object_class</span><span class="o">.</span><span class="n">parameters</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="c1"># If full verbose is True, compute the new residuals after updating the parameters</span>
         <span class="k">if</span> <span class="n">verbose_level</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
-            <span class="n">transformed_points_itk</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">jacobian_dp</span> <span class="o">=</span> <span class="n">object_class</span><span class="o">.</span><span class="n">_transform</span><span class="p">(</span><span class="n">input_points</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dp</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># shape (Npoints, output_dim), None, (Npoints, output_dim, Nparams)</span>
-            <span class="n">R_precomputed</span> <span class="o">=</span> <span class="n">output_points</span> <span class="o">-</span> <span class="n">transformed_points_itk</span>  <span class="c1"># shape (Npoints, output_dim)</span>
-            <span class="n">J_precomputed</span> <span class="o">=</span> <span class="n">jacobian_dp</span>  <span class="c1"># shape (Npoints, output_dim, Nparams)</span>
+            <span class="n">transformed_points_itk</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">jacobian_dp</span> <span class="o">=</span> <span class="n">object_class</span><span class="o">.</span><span class="n">_transform</span><span class="p">(</span><span class="n">input_points</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dp</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># shape (n_points, output_dim), None, (n_points, output_dim, n_params)</span>
+            <span class="n">R_precomputed</span> <span class="o">=</span> <span class="n">output_points</span> <span class="o">-</span> <span class="n">transformed_points_itk</span>  <span class="c1"># shape (n_points, output_dim)</span>
+            <span class="n">J_precomputed</span> <span class="o">=</span> <span class="n">jacobian_dp</span>  <span class="c1"># shape (n_points, output_dim, n_params)</span>
             <span class="n">log_verbose</span><span class="p">(</span><span class="n">verbose_level</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2"> [After updating]: |X_O - X_I| - Max difference: </span><span class="si">{</span><span class="n">numpy</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">R_precomputed</span><span class="p">)</span><span class="si">}</span><span class="s2">, Mean difference: </span><span class="si">{</span><span class="n">numpy</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">R_precomputed</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="c1"># Check the delta_p_threshold</span>
@@ -723,7 +722,7 @@
                 <span class="n">log_verbose</span><span class="p">(</span><span class="n">verbose_level</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;[max_time flag reached] : Warning Elapsed time </span><span class="si">{</span><span class="n">elapsed_time</span><span class="si">}</span><span class="s2"> seconds exceeds max_time </span><span class="si">{</span><span class="n">max_time</span><span class="si">}</span><span class="s2"> seconds - Optimization stopped at iteration </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
                 <span class="k">break</span>
     
-    <span class="k">return</span> <span class="n">object_class</span><span class="o">.</span><span class="n">parameters</span>  <span class="c1"># shape (Nparams,)</span></div>
+    <span class="k">return</span> <span class="n">object_class</span><span class="o">.</span><span class="n">parameters</span>  <span class="c1"># shape (n_params,)</span></div>
 
 </pre></div>
 
@@ -766,7 +765,7 @@
 
   <p class="copyright">
     
-      © Copyright 2025-2025, Artezaru.
+      © Copyright 2025-2026, Artezaru.
       <br/>
     
   </p>

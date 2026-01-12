@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pycvcam.core.Rays &#8212; pycvcam 1.5.3 documentation</title>
+    <title>pycvcam.core.Rays &#8212; pycvcam 1.5.4 documentation</title>
   
   
   
@@ -38,14 +38,14 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=d75fd82e"></script>
+    <script src="../_static/documentation_options.js?v=1cd648e3"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'api_doc/rays';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="pycvcam.Cv2Extrinsic" href="cv2_extrinsic.html" />
-    <link rel="prev" title="pycvcam.core.Extrinsic" href="extrinsic.html" />
+    <link rel="prev" title="pycvcam.core.Extrinsic._compute_rays" href="../generated/pycvcam.core.Extrinsic._compute_rays.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">pycvcam 1.5.3 documentation</p>
+    <p class="title logo__title">pycvcam 1.5.4 documentation</p>
   
 </a></div>
     
@@ -266,12 +266,49 @@
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">pycvcam.core:</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="package.html">pycvcam.core.Package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="transform.html">pycvcam.core.Transform</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="transform.html">pycvcam.core.Transform</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../generated/pycvcam.core.Transform.input_dim.html">pycvcam.core.Transform.input_dim</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generated/pycvcam.core.Transform.output_dim.html">pycvcam.core.Transform.output_dim</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generated/pycvcam.core.Transform.parameters.html">pycvcam.core.Transform.parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generated/pycvcam.core.Transform.n_params.html">pycvcam.core.Transform.n_params</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generated/pycvcam.core.Transform.parameter_names.html">pycvcam.core.Transform.parameter_names</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generated/pycvcam.core.Transform.constants.html">pycvcam.core.Transform.constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generated/pycvcam.core.Transform.n_constants.html">pycvcam.core.Transform.n_constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generated/pycvcam.core.Transform.constant_names.html">pycvcam.core.Transform.constant_names</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generated/pycvcam.core.Transform.transform.html">pycvcam.core.Transform.transform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generated/pycvcam.core.Transform.inverse_transform.html">pycvcam.core.Transform.inverse_transform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generated/pycvcam.core.Transform.to_dict.html">pycvcam.core.Transform.to_dict</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generated/pycvcam.core.Transform.from_dict.html">pycvcam.core.Transform.from_dict</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generated/pycvcam.core.Transform.to_json.html">pycvcam.core.Transform.to_json</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generated/pycvcam.core.Transform.from_json.html">pycvcam.core.Transform.from_json</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generated/pycvcam.core.Transform._get_jacobian_shorthands.html">pycvcam.core.Transform._get_jacobian_shorthands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generated/pycvcam.core.Transform._get_transform_aliases.html">pycvcam.core.Transform._get_transform_aliases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generated/pycvcam.core.Transform._get_inverse_transform_aliases.html">pycvcam.core.Transform._get_inverse_transform_aliases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generated/pycvcam.core.Transform.is_set.html">pycvcam.core.Transform.is_set</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generated/pycvcam.core.Transform._return_transform_result.html">pycvcam.core.Transform._return_transform_result</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generated/pycvcam.core.Transform._return_inverse_transform_result.html">pycvcam.core.Transform._return_inverse_transform_result</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generated/pycvcam.core.Transform._transform.html">pycvcam.core.Transform._transform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generated/pycvcam.core.Transform._inverse_transform.html">pycvcam.core.Transform._inverse_transform</a></li>
+</ul>
+</details></li>
 <li class="toctree-l1"><a class="reference internal" href="transform_result.html">pycvcam.core.TransformResult</a></li>
-<li class="toctree-l1"><a class="reference internal" href="intrinsic.html">pycvcam.core.Intrinsic</a></li>
-<li class="toctree-l1"><a class="reference internal" href="distortion.html">pycvcam.core.Distortion</a></li>
-<li class="toctree-l1"><a class="reference internal" href="extrinsic.html">pycvcam.core.Extrinsic</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="intrinsic.html">pycvcam.core.Intrinsic</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../generated/pycvcam.core.Intrinsic.scale.html">pycvcam.core.Intrinsic.scale</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generated/pycvcam.core.Intrinsic.unscale.html">pycvcam.core.Intrinsic.unscale</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="distortion.html">pycvcam.core.Distortion</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../generated/pycvcam.core.Distortion.distort.html">pycvcam.core.Distortion.distort</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generated/pycvcam.core.Distortion.undistort.html">pycvcam.core.Distortion.undistort</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="extrinsic.html">pycvcam.core.Extrinsic</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../generated/pycvcam.core.Extrinsic.project.html">pycvcam.core.Extrinsic.project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generated/pycvcam.core.Extrinsic.unproject.html">pycvcam.core.Extrinsic.unproject</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generated/pycvcam.core.Extrinsic.compute_rays.html">pycvcam.core.Extrinsic.compute_rays</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generated/pycvcam.core.Extrinsic._compute_rays.html">pycvcam.core.Extrinsic._compute_rays</a></li>
+</ul>
+</details></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">pycvcam.core.Rays</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Extrinsic Models:</span></p>
@@ -383,7 +420,7 @@
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>If <code class="docutils literal notranslate"><span class="pre">transpose</span></code> is set to True during the transformation, the output rays will have shape (6, …) instead of (…, 6). Same for the origins and directions (i.e., shape (3, …) instead of (…, 3) respectively).</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">transpose</span></code> is set to <code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code> during the transformation, the output rays will have shape (6, …) instead of (…, 6). Same for the origins and directions (i.e., shape (3, …) instead of (…, 3) respectively).</p>
 </div>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pycvcam.core.Rays.rays">
@@ -391,7 +428,7 @@
 <dd><p>The rays in the world coordinate system. Shape (…, 6).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>numpy.ndarray</p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -399,10 +436,10 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pycvcam.core.Rays.transpose">
 <span class="sig-name descname"><span class="pre">transpose</span></span><a class="headerlink" href="#pycvcam.core.Rays.transpose" title="Link to this definition">#</a></dt>
-<dd><p>If True, the output rays will have shape (6, …) instead of (…, 6). True if set during the transformation, otherwise False.</p>
+<dd><p>If <code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code>, the output rays will have shape (6, …) instead of (…, 6). <code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code> if set during the transformation, otherwise <code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>bool, optional</p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, optional</p>
 </dd>
 </dl>
 </dd></dl>
@@ -416,7 +453,7 @@
 <dd class="field-odd"><p>The directions of the rays in the world coordinate system. Shape (…, 3).</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>numpy.ndarray</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -430,7 +467,7 @@
 <dd class="field-odd"><p>The origins of the rays in the world coordinate system. Shape (…, 3).</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>numpy.ndarray</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -450,12 +487,12 @@
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="extrinsic.html"
+       href="../generated/pycvcam.core.Extrinsic._compute_rays.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">pycvcam.core.Extrinsic</p>
+        <p class="prev-next-title">pycvcam.core.Extrinsic._compute_rays</p>
       </div>
     </a>
     <a class="right-next"
@@ -530,7 +567,7 @@
 
   <p class="copyright">
     
-      © Copyright 2025-2025, Artezaru.
+      © Copyright 2025-2026, Artezaru.
       <br/>
     
   </p>

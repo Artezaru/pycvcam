@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pycvcam.optimize.optimize_input_points &#8212; pycvcam 1.5.3 documentation</title>
+    <title>pycvcam.optimize.optimize_input_points &#8212; pycvcam 1.5.4 documentation</title>
   
   
   
@@ -37,7 +37,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=d75fd82e"></script>
+    <script src="../../../_static/documentation_options.js?v=1cd648e3"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pycvcam/optimize/optimize_input_points';</script>
@@ -107,7 +107,7 @@
   
   
   
-    <p class="title logo__title">pycvcam 1.5.3 documentation</p>
+    <p class="title logo__title">pycvcam 1.5.4 documentation</p>
   
 </a></div>
     
@@ -329,7 +329,6 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">scipy</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">..core.transform</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transform</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..core.package</span><span class="w"> </span><span class="kn">import</span> <span class="n">Package</span>
 
 <div class="viewcode-block" id="optimize_input_points">
 <a class="viewcode-back" href="../../../api_doc/optimize_input_points.html#pycvcam.optimize.optimize_input_points.optimize_input_points">[docs]</a>
@@ -378,7 +377,7 @@
 
 <span class="sd">    .. note::</span>
 
-<span class="sd">        The ``_skip`` parameter is used to skip the checks for the transformation parameters and assume the output points are given in the (Npoints, dim) float format.</span>
+<span class="sd">        The ``_skip`` parameter is used to skip the checks for the transformation parameters and assume the output points are given in the (n_points, dim) float format.</span>
 <span class="sd">        Please use this parameter with caution, as it may lead to unexpected results if the transformation parameters are not set correctly.</span>
 
 <span class="sd">    .. warning::</span>
@@ -410,8 +409,8 @@
 <span class="sd">        If True, print the optimization progress and diagnostics. Default is False.</span>
 
 <span class="sd">    _skip : bool, optional</span>
-<span class="sd">        If True, skip the checks for the transformation parameters and assume the output points are given in the (Npoints, dim) float format.</span>
-<span class="sd">        The guess must be given in the (Npoints, dim) float format.</span>
+<span class="sd">        If True, skip the checks for the transformation parameters and assume the output points are given in the (n_points, dim) float format.</span>
+<span class="sd">        The guess must be given in the (n_points, dim) float format.</span>
 <span class="sd">        `transpose` is ignored if this parameter is set to True.</span>
 
 <span class="sd">    Returns</span>
@@ -439,7 +438,7 @@
 <span class="sd">        from pycvcam.optimize import optimize_input_points</span>
 
 <span class="sd">        # Create a Cv2Distortion object with known parameters</span>
-<span class="sd">        distortion = Cv2Distortion(parameters=numpy.array([1e-3, 2e-3, 1e-3, 1e-4, 2e-3]), Nparams=5)</span>
+<span class="sd">        distortion = Cv2Distortion(parameters=numpy.array([1e-3, 2e-3, 1e-3, 1e-4, 2e-3]), n_params=5)</span>
 
 <span class="sd">        # Generate some random distorted points</span>
 <span class="sd">        distorted_points = numpy.random.rand(10, 2)  # Random 2D points</span>
@@ -472,14 +471,14 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Transformation parameters are not set. Please set the parameters before optimizing.&quot;</span><span class="p">)</span>
 
         <span class="c1"># Convert output points to float</span>
-        <span class="n">output_points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">output_points</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span>
+        <span class="n">output_points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">output_points</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
 
         <span class="c1"># Check the guess</span>
         <span class="k">if</span> <span class="n">guess</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">guess</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">guess</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span>
+            <span class="n">guess</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">guess</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Use the output points as the initial guess</span>
-            <span class="n">guess</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">output_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dim</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span>
+            <span class="n">guess</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">output_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dim</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
 
         <span class="c1"># Check the shape of the output points</span>
         <span class="k">if</span> <span class="n">output_points</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
@@ -494,8 +493,8 @@
 
         <span class="c1"># Flatten the output points to 2D for processing</span>
         <span class="n">shape</span> <span class="o">=</span> <span class="n">output_points</span><span class="o">.</span><span class="n">shape</span>  <span class="c1"># (..., dim)</span>
-        <span class="n">output_points</span> <span class="o">=</span> <span class="n">output_points</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span>  <span class="c1"># (..., dim) -&gt; (Npoints, dim)</span>
-        <span class="n">guess</span> <span class="o">=</span> <span class="n">guess</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span>  <span class="c1"># (..., dim) -&gt; (Npoints, dim)</span>
+        <span class="n">output_points</span> <span class="o">=</span> <span class="n">output_points</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span>  <span class="c1"># (..., dim) -&gt; (n_points, dim)</span>
+        <span class="n">guess</span> <span class="o">=</span> <span class="n">guess</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span>  <span class="c1"># (..., dim) -&gt; (n_points, dim)</span>
         
         <span class="c1"># Check the number of points</span>
         <span class="k">if</span> <span class="n">output_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">guess</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
@@ -509,15 +508,15 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Guess must have </span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2"> dimensions, got </span><span class="si">{</span><span class="n">guess</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> dimensions.&quot;</span><span class="p">)</span>
         
     <span class="c1"># Initialize the guess for the input points</span>
-    <span class="n">Npoints</span> <span class="o">=</span> <span class="n">output_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">delta_itk</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">guess</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span> <span class="c1"># shape (Npoints, dim) (Delta for the next iteration)</span>
-    <span class="n">Nopt</span> <span class="o">=</span> <span class="n">Npoints</span> <span class="c1"># Number of points in computation</span>
+    <span class="n">n_points</span> <span class="o">=</span> <span class="n">output_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">delta_itk</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">guess</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="c1"># shape (n_points, dim) (Delta for the next iteration)</span>
+    <span class="n">Nopt</span> <span class="o">=</span> <span class="n">n_points</span> <span class="c1"># Number of points in computation</span>
 
     <span class="c1"># Prepare the output array:</span>
     <span class="n">input_points</span> <span class="o">=</span> <span class="n">guess</span>
 
     <span class="c1"># Create the mask for the points in computation</span>
-    <span class="n">mask</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">output_points</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">input_points</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>  <span class="c1"># shape (Npoints,)</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">output_points</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">input_points</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>  <span class="c1"># shape (n_points,)</span>
 
     <span class="c1"># Run the iterative algorithm</span>
     <span class="k">for</span> <span class="n">it</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_iter</span><span class="p">):</span>
@@ -548,16 +547,16 @@
         <span class="n">J</span> <span class="o">=</span> <span class="n">jacobian_dx</span> <span class="c1"># shape (Nopt, dim, dim)</span>
 
         <span class="c1"># Solve the linear system to find the delta</span>
-        <span class="n">delta_itk</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">scipy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">J</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">R</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Nopt</span><span class="p">)],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span> <span class="c1"># shape (Nopt, dim)</span>
+        <span class="n">delta_itk</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">scipy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">J</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">R</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Nopt</span><span class="p">)],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="c1"># shape (Nopt, dim)</span>
 
         <span class="c1"># Update the input points</span>
         <span class="n">input_points</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">input_points</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+</span> <span class="n">delta_itk</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span><span class="si">}</span><span class="s2"> valid points out of </span><span class="si">{</span><span class="n">Npoints</span><span class="si">}</span><span class="s2">. Max delta: </span><span class="si">{</span><span class="n">numpy</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">delta_itk</span><span class="p">))</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span><span class="si">}</span><span class="s2"> valid points out of </span><span class="si">{</span><span class="n">n_points</span><span class="si">}</span><span class="s2">. Max delta: </span><span class="si">{</span><span class="n">numpy</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">delta_itk</span><span class="p">))</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="c1"># Return the optimized input points</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">_skip</span><span class="p">:</span>
-        <span class="n">input_points</span> <span class="o">=</span> <span class="n">input_points</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">dim</span><span class="p">)</span>  <span class="c1"># (Npoints, dim) -&gt; (..., dim)</span>
+        <span class="n">input_points</span> <span class="o">=</span> <span class="n">input_points</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">dim</span><span class="p">)</span>  <span class="c1"># (n_points, dim) -&gt; (..., dim)</span>
 
         <span class="k">if</span> <span class="n">transpose</span><span class="p">:</span>
             <span class="n">input_points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">moveaxis</span><span class="p">(</span><span class="n">input_points</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="c1"># (..., dim) -&gt; (dim, ...)</span>
@@ -606,7 +605,7 @@
 
   <p class="copyright">
     
-      © Copyright 2025-2025, Artezaru.
+      © Copyright 2025-2026, Artezaru.
       <br/>
     
   </p>

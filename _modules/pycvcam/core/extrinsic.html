@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pycvcam.core.extrinsic &#8212; pycvcam 1.5.3 documentation</title>
+    <title>pycvcam.core.extrinsic &#8212; pycvcam 1.5.4 documentation</title>
   
   
   
@@ -37,7 +37,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=d75fd82e"></script>
+    <script src="../../../_static/documentation_options.js?v=1cd648e3"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pycvcam/core/extrinsic';</script>
@@ -107,7 +107,7 @@
   
   
   
-    <p class="title logo__title">pycvcam 1.5.3 documentation</p>
+    <p class="title logo__title">pycvcam 1.5.4 documentation</p>
   
 </a></div>
     
@@ -330,7 +330,6 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.transform</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transform</span><span class="p">,</span> <span class="n">TransformResult</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.rays</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rays</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.package</span><span class="w"> </span><span class="kn">import</span> <span class="n">Package</span>
 
 <div class="viewcode-block" id="Extrinsic">
 <a class="viewcode-back" href="../../../api_doc/extrinsic.html#pycvcam.core.Extrinsic">[docs]</a>
@@ -349,6 +348,8 @@
 <span class="sd">    To process the transformation, the method ``project`` and ``unproject`` are provided, which are aliases for the ``transform`` and ``inverse_transform`` methods respectively.</span>
 
 <span class="sd">    The extrinsic transformation also implement the method ``compute_rays`` to compute the rays emitted by the camera from the world points, which is useful for ray tracing or other applications.</span>
+<span class="sd">    The subclass must implement the ``_compute_rays`` method to define how to compute the rays from the normalized points.</span>
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_input_dim</span> <span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
     <span class="n">_output_dim</span> <span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
@@ -356,8 +357,6 @@
     <span class="c1"># =============================================</span>
     <span class="c1"># Addind aliases for the transformation</span>
     <span class="c1"># =============================================</span>
-<div class="viewcode-block" id="Extrinsic._get_transform_aliases">
-<a class="viewcode-back" href="../../../api_doc/extrinsic.html#pycvcam.core.Extrinsic._get_transform_aliases">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_transform_aliases</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Property to return a list of aliases for the transformed points.</span>
@@ -366,14 +365,11 @@
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        List[str]</span>
+<span class="sd">        :class:`List[str]`</span>
 <span class="sd">            A list of aliases for the transformed points.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;normalized_points&quot;</span><span class="p">,</span> <span class="s2">&quot;x_n&quot;</span><span class="p">]</span></div>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;normalized_points&quot;</span><span class="p">,</span> <span class="s2">&quot;x_n&quot;</span><span class="p">]</span>
 
-
-<div class="viewcode-block" id="Extrinsic._get_inverse_transform_aliases">
-<a class="viewcode-back" href="../../../api_doc/extrinsic.html#pycvcam.core.Extrinsic._get_inverse_transform_aliases">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_inverse_transform_aliases</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Property to return a list of aliases for the inverse transformed points.</span>
@@ -382,14 +378,13 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        List[str]</span>
+<span class="sd">        :class:`List[str]`</span>
 <span class="sd">            A list of aliases for the inverse transformed points.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;world_points&quot;</span><span class="p">,</span> <span class="s2">&quot;x_w&quot;</span><span class="p">]</span></div>
-
+        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;world_points&quot;</span><span class="p">,</span> <span class="s2">&quot;x_w&quot;</span><span class="p">]</span>
     
 <div class="viewcode-block" id="Extrinsic.project">
-<a class="viewcode-back" href="../../../api_doc/extrinsic.html#pycvcam.core.Extrinsic.project">[docs]</a>
+<a class="viewcode-back" href="../../../generated/pycvcam.core.Extrinsic.project.html#pycvcam.core.Extrinsic.project">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">project</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> 
         <span class="n">world_points</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> 
@@ -406,44 +401,53 @@
 
 <span class="sd">            - :meth:`pycvcam.core.Transform.transform` for applying the transformation to points.</span>
 
+<span class="sd">        .. note::</span>
+<span class="sd">        </span>
+<span class="sd">            The :obj:`world_points`  is converted to a numpy array of ``dtype=numpy.float64``.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        world_points : :class:`numpy.ndarray`</span>
+<span class="sd">            The world points to be transformed. Shape (..., 3).</span>
+
+<span class="sd">        transpose : :class:`bool`, optional</span>
+<span class="sd">            If :obj:`True`, the input points are assumed to have shape (3, ...) instead of (..., 3) and the output points will have shape (2, ...). Default is :obj:`False`.</span>
+
+<span class="sd">        dx : :class:`bool`, optional</span>
+<span class="sd">            If :obj:`True`, the jacobian with respect to the world points is computed. Default is :obj:`False`</span>
+
+<span class="sd">        dp : :class:`bool`, optional</span>
+<span class="sd">            If :obj:`True`, the jacobian with respect to the distortion parameters is computed. Default is :obj:`False`</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :class:`TransformResult`</span>
+<span class="sd">            The result of the transformation, which includes the ``normalized_points`` and the Jacobian matrices if available.</span>
+<span class="sd">            </span>
+<span class="sd">            </span>
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        </span>
 <span class="sd">        .. code-block:: python</span>
 
 <span class="sd">            extrinsic = ... # An instance of a subclass of Extrinsic</span>
 
 <span class="sd">            import numpy</span>
 
-<span class="sd">            world_points = numpy.array([[0.0, 0.0, 0.0], [1.0, 1.0, 1.0], [2.0, 2.0, 2.0]]) # shape (Npoints, 3)</span>
+<span class="sd">            world_points = numpy.array([[0.0, 0.0, 0.0], [1.0, 1.0, 1.0], [2.0, 2.0, 2.0]]) # shape (n_points, 3)</span>
 <span class="sd">            result = extrinsic.project(world_points)</span>
-<span class="sd">            normalized_points = result.normalized_points  # shape (Npoints, 2)</span>
+<span class="sd">            normalized_points = result.normalized_points  # shape (n_points, 2)</span>
 
 <span class="sd">            # SAME AS:</span>
 <span class="sd">            result = extrinsic.transform(world_points)</span>
-<span class="sd">            normalized_points = result.transformed_points  # shape (Npoints, 2)</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        world_points : numpy.ndarray</span>
-<span class="sd">            The world points to be transformed. Shape (..., 3).</span>
-
-<span class="sd">        transpose : bool, optional</span>
-<span class="sd">            If True, the input points are assumed to have shape (3, ...) instead of (..., 3) and the output points will have shape (2, ...). Default is False.</span>
-
-<span class="sd">        dx : bool, optional</span>
-<span class="sd">            If True, the jacobian with respect to the world points is computed. Default is False</span>
-
-<span class="sd">        dp : bool, optional</span>
-<span class="sd">            If True, the jacobian with respect to the distortion parameters is computed. Default is False</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        TransformResult</span>
-<span class="sd">            The result of the transformation, which includes the ``normalized_points`` and the Jacobian matrices if available.</span>
+<span class="sd">            normalized_points = result.transformed_points  # shape (n_points, 2)</span>
+<span class="sd">            </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">world_points</span><span class="p">,</span> <span class="n">transpose</span><span class="o">=</span><span class="n">transpose</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dx</span><span class="p">,</span> <span class="n">dp</span><span class="o">=</span><span class="n">dp</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Extrinsic.unproject">
-<a class="viewcode-back" href="../../../api_doc/extrinsic.html#pycvcam.core.Extrinsic.unproject">[docs]</a>
+<a class="viewcode-back" href="../../../generated/pycvcam.core.Extrinsic.unproject.html#pycvcam.core.Extrinsic.unproject">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">unproject</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">normalized_points</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
@@ -460,38 +464,47 @@
 
 <span class="sd">            - :meth:`pycvcam.core.Transform.inverse_transform` for applying the inverse transformation to points.</span>
 
+<span class="sd">        .. note::</span>
+<span class="sd">        </span>
+<span class="sd">            The :obj:`normalized_points`  is converted to a numpy array of ``dtype=numpy.float64``.</span>
+<span class="sd">            </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        normalized_points : :class:`numpy.ndarray`</span>
+<span class="sd">            The normalized points in the camera coordinate system to be transformed. Shape (..., 2).</span>
+
+<span class="sd">        transpose : :class:`bool`, optional</span>
+<span class="sd">            If :obj:`True`, the input points are assumed to have shape (2, ...) instead of (..., 2) and the output points will have shape (3, ...). Default is :obj:`False`.</span>
+
+<span class="sd">        dx : :class:`bool`, optional</span>
+<span class="sd">            If :obj:`True`, the jacobian with respect to the normalized points is computed. Default is :obj:`False`</span>
+<span class="sd">            </span>
+<span class="sd">        dp : :class:`bool`, optional</span>
+<span class="sd">            If :obj:`True`, the jacobian with respect to the extrinsic parameters is computed. Default is :obj:`False`</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :class:`TransformResult`</span>
+<span class="sd">            The result of the transformation, which includes the ``world_points`` and the Jacobian matrices if available.</span>
+<span class="sd">            </span>
+<span class="sd">            </span>
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        </span>
 <span class="sd">        .. code-block:: python</span>
 
 <span class="sd">            extrinsic = ... # An instance of a subclass of Extrinsic</span>
 
 <span class="sd">            import numpy</span>
 
-<span class="sd">            normalized_points = numpy.array([[0.0, 0.0], [1.0, 1.0], [2.0, 2.0]]) # shape (Npoints, 2)</span>
+<span class="sd">            normalized_points = numpy.array([[0.0, 0.0], [1.0, 1.0], [2.0, 2.0]]) # shape (n_points, 2)</span>
 <span class="sd">            result = extrinsic.unproject(normalized_points)</span>
-<span class="sd">            world_points = result.world_points  # shape (Npoints, 3)</span>
+<span class="sd">            world_points = result.world_points  # shape (n_points, 3)</span>
 
 <span class="sd">            # SAME AS:</span>
 <span class="sd">            result = extrinsic.inverse_transform(normalized_points)</span>
-<span class="sd">            world_points = result.transformed_points  # shape (Npoints, 3)</span>
+<span class="sd">            world_points = result.transformed_points  # shape (n_points, 3)</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        normalized_points : numpy.ndarray</span>
-<span class="sd">            The normalized points in the camera coordinate system to be transformed. Shape (..., 2).</span>
-
-<span class="sd">        transpose : bool, optional</span>
-<span class="sd">            If True, the input points are assumed to have shape (2, ...) instead of (..., 2) and the output points will have shape (3, ...). Default is False.</span>
-
-<span class="sd">        dx : bool, optional</span>
-<span class="sd">            If True, the jacobian with respect to the normalized points is computed. Default is False</span>
-
-<span class="sd">        dp : bool, optional</span>
-<span class="sd">            If True, the jacobian with respect to the extrinsic parameters is computed. Default is False</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        TransformResult</span>
-<span class="sd">            The result of the transformation, which includes the ``world_points`` and the Jacobian matrices if available.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">normalized_points</span><span class="p">,</span> <span class="n">transpose</span><span class="o">=</span><span class="n">transpose</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dx</span><span class="p">,</span> <span class="n">dp</span><span class="o">=</span><span class="n">dp</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
@@ -500,7 +513,7 @@
     <span class="c1"># Implementing the rays computation</span>
     <span class="c1"># =============================================</span>
 <div class="viewcode-block" id="Extrinsic.compute_rays">
-<a class="viewcode-back" href="../../../api_doc/extrinsic.html#pycvcam.core.Extrinsic.compute_rays">[docs]</a>
+<a class="viewcode-back" href="../../../generated/pycvcam.core.Extrinsic.compute_rays.html#pycvcam.core.Extrinsic.compute_rays">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_rays</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> 
         <span class="n">normalized_points</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
@@ -514,6 +527,29 @@
 
 <span class="sd">        The rays are the concatenation of the ``normalized_points`` converted in the world coordinates and the direction of the rays.</span>
 
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        normalized_points : :class:`numpy.ndarray`</span>
+<span class="sd">            The normalized points in the camera coordinate system. Shape (..., 2).</span>
+
+<span class="sd">        transpose : :class:`bool`, optional</span>
+<span class="sd">            If :obj:`True`, the input and output arrays are transposed to shape (2, ...) and (6, ...), respectively. Default is :obj:`False`.</span>
+
+<span class="sd">        _skip : :class:`bool`, optional</span>
+<span class="sd">            If :obj:`True`, skip the checks and transformations. Default is :obj:`False`.</span>
+
+<span class="sd">        kwargs : :class:`dict`</span>
+<span class="sd">            Additional arguments to be passed to the transformation method.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :class:`Rays`</span>
+<span class="sd">            The rays in the world coordinate system. The shape is (..., 6), where the last dimension represents the origin and direction of the rays.</span>
+
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        </span>
 <span class="sd">        .. code-block:: python</span>
 
 <span class="sd">            result = compute_rays(normalized_points)</span>
@@ -524,26 +560,7 @@
 
 <span class="sd">            result.origins  # (..., 3)  # The origins of the rays in the world coordinate system</span>
 <span class="sd">            result.directions  # (..., 3)  # The directions of the rays in the world coordinate system</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        normalized_points : numpy.ndarray</span>
-<span class="sd">            The normalized points in the camera coordinate system. Shape (..., 2).</span>
-
-<span class="sd">        transpose : bool, optional</span>
-<span class="sd">            If True, the input and output arrays are transposed to shape (2, ...) and (6, ...), respectively. Default is False.</span>
-
-<span class="sd">        _skip : bool, optional</span>
-<span class="sd">            If True, skip the checks and transformations. Default is False.</span>
-
-<span class="sd">        kwargs : dict</span>
-<span class="sd">            Additional arguments to be passed to the transformation method.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        Rays</span>
-<span class="sd">            The rays in the world coordinate system. The shape is (..., 6), where the last dimension represents the origin and direction of the rays.</span>
-
+<span class="sd">            </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">_skip</span><span class="p">:</span>
             <span class="c1"># Check the boolean flags</span>
@@ -555,7 +572,7 @@
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Transformation parameters are not set. Please set the parameters before transforming points.&quot;</span><span class="p">)</span>
 
             <span class="c1"># Convert input points to float</span>
-            <span class="n">points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">normalized_points</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span>
+            <span class="n">points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">normalized_points</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
 
             <span class="c1"># Check the shape of the input points</span>
             <span class="k">if</span> <span class="n">points</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
@@ -573,14 +590,14 @@
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Input points must have </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span><span class="si">}</span><span class="s2"> dimensions, got </span><span class="si">{</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> dimensions.&quot;</span><span class="p">)</span>
             
             <span class="c1"># Flatten the input points to 2D for processing</span>
-            <span class="n">points</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span><span class="p">)</span> <span class="c1"># (Npoints, output_dim)</span>
+            <span class="n">points</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span><span class="p">)</span> <span class="c1"># (n_points, output_dim)</span>
 
         <span class="c1"># Apply the inverse transformation</span>
-        <span class="n">rays</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_rays</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="c1"># (Npoints, 6)</span>
+        <span class="n">rays</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_rays</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="c1"># (n_points, 6)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">_skip</span><span class="p">:</span>
             <span class="c1"># Reshape the transformed points to the original shape</span>
-            <span class="n">rays</span> <span class="o">=</span> <span class="n">rays</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="mi">6</span><span class="p">)</span> <span class="c1"># (Npoints, 6) -&gt; (..., 6)</span>
+            <span class="n">rays</span> <span class="o">=</span> <span class="n">rays</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="mi">6</span><span class="p">)</span> <span class="c1"># (n_points, 6) -&gt; (..., 6)</span>
 
             <span class="c1"># Transpose the transformed points if requested</span>
             <span class="k">if</span> <span class="n">transpose</span><span class="p">:</span>
@@ -590,8 +607,9 @@
         <span class="k">return</span> <span class="n">Rays</span><span class="p">(</span><span class="n">rays</span><span class="p">,</span> <span class="n">transpose</span><span class="o">=</span><span class="n">transpose</span><span class="p">)</span></div>
 
     
+    
 <div class="viewcode-block" id="Extrinsic._compute_rays">
-<a class="viewcode-back" href="../../../api_doc/extrinsic.html#pycvcam.core.Extrinsic._compute_rays">[docs]</a>
+<a class="viewcode-back" href="../../../generated/pycvcam.core.Extrinsic._compute_rays.html#pycvcam.core.Extrinsic._compute_rays">[docs]</a>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_compute_rays</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">normalized_points</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -606,13 +624,13 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        normalized_points : numpy.ndarray</span>
-<span class="sd">            The normalized points in the camera coordinate system. Shape (Npoints, 2).</span>
+<span class="sd">        normalized_points : :class:`numpy.ndarray`</span>
+<span class="sd">            The normalized points in the camera coordinate system. Shape (n_points, 2).</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        numpy.ndarray</span>
-<span class="sd">            The rays in the world coordinate system. Shape (Npoints, 6).</span>
+<span class="sd">        :class:`numpy.ndarray`</span>
+<span class="sd">            The rays in the world coordinate system. Shape (n_points, 6).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;This method should be implemented by subclasses.&quot;</span><span class="p">)</span></div>
 </div>
@@ -658,7 +676,7 @@
 
   <p class="copyright">
     
-      © Copyright 2025-2025, Artezaru.
+      © Copyright 2025-2026, Artezaru.
       <br/>
     
   </p>

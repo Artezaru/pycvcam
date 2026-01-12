@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pycvcam.extrinsic_objects.orthographic_extrinsic &#8212; pycvcam 1.5.3 documentation</title>
+    <title>pycvcam.extrinsic_objects.orthographic_extrinsic &#8212; pycvcam 1.5.4 documentation</title>
   
   
   
@@ -37,7 +37,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=d75fd82e"></script>
+    <script src="../../../_static/documentation_options.js?v=1cd648e3"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pycvcam/extrinsic_objects/orthographic_extrinsic';</script>
@@ -107,7 +107,7 @@
   
   
   
-    <p class="title logo__title">pycvcam 1.5.3 documentation</p>
+    <p class="title logo__title">pycvcam 1.5.4 documentation</p>
   
 </a></div>
     
@@ -332,7 +332,6 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">..core</span><span class="w"> </span><span class="kn">import</span> <span class="n">Extrinsic</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..core.package</span><span class="w"> </span><span class="kn">import</span> <span class="n">Package</span>
 
 
 <div class="viewcode-block" id="OrthographicExtrinsic">
@@ -412,10 +411,10 @@
 <span class="sd">        world_points = numpy.array([[1, 2, 3],</span>
 <span class="sd">                                   [4, 5, 6],</span>
 <span class="sd">                                   [7, 8, 9],</span>
-<span class="sd">                                   [10, 11, 12]]) # shape (Npoints, 3)</span>
+<span class="sd">                                   [10, 11, 12]]) # shape (n_points, 3)</span>
 
 <span class="sd">        result = extrinsic.transform(world_points)</span>
-<span class="sd">        normalized_points = result.normalized_points # shape (Npoints, 2)</span>
+<span class="sd">        normalized_points = result.normalized_points # shape (n_points, 2)</span>
 <span class="sd">        print(normalized_points)</span>
 
 <span class="sd">    You can also access to the jacobian of the extrinsic transformation:</span>
@@ -423,8 +422,8 @@
 <span class="sd">    .. code-block:: python</span>
 
 <span class="sd">        result = extrinsic.transform(world_points, dx=True, dp=True)</span>
-<span class="sd">        normalized_points_dx = result.jacobian_dx  # Shape (Npoints, 2, 3)</span>
-<span class="sd">        normalized_points_dp = result.jacobian_dp  # Shape (Npoints, 2, 6)</span>
+<span class="sd">        normalized_points_dx = result.jacobian_dx  # Shape (n_points, 2, 3)</span>
+<span class="sd">        normalized_points_dp = result.jacobian_dp  # Shape (n_points, 2, 6)</span>
 <span class="sd">        print(normalized_points_dx) </span>
 <span class="sd">        print(normalized_points_dp)</span>
 
@@ -436,7 +435,7 @@
 <span class="sd">        depth = numpy.array([1.0, 2.0, 3.0, 4.0])  # Example depth values for each point</span>
 
 <span class="sd">        inverse_result = extrinsic.inverse_transform(normalized_points, dx=True, dp=True, depth=depth)</span>
-<span class="sd">        world_points = inverse_result.world_points  # Shape (Npoints, 3)</span>
+<span class="sd">        world_points = inverse_result.world_points  # Shape (n_points, 3)</span>
 <span class="sd">        print(world_points)</span>
 
 <span class="sd">    .. note::</span>
@@ -460,9 +459,9 @@
     <span class="c1"># =============================================</span>
     <span class="c1"># Overwrite some properties from the base class</span>
     <span class="c1"># =============================================</span>
-<div class="viewcode-block" id="OrthographicExtrinsic._get_jacobian_short_hand">
-<a class="viewcode-back" href="../../../api_doc/orthographic_extrinsic.html#pycvcam.OrthographicExtrinsic._get_jacobian_short_hand">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_get_jacobian_short_hand</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]:</span>
+<div class="viewcode-block" id="OrthographicExtrinsic._get_jacobian_shorthands">
+<a class="viewcode-back" href="../../../api_doc/orthographic_extrinsic.html#pycvcam.OrthographicExtrinsic._get_jacobian_shorthands">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_jacobian_shorthands</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Short-hand notation for the Jacobian matrices with respect to the extrinsic parameters.</span>
 
@@ -485,7 +484,7 @@
 
     
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">Nparams</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">n_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the number of parameters of the extrinsic transformation.</span>
 
@@ -523,7 +522,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_rvec</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_tvec</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">return</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="p">(</span><span class="mi">6</span><span class="p">,):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Parameters must be a 1D array of shape (6,).&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
@@ -607,7 +606,7 @@
         <span class="k">if</span> <span class="n">tvec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_tvec</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">return</span>
-        <span class="n">tvec</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">tvec</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="n">tvec</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">tvec</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">tvec</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Translation vector must be a 3D vector.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">tvec</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
@@ -652,7 +651,7 @@
         <span class="k">if</span> <span class="n">rvec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_rvec</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">return</span>
-        <span class="n">rvec</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">rvec</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="n">rvec</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">rvec</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">rvec</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Rotation vector must be a 3D vector.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">rvec</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
@@ -696,7 +695,7 @@
         <span class="k">if</span> <span class="n">rmat</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_rvec</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">return</span>
-        <span class="n">rmat</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">rmat</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span>
+        <span class="n">rmat</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">rmat</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">rmat</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Rotation matrix must be a 3x3 matrix.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">rmat</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
@@ -847,78 +846,78 @@
 
 <span class="sd">        where :math:`R` is the rotation matrix, :math:`T` is the translation vector, and :math:`Z_c` the depth of the point in the camera coordinate system is ignored.</span>
 
-<span class="sd">        The jacobians with respect to the extrinsic parameters is an array with shape (Npoints, 2, 6), where the last dimension contains the jacobian with respect to the rotation vector and translation vector.</span>
-<span class="sd">        The jacobian with respect to the world points is an array with shape (Npoints, 2, 3).</span>
+<span class="sd">        The jacobians with respect to the extrinsic parameters is an array with shape (n_points, 2, 6), where the last dimension contains the jacobian with respect to the rotation vector and translation vector.</span>
+<span class="sd">        The jacobian with respect to the world points is an array with shape (n_points, 2, 3).</span>
 
 <span class="sd">        .. warning::</span>
 
 <span class="sd">            This method is not intended to be used directly, but rather through the :meth:`pycvcam.core.Transform.transform` method.</span>
-<span class="sd">            Please ensure, the shape of the input ``world_points`` is (Npoints, 3) before calling this method.</span>
+<span class="sd">            Please ensure, the shape of the input ``world_points`` is (n_points, 3) before calling this method.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        world_points : numpy.ndarray</span>
-<span class="sd">            Array of world 3dpoints to be transformed with shape (Npoints, 3).</span>
+<span class="sd">            Array of world 3dpoints to be transformed with shape (n_points, 3).</span>
 
 <span class="sd">        dx : bool, optional</span>
 <span class="sd">            If True, the Jacobian of the normalized points with respect to the input 3D world points is computed. Default is False.</span>
-<span class="sd">            The output will be a 2D array of shape (Npoints, 2, 3).</span>
+<span class="sd">            The output will be a 2D array of shape (n_points, 2, 3).</span>
 
 <span class="sd">        dp : bool, optional</span>
 <span class="sd">            If True, the Jacobian of the normalized points with respect to the pose parameters is computed. Default is False.</span>
-<span class="sd">            The output will be a 2D array of shape (Npoints, 2, 6).</span>
+<span class="sd">            The output will be a 2D array of shape (n_points, 2, 6).</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        normalized_points : numpy.ndarray</span>
-<span class="sd">            The normalized points in camera normalized coordinates. Shape (Npoints, 2).</span>
+<span class="sd">            The normalized points in camera normalized coordinates. Shape (n_points, 2).</span>
 
 <span class="sd">        jacobian_dx : Optional[numpy.ndarray]</span>
-<span class="sd">            The jacobian of the normalized points with respect to the world points. Shape (Npoints, 2, 3) if dx is True, otherwise None.</span>
+<span class="sd">            The jacobian of the normalized points with respect to the world points. Shape (n_points, 2, 3) if dx is True, otherwise None.</span>
 
 <span class="sd">        jacobian_dp : Optional[numpy.ndarray]</span>
-<span class="sd">            The jacobian of the normalized points with respect to the extrinsic parameters. Shape (Npoints, 2, 6) if dp is True, otherwise None.</span>
+<span class="sd">            The jacobian of the normalized points with respect to the extrinsic parameters. Shape (n_points, 2, 6) if dp is True, otherwise None.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Get the number of points</span>
-        <span class="n">Npoints</span> <span class="o">=</span> <span class="n">world_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">n_points</span> <span class="o">=</span> <span class="n">world_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="c1"># Get the rotation matrix and translation vector</span>
         <span class="n">rmat</span><span class="p">,</span> <span class="n">jacobian</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">Rodrigues</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rvec</span><span class="p">)</span>
-        <span class="n">rmat</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">rmat</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span> <span class="c1"># shape (3, 3)</span>
-        <span class="n">jacobian</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">jacobian</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span> <span class="c1"># shape (3, 9) [R11,R12,R13,R21,R22,R23,R31,R32,R33]</span>
+        <span class="n">rmat</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">rmat</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="c1"># shape (3, 3)</span>
+        <span class="n">jacobian</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">jacobian</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="c1"># shape (3, 9) [R11,R12,R13,R21,R22,R23,R31,R32,R33]</span>
         <span class="n">rmat_dr</span> <span class="o">=</span> <span class="n">jacobian</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="c1"># shape (3, 3, 3) # [i, j, k] = dR[i,j]/drvec[k]</span>
 
         <span class="c1"># ==================</span>
         <span class="c1"># Camera points</span>
         <span class="c1"># ==================</span>
         <span class="c1"># Compute the camera points</span>
-        <span class="n">points_camera_flat</span> <span class="o">=</span> <span class="n">world_points</span> <span class="o">@</span> <span class="n">rmat</span><span class="o">.</span><span class="n">T</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tvec</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span> <span class="c1"># shape (Npoints, 3)</span>
+        <span class="n">points_camera_flat</span> <span class="o">=</span> <span class="n">world_points</span> <span class="o">@</span> <span class="n">rmat</span><span class="o">.</span><span class="n">T</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tvec</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span> <span class="c1"># shape (n_points, 3)</span>
 
         <span class="c1"># Compute the jacobian with respect to the world points</span>
         <span class="k">if</span> <span class="n">dx</span><span class="p">:</span>
-            <span class="n">points_camera_flat_dx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span><span class="n">rmat</span><span class="p">,</span> <span class="p">(</span><span class="n">Npoints</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+            <span class="n">points_camera_flat_dx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span><span class="n">rmat</span><span class="p">,</span> <span class="p">(</span><span class="n">n_points</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
 
         <span class="c1"># Compute the jacobian with respect to the extrinsic parameters</span>
         <span class="k">if</span> <span class="n">dp</span><span class="p">:</span>
-            <span class="n">points_camera_flat_dp</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">Npoints</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span> <span class="c1"># shape (Npoints, 3, 6)</span>
+            <span class="n">points_camera_flat_dp</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n_points</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="c1"># shape (n_points, 3, 6)</span>
             <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
-                <span class="n">points_camera_flat_dp</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">world_points</span> <span class="o">@</span> <span class="n">rmat_dr</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">T</span> <span class="c1"># shape (Npoints, 3)</span>
-            <span class="n">points_camera_flat_dp</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())[</span><span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span> <span class="c1"># shape (Npoints, 3)</span>
-            <span class="n">points_camera_flat_dp</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())[</span><span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span> <span class="c1"># shape (Npoints, 3)</span>
-            <span class="n">points_camera_flat_dp</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())[</span><span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span> <span class="c1"># shape (Npoints, 3)</span>
+                <span class="n">points_camera_flat_dp</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">world_points</span> <span class="o">@</span> <span class="n">rmat_dr</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">T</span> <span class="c1"># shape (n_points, 3)</span>
+            <span class="n">points_camera_flat_dp</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)[</span><span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span> <span class="c1"># shape (n_points, 3)</span>
+            <span class="n">points_camera_flat_dp</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)[</span><span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span> <span class="c1"># shape (n_points, 3)</span>
+            <span class="n">points_camera_flat_dp</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)[</span><span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span> <span class="c1"># shape (n_points, 3)</span>
 
         <span class="c1"># ==================</span>
         <span class="c1"># Normalized points</span>
         <span class="c1"># ==================</span>
-        <span class="n">normalized_points_flat</span> <span class="o">=</span> <span class="n">points_camera_flat</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="c1"># shape (Npoints, 2)</span>
+        <span class="n">normalized_points_flat</span> <span class="o">=</span> <span class="n">points_camera_flat</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="c1"># shape (n_points, 2)</span>
 
         <span class="c1"># Compute the jacobian with respect to the camera points</span>
         <span class="k">if</span> <span class="n">dx</span><span class="p">:</span>
-            <span class="n">jacobian_flat_dx</span> <span class="o">=</span> <span class="n">points_camera_flat_dx</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="p">:]</span> <span class="c1"># shape (Npoints, 2, 3)</span>
+            <span class="n">jacobian_flat_dx</span> <span class="o">=</span> <span class="n">points_camera_flat_dx</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="p">:]</span> <span class="c1"># shape (n_points, 2, 3)</span>
 
         <span class="c1"># Compute the jacobian with respect to the extrinsic parameters</span>
         <span class="k">if</span> <span class="n">dp</span><span class="p">:</span>
-            <span class="n">jacobian_flat_dp</span> <span class="o">=</span> <span class="n">points_camera_flat_dp</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="p">:]</span> <span class="c1"># shape (Npoints, 2, 6)</span>
+            <span class="n">jacobian_flat_dp</span> <span class="o">=</span> <span class="n">points_camera_flat_dp</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="p">:]</span> <span class="c1"># shape (n_points, 2, 6)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">dx</span><span class="p">:</span>
             <span class="n">jacobian_flat_dx</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">dp</span><span class="p">:</span>
@@ -946,26 +945,26 @@
 
 <span class="sd">        where :math:`R` is the rotation matrix, :math:`T` is the translation vector, and :math:`Z_c` is the depth of the point in the camera coordinate system.</span>
 
-<span class="sd">        The jacobians with respect to the extrinsic parameters is an array with shape (Npoints, 3, 6), where the last dimension contains the jacobian with respect to the rotation vector and translation vector.</span>
-<span class="sd">        The jacobian with respect to the normalized points is an array with shape (Npoints, 3, 2).</span>
+<span class="sd">        The jacobians with respect to the extrinsic parameters is an array with shape (n_points, 3, 6), where the last dimension contains the jacobian with respect to the rotation vector and translation vector.</span>
+<span class="sd">        The jacobian with respect to the normalized points is an array with shape (n_points, 3, 2).</span>
 
 <span class="sd">        .. warning::</span>
 
 <span class="sd">            This method is not intended to be used directly, but rather through the :meth:`pycvcam.core.Transform.inverse_transform` method.</span>
-<span class="sd">            Please ensure, the shape of the input ``normalized_points`` is (Npoints, 2) before calling this method, and same for the depth parameter if provided.</span>
+<span class="sd">            Please ensure, the shape of the input ``normalized_points`` is (n_points, 2) before calling this method, and same for the depth parameter if provided.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        normalized_points : numpy.ndarray</span>
-<span class="sd">            Array of normalized points in camera normalized coordinates to be transformed with shape (Npoints, 2).</span>
+<span class="sd">            Array of normalized points in camera normalized coordinates to be transformed with shape (n_points, 2).</span>
 
 <span class="sd">        dx : bool, optional</span>
 <span class="sd">            If True, the Jacobian of the normalized points with respect to the input 3D world points is computed. Default is False.</span>
-<span class="sd">            The output will be a 2D array of shape (Npoints, 2, 3).</span>
+<span class="sd">            The output will be a 2D array of shape (n_points, 2, 3).</span>
 
 <span class="sd">        dp : bool, optional</span>
 <span class="sd">            If True, the Jacobian of the normalized points with respect to the pose parameters is computed. Default is False.</span>
-<span class="sd">            The output will be a 2D array of shape (Npoints, 2, 6).</span>
+<span class="sd">            The output will be a 2D array of shape (n_points, 2, 6).</span>
 
 <span class="sd">        depth : Optional[numpy.ndarray], optional</span>
 <span class="sd">            The depth of the points in the world coordinate system. If None, the depth is assumed to be 1.0 for all points.</span>
@@ -974,22 +973,22 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        world_points : numpy.ndarray</span>
-<span class="sd">            The transformed world 3D points. It will be a 2D array of shape (Npoints, 3).</span>
+<span class="sd">            The transformed world 3D points. It will be a 2D array of shape (n_points, 3).</span>
 
 <span class="sd">        jacobian_dx : Optional[numpy.ndarray]</span>
-<span class="sd">            The jacobian of the world points with respect to the normalized points. Shape (Npoints, 3, 2) if dx is True, otherwise None.</span>
+<span class="sd">            The jacobian of the world points with respect to the normalized points. Shape (n_points, 3, 2) if dx is True, otherwise None.</span>
 
 <span class="sd">        jacobian_dp : Optional[numpy.ndarray]</span>
-<span class="sd">            The jacobian of the world points with respect to the extrinsic parameters. Shape (Npoints, 3, 6) if dp is True, otherwise None.</span>
+<span class="sd">            The jacobian of the world points with respect to the extrinsic parameters. Shape (n_points, 3, 6) if dp is True, otherwise None.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Get the number of points</span>
-        <span class="n">Npoints</span> <span class="o">=</span> <span class="n">normalized_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">n_points</span> <span class="o">=</span> <span class="n">normalized_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="c1"># Get the rotation matrix and translation vector</span>
         <span class="n">rmat</span><span class="p">,</span> <span class="n">jacobian</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">Rodrigues</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rvec</span><span class="p">)</span>
-        <span class="n">rmat</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">rmat</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span> <span class="c1"># shape (3, 3)</span>
+        <span class="n">rmat</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">rmat</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="c1"># shape (3, 3)</span>
         <span class="n">rmat_inv</span> <span class="o">=</span> <span class="n">rmat</span><span class="o">.</span><span class="n">T</span> <span class="c1"># Inverse of the rotation matrix (R^{-1} = R^{T})</span>
-        <span class="n">jacobian</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">jacobian</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span> <span class="c1"># shape (3, 9) [R11,R12,R13,R21,R22,R23,R31,R32,R33]</span>
+        <span class="n">jacobian</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">jacobian</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="c1"># shape (3, 9) [R11,R12,R13,R21,R22,R23,R31,R32,R33]</span>
         <span class="n">rmat_dr</span> <span class="o">=</span> <span class="n">jacobian</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="c1"># shape (3, 3, 3) # [i, j, k] = dR[i,j]/drvec[k]</span>
         <span class="n">rmat_inv_dr</span> <span class="o">=</span> <span class="n">rmat_dr</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="c1"># shape (3, 3, 3) # [i, j, k] = dR^{-1}[i,j]/drvec[k] = dR^{T}[i,j]/drvec[k] = dR[j,i]/drvec[k]</span>
 
@@ -997,32 +996,32 @@
         <span class="c1"># Check depth</span>
         <span class="c1"># ==================</span>
         <span class="k">if</span> <span class="n">depth</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">depth</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">Npoints</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span>
+            <span class="n">depth</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">n_points</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">depth</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">depth</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">depth</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="p">(</span><span class="n">Npoints</span><span class="p">,):</span>
+            <span class="n">depth</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">depth</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">depth</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="p">(</span><span class="n">n_points</span><span class="p">,):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Depth must be a 1D array with the same number of points as normalized_points.&quot;</span><span class="p">)</span>
 
         <span class="c1"># ==================</span>
         <span class="c1"># Camera points</span>
         <span class="c1"># ==================</span>
         <span class="c1"># Compute the camera points</span>
-        <span class="n">X_C</span> <span class="o">=</span> <span class="n">normalized_points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="c1"># shape (Npoints,)</span>
-        <span class="n">Y_C</span> <span class="o">=</span> <span class="n">normalized_points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="c1"># shape (Npoints,)</span>
-        <span class="n">Z_C</span> <span class="o">=</span> <span class="n">depth</span> <span class="c1"># shape (Npoints,)</span>
+        <span class="n">X_C</span> <span class="o">=</span> <span class="n">normalized_points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="c1"># shape (n_points,)</span>
+        <span class="n">Y_C</span> <span class="o">=</span> <span class="n">normalized_points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="c1"># shape (n_points,)</span>
+        <span class="n">Z_C</span> <span class="o">=</span> <span class="n">depth</span> <span class="c1"># shape (n_points,)</span>
 
-        <span class="n">points_camera_flat</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">Npoints</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span> <span class="c1"># shape (Npoints, 3)</span>
+        <span class="n">points_camera_flat</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n_points</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="c1"># shape (n_points, 3)</span>
         <span class="n">points_camera_flat</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">X_C</span>
         <span class="n">points_camera_flat</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">Y_C</span>
         <span class="n">points_camera_flat</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">Z_C</span>
 
         <span class="c1"># Compute the jacobian with respect to the normalized points</span>
         <span class="k">if</span> <span class="n">dx</span><span class="p">:</span>
-            <span class="n">points_camera_flat_dx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">Npoints</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span> <span class="c1"># shape (Npoints, 3, 2)</span>
-            <span class="n">points_camera_flat_dx</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="c1"># shape (Npoints, 2)</span>
+            <span class="n">points_camera_flat_dx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n_points</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="c1"># shape (n_points, 3, 2)</span>
+            <span class="n">points_camera_flat_dx</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="c1"># shape (n_points, 2)</span>
             <span class="n">points_camera_flat_dx</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
             <span class="n">points_camera_flat_dx</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
-            <span class="n">points_camera_flat_dx</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="c1"># shape (Npoints, 2)</span>
+            <span class="n">points_camera_flat_dx</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="c1"># shape (n_points, 2)</span>
             <span class="n">points_camera_flat_dx</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
             <span class="n">points_camera_flat_dx</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
 
@@ -1030,22 +1029,22 @@
         <span class="c1"># World points</span>
         <span class="c1"># ===================</span>
         <span class="c1"># Compute the world points</span>
-        <span class="n">world_points_flat</span> <span class="o">=</span> <span class="p">(</span><span class="n">points_camera_flat</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tvec</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:])</span> <span class="o">@</span> <span class="n">rmat_inv</span><span class="o">.</span><span class="n">T</span> <span class="c1"># shape (Npoints, 3)</span>
+        <span class="n">world_points_flat</span> <span class="o">=</span> <span class="p">(</span><span class="n">points_camera_flat</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tvec</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:])</span> <span class="o">@</span> <span class="n">rmat_inv</span><span class="o">.</span><span class="n">T</span> <span class="c1"># shape (n_points, 3)</span>
 
         <span class="c1"># Compute the jacobian with respect to the camera points</span>
         <span class="k">if</span> <span class="n">dx</span><span class="p">:</span>
-            <span class="n">world_points_flat_dx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">Npoints</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span> <span class="c1"># shape (Npoints, 3, 2)</span>
-            <span class="n">world_points_flat_dx</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">points_camera_flat_dx</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">@</span> <span class="n">rmat_inv</span><span class="o">.</span><span class="n">T</span> <span class="c1"># shape (Npoints, 3)</span>
-            <span class="n">world_points_flat_dx</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">points_camera_flat_dx</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">@</span> <span class="n">rmat_inv</span><span class="o">.</span><span class="n">T</span> <span class="c1"># shape (Npoints, 3)</span>
+            <span class="n">world_points_flat_dx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n_points</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="c1"># shape (n_points, 3, 2)</span>
+            <span class="n">world_points_flat_dx</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">points_camera_flat_dx</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">@</span> <span class="n">rmat_inv</span><span class="o">.</span><span class="n">T</span> <span class="c1"># shape (n_points, 3)</span>
+            <span class="n">world_points_flat_dx</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">points_camera_flat_dx</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">@</span> <span class="n">rmat_inv</span><span class="o">.</span><span class="n">T</span> <span class="c1"># shape (n_points, 3)</span>
 
         <span class="c1"># Compute the jacobian with respect to the extrinsic parameters</span>
         <span class="k">if</span> <span class="n">dp</span><span class="p">:</span>
-            <span class="n">world_points_flat_dp</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">Npoints</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span> <span class="c1"># shape (Npoints, 3, 6)</span>
+            <span class="n">world_points_flat_dp</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n_points</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="c1"># shape (n_points, 3, 6)</span>
             <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
                 <span class="n">world_points_flat_dp</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">points_camera_flat</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tvec</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:])</span> <span class="o">@</span> <span class="n">rmat_inv_dr</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>
-            <span class="n">world_points_flat_dp</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())[</span><span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span> <span class="o">@</span> <span class="n">rmat_inv</span><span class="o">.</span><span class="n">T</span>
-            <span class="n">world_points_flat_dp</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())[</span><span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span> <span class="o">@</span> <span class="n">rmat_inv</span><span class="o">.</span><span class="n">T</span>
-            <span class="n">world_points_flat_dp</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())[</span><span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span> <span class="o">@</span> <span class="n">rmat_inv</span><span class="o">.</span><span class="n">T</span>
+            <span class="n">world_points_flat_dp</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)[</span><span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span> <span class="o">@</span> <span class="n">rmat_inv</span><span class="o">.</span><span class="n">T</span>
+            <span class="n">world_points_flat_dp</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)[</span><span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span> <span class="o">@</span> <span class="n">rmat_inv</span><span class="o">.</span><span class="n">T</span>
+            <span class="n">world_points_flat_dp</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)[</span><span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span> <span class="o">@</span> <span class="n">rmat_inv</span><span class="o">.</span><span class="n">T</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">dx</span><span class="p">:</span>
             <span class="n">world_points_flat_dx</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1083,15 +1082,15 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        normalized_points : numpy.ndarray</span>
-<span class="sd">            The normalized points in the camera coordinate system. Shape (Npoints, 2).</span>
+<span class="sd">            The normalized points in the camera coordinate system. Shape (n_points, 2).</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        numpy.ndarray</span>
-<span class="sd">            The rays in the world coordinate system. Shape (Npoints, 6).</span>
+<span class="sd">            The rays in the world coordinate system. Shape (n_points, 6).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Get the number of points</span>
-        <span class="n">Npoints</span> <span class="o">=</span> <span class="n">normalized_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">n_points</span> <span class="o">=</span> <span class="n">normalized_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="c1"># Get the rotation matrix and translation vector</span>
         <span class="n">rmat</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">Rodrigues</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rvec</span><span class="p">)</span>
@@ -1099,18 +1098,18 @@
         <span class="n">tvec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tvec</span>
 
         <span class="c1"># Compute the origin of the ray in the world coordinate system</span>
-        <span class="n">vector_camera</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span> <span class="c1"># shape (3,)</span>
+        <span class="n">vector_camera</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="c1"># shape (3,)</span>
         <span class="n">vector_world</span> <span class="o">=</span> <span class="n">vector_camera</span> <span class="o">@</span> <span class="n">rmat_inv</span><span class="o">.</span><span class="n">T</span>  <span class="c1"># shape (3,)</span>
         <span class="n">direction_world</span> <span class="o">=</span> <span class="n">vector_world</span> <span class="o">/</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">vector_world</span><span class="p">)</span>  <span class="c1"># shape (3,)</span>
 
         <span class="c1"># Compute the normalized points in the world coordinate system</span>
-        <span class="n">normalized_points_world</span> <span class="o">=</span> <span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">normalized_points</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">Npoints</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">tvec</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:])</span> <span class="o">@</span> <span class="n">rmat_inv</span><span class="o">.</span><span class="n">T</span> <span class="c1"># shape (Npoints, 3)</span>
+        <span class="n">normalized_points_world</span> <span class="o">=</span> <span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">normalized_points</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">n_points</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">tvec</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:])</span> <span class="o">@</span> <span class="n">rmat_inv</span><span class="o">.</span><span class="n">T</span> <span class="c1"># shape (n_points, 3)</span>
 
         <span class="c1"># Compute the direction of the ray in the world coordinate system</span>
-        <span class="n">direction_world</span> <span class="o">=</span> <span class="n">direction_world</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">Npoints</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># shape (Npoints, 3)</span>
+        <span class="n">direction_world</span> <span class="o">=</span> <span class="n">direction_world</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">n_points</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># shape (n_points, 3)</span>
 
         <span class="c1"># Create the rays in the world coordinate system</span>
-        <span class="n">rays</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">Npoints</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Package</span><span class="o">.</span><span class="n">get_float_dtype</span><span class="p">())</span> <span class="c1"># shape (Npoints, 6)</span>
+        <span class="n">rays</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n_points</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="c1"># shape (n_points, 6)</span>
         <span class="n">rays</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">normalized_points_world</span> <span class="c1"># The first 3 elements are the origin of the ray in the world coordinate system</span>
         <span class="n">rays</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">:]</span> <span class="o">=</span> <span class="n">direction_world</span> <span class="c1"># The last 3 elements are the direction of the ray in the world coordinate system</span>
 
@@ -1158,7 +1157,7 @@
 
   <p class="copyright">
     
-      © Copyright 2025-2025, Artezaru.
+      © Copyright 2025-2026, Artezaru.
       <br/>
     
   </p>
