@@ -18,7 +18,6 @@ from numbers import Number
 import numpy
 
 from ..core import Intrinsic
-from ..core.package import Package
 
 
 
@@ -103,9 +102,9 @@ class Cv2Intrinsic(Intrinsic):
 
         distorted_points = numpy.array([[100, 200],
                                      [150, 250],
-                                     [200, 300]]) # Shape (Npoints, 2)
+                                     [200, 300]]) # Shape (n_points, 2)
         result = intrinsic.transform(distorted_points)
-        image_points = result.image_points # Shape (Npoints, 2)
+        image_points = result.image_points # Shape (n_points, 2)
         print(image_points)
 
     You can also access to the jacobian of the intrinsic transformation:
@@ -122,7 +121,7 @@ class Cv2Intrinsic(Intrinsic):
     .. code-block:: python
 
         inverse_result = intrinsic.inverse_transform(image_points, dx=True, dp=True)
-        distorted_points = inverse_result.distorted_points  # Shape (Npoints, 2)
+        distorted_points = inverse_result.distorted_points  # Shape (n_points, 2)
         print(distorted_points)
     
     .. seealso::
@@ -142,7 +141,7 @@ class Cv2Intrinsic(Intrinsic):
     # =============================================
     # Overwrite some properties from the base class
     # =============================================
-    def _get_jacobian_short_hand(self) -> Dict[str, Tuple[int, int, Optional[str]]]:
+    def _get_jacobian_shorthands(self) -> Dict[str, Tuple[int, int, Optional[str]]]:
         r"""
         Short-hand notation for the Jacobian matrices with respect to the intrinsic parameters.
 
@@ -164,7 +163,7 @@ class Cv2Intrinsic(Intrinsic):
         }
     
     @property
-    def Nparams(self) -> int:
+    def n_params(self) -> int:
         r"""
         Get the number of parameters of the intrinsic transformation.
 
@@ -196,7 +195,7 @@ class Cv2Intrinsic(Intrinsic):
         """
         if self._fx is None or self._fy is None or self._cx is None or self._cy is None:
             return None
-        return numpy.array([self._fx, self._fy, self._cx, self._cy], dtype=Package.get_float_dtype())
+        return numpy.array([self._fx, self._fy, self._cx, self._cy], dtype=numpy.float64)
 
     @parameters.setter
     def parameters(self, value: Optional[numpy.ndarray]) -> None:
@@ -206,7 +205,7 @@ class Cv2Intrinsic(Intrinsic):
             self._cx = None
             self._cy = None
             return
-        value = numpy.asarray(value, dtype=Package.get_float_dtype()).flatten()
+        value = numpy.asarray(value, dtype=numpy.float64).flatten()
         if value.shape != (4,):
             raise ValueError("Parameters must be a 1D array of shape (4,).")
         if not numpy.isfinite(value).all():
@@ -479,7 +478,7 @@ class Cv2Intrinsic(Intrinsic):
             [self._fx, 0, self._cx],
             [0, self._fy, self._cy],
             [0, 0, 1]
-        ], dtype=Package.get_float_dtype())
+        ], dtype=numpy.float64)
     
     @intrinsic_matrix.setter
     def intrinsic_matrix(self, intrinsic_matrix: Optional[numpy.ndarray]) -> None:
@@ -489,7 +488,7 @@ class Cv2Intrinsic(Intrinsic):
             self._cx = None
             self._cy = None
             return
-        intrinsic_matrix = numpy.asarray(intrinsic_matrix, dtype=Package.get_float_dtype())
+        intrinsic_matrix = numpy.asarray(intrinsic_matrix, dtype=numpy.float64)
         if intrinsic_matrix.shape != (3, 3):
             raise ValueError("Intrinsic matrix must be a 3x3 matrix.")
         # Check if a skew value is given
@@ -613,18 +612,18 @@ class Cv2Intrinsic(Intrinsic):
 
             y_i = f_y \cdot y_d + c_y
 
-        The jacobians with respect to the intrinsic parameters is an array with shape (Npoints, 2, 4), where the last dimension represents the parameters (fx, fy, cx, cy).
-        The jacobian with respect to the distorted points is an array with shape (Npoints, 2, 2).
+        The jacobians with respect to the intrinsic parameters is an array with shape (n_points, 2, 4), where the last dimension represents the parameters (fx, fy, cx, cy).
+        The jacobian with respect to the distorted points is an array with shape (n_points, 2, 2).
 
         .. warning::
 
             This method is not intended to be used directly, but rather through the :meth:`pycvcam.core.Transform.transform` method.
-            Please ensure, the shape of the input ``distorted_points`` is (Npoints, 2) before calling this method.
+            Please ensure, the shape of the input ``distorted_points`` is (n_points, 2) before calling this method.
 
         Parameters
         ----------
         distorted_points : numpy.ndarray
-            The distorted points in camera normalized coordinates to be transformed. Shape (Npoints, 2).
+            The distorted points in camera normalized coordinates to be transformed. Shape (n_points, 2).
 
         dx : bool, optional
             If True, the jacobian with respect to the distorted points is computed. Default is False
@@ -635,48 +634,48 @@ class Cv2Intrinsic(Intrinsic):
         Returns
         -------
         image_points : numpy.ndarray
-            The image points in image coordinates, which are equal to the x and y componants of the distorted points. Shape (Npoints, 2).
+            The image points in image coordinates, which are equal to the x and y componants of the distorted points. Shape (n_points, 2).
 
         jacobian_dx : Optional[numpy.ndarray]
-            The jacobian of the image points with respect to the distorted points. Shape (Npoints, 2, 2) if dx is True, otherwise None.
+            The jacobian of the image points with respect to the distorted points. Shape (n_points, 2, 2) if dx is True, otherwise None.
 
         jacobian_dp : Optional[numpy.ndarray]
-            The jacobian of the image points with respect to the intrinsic parameters. Shape (Npoints, 2, 4) if dp is True, otherwise None.
+            The jacobian of the image points with respect to the intrinsic parameters. Shape (n_points, 2, 4) if dp is True, otherwise None.
         """
         # Extract the useful coordinates
-        x_D = distorted_points[:, 0] # shape (Npoints,)
-        y_D = distorted_points[:, 1] # shape (Npoints,)
+        x_D = distorted_points[:, 0] # shape (n_points,)
+        y_D = distorted_points[:, 1] # shape (n_points,)
 
         # Compute the image points
-        x_I = self._fx * x_D + self._cx # shape (Npoints,)
-        y_I = self._fy * y_D + self._cy # shape (Npoints,)
+        x_I = self._fx * x_D + self._cx # shape (n_points,)
+        y_I = self._fy * y_D + self._cy # shape (n_points,)
 
-        image_points_flat = numpy.empty(distorted_points.shape) # shape (Npoints, 2)
-        image_points_flat[:, 0] = x_I # shape (Npoints,)
-        image_points_flat[:, 1] = y_I # shape (Npoints,)
+        image_points_flat = numpy.empty(distorted_points.shape) # shape (n_points, 2)
+        image_points_flat[:, 0] = x_I # shape (n_points,)
+        image_points_flat[:, 1] = y_I # shape (n_points,)
  
         # Compute the jacobian with respect to the distorted points
         if dx:
-            jacobian_flat_dx = numpy.empty((*distorted_points.shape, 2), dtype=Package.get_float_dtype()) # shape (Npoints, 2, 2)
-            jacobian_flat_dx[:, 0, 0] = self._fx # shape (Npoints,)
-            jacobian_flat_dx[:, 0, 1] = 0.0 # shape (Npoints,)
-            jacobian_flat_dx[:, 1, 0] = 0.0 # shape (Npoints,)
-            jacobian_flat_dx[:, 1, 1] = self._fy # shape (Npoints,)
+            jacobian_flat_dx = numpy.empty((*distorted_points.shape, 2), dtype=numpy.float64) # shape (n_points, 2, 2)
+            jacobian_flat_dx[:, 0, 0] = self._fx # shape (n_points,)
+            jacobian_flat_dx[:, 0, 1] = 0.0 # shape (n_points,)
+            jacobian_flat_dx[:, 1, 0] = 0.0 # shape (n_points,)
+            jacobian_flat_dx[:, 1, 1] = self._fy # shape (n_points,)
         else:
             jacobian_flat_dx = None
 
         # Compute the jacobian with respect to the intrinsic parameters
         if dp:
-            jacobian_flat_dp = numpy.empty((*distorted_points.shape, 4), dtype=Package.get_float_dtype()) # shape (Npoints, 2, 4)
-            jacobian_flat_dp[:, 0, 0] = x_D # shape (Npoints,)
-            jacobian_flat_dp[:, 0, 1] = 0.0 # shape (Npoints,)
-            jacobian_flat_dp[:, 0, 2] = 1.0 # shape (Npoints,)
-            jacobian_flat_dp[:, 0, 3] = 0.0 # shape (Npoints,)
+            jacobian_flat_dp = numpy.empty((*distorted_points.shape, 4), dtype=numpy.float64) # shape (n_points, 2, 4)
+            jacobian_flat_dp[:, 0, 0] = x_D # shape (n_points,)
+            jacobian_flat_dp[:, 0, 1] = 0.0 # shape (n_points,)
+            jacobian_flat_dp[:, 0, 2] = 1.0 # shape (n_points,)
+            jacobian_flat_dp[:, 0, 3] = 0.0 # shape (n_points,)
 
-            jacobian_flat_dp[:, 1, 0] = 0.0 # shape (Npoints,)
-            jacobian_flat_dp[:, 1, 1] = y_D # shape (Npoints,)
-            jacobian_flat_dp[:, 1, 2] = 0.0 # shape (Npoints,)
-            jacobian_flat_dp[:, 1, 3] = 1.0 # shape (Npoints,)
+            jacobian_flat_dp[:, 1, 0] = 0.0 # shape (n_points,)
+            jacobian_flat_dp[:, 1, 1] = y_D # shape (n_points,)
+            jacobian_flat_dp[:, 1, 2] = 0.0 # shape (n_points,)
+            jacobian_flat_dp[:, 1, 3] = 1.0 # shape (n_points,)
         else:
             jacobian_flat_dp = None
 
@@ -697,18 +696,18 @@ class Cv2Intrinsic(Intrinsic):
         
             y_d = \frac{y_i - c_y}{f_y}
 
-        The jacobians with respect to the intrinsic parameters is an array with shape (Npoints, 2, 4), where the last dimension represents the parameters (fx, fy, cx, cy).
-        The jacobian with respect to the image points is an array with shape (Npoints, 2, 2).
+        The jacobians with respect to the intrinsic parameters is an array with shape (n_points, 2, 4), where the last dimension represents the parameters (fx, fy, cx, cy).
+        The jacobian with respect to the image points is an array with shape (n_points, 2, 2).
 
         .. warning::
 
             This method is not intended to be used directly, but rather through the :meth:`pycvcam.core.Transform.transform` method.
-            Please ensure, the shape of the input ``image_points`` is (Npoints, 2) before calling this method.
+            Please ensure, the shape of the input ``image_points`` is (n_points, 2) before calling this method.
 
         Parameters
         ----------
         image_points : numpy.ndarray
-            The image points in image coordinates to be transformed. Shape (Npoints, 2).
+            The image points in image coordinates to be transformed. Shape (n_points, 2).
 
         dx : bool, optional
             If True, the jacobian with respect to the image points is computed. Default is False
@@ -719,48 +718,48 @@ class Cv2Intrinsic(Intrinsic):
         Returns
         -------
         distorted_points : numpy.ndarray
-            The distorted points in camera normalized coordinates, which are equal to the x and y components of the image points. Shape (Npoints, 2).
+            The distorted points in camera normalized coordinates, which are equal to the x and y components of the image points. Shape (n_points, 2).
 
         jacobian_dx : Optional[numpy.ndarray]
-            The jacobian of the distorted points with respect to the image points. Shape (Npoints, 2, 2) if dx is True, otherwise None.
+            The jacobian of the distorted points with respect to the image points. Shape (n_points, 2, 2) if dx is True, otherwise None.
 
         jacobian_dp : Optional[numpy.ndarray]
-            The jacobian of the distorted points with respect to the intrinsic parameters. Shape (Npoints, 2, 4) if dp is True, otherwise None.
+            The jacobian of the distorted points with respect to the intrinsic parameters. Shape (n_points, 2, 4) if dp is True, otherwise None.
         """
         # Extract the useful coordinates
-        x_I = image_points[:, 0] # shape (Npoints,)
-        y_I = image_points[:, 1] # shape (Npoints,)
+        x_I = image_points[:, 0] # shape (n_points,)
+        y_I = image_points[:, 1] # shape (n_points,)
 
         # Compute the distorted points
-        x_D = (x_I - self._cx) / self._fx # shape (Npoints,)
-        y_D = (y_I - self._cy) / self._fy # shape (Npoints,)
+        x_D = (x_I - self._cx) / self._fx # shape (n_points,)
+        y_D = (y_I - self._cy) / self._fy # shape (n_points,)
 
-        distorted_points_flat = numpy.empty(image_points.shape) # shape (Npoints, 2)
-        distorted_points_flat[:, 0] = x_D # shape (Npoints,)
-        distorted_points_flat[:, 1] = y_D # shape (Npoints,)
+        distorted_points_flat = numpy.empty(image_points.shape) # shape (n_points, 2)
+        distorted_points_flat[:, 0] = x_D # shape (n_points,)
+        distorted_points_flat[:, 1] = y_D # shape (n_points,)
 
         # Compute the jacobian with respect to the image points
         if dx:
-            jacobian_flat_dx = numpy.empty((*image_points.shape, 2), dtype=Package.get_float_dtype()) # shape (Npoints, 2, 2)
-            jacobian_flat_dx[:, 0, 0] = 1.0 / self._fx # shape (Npoints,)
-            jacobian_flat_dx[:, 0, 1] = 0.0 # shape (Npoints,)
-            jacobian_flat_dx[:, 1, 0] = 0.0 # shape (Npoints,)
-            jacobian_flat_dx[:, 1, 1] = 1.0 / self._fy # shape (Npoints,)
+            jacobian_flat_dx = numpy.empty((*image_points.shape, 2), dtype=numpy.float64) # shape (n_points, 2, 2)
+            jacobian_flat_dx[:, 0, 0] = 1.0 / self._fx # shape (n_points,)
+            jacobian_flat_dx[:, 0, 1] = 0.0 # shape (n_points,)
+            jacobian_flat_dx[:, 1, 0] = 0.0 # shape (n_points,)
+            jacobian_flat_dx[:, 1, 1] = 1.0 / self._fy # shape (n_points,)
         else:
             jacobian_flat_dx = None
 
         # Compute the jacobian with respect to the intrinsic parameters
         if dp:
-            jacobian_flat_dp = numpy.empty((*image_points.shape, 4), dtype=Package.get_float_dtype()) # shape (Npoints, 2, 4)
-            jacobian_flat_dp[:, 0, 0] = - x_D / self._fx # shape (Npoints,) because x_D = (x_I - c_x) / f_x
-            jacobian_flat_dp[:, 0, 1] = 0.0 # shape (Npoints,)
-            jacobian_flat_dp[:, 0, 2] = - 1.0 / self._fx # shape (Npoints,)
-            jacobian_flat_dp[:, 0, 3] = 0.0 # shape (Npoints,)
+            jacobian_flat_dp = numpy.empty((*image_points.shape, 4), dtype=numpy.float64) # shape (n_points, 2, 4)
+            jacobian_flat_dp[:, 0, 0] = - x_D / self._fx # shape (n_points,) because x_D = (x_I - c_x) / f_x
+            jacobian_flat_dp[:, 0, 1] = 0.0 # shape (n_points,)
+            jacobian_flat_dp[:, 0, 2] = - 1.0 / self._fx # shape (n_points,)
+            jacobian_flat_dp[:, 0, 3] = 0.0 # shape (n_points,)
 
-            jacobian_flat_dp[:, 1, 0] = 0.0 # shape (Npoints,)
-            jacobian_flat_dp[:, 1, 1] = - y_D / self._fy # shape (Npoints,) because y_D = (y_I - c_y) / f_y
-            jacobian_flat_dp[:, 1, 2] = 0.0 # shape (Npoints,)
-            jacobian_flat_dp[:, 1, 3] = -1.0 / self._fy # shape (Npoints,)
+            jacobian_flat_dp[:, 1, 0] = 0.0 # shape (n_points,)
+            jacobian_flat_dp[:, 1, 1] = - y_D / self._fy # shape (n_points,) because y_D = (y_I - c_y) / f_y
+            jacobian_flat_dp[:, 1, 2] = 0.0 # shape (n_points,)
+            jacobian_flat_dp[:, 1, 3] = -1.0 / self._fy # shape (n_points,)
         else:
             jacobian_flat_dp = None
 

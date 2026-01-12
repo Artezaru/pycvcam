@@ -47,13 +47,12 @@ git:
 	git push origin master
 
 # 7. Create the application
-app:
-	echo "from pycvcam.__main__ import __main_gui__" > run_gui.py
-	echo "__main_gui__()" >> run_gui.py
-	pyinstaller --name pycvcam --onefile --windowed run_gui.py
-	rm run_gui.py
-	rm -rf build
-	rm run_gui.spec
+autosummary:
+	@echo "Generating autosummary files in docs/source/api_doc/*.rst"
+	@sphinx-autogen -o docs/source/generated/ docs/source/api_doc/*.rst
+	@echo "Autosummary generation complete."
+	@echo "Run python autosummary_change_titles.py to update the names in the generated files."
+	@python3 docs/source/autosummary_change_titles.py
 
 # 8. Tests the package
 test:

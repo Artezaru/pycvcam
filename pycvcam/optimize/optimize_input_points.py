@@ -17,7 +17,6 @@ from typing import Optional
 import scipy
 
 from ..core.transform import Transform
-from ..core.package import Package
 
 def optimize_input_points(
     transform: Transform,
@@ -64,7 +63,7 @@ def optimize_input_points(
 
     .. note::
 
-        The ``_skip`` parameter is used to skip the checks for the transformation parameters and assume the output points are given in the (Npoints, dim) float format.
+        The ``_skip`` parameter is used to skip the checks for the transformation parameters and assume the output points are given in the (n_points, dim) float format.
         Please use this parameter with caution, as it may lead to unexpected results if the transformation parameters are not set correctly.
 
     .. warning::
@@ -96,8 +95,8 @@ def optimize_input_points(
         If True, print the optimization progress and diagnostics. Default is False.
 
     _skip : bool, optional
-        If True, skip the checks for the transformation parameters and assume the output points are given in the (Npoints, dim) float format.
-        The guess must be given in the (Npoints, dim) float format.
+        If True, skip the checks for the transformation parameters and assume the output points are given in the (n_points, dim) float format.
+        The guess must be given in the (n_points, dim) float format.
         `transpose` is ignored if this parameter is set to True.
 
     Returns
@@ -125,7 +124,7 @@ def optimize_input_points(
         from pycvcam.optimize import optimize_input_points
 
         # Create a Cv2Distortion object with known parameters
-        distortion = Cv2Distortion(parameters=numpy.array([1e-3, 2e-3, 1e-3, 1e-4, 2e-3]), Nparams=5)
+        distortion = Cv2Distortion(parameters=numpy.array([1e-3, 2e-3, 1e-3, 1e-4, 2e-3]), n_params=5)
 
         # Generate some random distorted points
         distorted_points = numpy.random.rand(10, 2)  # Random 2D points
@@ -158,14 +157,14 @@ def optimize_input_points(
             raise ValueError("Transformation parameters are not set. Please set the parameters before optimizing.")
 
         # Convert output points to float
-        output_points = numpy.asarray(output_points, dtype=Package.get_float_dtype())
+        output_points = numpy.asarray(output_points, dtype=numpy.float64)
 
         # Check the guess
         if guess is not None:
-            guess = numpy.asarray(guess, dtype=Package.get_float_dtype())
+            guess = numpy.asarray(guess, dtype=numpy.float64)
         else:
             # Use the output points as the initial guess
-            guess = numpy.zeros((output_points.shape[0], dim), dtype=Package.get_float_dtype())
+            guess = numpy.zeros((output_points.shape[0], dim), dtype=numpy.float64)
 
         # Check the shape of the output points
         if output_points.ndim < 2:
@@ -180,8 +179,8 @@ def optimize_input_points(
 
         # Flatten the output points to 2D for processing
         shape = output_points.shape  # (..., dim)
-        output_points = output_points.reshape(-1, dim)  # (..., dim) -> (Npoints, dim)
-        guess = guess.reshape(-1, dim)  # (..., dim) -> (Npoints, dim)
+        output_points = output_points.reshape(-1, dim)  # (..., dim) -> (n_points, dim)
+        guess = guess.reshape(-1, dim)  # (..., dim) -> (n_points, dim)
         
         # Check the number of points
         if output_points.shape[0] != guess.shape[0]:
@@ -195,15 +194,15 @@ def optimize_input_points(
             raise ValueError(f"Guess must have {dim} dimensions, got {guess.shape[-1]} dimensions.")
         
     # Initialize the guess for the input points
-    Npoints = output_points.shape[0]
-    delta_itk = numpy.zeros_like(guess, dtype=Package.get_float_dtype()) # shape (Npoints, dim) (Delta for the next iteration)
-    Nopt = Npoints # Number of points in computation
+    n_points = output_points.shape[0]
+    delta_itk = numpy.zeros_like(guess, dtype=numpy.float64) # shape (n_points, dim) (Delta for the next iteration)
+    Nopt = n_points # Number of points in computation
 
     # Prepare the output array:
     input_points = guess
 
     # Create the mask for the points in computation
-    mask = numpy.logical_and(numpy.isfinite(output_points).all(axis=1), numpy.isfinite(input_points).all(axis=1))  # shape (Npoints,)
+    mask = numpy.logical_and(numpy.isfinite(output_points).all(axis=1), numpy.isfinite(input_points).all(axis=1))  # shape (n_points,)
 
     # Run the iterative algorithm
     for it in range(max_iter):
@@ -234,16 +233,16 @@ def optimize_input_points(
         J = jacobian_dx # shape (Nopt, dim, dim)
 
         # Solve the linear system to find the delta
-        delta_itk = numpy.array([scipy.linalg.solve(J[i], R[i]) for i in range(Nopt)], dtype=Package.get_float_dtype()) # shape (Nopt, dim)
+        delta_itk = numpy.array([scipy.linalg.solve(J[i], R[i]) for i in range(Nopt)], dtype=numpy.float64) # shape (Nopt, dim)
 
         # Update the input points
         input_points[mask, :] = input_points[mask, :] + delta_itk
         if verbose:
-            print(f"Iteration {it+1}: {numpy.sum(mask)} valid points out of {Npoints}. Max delta: {numpy.max(numpy.abs(delta_itk))}")
+            print(f"Iteration {it+1}: {numpy.sum(mask)} valid points out of {n_points}. Max delta: {numpy.max(numpy.abs(delta_itk))}")
 
     # Return the optimized input points
     if not _skip:
-        input_points = input_points.reshape(*shape[:-1], dim)  # (Npoints, dim) -> (..., dim)
+        input_points = input_points.reshape(*shape[:-1], dim)  # (n_points, dim) -> (..., dim)
 
         if transpose:
             input_points = numpy.moveaxis(input_points, -1, 0) # (..., dim) -> (dim, ...)

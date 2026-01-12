@@ -19,7 +19,6 @@ import numpy
 from .core.distortion import Distortion
 from .core.intrinsic import Intrinsic
 from .core.extrinsic import Extrinsic
-from .core.package import Package
 
 from .distortion_objects.no_distortion import NoDistortion
 from .intrinsic_objects.no_intrinsic import NoIntrinsic
@@ -95,7 +94,7 @@ def undistort_points(
         The output points will be in the same shape as the input points.
 
     _skip : bool, optional
-            [INTERNAL USE], If True, skip the checks for the transformation parameters and assume the points are given in the (Npoints, input_dim) float format.
+            [INTERNAL USE], If True, skip the checks for the transformation parameters and assume the points are given in the (n_points, input_dim) float format.
             `transpose` is ignored if this parameter is set to True.
     
     **kwargs : optional
@@ -176,7 +175,7 @@ def undistort_points(
             raise ValueError("transpose must be a boolean value")
         
         # Create the array of points
-        image_points = numpy.asarray(image_points, dtype=Package.get_float_dtype())
+        image_points = numpy.asarray(image_points, dtype=numpy.float64)
 
         # Transpose the points if needed
         if transpose:
@@ -186,30 +185,30 @@ def undistort_points(
         shape = image_points.shape # (..., 2)
 
         # Flatten the points along the last axis
-        image_points = image_points.reshape(-1, shape[-1]) # shape (..., 2) -> shape (Npoints, 2)
+        image_points = image_points.reshape(-1, shape[-1]) # shape (..., 2) -> shape (n_points, 2)
         
         # Check the shape of the points
         if image_points.ndim !=2 or image_points.shape[1] != 2:
             raise ValueError(f"The points must be in the shape (..., 2) or (2, ...) if ``transpose`` is True. Got {image_points.shape} instead and transpose is {transpose}.")
 
-    Npoints = image_points.shape[0] # Npoints
-    output_points = image_points.copy() # shape (Npoints, 2)
+    n_points = image_points.shape[0] # n_points
+    output_points = image_points.copy() # shape (n_points, 2)
 
     # Realize the transformation:
     if not isinstance(intrinsic, NoIntrinsic):
-        output_points, _, _ = intrinsic._inverse_transform(output_points, dx=False, dp=False) # shape (Npoints, 2) -> shape (Npoints, 2)
+        output_points, _, _ = intrinsic._inverse_transform(output_points, dx=False, dp=False) # shape (n_points, 2) -> shape (n_points, 2)
     if not isinstance(distortion, NoDistortion):
-        output_points, _, _ = distortion._inverse_transform(output_points, dx=False, dp=False, **kwargs) # shape (Npoints, 2) -> shape (Npoints, 2)
+        output_points, _, _ = distortion._inverse_transform(output_points, dx=False, dp=False, **kwargs) # shape (n_points, 2) -> shape (n_points, 2)
     if not isinstance(R, NoExtrinsic):
-        output_points, _, _ = R._transform(numpy.concatenate((output_points, numpy.ones((Npoints, 1))), axis=1), dx=False, dp=False) # shape (Npoints, 2) -> shape (Npoints, 3)
-        output_points = output_points[:, :2] # shape (Npoints, 3) -> shape (Npoints, 2)
+        output_points, _, _ = R._transform(numpy.concatenate((output_points, numpy.ones((n_points, 1))), axis=1), dx=False, dp=False) # shape (n_points, 2) -> shape (n_points, 3)
+        output_points = output_points[:, :2] # shape (n_points, 3) -> shape (n_points, 2)
 
     if not isinstance(P, NoIntrinsic):
-        output_points, _, _ = P._transform(output_points, dx=False, dp=False) # shape (Npoints, 2) -> shape (Npoints, 2)
+        output_points, _, _ = P._transform(output_points, dx=False, dp=False) # shape (n_points, 2) -> shape (n_points, 2)
 
     if not _skip:
         # Reshape the normalized points back to the original shape
-        output_points = output_points.reshape(shape) # shape (Npoints, 2) -> (..., 2)
+        output_points = output_points.reshape(shape) # shape (n_points, 2) -> (..., 2)
 
         # Transpose the points back to the original shape if needed
         if transpose:

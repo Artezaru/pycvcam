@@ -18,7 +18,6 @@ from numbers import Number, Integral
 import cv2
 
 from ..core import Distortion
-from ..core.package import Package
 from ..optimize import optimize_input_points
 
 class FisheyeDistortion(Distortion):
@@ -62,18 +61,18 @@ class FisheyeDistortion(Distortion):
 
     .. note::
 
-        If the number of parameters is ``Nparams``, the maximum order of the polynomial is :math:`2*Nparams + 1`. and only odd powers of :math:`\theta` are used in the polynomial.
+        If the number of parameters is ``n_params``, the maximum order of the polynomial is :math:`2*n_params + 1`. and only odd powers of :math:`\theta` are used in the polynomial.
     
     .. warning::
 
-        If the number of parameters ``Nparams`` is given during instantiation, the given parameters are truncated or extended to the given number of parameters.
+        If the number of parameters ``n_params`` is given during instantiation, the given parameters are truncated or extended to the given number of parameters.
 
     Parameters
     ----------
     parameters : Optional[numpy.ndarray], optional
-        The parameters of the distortion transformation. It should be a numpy array of shape (Nparams,) containing the distortion coefficients ordered as described above. Default is None, which means no distortion is setted.
+        The parameters of the distortion transformation. It should be a numpy array of shape (n_params,) containing the distortion coefficients ordered as described above. Default is None, which means no distortion is setted.
 
-    Nparams : Optional[Integral], optional
+    n_params : Optional[Integral], optional
         The number of parameters for the distortion model. If not specified, it will be inferred from the shape of the `parameters` array.
 
     Examples
@@ -93,10 +92,10 @@ class FisheyeDistortion(Distortion):
 
     .. code-block:: python
 
-        normalized_points = numpy.array([[0.1, 0.2], [0.3, 0.4], [0.5, 0.6]]) # shape (Npoints, 2)
+        normalized_points = numpy.array([[0.1, 0.2], [0.3, 0.4], [0.5, 0.6]]) # shape (n_points, 2)
 
         result = distortion.transform(normalized_points)
-        distorted_points = result.distorted_points # Shape (Npoints, 2)
+        distorted_points = result.distorted_points # Shape (n_points, 2)
         print(distorted_points)
 
     You can also access to the jacobian of the distortion transformation:
@@ -104,8 +103,8 @@ class FisheyeDistortion(Distortion):
     .. code-block:: python
 
         result = distortion.transform(normalized_points, dx=True, dp=True)
-        distorted_points_dx = result.jacobian_dx  # Shape (Npoints, 2, 2)
-        distorted_points_dp = result.jacobian_dp  # Shape (Npoints, 2, Nparams = 5)
+        distorted_points_dx = result.jacobian_dx  # Shape (n_points, 2, 2)
+        distorted_points_dp = result.jacobian_dp  # Shape (n_points, 2, n_params = 5)
         print(distorted_points_dx) 
         print(distorted_points_dp)
 
@@ -114,7 +113,7 @@ class FisheyeDistortion(Distortion):
     .. code-block:: python
 
         inverse_result = distortion.inverse_transform(distorted_points, dx=True, dp=True)
-        normalized_points = inverse_result.normalized_points  # Shape (Npoints, 2)
+        normalized_points = inverse_result.normalized_points  # Shape (n_points, 2)
         print(normalized_points)
 
     .. note::
@@ -129,11 +128,11 @@ class FisheyeDistortion(Distortion):
         - :meth:`pycvcam.FisheyeDistortion._inverse_transform` to transform the ``distorted_points`` back to ``normalized_points``.
 
     """
-    def __init__(self, parameters: Optional[numpy.ndarray] = None, Nparams: Optional[Integral] = None) -> None:
+    def __init__(self, parameters: Optional[numpy.ndarray] = None, n_params: Optional[Integral] = None) -> None:
         # Initialize the Transform base class
         super().__init__(parameters=parameters, constants=None)
-        if Nparams is not None:
-            self.Nparams = Nparams
+        if n_params is not None:
+            self.n_params = n_params
 
     # =============================================
     # Overwrite some properties from the base class
@@ -147,7 +146,7 @@ class FisheyeDistortion(Distortion):
 
         .. note::
 
-            If the number of parameters is ``Nparams``, the maximum order of the polynomial is :math:`2*Nparams + 1`. and only odd powers of :math:`\theta` are used in the polynomial.
+            If the number of parameters is ``n_params``, the maximum order of the polynomial is :math:`2*n_params + 1`. and only odd powers of :math:`\theta` are used in the polynomial.
 
         Parameters
         ----------
@@ -164,7 +163,7 @@ class FisheyeDistortion(Distortion):
     @parameters.setter
     def parameters(self, parameters: Optional[numpy.ndarray]) -> None:
         if parameters is not None:
-            parameters = numpy.asarray(parameters, dtype=Package.get_float_dtype())
+            parameters = numpy.asarray(parameters, dtype=numpy.float64)
             if parameters.ndim != 1:
                 raise ValueError("The parameters should be a 1D numpy array.")
         self._parameters = parameters
@@ -183,13 +182,13 @@ class FisheyeDistortion(Distortion):
         self._constants = None
 
     @property
-    def Nparams(self) -> int:
+    def n_params(self) -> int:
         r"""
         Get or set the number of parameters of the distortion model.
 
         .. note::
 
-            If the number of parameters is ``Nparams``, the maximum order of the polynomial is :math:`2*Nparams + 1`. and only odd powers of :math:`\theta` are used in the polynomial.
+            If the number of parameters is ``n_params``, the maximum order of the polynomial is :math:`2*n_params + 1`. and only odd powers of :math:`\theta` are used in the polynomial.
 
         If the given number of parameters is less than the current number of parameters, the parameters are truncated.
         If the given number of parameters is greater than the current number of parameters, the parameters are extended with zeros.
@@ -204,8 +203,8 @@ class FisheyeDistortion(Distortion):
         else:
             return self.parameters.size
         
-    @Nparams.setter
-    def Nparams(self, value: Integral) -> None:
+    @n_params.setter
+    def n_params(self, value: Integral) -> None:
         if not isinstance(value, Integral):
             raise TypeError("The number of parameters should be an integer.")
         if value < 0:
@@ -219,10 +218,10 @@ class FisheyeDistortion(Distortion):
         # Update the number of parameters instead of creating a new array
         if value == 0:
             self.parameters = None
-        elif value < self.Nparams:
+        elif value < self.n_params:
             self.parameters = self.parameters[:value]
-        elif value > self.Nparams:
-            self.parameters = numpy.concatenate((self.parameters, numpy.zeros(value - self.Nparams)))
+        elif value > self.n_params:
+            self.parameters = numpy.concatenate((self.parameters, numpy.zeros(value - self.n_params)))
 
     @property
     def parameter_names(self) -> List[str]:
@@ -234,7 +233,7 @@ class FisheyeDistortion(Distortion):
         List[str]
             The names of the parameters of the distortion transformation.
         """
-        params = [f"d_{i+1}" for i in range(self.Nparams)]
+        params = [f"d_{i+1}" for i in range(self.n_params)]
         return params
     
     @property
@@ -279,7 +278,7 @@ class FisheyeDistortion(Distortion):
         if not isinstance(i, Integral):
             raise TypeError("The index of the distortion coefficient should be an integer.")
         i_min = 1
-        i_max = self.Nparams
+        i_max = self.n_params
         if i < i_min or i > i_max:
             raise ValueError(f"The index of the distortion coefficient should be between {i_min} and {i_max}.")
         self.parameters[i - 1] = value
@@ -307,7 +306,7 @@ class FisheyeDistortion(Distortion):
         if not isinstance(i, Integral):
             raise TypeError("The index of the distortion coefficient should be an integer.")
         i_min = 1
-        i_max = self.Nparams
+        i_max = self.n_params
         if i < i_min or i > i_max: 
             raise ValueError(f"The index of the distortion coefficient should be between {i_min} and {i_max}.")
         return self.parameters[i - 1]
@@ -316,7 +315,7 @@ class FisheyeDistortion(Distortion):
         r"""
         Set to zero the parameters of the distortion model.
         """
-        self.parameters = numpy.zeros((self.Nparams, ), dtype=Package.get_float_dtype())
+        self.parameters = numpy.zeros((self.n_params, ), dtype=numpy.float64)
 
     # =================================================================
     # Internal methods to compute the distortion
@@ -325,8 +324,8 @@ class FisheyeDistortion(Distortion):
         r"""
         Convert cartesian coordinates to polar coordinates.
         
-        The input ``cartesian`` points are given in the form :math:`(x, y)` with shape (Npoints, 2).
-        The output ``polar`` points are given in the form :math:`(r, \theta)` with shape (Npoints, 2), where :math:`r = \sqrt{x^2 + y^2}` and :math:`\theta = \arctan2(y, x)`.
+        The input ``cartesian`` points are given in the form :math:`(x, y)` with shape (n_points, 2).
+        The output ``polar`` points are given in the form :math:`(r, \theta)` with shape (n_points, 2), where :math:`r = \sqrt{x^2 + y^2}` and :math:`\theta = \arctan2(y, x)`.
 
         .. math::
 
@@ -340,7 +339,7 @@ class FisheyeDistortion(Distortion):
             \arctan2(y, x) \\
             \end{bmatrix}
 
-        The jacobian with respect to the cartesian points is an array with shape (Npoints, 2, 2).
+        The jacobian with respect to the cartesian points is an array with shape (n_points, 2, 2).
 
         .. math::
 
@@ -356,12 +355,12 @@ class FisheyeDistortion(Distortion):
 
         .. warning::
             This method is not intended to be used directly, but rather through the :meth:`pycvcam.core.Transform.transform` method.
-            Please ensure, the shape of the input ``cartesian`` is (Npoints, 2) before calling this method.
+            Please ensure, the shape of the input ``cartesian`` is (n_points, 2) before calling this method.
 
         Parameters
         ----------
         cartesian : numpy.ndarray
-            The cartesian points to be converted. Shape (Npoints, 2).
+            The cartesian points to be converted. Shape (n_points, 2).
         
         dx : bool, optional
             If True, the jacobian with respect to the cartesian points is computed. Default is True.
@@ -369,33 +368,33 @@ class FisheyeDistortion(Distortion):
         Returns
         -------
         polar : numpy.ndarray
-            The polar points. Shape (Npoints, 2).
+            The polar points. Shape (n_points, 2).
         
         jacobian_dx : Optional[numpy.ndarray]
-            The jacobian of the polar points with respect to the cartesian points. Shape (Npoints, 2, 2) if dx is True, otherwise None.
+            The jacobian of the polar points with respect to the cartesian points. Shape (n_points, 2, 2) if dx is True, otherwise None.
 
         """
         if not isinstance(dx, bool):
             raise TypeError("The dx parameter must be a boolean.")
 
         # Extract the cartesian coordinates
-        x = cartesian[:, 0] # shape (Npoints,)
-        y = cartesian[:, 1] # shape (Npoints,)
+        x = cartesian[:, 0] # shape (n_points,)
+        y = cartesian[:, 1] # shape (n_points,)
         
         # Compute the polar coordinates
-        r = numpy.sqrt(x**2 + y**2) # shape (Npoints,)
-        theta = numpy.arctan2(y, x) # shape (Npoints,)
+        r = numpy.sqrt(x**2 + y**2) # shape (n_points,)
+        theta = numpy.arctan2(y, x) # shape (n_points,)
 
-        polar = numpy.empty((cartesian.shape[0], 2), dtype=Package.get_float_dtype()) # shape (Npoints, 2)
+        polar = numpy.empty((cartesian.shape[0], 2), dtype=numpy.float64) # shape (n_points, 2)
         polar[:, 0] = r
         polar[:, 1] = theta
 
         # Compute the jacobian with respect to the cartesian points
         jacobian_dx = None
         if dx:
-            jacobian_dx = numpy.empty((cartesian.shape[0], 2, 2), dtype=Package.get_float_dtype()) # shape (Npoints, 2, 2)
+            jacobian_dx = numpy.empty((cartesian.shape[0], 2, 2), dtype=numpy.float64) # shape (n_points, 2, 2)
             r_safe = numpy.where(r == 0, 1e-8, r) # Avoid division by zero
-            r2 = r_safe ** 2 # shape (Npoints,)
+            r2 = r_safe ** 2 # shape (n_points,)
             jacobian_dx[:, 0, 0] = x / r_safe # dr/dx
             jacobian_dx[:, 0, 1] = y / r_safe # dr/dy
             jacobian_dx[:, 1, 0] = -y / r2 # dtheta/dx
@@ -408,8 +407,8 @@ class FisheyeDistortion(Distortion):
         r"""
         Convert polar coordinates to cartesian coordinates.
         
-        The input ``polar`` points are given in the form :math:`(r, \theta)` with shape (Npoints, 2), where :math:`r = \sqrt{x^2 + y^2}` and :math:`\theta = \arctan2(y, x)`.
-        The output ``cartesian`` points are given in the form :math:`(x, y)` with shape (Npoints, 2).
+        The input ``polar`` points are given in the form :math:`(r, \theta)` with shape (n_points, 2), where :math:`r = \sqrt{x^2 + y^2}` and :math:`\theta = \arctan2(y, x)`.
+        The output ``cartesian`` points are given in the form :math:`(x, y)` with shape (n_points, 2).
 
         .. math::
 
@@ -423,7 +422,7 @@ class FisheyeDistortion(Distortion):
             r \sin(\theta) \\
             \end{bmatrix}
 
-        The jacobian with respect to the polar points is an array with shape (Npoints, 2, 2).
+        The jacobian with respect to the polar points is an array with shape (n_points, 2, 2).
 
         .. math::
 
@@ -439,12 +438,12 @@ class FisheyeDistortion(Distortion):
 
         .. warning::
             This method is not intended to be used directly, but rather through the :meth:`pycvcam.core.Transform.transform` method.
-            Please ensure, the shape of the input ``polar`` is (Npoints, 2) before calling this method.
+            Please ensure, the shape of the input ``polar`` is (n_points, 2) before calling this method.
 
         Parameters
         ----------
         polar : numpy.ndarray
-            The polar points to be converted. Shape (Npoints, 2).
+            The polar points to be converted. Shape (n_points, 2).
         
         dx : bool, optional
             If True, the jacobian with respect to the polar points is computed. Default is True.
@@ -452,31 +451,31 @@ class FisheyeDistortion(Distortion):
         Returns
         -------
         cartesian : numpy.ndarray
-            The cartesian points. Shape (Npoints, 2).
+            The cartesian points. Shape (n_points, 2).
         
         jacobian_dx : Optional[numpy.ndarray]
-            The jacobian of the cartesian points with respect to the polar points. Shape (Npoints, 2, 2) if dx is True, otherwise None.
+            The jacobian of the cartesian points with respect to the polar points. Shape (n_points, 2, 2) if dx is True, otherwise None.
 
         """
         if not isinstance(dx, bool):
             raise TypeError("The dx parameter must be a boolean.")
         
         # Extract the polar coordinates
-        r = polar[:, 0] # shape (Npoints,)
-        theta = polar[:, 1] # shape (Npoints,)
+        r = polar[:, 0] # shape (n_points,)
+        theta = polar[:, 1] # shape (n_points,)
 
         # Compute the cartesian coordinates
-        x = r * numpy.cos(theta) # shape (Npoints,)
-        y = r * numpy.sin(theta) # shape (Npoints,)
+        x = r * numpy.cos(theta) # shape (n_points,)
+        y = r * numpy.sin(theta) # shape (n_points,)
 
-        cartesian = numpy.empty((polar.shape[0], 2), dtype=Package.get_float_dtype()) # shape (Npoints, 2)
+        cartesian = numpy.empty((polar.shape[0], 2), dtype=numpy.float64) # shape (n_points, 2)
         cartesian[:, 0] = x
         cartesian[:, 1] = y
 
         # Compute the jacobian with respect to the polar points
         jacobian_dx = None
         if dx:
-            jacobian_dx = numpy.empty((polar.shape[0], 2, 2), dtype=Package.get_float_dtype()) # shape (Npoints, 2, 2)
+            jacobian_dx = numpy.empty((polar.shape[0], 2, 2), dtype=numpy.float64) # shape (n_points, 2, 2)
             jacobian_dx[:, 0, 0] = numpy.cos(theta) # dx/dr
             jacobian_dx[:, 0, 1] = -r * numpy.sin(theta) # dx/dtheta
             jacobian_dx[:, 1, 0] = numpy.sin(theta) # dy/dr
@@ -518,18 +517,18 @@ class FisheyeDistortion(Distortion):
 
             \theta_d = \theta(1 + d_1\theta^2 + d_2\theta^4 + d_3\theta^6 + \ldots)
 
-        The jacobians with respect to the distortion parameters is an array with shape (Npoints, 2, Nparams), where the last dimension represents the parameters in the order of the class attributes (d1, d2, d3, ...).
-        The jacobian with respect to the normalized points is an array with shape (Npoints, 2, 2).
+        The jacobians with respect to the distortion parameters is an array with shape (n_points, 2, n_params), where the last dimension represents the parameters in the order of the class attributes (d1, d2, d3, ...).
+        The jacobian with respect to the normalized points is an array with shape (n_points, 2, 2).
 
         .. warning::
 
             This method is not intended to be used directly, but rather through the :meth:`pycvcam.core.Transform.transform` method.
-            Please ensure, the shape of the input ``normalized_points`` is (Npoints, 2) before calling this method.
+            Please ensure, the shape of the input ``normalized_points`` is (n_points, 2) before calling this method.
 
         Parameters
         ----------
         normalized_points : numpy.ndarray
-            The normalized points in camera normalized coordinates to be transformed. Shape (Npoints, 2).
+            The normalized points in camera normalized coordinates to be transformed. Shape (n_points, 2).
 
         dx : bool, optional
             If True, the jacobian with respect to the normalized points is computed. Default is False
@@ -545,61 +544,61 @@ class FisheyeDistortion(Distortion):
         Returns
         -------
         distorted_points : numpy.ndarray
-            The distorted points in camera normalized coordinates. Shape (Npoints, 2).
+            The distorted points in camera normalized coordinates. Shape (n_points, 2).
 
         jacobian_dx : Optional[numpy.ndarray]
-            The jacobian of the distorted points with respect to the normalized points. Shape (Npoints, 2, 2) if dx is True, otherwise None.
+            The jacobian of the distorted points with respect to the normalized points. Shape (n_points, 2, 2) if dx is True, otherwise None.
 
         jacobian_dp : Optional[numpy.ndarray]
-            The jacobian of the distorted points with respect to the distortion parameters. Shape (Npoints, 2, Nparams) if dp is True, otherwise None.
+            The jacobian of the distorted points with respect to the distortion parameters. Shape (n_points, 2, n_params) if dp is True, otherwise None.
         """
         # Prepare the inputs data for distortion
-        x_N = normalized_points[:, 0] # shape (Npoints,)
-        y_N = normalized_points[:, 1] # shape (Npoints,)
-        Npoints = normalized_points.shape[0]
-        Nparams = self.Nparams
+        x_N = normalized_points[:, 0] # shape (n_points,)
+        y_N = normalized_points[:, 1] # shape (n_points,)
+        n_points = normalized_points.shape[0]
+        n_params = self.n_params
 
         # Convert to polar coordinates
-        polar, jacobian_dx_cart2pol = self._cartesian_to_polar(normalized_points, dx=dx) # shape (Npoints, 2), (Npoints, 2, 2) or None
+        polar, jacobian_dx_cart2pol = self._cartesian_to_polar(normalized_points, dx=dx) # shape (n_points, 2), (n_points, 2, 2) or None
 
-        r = polar[:, 0] # shape (Npoints,)
-        theta = polar[:, 1] # shape (Npoints,)
+        r = polar[:, 0] # shape (n_points,)
+        theta = polar[:, 1] # shape (n_points,)
 
         # Apply the distortion model
-        theta_powers = numpy.power(theta[:, numpy.newaxis], 2 * numpy.arange(1, Nparams + 1)) # shape (Npoints, Nparams) # theta^2, theta^4, theta^6, ...
-        theta_d = theta * (1 + numpy.dot(theta_powers, self.parameters)) # shape (Npoints,)
+        theta_powers = numpy.power(theta[:, numpy.newaxis], 2 * numpy.arange(1, n_params + 1)) # shape (n_points, n_params) # theta^2, theta^4, theta^6, ...
+        theta_d = theta * (1 + numpy.dot(theta_powers, self.parameters)) # shape (n_points,)
 
         if dx:
-            theta_d_dx = numpy.empty((Npoints, 1, 2), dtype=Package.get_float_dtype()) # shape (Npoints, 1, 2)
+            theta_d_dx = numpy.empty((n_points, 1, 2), dtype=numpy.float64) # shape (n_points, 1, 2)
             # dtheta_d/dtheta = 1 + 3 * d1 * theta^2 + 5 * d2 * theta^4 + 7 * d3 * theta^6 + ...
-            coefficients = numpy.array([2*i + 1 for i in range(1, Nparams + 1)], dtype=Package.get_float_dtype()) # shape (Nparams,)
-            dtheta_d_dtheta = 1 + numpy.dot(theta_powers, self.parameters * coefficients) # shape (Npoints,)
-            theta_d_dx[:, 0, :] = dtheta_d_dtheta[:, numpy.newaxis] * jacobian_dx_cart2pol[:, 1, :] # shape (Npoints, 2)
+            coefficients = numpy.array([2*i + 1 for i in range(1, n_params + 1)], dtype=numpy.float64) # shape (n_params,)
+            dtheta_d_dtheta = 1 + numpy.dot(theta_powers, self.parameters * coefficients) # shape (n_points,)
+            theta_d_dx[:, 0, :] = dtheta_d_dtheta[:, numpy.newaxis] * jacobian_dx_cart2pol[:, 1, :] # shape (n_points, 2)
     
-        if dp and Nparams > 0:
-            theta_d_dp = numpy.empty((Npoints, 1, Nparams), dtype=Package.get_float_dtype()) # shape (Npoints, 1, Nparams)
-            theta_d_dp[:, 0, :] = theta[:, numpy.newaxis] * theta_powers # shape (Npoints, Nparams)
+        if dp and n_params > 0:
+            theta_d_dp = numpy.empty((n_points, 1, n_params), dtype=numpy.float64) # shape (n_points, 1, n_params)
+            theta_d_dp[:, 0, :] = theta[:, numpy.newaxis] * theta_powers # shape (n_points, n_params)
         
         # Convert back to cartesian coordinates
-        distorted_points, jacobian_dx_pol2cart = self._polar_to_cartesian(numpy.column_stack((r, theta_d)), dx=dx) # shape (Npoints, 2), (Npoints, 2, 2) or None
+        distorted_points, jacobian_dx_pol2cart = self._polar_to_cartesian(numpy.column_stack((r, theta_d)), dx=dx) # shape (n_points, 2), (n_points, 2, 2) or None
 
         # Compute the jacobians
         jacobian_dx = None
         if dx:
-            jacobian_dx = numpy.empty((Npoints, 2, 2), dtype=Package.get_float_dtype()) # shape (Npoints, 2, 2)
+            jacobian_dx = numpy.empty((n_points, 2, 2), dtype=numpy.float64) # shape (n_points, 2, 2)
             jacobian_dx[:, 0, 0] = jacobian_dx_pol2cart[:, 0, 0] * jacobian_dx_cart2pol[:, 0, 0] + jacobian_dx_pol2cart[:, 0, 1] * theta_d_dx[:, 0, 0] # dx/dx_N
             jacobian_dx[:, 0, 1] = jacobian_dx_pol2cart[:, 0, 0] * jacobian_dx_cart2pol[:, 0, 1] + jacobian_dx_pol2cart[:, 0, 1] * theta_d_dx[:, 0, 1] # dx/dy_N
             jacobian_dx[:, 1, 0] = jacobian_dx_pol2cart[:, 1, 0] * jacobian_dx_cart2pol[:, 0, 0] + jacobian_dx_pol2cart[:, 1, 1] * theta_d_dx[:, 0, 0] # dy/dx_N
             jacobian_dx[:, 1, 1] = jacobian_dx_pol2cart[:, 1, 0] * jacobian_dx_cart2pol[:, 0, 1] + jacobian_dx_pol2cart[:, 1, 1] * theta_d_dx[:, 0, 1] # dy/dy_N
 
         jacobian_dp = None
-        if dp and Nparams > 0:
-            jacobian_dp = numpy.empty((Npoints, 2, Nparams), dtype=Package.get_float_dtype()) # shape (Npoints, 2, Nparams)
+        if dp and n_params > 0:
+            jacobian_dp = numpy.empty((n_points, 2, n_params), dtype=numpy.float64) # shape (n_points, 2, n_params)
             jacobian_dp[:, 0, :] = jacobian_dx_pol2cart[:, 0, 1][:, numpy.newaxis] * theta_d_dp[:, 0, :] # dx/dp
             jacobian_dp[:, 1, :] = jacobian_dx_pol2cart[:, 1, 1][:, numpy.newaxis] * theta_d_dp[:, 0, :] # dy/dp
         
-        if dp and Nparams == 0:
-            jacobian_dp = numpy.empty((Npoints, 2, 0), dtype=Package.get_float_dtype()) # shape (Npoints, 2, 0)
+        if dp and n_params == 0:
+            jacobian_dp = numpy.empty((n_points, 2, 0), dtype=numpy.float64) # shape (n_points, 2, 0)
         
         return distorted_points, jacobian_dx, jacobian_dp
     
@@ -618,14 +617,14 @@ class FisheyeDistortion(Distortion):
         .. warning::
 
             This method is not intended to be used directly, but rather through the :meth:`pycvcam.core.Transform.transform` method.
-            Please ensure, the shape of the input ``image_points`` is (Npoints, 2) before calling this method.
+            Please ensure, the shape of the input ``image_points`` is (n_points, 2) before calling this method.
 
             The jacobians with respect to the distortion parameters and the distorted points are always None, since it is an iterative algorithm.
 
         Parameters
         ----------
         distorted_points : numpy.ndarray
-            The distorted points in camera normalized coordinates to be transformed. Shape (Npoints, 2).
+            The distorted points in camera normalized coordinates to be transformed. Shape (n_points, 2).
 
         dx : bool, optional
             If True, the jacobian with respect to the distorted points is computed. Default is False
@@ -639,7 +638,7 @@ class FisheyeDistortion(Distortion):
         Returns
         -------
         normalized_points : numpy.ndarray
-            The normalized points in camera normalized coordinates, which are equal to the x and y components of the image points. Shape (Npoints, 2).
+            The normalized points in camera normalized coordinates, which are equal to the x and y components of the image points. Shape (n_points, 2).
 
         jacobian_dx : Optional[numpy.ndarray]
             Always None, since the jacobian with respect to the distorted points is not computed by an iterative algorithm.

@@ -27,3 +27,18 @@ distortion = Cv2Distortion(parameters = [0.1, 0.2, 0.3, 0.4, 0.5])
 result = project_points(world_points, intrinsic=intrinsic, distortion=distortion, extrinsic=extrinsic, transpose=False, dp=True, dx=True)
 print("Projected image points:")
 print(result.image_points) # shape (5, 2)
+print("Jacobian w.r.t. 3D world points:")
+print(result.jacobian_dx) # shape (5, 2, 3)
+print("Jacobian w.r.t. projection parameters:")
+print(result.jacobian_dp) # shape (5, 2, n_params)
+
+
+
+# Project the 3D points to 2D image points
+result = project_points(world_points, intrinsic=intrinsic, distortion=distortion, extrinsic=extrinsic, transpose=False, dextrinsic=True, dx=False)
+print("Projected image points:")
+print(result.image_points) # shape (5, 2)
+print("Jacobian w.r.t. 3D world points:")
+print(result.jacobian_dx) # shape (5, 2, 3)
+print("Jacobian w.r.t. projection parameters:")
+print(result.jacobian_dp) # shape (5, 2, n_params)

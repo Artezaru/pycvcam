@@ -16,7 +16,6 @@ from typing import Optional, Tuple
 import numpy
 
 from ..core import Intrinsic
-from ..core.package import Package
 
 
 class NoIntrinsic(Intrinsic):
@@ -82,18 +81,18 @@ class NoIntrinsic(Intrinsic):
         Lets consider ``distorted_points`` in the camera normalized coordinate system :math:`\vec{x}_d = (x_d, y_d)`, the corresponding ``image_points`` in the image coordinate system are given by :math:`\vec{x}_i = (x_d, y_d)`. 
         Simply applying an identity transformation, which means that the image points are equal to the distorted points.
 
-        The jacobians with respect to the intrinsic parameters is an empty array with shape (Npoints, 2, 0), as there are no parameters to compute the jacobian for.
+        The jacobians with respect to the intrinsic parameters is an empty array with shape (n_points, 2, 0), as there are no parameters to compute the jacobian for.
         The jacobian with respect to the distorted points is set to the identity matrix, as the distorted points are equal to the image points.
 
         .. warning::
 
             This method is not intended to be used directly, but rather through the :meth:`pycvcam.core.Transform.transform` method.
-            Please ensure, the shape of the input ``distorted_points`` is (Npoints, 2) before calling this method.
+            Please ensure, the shape of the input ``distorted_points`` is (n_points, 2) before calling this method.
 
         Parameters
         ----------
         distorted_points : numpy.ndarray
-            The distorted points in camera normalized coordinates to be transformed. Shape (Npoints, 2).
+            The distorted points in camera normalized coordinates to be transformed. Shape (n_points, 2).
 
         dx : bool, optional
             If True, the jacobian with respect to the distorted points is computed. Default is False
@@ -104,23 +103,23 @@ class NoIntrinsic(Intrinsic):
         Returns
         -------
         image_points : numpy.ndarray
-            The image points in image coordinates, which are equal to the x and y componants of the distorted points. Shape (Npoints, 2).
+            The image points in image coordinates, which are equal to the x and y componants of the distorted points. Shape (n_points, 2).
 
         jacobian_dx : Optional[numpy.ndarray]
-            The jacobian of the image points with respect to the distorted points. Shape (Npoints, 2, 2) if dx is True, otherwise None.
+            The jacobian of the image points with respect to the distorted points. Shape (n_points, 2, 2) if dx is True, otherwise None.
 
         jacobian_dp : Optional[numpy.ndarray]
-            The jacobian of the image points with respect to the intrinsic parameters. Shape (Npoints, 2, 0) if dp is True, otherwise None.
+            The jacobian of the image points with respect to the intrinsic parameters. Shape (n_points, 2, 0) if dp is True, otherwise None.
         """
-        image_points = distorted_points.copy() # shape (Npoints, 2)
-        jacobian_dx = None # shape (Npoints, 2, 2)
-        jacobian_dp = None # shape (Npoints, 2, Nparams)
+        image_points = distorted_points.copy() # shape (n_points, 2)
+        jacobian_dx = None # shape (n_points, 2, 2)
+        jacobian_dp = None # shape (n_points, 2, n_params)
         if dx:
-            jacobian_dx = numpy.zeros((image_points.shape[0], 2, 2), dtype=Package.get_float_dtype()) # shape (Npoints, 2, 2)
+            jacobian_dx = numpy.zeros((image_points.shape[0], 2, 2), dtype=numpy.float64) # shape (n_points, 2, 2)
             jacobian_dx[:, 0, 0] = 1.0
             jacobian_dx[:, 1, 1] = 1.0
         if dp:
-            jacobian_dp = numpy.empty((image_points.shape[0], 2, 0), dtype=Package.get_float_dtype()) # shape (Npoints, 2, 0)
+            jacobian_dp = numpy.empty((image_points.shape[0], 2, 0), dtype=numpy.float64) # shape (n_points, 2, 0)
         return image_points, jacobian_dx, jacobian_dp
     
     
@@ -131,18 +130,18 @@ class NoIntrinsic(Intrinsic):
         Lets consider ``image_points`` in the image coordinate system :math:`\vec{x}_i = (x_i, y_i)`, the corresponding ``distorted_points`` in the camera normalized coordinate system are given by :math:`\vec{x}_d = (x_i, y_i)`. 
         Simply applying an identity transformation, which means that the image points are equal to the distorted points.
 
-        The jacobians with respect to the intrinsic parameters is an empty array with shape (Npoints, 2, 0), as there are no parameters to compute the jacobian for.
+        The jacobians with respect to the intrinsic parameters is an empty array with shape (n_points, 2, 0), as there are no parameters to compute the jacobian for.
         The jacobian with respect to the image points is set to the identity matrix, as the distorted points are equal to the image points.
 
         .. warning::
 
             This method is not intended to be used directly, but rather through the :meth:`pycvcam.core.Transform.transform` method.
-            Please ensure, the shape of the input ``image_points`` is (Npoints, 2) before calling this method.
+            Please ensure, the shape of the input ``image_points`` is (n_points, 2) before calling this method.
 
         Parameters
         ----------
         image_points : numpy.ndarray
-            The image points in image coordinates to be transformed. Shape (Npoints, 2).
+            The image points in image coordinates to be transformed. Shape (n_points, 2).
 
         dx : bool, optional
             If True, the jacobian with respect to the image points is computed. Default is False
@@ -153,12 +152,12 @@ class NoIntrinsic(Intrinsic):
         Returns
         -------
         distorted_points : numpy.ndarray
-            The distorted points in camera normalized coordinates, which are equal to the x and y components of the image points. Shape (Npoints, 2).
+            The distorted points in camera normalized coordinates, which are equal to the x and y components of the image points. Shape (n_points, 2).
 
         jacobian_dx : Optional[numpy.ndarray]
-            The jacobian of the distorted points with respect to the image points. Shape (Npoints, 2, 2) if dx is True, otherwise None.
+            The jacobian of the distorted points with respect to the image points. Shape (n_points, 2, 2) if dx is True, otherwise None.
 
         jacobian_dp : Optional[numpy.ndarray]
-            The jacobian of the distorted points with respect to the intrinsic parameters. Shape (Npoints, 2, 0) if dp is True, otherwise None.
+            The jacobian of the distorted points with respect to the intrinsic parameters. Shape (n_points, 2, 0) if dp is True, otherwise None.
         """
         return self._transform(image_points, dx=dx, dp=dp)

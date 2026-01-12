@@ -119,7 +119,7 @@ def test_jacobian_analytic_numeric_match(default):
 
     # --- dp (∂output/∂distortion parameters) ---
     param_vec = default.parameters
-    for i in range(default.Nparams):
+    for i in range(default.n_params):
         param_plus = param_vec.copy()
         param_plus[i] += epsilon
         distortion_plus = ZernikeDistortion()

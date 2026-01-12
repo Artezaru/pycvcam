@@ -7,7 +7,7 @@ from pycvcam.optimize import optimize_input_points
 @pytest.fixture
 def default():
     """Creates a default Distortion object with known parameters."""
-    return Cv2Distortion(parameters=numpy.array([1e-3, 2e-3, 1e-3, 1e-4, 2e-3]), Nparams=5)
+    return Cv2Distortion(parameters=numpy.array([1e-3, 2e-3, 1e-3, 1e-4, 2e-3]), n_params=5)
 
 def test_parameters(default):
     """Test the parameters property returns the correct distortion parameters."""
@@ -99,3 +99,12 @@ def test_transform_inverse_transform_consistency(default):
 
     # Check if the inverse transformed points match the original points
     assert numpy.allclose(inverse_transformed.transformed_points, points, rtol=1e-3, atol=1e-5)
+    
+def test_save_load_parameters(default, tmp_path):
+    """Test saving and loading distortion parameters."""
+    file_path = tmp_path / "distortion_params.json"
+    default.to_json(file_path)
+    
+    loaded_distortion = Cv2Distortion.from_json(file_path)
+    numpy.testing.assert_allclose(loaded_distortion.parameters, default.parameters, rtol=1e-10, atol=1e-12)
+    

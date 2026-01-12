@@ -13,7 +13,6 @@ The structure of objects is given by the abstract classes stored in the ``pycvca
    :maxdepth: 1
    :caption: pycvcam.core:
 
-   ./api_doc/package.rst
    ./api_doc/transform.rst
    ./api_doc/transform_result.rst
    ./api_doc/intrinsic.rst

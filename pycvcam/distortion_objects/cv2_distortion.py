@@ -18,8 +18,6 @@ from numbers import Number, Integral
 import cv2
 
 from ..core import Distortion
-from ..core.package import Package
-
 class Cv2Distortion(Distortion):
     r"""
 
@@ -103,14 +101,14 @@ class Cv2Distortion(Distortion):
 
     .. warning::
 
-        If the number of parameters ``Nparams`` is given during instantiation, the given parameters are truncated or extended to the given number of parameters.
+        If the number of parameters ``n_params`` is given during instantiation, the given parameters are truncated or extended to the given number of parameters.
 
     Parameters
     ----------
     parameters : Optional[numpy.ndarray], optional
-        The parameters of the distortion transformation. It should be a numpy array of shape (Nparams,) containing the distortion coefficients ordered as described above. Default is None, which means no distortion is setted.
+        The parameters of the distortion transformation. It should be a numpy array of shape (n_params,) containing the distortion coefficients ordered as described above. Default is None, which means no distortion is setted.
 
-    Nparams : Optional[Integral], optional
+    n_params : Optional[Integral], optional
         The number of parameters for the distortion model. If not specified, it will be inferred from the shape of the `parameters` array.
 
     Examples
@@ -130,10 +128,10 @@ class Cv2Distortion(Distortion):
 
     .. code-block:: python
 
-        normalized_points = numpy.array([[0.1, 0.2], [0.3, 0.4], [0.5, 0.6]]) # shape (Npoints, 2)
+        normalized_points = numpy.array([[0.1, 0.2], [0.3, 0.4], [0.5, 0.6]]) # shape (n_points, 2)
 
         result = distortion.transform(normalized_points)
-        distorted_points = result.distorted_points # Shape (Npoints, 2)
+        distorted_points = result.distorted_points # Shape (n_points, 2)
         print(distorted_points)
 
     You can also access to the jacobian of the distortion transformation:
@@ -141,8 +139,8 @@ class Cv2Distortion(Distortion):
     .. code-block:: python
 
         result = distortion.transform(normalized_points, dx=True, dp=True)
-        distorted_points_dx = result.jacobian_dx  # Shape (Npoints, 2, 2)
-        distorted_points_dp = result.jacobian_dp  # Shape (Npoints, 2, Nparams = 5)
+        distorted_points_dx = result.jacobian_dx  # Shape (n_points, 2, 2)
+        distorted_points_dp = result.jacobian_dp  # Shape (n_points, 2, n_params = 5)
         print(distorted_points_dx) 
         print(distorted_points_dp)
 
@@ -151,7 +149,7 @@ class Cv2Distortion(Distortion):
     .. code-block:: python
 
         inverse_result = distortion.inverse_transform(distorted_points, dx=True, dp=True)
-        normalized_points = inverse_result.normalized_points  # Shape (Npoints, 2)
+        normalized_points = inverse_result.normalized_points  # Shape (n_points, 2)
         print(normalized_points)
 
     .. note::
@@ -166,11 +164,11 @@ class Cv2Distortion(Distortion):
         - :meth:`pycvcam.Cv2Distortion._inverse_transform` to transform the ``distorted_points`` back to ``normalized_points``.
 
     """
-    def __init__(self, parameters: Optional[numpy.ndarray] = None, Nparams: Optional[Integral] = None) -> None:
+    def __init__(self, parameters: Optional[numpy.ndarray] = None, n_params: Optional[Integral] = None) -> None:
         # Initialize the Transform base class
         super().__init__(parameters=parameters, constants=None)
-        if Nparams is not None:
-            self.Nparams = Nparams
+        if n_params is not None:
+            self.n_params = n_params
 
     # =============================================
     # Overwrite some properties from the base class
@@ -210,7 +208,7 @@ class Cv2Distortion(Distortion):
     @parameters.setter
     def parameters(self, parameters: Optional[numpy.ndarray]) -> None:
         if parameters is not None:
-            parameters = numpy.asarray(parameters, dtype=Package.get_float_dtype())
+            parameters = numpy.asarray(parameters, dtype=numpy.float64)
             if parameters.ndim != 1:
                 raise ValueError("The parameters should be a 1D numpy array.")
             if parameters.size > 14:
@@ -220,10 +218,10 @@ class Cv2Distortion(Distortion):
             index = 0
             while valid_sizes[index] < parameters.size:
                 index += 1
-            Nparams = valid_sizes[index]
+            n_params = valid_sizes[index]
             # Extend the parameters to the next valid size
-            if Nparams > parameters.size:
-                parameters = numpy.concatenate((parameters, numpy.zeros(Nparams - parameters.size)))
+            if n_params > parameters.size:
+                parameters = numpy.concatenate((parameters, numpy.zeros(n_params - parameters.size)))
             # Set to None if the number of parameters is 0
             if parameters.size == 0:
                 parameters = None
@@ -243,7 +241,7 @@ class Cv2Distortion(Distortion):
         self._constants = None
 
     @property
-    def Nparams(self) -> int:
+    def n_params(self) -> int:
         r"""
         Get or set the number of parameters of the distortion model.
 
@@ -262,8 +260,8 @@ class Cv2Distortion(Distortion):
         else:
             return self.parameters.size
         
-    @Nparams.setter
-    def Nparams(self, value: Integral) -> None:
+    @n_params.setter
+    def n_params(self, value: Integral) -> None:
         if not isinstance(value, Integral):
             raise TypeError("The number of parameters should be an integer.")
         if value not in [0, 4, 5, 8, 12, 14]:
@@ -277,10 +275,10 @@ class Cv2Distortion(Distortion):
         # Update the number of parameters instead of creating a new array
         if value == 0:
             self.parameters = None
-        elif value < self.Nparams:
+        elif value < self.n_params:
             self.parameters = self.parameters[:value]
-        elif value > self.Nparams:
-            self.parameters = numpy.concatenate((self.parameters, numpy.zeros(value - self.Nparams)))
+        elif value > self.n_params:
+            self.parameters = numpy.concatenate((self.parameters, numpy.zeros(value - self.n_params)))
 
     @property
     def parameter_names(self) -> List[str]:
@@ -293,7 +291,7 @@ class Cv2Distortion(Distortion):
             The names of the parameters of the distortion transformation.
         """
         params = ["k_1", "k_2", "p_1", "p_2", "k_3", "k_4", "k_5", "k_6", "s_1", "s_2", "s_3", "s_4", "t_x", "t_y"]
-        return params[:self.Nparams]
+        return params[:self.n_params]
 
     @property
     def constant_names(self) -> List[str]:
@@ -337,7 +335,7 @@ class Cv2Distortion(Distortion):
         ValueError
             If the number of parameters is less than 4.
         """
-        if self.Nparams < 4: 
+        if self.n_params < 4: 
             raise ValueError("The number of parameters is less than 4. Set the number of parameters to 4 or more before getting the k1 value.")
         return self.parameters[0]
     
@@ -364,7 +362,7 @@ class Cv2Distortion(Distortion):
         """
         if not isinstance(value, Number):
             raise TypeError("The value should be a number.")
-        if self.Nparams < 4:
+        if self.n_params < 4:
             raise ValueError("The number of parameters is less than 4. Set the number of parameters to 4 or more before setting the k1 value.")
         self.parameters[0] = float(value)
 
@@ -389,7 +387,7 @@ class Cv2Distortion(Distortion):
         ValueError
             If the number of parameters is less than 4.
         """
-        if self.Nparams < 4: 
+        if self.n_params < 4: 
             raise ValueError("The number of parameters is less than 4. Set the number of parameters to 4 or more before getting the k2 value.")
         return self.parameters[1]
     
@@ -416,7 +414,7 @@ class Cv2Distortion(Distortion):
         """
         if not isinstance(value, Number):
             raise TypeError("The value should be a number.")
-        if self.Nparams < 4:
+        if self.n_params < 4:
             raise ValueError("The number of parameters is less than 4. Set the number of parameters to 4 or more before setting the k2 value.")
         self.parameters[1] = float(value)
 
@@ -441,7 +439,7 @@ class Cv2Distortion(Distortion):
         ValueError
             If the number of parameters is less than 4.
         """
-        if self.Nparams < 4: 
+        if self.n_params < 4: 
             raise ValueError("The number of parameters is less than 4. Set the number of parameters to 4 or more before getting the p1 value.")
         return self.parameters[2]
     
@@ -468,7 +466,7 @@ class Cv2Distortion(Distortion):
         """
         if not isinstance(value, Number):
             raise TypeError("The value should be a number.")
-        if self.Nparams < 4:
+        if self.n_params < 4:
             raise ValueError("The number of parameters is less than 4. Set the number of parameters to 4 or more before setting the p1 value.")
         self.parameters[2] = float(value)
 
@@ -493,7 +491,7 @@ class Cv2Distortion(Distortion):
         ValueError
             If the number of parameters is less than 4.
         """
-        if self.Nparams < 4: 
+        if self.n_params < 4: 
             raise ValueError("The number of parameters is less than 4. Set the number of parameters to 4 or more before getting the p2 value.")
         return self.parameters[3]
     
@@ -520,7 +518,7 @@ class Cv2Distortion(Distortion):
         """
         if not isinstance(value, Number):
             raise TypeError("The value should be a number.")
-        if self.Nparams < 4:
+        if self.n_params < 4:
             raise ValueError("The number of parameters is less than 4. Set the number of parameters to 4 or more before setting the p2 value.")
         self.parameters[3] = float(value)
 
@@ -545,7 +543,7 @@ class Cv2Distortion(Distortion):
         ValueError
             If the number of parameters is less than 5.
         """
-        if self.Nparams < 5: 
+        if self.n_params < 5: 
             raise ValueError("The number of parameters is less than 5. Set the number of parameters to 5 or more before getting the k3 value.")
         return self.parameters[4]
     
@@ -572,7 +570,7 @@ class Cv2Distortion(Distortion):
         """
         if not isinstance(value, Number):
             raise TypeError("The value should be a number.")
-        if self.Nparams < 5:
+        if self.n_params < 5:
             raise ValueError("The number of parameters is less than 5. Set the number of parameters to 5 or more before setting the k3 value.")
         self.parameters[4] = float(value)
 
@@ -597,7 +595,7 @@ class Cv2Distortion(Distortion):
         ValueError
             If the number of parameters is less than 8.
         """
-        if self.Nparams < 8: 
+        if self.n_params < 8: 
             raise ValueError("The number of parameters is less than 8. Set the number of parameters to 8 or more before getting the k4 value.")
         return self.parameters[5]
 
@@ -624,7 +622,7 @@ class Cv2Distortion(Distortion):
         """
         if not isinstance(value, Number):
             raise TypeError("The value should be a number.")
-        if self.Nparams < 8:
+        if self.n_params < 8:
             raise ValueError("The number of parameters is less than 8. Set the number of parameters to 8 or more before setting the k4 value.")
         self.parameters[5] = float(value)
     
@@ -649,7 +647,7 @@ class Cv2Distortion(Distortion):
         ValueError
             If the number of parameters is less than 8.
         """
-        if self.Nparams < 8: 
+        if self.n_params < 8: 
             raise ValueError("The number of parameters is less than 8. Set the number of parameters to 8 or more before getting the k5 value.")
         return self.parameters[6]
     
@@ -676,7 +674,7 @@ class Cv2Distortion(Distortion):
         """
         if not isinstance(value, Number):
             raise TypeError("The value should be a number.")
-        if self.Nparams < 8:
+        if self.n_params < 8:
             raise ValueError("The number of parameters is less than 8. Set the number of parameters to 8 or more before setting the k5 value.")
         self.parameters[6] = float(value)
     
@@ -701,7 +699,7 @@ class Cv2Distortion(Distortion):
         ValueError
             If the number of parameters is less than 8.
         """
-        if self.Nparams < 8: 
+        if self.n_params < 8: 
             raise ValueError("The number of parameters is less than 8. Set the number of parameters to 8 or more before getting the k6 value.")
         return self.parameters[7]
 
@@ -728,7 +726,7 @@ class Cv2Distortion(Distortion):
         """
         if not isinstance(value, Number):
             raise TypeError("The value should be a number.")
-        if self.Nparams < 8:
+        if self.n_params < 8:
             raise ValueError("The number of parameters is less than 8. Set the number of parameters to 8 or more before setting the k6 value.")
         self.parameters[7] = float(value)
 
@@ -753,7 +751,7 @@ class Cv2Distortion(Distortion):
         ValueError
             If the number of parameters is less than 12.
         """
-        if self.Nparams < 12: 
+        if self.n_params < 12: 
             raise ValueError("The number of parameters is less than 12. Set the number of parameters to 12 or more before getting the s1 value.")
         return self.parameters[8]
     
@@ -780,7 +778,7 @@ class Cv2Distortion(Distortion):
         """
         if not isinstance(value, Number):
             raise TypeError("The value should be a number.")
-        if self.Nparams < 12:
+        if self.n_params < 12:
             raise ValueError("The number of parameters is less than 12. Set the number of parameters to 12 or more before setting the s1 value.")
         self.parameters[8] = float(value)
 
@@ -805,7 +803,7 @@ class Cv2Distortion(Distortion):
         ValueError
             If the number of parameters is less than 12.
         """
-        if self.Nparams < 12: 
+        if self.n_params < 12: 
             raise ValueError("The number of parameters is less than 12. Set the number of parameters to 12 or more before getting the s2 value.")
         return self.parameters[9]
     
@@ -832,7 +830,7 @@ class Cv2Distortion(Distortion):
         """
         if not isinstance(value, Number):
             raise TypeError("The value should be a number.")
-        if self.Nparams < 12:
+        if self.n_params < 12:
             raise ValueError("The number of parameters is less than 12. Set the number of parameters to 12 or more before setting the s2 value.")
         self.parameters[9] = float(value)
 
@@ -857,7 +855,7 @@ class Cv2Distortion(Distortion):
         ValueError
             If the number of parameters is less than 12.
         """
-        if self.Nparams < 12: 
+        if self.n_params < 12: 
             raise ValueError("The number of parameters is less than 12. Set the number of parameters to 12 or more before getting the s3 value.")
         return self.parameters[10]
     
@@ -884,7 +882,7 @@ class Cv2Distortion(Distortion):
         """
         if not isinstance(value, Number):
             raise TypeError("The value should be a number.")
-        if self.Nparams < 12:
+        if self.n_params < 12:
             raise ValueError("The number of parameters is less than 12. Set the number of parameters to 12 or more before setting the s3 value.")
         self.parameters[10] = float(value)
 
@@ -909,7 +907,7 @@ class Cv2Distortion(Distortion):
         ValueError
             If the number of parameters is less than 12.
         """
-        if self.Nparams < 12: 
+        if self.n_params < 12: 
             raise ValueError("The number of parameters is less than 12. Set the number of parameters to 12 or more before getting the s4 value.")
         return self.parameters[11]
     
@@ -936,7 +934,7 @@ class Cv2Distortion(Distortion):
         """
         if not isinstance(value, Number):
             raise TypeError("The value should be a number.")
-        if self.Nparams < 12:
+        if self.n_params < 12:
             raise ValueError("The number of parameters is less than 12. Set the number of parameters to 12 or more before setting the s4 value.")
         self.parameters[11] = float(value)
     
@@ -961,7 +959,7 @@ class Cv2Distortion(Distortion):
         ValueError
             If the number of parameters is less than 14.
         """
-        if self.Nparams < 14: 
+        if self.n_params < 14: 
             raise ValueError("The number of parameters is less than 14. Set the number of parameters to 14 or more before getting the tau_x value.")
         return self.parameters[12]
     
@@ -988,7 +986,7 @@ class Cv2Distortion(Distortion):
         """
         if not isinstance(value, Number):
             raise TypeError("The value should be a number.")
-        if self.Nparams < 14:
+        if self.n_params < 14:
             raise ValueError("The number of parameters is less than 14. Set the number of parameters to 14 or more before setting the tau_x value.")
         self.parameters[12] = float(value)
 
@@ -1013,7 +1011,7 @@ class Cv2Distortion(Distortion):
         ValueError
             If the number of parameters is less than 14.
         """
-        if self.Nparams < 14: 
+        if self.n_params < 14: 
             raise ValueError("The number of parameters is less than 14. Set the number of parameters to 14 or more before getting the tau_y value.")
         return self.parameters[13]
     
@@ -1040,7 +1038,7 @@ class Cv2Distortion(Distortion):
         """
         if not isinstance(value, Number):
             raise TypeError("The value should be a number.")
-        if self.Nparams < 14:
+        if self.n_params < 14:
             raise ValueError("The number of parameters is less than 14. Set the number of parameters to 14 or more before setting the tau_y value.")
         self.parameters[13] = float(value)
        
@@ -1049,7 +1047,7 @@ class Cv2Distortion(Distortion):
         r"""
         Set to zero the parameters of the distortion model.
         """
-        self.parameters = numpy.zeros((self.Nparams, ), dtype=Package.get_float_dtype())
+        self.parameters = numpy.zeros((self.n_params, ), dtype=numpy.float64)
 
 
     # =================================================================
@@ -1156,13 +1154,13 @@ class Cv2Distortion(Distortion):
         invR = None
     
         # If the number of parameters is not 14, return identity matrix and zero derivatives
-        if self.Nparams != 14:
-            R = numpy.eye(3, dtype=Package.get_float_dtype())
+        if self.n_params != 14:
+            R = numpy.eye(3, dtype=numpy.float64)
             if dp:
-                Rdtx = numpy.zeros((3, 3), dtype=Package.get_float_dtype())
-                Rdty = numpy.zeros((3, 3), dtype=Package.get_float_dtype())
+                Rdtx = numpy.zeros((3, 3), dtype=numpy.float64)
+                Rdty = numpy.zeros((3, 3), dtype=numpy.float64)
             if inv:
-                invR = numpy.eye(3, dtype=Package.get_float_dtype())
+                invR = numpy.eye(3, dtype=numpy.float64)
             return R, Rdtx, Rdty, invR
 
         # Prepare the cosinus and sinus of the angles
@@ -1176,26 +1174,26 @@ class Cv2Distortion(Distortion):
             [1, 0, 0],
             [0, ctx, stx],
             [0, -stx, ctx]
-        ], dtype=Package.get_float_dtype())
+        ], dtype=numpy.float64)
 
         Ry = numpy.array([
             [cty, 0, -sty],
             [0, 1, 0],
             [sty, 0, cty]
-        ], dtype=Package.get_float_dtype())
+        ], dtype=numpy.float64)
 
         if dp:
             Rxdtx = numpy.array([
                 [0, 0, 0],
                 [0, -stx, ctx],
                 [0, -ctx, -stx]
-            ], dtype=Package.get_float_dtype())
+            ], dtype=numpy.float64)
 
             Rydty = numpy.array([
                 [-sty, 0, -cty],
                 [0, 0, 0],
                 [cty, 0, -sty]
-            ], dtype=Package.get_float_dtype())
+            ], dtype=numpy.float64)
 
         # Compute the products of the rotation matrices
         Rxy = numpy.dot(Ry, Rx)
@@ -1212,27 +1210,27 @@ class Cv2Distortion(Distortion):
             [Rxy[2, 2], 0, -Rxy[0, 2]],
             [0, Rxy[2, 2], -Rxy[1, 2]],
             [0, 0, 1]
-        ], dtype=Package.get_float_dtype())
+        ], dtype=numpy.float64)
 
         if dp:
             Rzdtx = numpy.array([
                 [Rxydtx[2, 2], 0, -Rxydtx[0, 2]],
                 [0, Rxydtx[2, 2], -Rxydtx[1, 2]],
                 [0, 0, 0]
-            ], dtype=Package.get_float_dtype())
+            ], dtype=numpy.float64)
 
             Rzdty = numpy.array([
                 [Rxydty[2, 2], 0, -Rxydty[0, 2]],
                 [0, Rxydty[2, 2], -Rxydty[1, 2]],
                 [0, 0, 0]
-            ], dtype=Package.get_float_dtype())
+            ], dtype=numpy.float64)
         
         if inv:
             invRz = numpy.array([
                 [1/Rxy[2, 2], 0, Rxy[0, 2]/Rxy[2, 2]],
                 [0, 1/Rxy[2, 2], Rxy[1, 2]/Rxy[2, 2]],
                 [0, 0, 1]
-            ], dtype=Package.get_float_dtype())
+            ], dtype=numpy.float64)
 
         # Compute the tilt matrix and the derivatives
         R = numpy.dot(Rz, Rxy)
@@ -1308,20 +1306,20 @@ class Cv2Distortion(Distortion):
             sin(\tau_y) & -sin(\tau_x)cos(\tau_y) & cos(\tau_x)cos(\tau_y)
             \end{bmatrix}
 
-        The jacobians with respect to the distortion parameters is an array with shape (Npoints, 2, Nparams), where the last dimension represents the parameters in the order of the class attributes (k1, k2, k3, p1, p2, k4, k5, k6, s1, s2, s3, s4, tau_x, tau_y).
-        The jacobian with respect to the normalized points is an array with shape (Npoints, 2, 2).
+        The jacobians with respect to the distortion parameters is an array with shape (n_points, 2, n_params), where the last dimension represents the parameters in the order of the class attributes (k1, k2, k3, p1, p2, k4, k5, k6, s1, s2, s3, s4, tau_x, tau_y).
+        The jacobian with respect to the normalized points is an array with shape (n_points, 2, 2).
 
         .. warning::
 
             This method is not intended to be used directly, but rather through the :meth:`pycvcam.core.Transform.transform` method.
-            Please ensure, the shape of the input ``normalized_points`` is (Npoints, 2) before calling this method.
+            Please ensure, the shape of the input ``normalized_points`` is (n_points, 2) before calling this method.
 
         To achieve the distortion transformation using openCV, set the ``opencv`` parameter to True. (``jacobian_dx`` will not be computed in this case).
 
         Parameters
         ----------
         normalized_points : numpy.ndarray
-            The normalized points in camera normalized coordinates to be transformed. Shape (Npoints, 2).
+            The normalized points in camera normalized coordinates to be transformed. Shape (n_points, 2).
 
         dx : bool, optional
             If True, the jacobian with respect to the normalized points is computed. Default is False
@@ -1337,13 +1335,13 @@ class Cv2Distortion(Distortion):
         Returns
         -------
         distorted_points : numpy.ndarray
-            The distorted points in camera normalized coordinates. Shape (Npoints, 2).
+            The distorted points in camera normalized coordinates. Shape (n_points, 2).
 
         jacobian_dx : Optional[numpy.ndarray]
-            The jacobian of the distorted points with respect to the normalized points. Shape (Npoints, 2, 2) if dx is True, otherwise None.
+            The jacobian of the distorted points with respect to the normalized points. Shape (n_points, 2, 2) if dx is True, otherwise None.
 
         jacobian_dp : Optional[numpy.ndarray]
-            The jacobian of the distorted points with respect to the distortion parameters. Shape (Npoints, 2, Nparams) if dp is True, otherwise None.
+            The jacobian of the distorted points with respect to the distortion parameters. Shape (n_points, 2, n_params) if dp is True, otherwise None.
         """
         # USE THE OPEN CV DISTORTION IF REQUESTED
         if not isinstance(opencv, bool):
@@ -1352,99 +1350,99 @@ class Cv2Distortion(Distortion):
             return self._transform_opencv(normalized_points, dx=dx, dp=dp)
 
         # Prepare the inputs data for distortion
-        x_N = normalized_points[:, 0] # shape (Npoints,)
-        y_N = normalized_points[:, 1] # shape (Npoints,)
-        x_N = x_N[:, numpy.newaxis] # shape (Npoints, 1)
-        y_N = y_N[:, numpy.newaxis] # shape (Npoints, 1)
-        Npoints = normalized_points.shape[0]
-        Nparams = self.Nparams
+        x_N = normalized_points[:, 0] # shape (n_points,)
+        y_N = normalized_points[:, 1] # shape (n_points,)
+        x_N = x_N[:, numpy.newaxis] # shape (n_points, 1)
+        y_N = y_N[:, numpy.newaxis] # shape (n_points, 1)
+        n_points = normalized_points.shape[0]
+        n_params = self.n_params
 
-        zero = lambda dim: numpy.zeros((Npoints, dim), dtype=Package.get_float_dtype()) # shape (Npoints, dim)
+        zero = lambda dim: numpy.zeros((n_points, dim), dtype=numpy.float64) # shape (n_points, dim)
         ccat = lambda tup: numpy.concatenate(tup, axis=1) # Concatenate along the second axis
         dDdxy = None # The derivative of the distortion with respect to the normalized points
         dDdp = None # The derivative of the distortion with respect to the distortion parameters
 
         # Prepare some variables for the distortion
-        xN_yN = x_N * y_N # shape (Npoints, 1)
-        xN2 = x_N ** 2 # shape (Npoints, 1)
-        yN2 = y_N ** 2 # shape (Npoints, 1)
+        xN_yN = x_N * y_N # shape (n_points, 1)
+        xN2 = x_N ** 2 # shape (n_points, 1)
+        yN2 = y_N ** 2 # shape (n_points, 1)
         
         # Return a identity Jacobian and an empty jacobian if no parameters in the model
-        if Nparams == 0:
-            distorted_points = numpy.copy(normalized_points) # shape (Npoints, 2)
+        if n_params == 0:
+            distorted_points = numpy.copy(normalized_points) # shape (n_points, 2)
             if dx: 
-                dDdxy = numpy.zeros((Npoints, 2, 2), dtype=Package.get_float_dtype()) # shape (Npoints, 2, 2)
+                dDdxy = numpy.zeros((n_points, 2, 2), dtype=numpy.float64) # shape (n_points, 2, 2)
                 dDdxy[:, 0, 0] = 1.0
                 dDdxy[:, 1, 1] = 1.0
             if dp:
-                dDdp = numpy.empty((Npoints, 2, 0), dtype=Package.get_float_dtype()) # shape (Npoints, 2, 0)
+                dDdp = numpy.empty((n_points, 2, 0), dtype=numpy.float64) # shape (n_points, 2, 0)
             return distorted_points, dDdxy, dDdp
                 
-        # Prepare the powers of the norm (r) [only if needed] with shape (Npoints, 1)
-        r2 = xN2 + yN2 # shape (Npoints, 1)
-        r4 = r2 ** 2 # shape (Npoints, 1)
+        # Prepare the powers of the norm (r) [only if needed] with shape (n_points, 1)
+        r2 = xN2 + yN2 # shape (n_points, 1)
+        r4 = r2 ** 2 # shape (n_points, 1)
 
-        if Nparams >= 5:
-            r6 = r2 * r4 # shape (Npoints, 1)
+        if n_params >= 5:
+            r6 = r2 * r4 # shape (n_points, 1)
 
-        # Prepare the radial distortion coefficients [only if needed] with shape (Npoints, 1)
-        if Nparams == 4:
-            K = (1 + self.k1 * r2 + self.k2 * r4) # shape (Npoints, 1)
+        # Prepare the radial distortion coefficients [only if needed] with shape (n_points, 1)
+        if n_params == 4:
+            K = (1 + self.k1 * r2 + self.k2 * r4) # shape (n_points, 1)
 
-        elif Nparams == 5:
-            K = (1 + self.k1 * r2 + self.k2 * r4 + self.k3 * r6) # shape (Npoints, 1)
+        elif n_params == 5:
+            K = (1 + self.k1 * r2 + self.k2 * r4 + self.k3 * r6) # shape (n_points, 1)
         
-        else: # Nparams >= 8
-            Kup = (1 + self.k1 * r2 + self.k2 * r4 + self.k3 * r6) # shape (Npoints, 1)
-            Kdown = (1 + self.k4 * r2 + self.k5 * r4 + self.k6 * r6) # shape (Npoints, 1)
-            iKdown = 1 / Kdown # shape (Npoints, 1)
-            i2Kdown = iKdown ** 2 # shape (Npoints, 1)
-            K = Kup * iKdown # shape (Npoints, 1)
+        else: # n_params >= 8
+            Kup = (1 + self.k1 * r2 + self.k2 * r4 + self.k3 * r6) # shape (n_points, 1)
+            Kdown = (1 + self.k4 * r2 + self.k5 * r4 + self.k6 * r6) # shape (n_points, 1)
+            iKdown = 1 / Kdown # shape (n_points, 1)
+            i2Kdown = iKdown ** 2 # shape (n_points, 1)
+            K = Kup * iKdown # shape (n_points, 1)
                             
-        x_radial = x_N * K # shape (Npoints, 1)
-        y_radial = y_N * K # shape (Npoints, 1)
+        x_radial = x_N * K # shape (n_points, 1)
+        y_radial = y_N * K # shape (n_points, 1)
 
-        # Prepare the tangential distortion coefficients [only if needed] with shape (Npoints, 1)
-        axp1 = ayp2 = 2 * xN_yN # shape (Npoints, 1)
-        axp2 = r2 + 2 * xN2 # shape (Npoints, 1)
-        ayp1 = r2 + 2 * yN2 # shape (Npoints, 1)
-        x_tangential = self.p1 * axp1 + self.p2 * axp2 # shape (Npoints, 1)
-        y_tangential = self.p1 * ayp1 + self.p2 * ayp2 # shape (Npoints, 1)
+        # Prepare the tangential distortion coefficients [only if needed] with shape (n_points, 1)
+        axp1 = ayp2 = 2 * xN_yN # shape (n_points, 1)
+        axp2 = r2 + 2 * xN2 # shape (n_points, 1)
+        ayp1 = r2 + 2 * yN2 # shape (n_points, 1)
+        x_tangential = self.p1 * axp1 + self.p2 * axp2 # shape (n_points, 1)
+        y_tangential = self.p1 * ayp1 + self.p2 * ayp2 # shape (n_points, 1)
 
-        # Prepare the prism distortion coefficients [only if needed] with shape (Npoints, 1)
-        if Nparams < 12:
-            x_prism = zero(1) # shape (Npoints, 1)
-            y_prism = zero(1) # shape (Npoints, 1)
+        # Prepare the prism distortion coefficients [only if needed] with shape (n_points, 1)
+        if n_params < 12:
+            x_prism = zero(1) # shape (n_points, 1)
+            y_prism = zero(1) # shape (n_points, 1)
             
-        else: # Nparams >= 12
-            x_prism = self.s1 * r2 + self.s2 * r4 # shape (Npoints, 1)
-            y_prism = self.s3 * r2 + self.s4 * r4 # shape (Npoints, 1)
+        else: # n_params >= 12
+            x_prism = self.s1 * r2 + self.s2 * r4 # shape (n_points, 1)
+            y_prism = self.s3 * r2 + self.s4 * r4 # shape (n_points, 1)
             
         # Compute the distorted points
-        x_D = x_radial + x_tangential + x_prism # shape (Npoints, 1)
-        y_D = y_radial + y_tangential + y_prism # shape (Npoints, 1)
+        x_D = x_radial + x_tangential + x_prism # shape (n_points, 1)
+        y_D = y_radial + y_tangential + y_prism # shape (n_points, 1)
 
         # Prepare some variables for the jacobians
-        if (dx and Nparams >= 12) or dp:
-            xN_r2 = x_N * r2 # shape (Npoints, 1)
-            yN_r2 = y_N * r2 # shape (Npoints, 1)
+        if (dx and n_params >= 12) or dp:
+            xN_r2 = x_N * r2 # shape (n_points, 1)
+            yN_r2 = y_N * r2 # shape (n_points, 1)
 
-        # Compute the Jacobians with respect to the normalized points with shape (Npoints, 2)
+        # Compute the Jacobians with respect to the normalized points with shape (n_points, 2)
         if dx:
-            x_Ddxy = numpy.empty((Npoints, 2), dtype=Package.get_float_dtype()) # shape (Npoints, 2)
-            y_Ddxy = numpy.empty((Npoints, 2), dtype=Package.get_float_dtype()) # shape (Npoints, 2)
+            x_Ddxy = numpy.empty((n_points, 2), dtype=numpy.float64) # shape (n_points, 2)
+            y_Ddxy = numpy.empty((n_points, 2), dtype=numpy.float64) # shape (n_points, 2)
 
-            if Nparams == 4:
-                dK_r2 = (2 * self.k1 + 4 * self.k2 * r2) # shape (Npoints, 1)
-            elif Nparams == 5:
-                dK_r2 = (2 * self.k1 + 4 * self.k2 * r2 + 6 * self.k3 * r4) # shape (Npoints, 1)
+            if n_params == 4:
+                dK_r2 = (2 * self.k1 + 4 * self.k2 * r2) # shape (n_points, 1)
+            elif n_params == 5:
+                dK_r2 = (2 * self.k1 + 4 * self.k2 * r2 + 6 * self.k3 * r4) # shape (n_points, 1)
             else:
-                dK_r2 = (2 * self.k1 + 4 * self.k2 * r2 + 6 * self.k3 * r4) * Kdown - Kup * (2 * self.k4 + 4 * self.k5 * r2 + 6 * self.k6 * r4) # shape (Npoints, 1)
+                dK_r2 = (2 * self.k1 + 4 * self.k2 * r2 + 6 * self.k3 * r4) * Kdown - Kup * (2 * self.k4 + 4 * self.k5 * r2 + 6 * self.k6 * r4) # shape (n_points, 1)
                 dK_r2 = dK_r2 * i2Kdown
 
-            x_radial_dx = K + dK_r2 * xN2 # shape (Npoints, 1)
-            x_radial_dy = y_radial_dx = dK_r2 * xN_yN # shape (Npoints, 1)
-            y_radial_dy = K + dK_r2 * yN2 # shape (Npoints, 1)
+            x_radial_dx = K + dK_r2 * xN2 # shape (n_points, 1)
+            x_radial_dy = y_radial_dx = dK_r2 * xN_yN # shape (n_points, 1)
+            y_radial_dy = K + dK_r2 * yN2 # shape (n_points, 1)
 
             x_tangential_dx = (2 * self.p1) * y_N + (6 * self.p2) * x_N
             x_tangential_dy = (2 * self.p1) * x_N + (2 * self.p2) * y_N
@@ -1456,30 +1454,30 @@ class Cv2Distortion(Distortion):
             y_Ddxy[:, 0] = (y_radial_dx + y_tangential_dx).ravel()
             y_Ddxy[:, 1] = (y_radial_dy + y_tangential_dy).ravel()
 
-            if Nparams >= 12:
+            if n_params >= 12:
                 x_Ddxy[:, 0] += ((2 * self.s1) * x_N + (4 * self.s2) * xN_r2).ravel()
                 x_Ddxy[:, 1] += ((2 * self.s1) * y_N + (4 * self.s2) * yN_r2).ravel()
                 y_Ddxy[:, 0] += ((2 * self.s3) * x_N + (4 * self.s4) * xN_r2).ravel()
                 y_Ddxy[:, 1] += ((2 * self.s3) * y_N + (4 * self.s4) * yN_r2).ravel()
 
         if dp:
-            x_Ddp = numpy.empty((Npoints, Nparams), dtype=Package.get_float_dtype()) # shape (Npoints, Nparams)
-            y_Ddp = numpy.empty((Npoints, Nparams), dtype=Package.get_float_dtype()) # shape (Npoints, Nparams)
+            x_Ddp = numpy.empty((n_points, n_params), dtype=numpy.float64) # shape (n_points, n_params)
+            y_Ddp = numpy.empty((n_points, n_params), dtype=numpy.float64) # shape (n_points, n_params)
 
-            x_Ddp[:, 0] = xN_r2.ravel() if Nparams <= 5 else (xN_r2 * iKdown).ravel()
-            x_Ddp[:, 1] = (r4 * x_N).ravel() if Nparams <= 5 else (r4 * x_N * iKdown).ravel()
+            x_Ddp[:, 0] = xN_r2.ravel() if n_params <= 5 else (xN_r2 * iKdown).ravel()
+            x_Ddp[:, 1] = (r4 * x_N).ravel() if n_params <= 5 else (r4 * x_N * iKdown).ravel()
             x_Ddp[:, 2] = axp1.ravel()
             x_Ddp[:, 3] = axp2.ravel()
-            y_Ddp[: ,0] = yN_r2.ravel() if Nparams <= 5 else (yN_r2 * iKdown).ravel()
-            y_Ddp[:, 1] = (r4 * y_N).ravel() if Nparams <= 5 else (r4 * y_N * iKdown).ravel()
+            y_Ddp[: ,0] = yN_r2.ravel() if n_params <= 5 else (yN_r2 * iKdown).ravel()
+            y_Ddp[:, 1] = (r4 * y_N).ravel() if n_params <= 5 else (r4 * y_N * iKdown).ravel()
             y_Ddp[:, 2] = ayp1.ravel()
             y_Ddp[:, 3] = ayp2.ravel()
 
-            if Nparams >= 5:
-                x_Ddp[:, 4] = (r6 * x_N).ravel() if Nparams <= 5 else (r6 * x_N * iKdown).ravel()
-                y_Ddp[:, 4] = (r6 * y_N).ravel() if Nparams <= 5 else (r6 * y_N * iKdown).ravel()
+            if n_params >= 5:
+                x_Ddp[:, 4] = (r6 * x_N).ravel() if n_params <= 5 else (r6 * x_N * iKdown).ravel()
+                y_Ddp[:, 4] = (r6 * y_N).ravel() if n_params <= 5 else (r6 * y_N * iKdown).ravel()
 
-            if Nparams >= 8:
+            if n_params >= 8:
                 m_Kup_i2Kdown = -Kup * i2Kdown
                 m_Kup_i2Kdown_xN = m_Kup_i2Kdown * x_N
                 m_Kup_i2Kdown_yN = m_Kup_i2Kdown * y_N
@@ -1490,7 +1488,7 @@ class Cv2Distortion(Distortion):
                 y_Ddp[:, 6] = (m_Kup_i2Kdown_yN * r4).ravel() 
                 y_Ddp[:, 7] = (m_Kup_i2Kdown_yN * r6).ravel()
 
-            if Nparams >= 12:
+            if n_params >= 12:
                 x_Ddp[:, 8] = r2.ravel()
                 x_Ddp[:, 9] = r4.ravel()
                 x_Ddp[:, 10:12] = 0.0
@@ -1498,63 +1496,63 @@ class Cv2Distortion(Distortion):
                 y_Ddp[:, 10] = r2.ravel()
                 y_Ddp[:, 11] = r4.ravel()
 
-            if Nparams >= 14:
+            if n_params >= 14:
                 x_Ddp[:, 12:14] = 0.0
                 y_Ddp[:, 12:14] = 0.0
 
 
         # Apply the perspective transformation [only if needed]
         # Also compute the finals derivatives with respect to the normalized points and to the parameters
-        if self.Nparams >= 14:
+        if self.n_params >= 14:
             # Get the tilt matrix
             R, Rdtx, Rdty, _ = self._compute_tilt_matrix(dp = dp, inv=False) # shape (3, 3) ; shape (3, 3) ; shape (3, 3)
 
             # Apply the perspective transformation
-            x_perspectD = R[0, 0] * x_D + R[0, 1] * y_D + R[0, 2] # shape (Npoints, 1)
-            y_perspectD = R[1, 0] * x_D + R[1, 1] * y_D + R[1, 2] # shape (Npoints, 1)
-            z_perspectD = R[2, 0] * x_D + R[2, 1] * y_D + R[2, 2] # shape (Npoints, 1)
-            iz_perspectD = 1 / z_perspectD # shape (Npoints, 1)
-            i2z_perspectD = iz_perspectD ** 2 # shape (Npoints, 1)
+            x_perspectD = R[0, 0] * x_D + R[0, 1] * y_D + R[0, 2] # shape (n_points, 1)
+            y_perspectD = R[1, 0] * x_D + R[1, 1] * y_D + R[1, 2] # shape (n_points, 1)
+            z_perspectD = R[2, 0] * x_D + R[2, 1] * y_D + R[2, 2] # shape (n_points, 1)
+            iz_perspectD = 1 / z_perspectD # shape (n_points, 1)
+            i2z_perspectD = iz_perspectD ** 2 # shape (n_points, 1)
             if dx:
-                x_perspectDdxy = (R[0, 0] * x_Ddxy + R[0, 1] * y_Ddxy) # shape (Npoints, 2)
-                y_perspectDdxy = (R[1, 0] * x_Ddxy + R[1, 1] * y_Ddxy) # shape (Npoints, 2)
-                z_perspectDdxy = (R[2, 0] * x_Ddxy + R[2, 1] * y_Ddxy) # shape (Npoints, 2)
+                x_perspectDdxy = (R[0, 0] * x_Ddxy + R[0, 1] * y_Ddxy) # shape (n_points, 2)
+                y_perspectDdxy = (R[1, 0] * x_Ddxy + R[1, 1] * y_Ddxy) # shape (n_points, 2)
+                z_perspectDdxy = (R[2, 0] * x_Ddxy + R[2, 1] * y_Ddxy) # shape (n_points, 2)
             if dp:
-                x_perspectDdp = numpy.empty((Npoints, Nparams), dtype=Package.get_float_dtype()) # shape (Npoints, Nparams)
-                x_perspectDdp[:, :12] = (R[0, 0] * x_Ddp[:, :12] + R[0, 1] * y_Ddp[:, :12]) # shape (Npoints, 12)
-                x_perspectDdp[:, 12] = (Rdtx[0, 0] * x_D + Rdtx[0, 1] * y_D + Rdtx[0, 2]).ravel() # shape (Npoints, 1)
-                x_perspectDdp[:, 13] = (Rdty[0, 0] * x_D + Rdty[0, 1] * y_D + Rdty[0, 2]).ravel() # shape (Npoints, 1)
+                x_perspectDdp = numpy.empty((n_points, n_params), dtype=numpy.float64) # shape (n_points, n_params)
+                x_perspectDdp[:, :12] = (R[0, 0] * x_Ddp[:, :12] + R[0, 1] * y_Ddp[:, :12]) # shape (n_points, 12)
+                x_perspectDdp[:, 12] = (Rdtx[0, 0] * x_D + Rdtx[0, 1] * y_D + Rdtx[0, 2]).ravel() # shape (n_points, 1)
+                x_perspectDdp[:, 13] = (Rdty[0, 0] * x_D + Rdty[0, 1] * y_D + Rdty[0, 2]).ravel() # shape (n_points, 1)
 
-                y_perspectDdp = numpy.empty((Npoints, Nparams), dtype=Package.get_float_dtype()) # shape (Npoints, Nparams)
-                y_perspectDdp[:, :12] = (R[1, 0] * x_Ddp[:, :12] + R[1, 1] * y_Ddp[:, :12]) # shape (Npoints, 12)
-                y_perspectDdp[:, 12] = (Rdtx[1, 0] * x_D + Rdtx[1, 1] * y_D + Rdtx[1, 2]).ravel() # shape (Npoints, 1)
-                y_perspectDdp[:, 13] = (Rdty[1, 0] * x_D + Rdty[1, 1] * y_D + Rdty[1, 2]).ravel() # shape (Npoints, 1)
+                y_perspectDdp = numpy.empty((n_points, n_params), dtype=numpy.float64) # shape (n_points, n_params)
+                y_perspectDdp[:, :12] = (R[1, 0] * x_Ddp[:, :12] + R[1, 1] * y_Ddp[:, :12]) # shape (n_points, 12)
+                y_perspectDdp[:, 12] = (Rdtx[1, 0] * x_D + Rdtx[1, 1] * y_D + Rdtx[1, 2]).ravel() # shape (n_points, 1)
+                y_perspectDdp[:, 13] = (Rdty[1, 0] * x_D + Rdty[1, 1] * y_D + Rdty[1, 2]).ravel() # shape (n_points, 1)
 
-                z_perspectDdp = numpy.empty((Npoints, Nparams), dtype=Package.get_float_dtype()) # shape (Npoints, Nparams)
-                z_perspectDdp[:, :12] = (R[2, 0] * x_Ddp[:, :12] + R[2, 1] * y_Ddp[:, :12]) # shape (Npoints, 12)
-                z_perspectDdp[:, 12] = (Rdtx[2, 0] * x_D + Rdtx[2, 1] * y_D + Rdtx[2, 2]).ravel() # shape (Npoints, 1)
-                z_perspectDdp[:, 13] = (Rdty[2, 0] * x_D + Rdty[2, 1] * y_D + Rdty[2, 2]).ravel() # shape (Npoints, 1)
+                z_perspectDdp = numpy.empty((n_points, n_params), dtype=numpy.float64) # shape (n_points, n_params)
+                z_perspectDdp[:, :12] = (R[2, 0] * x_Ddp[:, :12] + R[2, 1] * y_Ddp[:, :12]) # shape (n_points, 12)
+                z_perspectDdp[:, 12] = (Rdtx[2, 0] * x_D + Rdtx[2, 1] * y_D + Rdtx[2, 2]).ravel() # shape (n_points, 1)
+                z_perspectDdp[:, 13] = (Rdty[2, 0] * x_D + Rdty[2, 1] * y_D + Rdty[2, 2]).ravel() # shape (n_points, 1)
             
             # Normalize the points by the perspective transformation
-            x_D = x_perspectD * iz_perspectD # shape (Npoints, 1)
-            y_D = y_perspectD * iz_perspectD # shape (Npoints, 1)
+            x_D = x_perspectD * iz_perspectD # shape (n_points, 1)
+            y_D = y_perspectD * iz_perspectD # shape (n_points, 1)
             if dx:
-                x_Ddxy = (x_perspectDdxy * numpy.broadcast_to(z_perspectD, (Npoints, 2)) - numpy.broadcast_to(x_perspectD, (Npoints, 2)) * z_perspectDdxy) * i2z_perspectD # shape (Npoints, 2)
-                y_Ddxy = (y_perspectDdxy * numpy.broadcast_to(z_perspectD, (Npoints, 2)) - numpy.broadcast_to(y_perspectD, (Npoints, 2)) * z_perspectDdxy) * i2z_perspectD # shape (Npoints, 2)
+                x_Ddxy = (x_perspectDdxy * numpy.broadcast_to(z_perspectD, (n_points, 2)) - numpy.broadcast_to(x_perspectD, (n_points, 2)) * z_perspectDdxy) * i2z_perspectD # shape (n_points, 2)
+                y_Ddxy = (y_perspectDdxy * numpy.broadcast_to(z_perspectD, (n_points, 2)) - numpy.broadcast_to(y_perspectD, (n_points, 2)) * z_perspectDdxy) * i2z_perspectD # shape (n_points, 2)
             if dp:
-                x_Ddp = (x_perspectDdp * numpy.broadcast_to(z_perspectD, (Npoints, Nparams)) - numpy.broadcast_to(x_perspectD, (Npoints, Nparams)) * z_perspectDdp) * i2z_perspectD # shape (Npoints, Nparams)
-                y_Ddp = (y_perspectDdp * numpy.broadcast_to(z_perspectD, (Npoints, Nparams)) - numpy.broadcast_to(y_perspectD, (Npoints, Nparams)) * z_perspectDdp) * i2z_perspectD # shape (Npoints, Nparams)
+                x_Ddp = (x_perspectDdp * numpy.broadcast_to(z_perspectD, (n_points, n_params)) - numpy.broadcast_to(x_perspectD, (n_points, n_params)) * z_perspectDdp) * i2z_perspectD # shape (n_points, n_params)
+                y_Ddp = (y_perspectDdp * numpy.broadcast_to(z_perspectD, (n_points, n_params)) - numpy.broadcast_to(y_perspectD, (n_points, n_params)) * z_perspectDdp) * i2z_perspectD # shape (n_points, n_params)
             
         # Construct the final outputs
-        distorted_points = ccat((x_D, y_D)) # shape (Npoints, 2)
+        distorted_points = ccat((x_D, y_D)) # shape (n_points, 2)
         if dx:
-            dDdxy = numpy.zeros((Npoints, 2, 2), dtype=Package.get_float_dtype()) # shape (Npoints, 2, 2)
-            dDdxy[:, 0, :] = x_Ddxy # shape (Npoints, 2)
-            dDdxy[:, 1, :] = y_Ddxy # shape (Npoints, 2)
+            dDdxy = numpy.zeros((n_points, 2, 2), dtype=numpy.float64) # shape (n_points, 2, 2)
+            dDdxy[:, 0, :] = x_Ddxy # shape (n_points, 2)
+            dDdxy[:, 1, :] = y_Ddxy # shape (n_points, 2)
         if dp:
-            dDdp = numpy.zeros((Npoints, 2, Nparams), dtype=Package.get_float_dtype()) # shape (Npoints, 2, Nparams)
-            dDdp[:, 0, :] = x_Ddp # shape (Npoints, Nparams)
-            dDdp[:, 1, :] = y_Ddp # shape (Npoints, Nparams)
+            dDdp = numpy.zeros((n_points, 2, n_params), dtype=numpy.float64) # shape (n_points, 2, n_params)
+            dDdp[:, 0, :] = x_Ddp # shape (n_points, n_params)
+            dDdp[:, 1, :] = y_Ddp # shape (n_points, n_params)
         
         # Return the distorted points and the derivatives
         return distorted_points, dDdxy, dDdp
@@ -1569,14 +1567,14 @@ class Cv2Distortion(Distortion):
         .. warning::
 
             This method is not intended to be used directly, but rather through the :meth:`pycvcam.core.Transform.transform` method.
-            Please ensure, the shape of the input ``normalized_points`` is (Npoints, 2) before calling this method.
+            Please ensure, the shape of the input ``normalized_points`` is (n_points, 2) before calling this method.
 
             The jacobian with respect to the normalized points is not computed in this case (always None).
 
         Parameters
         ----------
         normalized_points : numpy.ndarray
-            The normalized points in camera normalized coordinates to be transformed. Shape (Npoints, 2).
+            The normalized points in camera normalized coordinates to be transformed. Shape (n_points, 2).
 
         dx : bool, optional
             If True, the jacobian with respect to the normalized points is computed. Default is False
@@ -1592,36 +1590,36 @@ class Cv2Distortion(Distortion):
         Returns
         -------
         distorted_points : numpy.ndarray
-            The distorted points in camera normalized coordinates. Shape (Npoints, 2).
+            The distorted points in camera normalized coordinates. Shape (n_points, 2).
 
         jacobian_dx : Optional[numpy.ndarray]
             Always None, since the jacobian with respect to the normalized points is not computed with OpenCV.
 
         jacobian_dp : Optional[numpy.ndarray]
-            The jacobian of the distorted points with respect to the distortion parameters. Shape (Npoints, 2, Nparams) if dp is True, otherwise None.
+            The jacobian of the distorted points with respect to the distortion parameters. Shape (n_points, 2, n_params) if dp is True, otherwise None.
         """
         if dx:
             print("\n[WARNING]: Distortion with Opencv and dx=True. The jacobian wrt normalized points cannot be computed with this method. They are always None.\n")
 
-        Npoints = normalized_points.shape[0] # Npoints
+        n_points = normalized_points.shape[0] # n_points
 
-        # Create the contiguous array of shape (Npoints, 1, 3) for cv2 compatibility
+        # Create the contiguous array of shape (n_points, 1, 3) for cv2 compatibility
         object_points = numpy.concatenate((normalized_points, numpy.ones((normalized_points.shape[0], 1))), axis=1)
-        object_points = numpy.ascontiguousarray(object_points.reshape(-1, 1, 3), dtype=Package.get_float_dtype())
+        object_points = numpy.ascontiguousarray(object_points.reshape(-1, 1, 3), dtype=numpy.float64)
 
         # Apply the OpenCV distortion removing rvec, tvec and intrinsic matrix
-        rvec = numpy.zeros((3, 1), dtype=Package.get_float_dtype())
-        tvec = numpy.zeros((3, 1), dtype=Package.get_float_dtype())
-        intrinsic_matrix = numpy.eye(3, dtype=Package.get_float_dtype())
-        image_points, jacobian = cv2.projectPoints(object_points, rvec, tvec, intrinsic_matrix, self.parameters) # shape (Npoints, 1, 2)
+        rvec = numpy.zeros((3, 1), dtype=numpy.float64)
+        tvec = numpy.zeros((3, 1), dtype=numpy.float64)
+        intrinsic_matrix = numpy.eye(3, dtype=numpy.float64)
+        image_points, jacobian = cv2.projectPoints(object_points, rvec, tvec, intrinsic_matrix, self.parameters) # shape (n_points, 1, 2)
 
-        # Reshape the image points to (2, Npoints)
-        distorted_points = numpy.asarray(image_points[:,0,:], dtype=Package.get_float_dtype())
+        # Reshape the image points to (2, n_points)
+        distorted_points = numpy.asarray(image_points[:,0,:], dtype=numpy.float64)
         if dp:
-            jacobian = numpy.asarray(jacobian, dtype=Package.get_float_dtype())[:, -self.Nparams:] # shape (2 * Npoints, Nparams)
-            jacobian_dp = numpy.zeros((Npoints, 2, self.Nparams), dtype=Package.get_float_dtype()) # shape (Npoints, 2, Nparams)
-            jacobian_dp[:, 0, :] = jacobian[0::2, :] # shape (Npoints, Nparams)
-            jacobian_dp[:, 1, :] = jacobian[1::2, :] # shape (Npoints, Nparams)
+            jacobian = numpy.asarray(jacobian, dtype=numpy.float64)[:, -self.n_params:] # shape (2 * n_points, n_params)
+            jacobian_dp = numpy.zeros((n_points, 2, self.n_params), dtype=numpy.float64) # shape (n_points, 2, n_params)
+            jacobian_dp[:, 0, :] = jacobian[0::2, :] # shape (n_points, n_params)
+            jacobian_dp[:, 1, :] = jacobian[1::2, :] # shape (n_points, n_params)
         else:
             jacobian_dp = None
 
@@ -1674,7 +1672,7 @@ class Cv2Distortion(Distortion):
         .. warning::
 
             This method is not intended to be used directly, but rather through the :meth:`pycvcam.core.Transform.transform` method.
-            Please ensure, the shape of the input ``image_points`` is (Npoints, 2) before calling this method.
+            Please ensure, the shape of the input ``image_points`` is (n_points, 2) before calling this method.
 
             The jacobians with respect to the distortion parameters and the distorted points are always None, since it is an iterative algorithm.
 
@@ -1687,7 +1685,7 @@ class Cv2Distortion(Distortion):
         Parameters
         ----------
         distorted_points : numpy.ndarray
-            The distorted points in camera normalized coordinates to be transformed. Shape (Npoints, 2).
+            The distorted points in camera normalized coordinates to be transformed. Shape (n_points, 2).
 
         dx : bool, optional
             If True, the jacobian with respect to the distorted points is computed. Default is False
@@ -1709,7 +1707,7 @@ class Cv2Distortion(Distortion):
         Returns
         -------
         normalized_points : numpy.ndarray
-            The normalized points in camera normalized coordinates, which are equal to the x and y components of the image points. Shape (Npoints, 2).
+            The normalized points in camera normalized coordinates, which are equal to the x and y components of the image points. Shape (n_points, 2).
 
         jacobian_dx : Optional[numpy.ndarray]
             Always None, since the jacobian with respect to the distorted points is not computed by an iterative algorithm.
@@ -1727,43 +1725,43 @@ class Cv2Distortion(Distortion):
             print("\n[WARNING]: Undistortion with dx=True or dp=True. The jacobians cannot be computed with this method. They are always None.\n")
 
         # Prepare the inputs data for undistortion
-        x_D = distorted_points[:, 0] # shape (Npoints,)
-        y_D = distorted_points[:, 1] # shape (Npoints,)
-        x_D = x_D[:, numpy.newaxis] # shape (Npoints, 1)
-        y_D = y_D[:, numpy.newaxis] # shape (Npoints, 1)
-        Npoints = distorted_points.shape[0]
-        Nparams = self.Nparams
+        x_D = distorted_points[:, 0] # shape (n_points,)
+        y_D = distorted_points[:, 1] # shape (n_points,)
+        x_D = x_D[:, numpy.newaxis] # shape (n_points, 1)
+        y_D = y_D[:, numpy.newaxis] # shape (n_points, 1)
+        n_points = distorted_points.shape[0]
+        n_params = self.n_params
 
         # Case of no parameters in the model
-        if Nparams == 0:
+        if n_params == 0:
             normalized_points = numpy.copy(distorted_points)
             return normalized_points, None, None
 
         # Get the tilt matrix [only if needed]
-        if self.Nparams >= 14:
+        if self.n_params >= 14:
             R, _, _, invR = self._compute_tilt_matrix(dp=False, inv=True)
 
         # Prepare the output array:
-        normalized_points = numpy.empty((Npoints, 2), dtype=Package.get_float_dtype()) # shape (Npoints, 2)
+        normalized_points = numpy.empty((n_points, 2), dtype=numpy.float64) # shape (n_points, 2)
 
         # Create the mask for the points in computation
-        mask = numpy.ones((Npoints,), dtype=numpy.bool) # shape (Npoints,)
+        mask = numpy.ones((n_points,), dtype=numpy.bool) # shape (n_points,)
 
         # Remove the perspective transformation [only if needed]
-        if self.Nparams >= 14:
-            x_0 = numpy.dot(invR[0, 0], x_D) + numpy.dot(invR[0, 1], y_D) + invR[0, 2] # shape (Npoints, 1)
-            y_0 = numpy.dot(invR[1, 0], x_D) + numpy.dot(invR[1, 1], y_D) + invR[1, 2] # shape (Npoints, 1)
-            z_0 = numpy.dot(invR[2, 0], x_D) + numpy.dot(invR[2, 1], y_D) + invR[2, 2] # shape (Npoints, 1)
-            x_0 = x_0 / z_0 # shape (Npoints, 1)
-            y_0 = y_0 / z_0 # shape (Npoints, 1)
+        if self.n_params >= 14:
+            x_0 = numpy.dot(invR[0, 0], x_D) + numpy.dot(invR[0, 1], y_D) + invR[0, 2] # shape (n_points, 1)
+            y_0 = numpy.dot(invR[1, 0], x_D) + numpy.dot(invR[1, 1], y_D) + invR[1, 2] # shape (n_points, 1)
+            z_0 = numpy.dot(invR[2, 0], x_D) + numpy.dot(invR[2, 1], y_D) + invR[2, 2] # shape (n_points, 1)
+            x_0 = x_0 / z_0 # shape (n_points, 1)
+            y_0 = y_0 / z_0 # shape (n_points, 1)
         else:
-            x_0 = x_D # shape (Npoints, 1)
-            y_0 = y_D # shape (Npoints, 1)
+            x_0 = x_D # shape (n_points, 1)
+            y_0 = y_D # shape (n_points, 1)
 
         # Initialize the guess for the normalized points
-        x_N = x_0.copy() # shape (Npoints, 1)
-        y_N = y_0.copy() # shape (Npoints, 1)
-        Nopt = Npoints # Number of points in computation
+        x_N = x_0.copy() # shape (n_points, 1)
+        y_N = y_0.copy() # shape (n_points, 1)
+        Nopt = n_points # Number of points in computation
 
         # Run the iterative algorithm
         for it in range(max_iter):
@@ -1771,17 +1769,17 @@ class Cv2Distortion(Distortion):
             # Prepare the powers of the norm (r) [only if needed] with shape (Nopt, 1)
             r2 = x_N ** 2 + y_N ** 2 # shape (Nopt, 1)
             r4 = r2 ** 2 # shape (Nopt, 1)
-            if Nparams >= 5:
+            if n_params >= 5:
                 r6 = r2 * r4 # shape (Nopt, 1)
 
             # Prepare the radial distortion coefficients [only if needed] with shape (Nopt, 1)
-            if Nparams == 4:
+            if n_params == 4:
                 invK = 1/(1 + self.k1 * r2 + self.k2 * r4) # shape (Nopt, 1)
 
-            elif Nparams == 5:
+            elif n_params == 5:
                 invK = 1/(1 + self.k1 * r2 + self.k2 * r4 + self.k3 * r6) # shape (Nopt, 1)
             
-            else: # Nparams >= 8
+            else: # n_params >= 8
                 Kup = (1 + self.k1 * r2 + self.k2 * r4 + self.k3 * r6) # shape (Nopt, 1)
                 Kdown = (1 + self.k4 * r2 + self.k5 * r4 + self.k6 * r6) # shape (Nopt, 1)
                 invK = Kdown / Kup # shape (Nopt, 1)
@@ -1794,9 +1792,9 @@ class Cv2Distortion(Distortion):
             y_tangential = self.p1 * ayp1 + self.p2 * ayp2 # shape (Nopt, 1)
 
             # Prepare the prism distortion coefficients [only if needed] with shape (Nopt, 1)
-            x_prism = numpy.zeros((Nopt, 1), dtype=Package.get_float_dtype()) # shape (Nopt, 1)
-            y_prism = numpy.zeros((Nopt, 1), dtype=Package.get_float_dtype()) # shape (Nopt, 1)
-            if Nparams >= 12:
+            x_prism = numpy.zeros((Nopt, 1), dtype=numpy.float64) # shape (Nopt, 1)
+            y_prism = numpy.zeros((Nopt, 1), dtype=numpy.float64) # shape (Nopt, 1)
+            if n_params >= 12:
                 x_prism = self.s1 * r2 + self.s2 * r4 # shape (Nopt, 1)
                 y_prism = self.s3 * r2 + self.s4 * r4 # shape (Nopt, 1)
 
@@ -1835,14 +1833,14 @@ class Cv2Distortion(Distortion):
         .. warning::
 
             This method is not intended to be used directly, but rather through the :meth:`pycvcam.core.Transform.transform` method.
-            Please ensure, the shape of the input ``distorted_points`` is (Npoints, 2) with float type.
+            Please ensure, the shape of the input ``distorted_points`` is (n_points, 2) with float type.
 
             The jacobian with respect to the distorted points and the distortion parameters is not computed in this case (always None).
 
         Parameters
         ----------
         distorted_points : numpy.ndarray
-            The distorted points in camera normalized coordinates to be transformed. Shape (Npoints, 2).
+            The distorted points in camera normalized coordinates to be transformed. Shape (n_points, 2).
 
         dx : bool, optional
             If True, the jacobian with respect to the distorted points is computed. Default is False
@@ -1853,7 +1851,7 @@ class Cv2Distortion(Distortion):
         Returns
         -------
         normalized_points : numpy.ndarray
-            The normalized points in camera normalized coordinates, which are equal to the x and y components of the image points. Shape (Npoints, 2).
+            The normalized points in camera normalized coordinates, which are equal to the x and y components of the image points. Shape (n_points, 2).
 
         jacobian_dx : Optional[numpy.ndarray]
             Always None, since the jacobian with respect to the distorted points is not computed by an iterative algorithm.
@@ -1865,17 +1863,17 @@ class Cv2Distortion(Distortion):
         if dx or dp:
             print("\n[WARNING]: Undistortion with OpenCV and dx=True or dp=True. The jacobians cannot be computed with this method. They are always None.\n")
         
-        # Create the contiguous array of shape (Npoints, 1, 2) for cv2 compatibility
-        distorted_points = numpy.ascontiguousarray(distorted_points.reshape(-1, 1, 2), dtype=Package.get_float_dtype())
+        # Create the contiguous array of shape (n_points, 1, 2) for cv2 compatibility
+        distorted_points = numpy.ascontiguousarray(distorted_points.reshape(-1, 1, 2), dtype=numpy.float64)
 
         # Apply the OpenCV undistortion removing rvec, tvec and intrinsic matrix
-        Rmat = numpy.eye(3, dtype=Package.get_float_dtype())
-        Pmat = numpy.eye(3, dtype=Package.get_float_dtype())
-        intrinsic_matrix = numpy.eye(3, dtype=Package.get_float_dtype())
-        normalized_points = cv2.undistortPoints(distorted_points, intrinsic_matrix, self.parameters, Rmat, Pmat) # shape (Npoints, 1, 2)
+        Rmat = numpy.eye(3, dtype=numpy.float64)
+        Pmat = numpy.eye(3, dtype=numpy.float64)
+        intrinsic_matrix = numpy.eye(3, dtype=numpy.float64)
+        normalized_points = cv2.undistortPoints(distorted_points, intrinsic_matrix, self.parameters, Rmat, Pmat) # shape (n_points, 1, 2)
 
-        # Reshape the normalized points to (Npoints, 2)
-        normalized_points = numpy.asarray(normalized_points[:,0,:], dtype=Package.get_float_dtype())
+        # Reshape the normalized points to (n_points, 2)
+        normalized_points = numpy.asarray(normalized_points[:,0,:], dtype=numpy.float64)
 
         # Return the normalized points and the jacobian
         return normalized_points, None, None

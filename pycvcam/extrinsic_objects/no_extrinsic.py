@@ -16,7 +16,6 @@ from typing import Optional, Tuple
 import numpy
 
 from ..core import Extrinsic
-from ..core.package import Package
 
 class NoExtrinsic(Extrinsic):
     r"""
@@ -81,18 +80,18 @@ class NoExtrinsic(Extrinsic):
         Lets consider ``world_points`` in the global coordinate system :math:`\vec{X}_w = (X_w, Y_w, Z_w)`, the corresponding ``normalized_points`` in the camera normalized coordinate system are given by :math:`\vec{x}_n = (X_w, Y_w)`. 
         Simply ignoring the z-coordinate, which is always set to 1 for the normalization plane.
 
-        The jacobians with respect to the extrinsic parameters is an empty array with shape (Npoints, 2, 0), as there are no parameters to compute the jacobian for.
+        The jacobians with respect to the extrinsic parameters is an empty array with shape (n_points, 2, 0), as there are no parameters to compute the jacobian for.
         The jacobian with respect to the world points is set to the identity matrix (for x and y) and zero for z, as the world points are equal to the normalized points.
 
         .. warning::
 
             This method is not intended to be used directly, but rather through the :meth:`pycvcam.core.Transform.transform` method.
-            Please ensure, the shape of the input ``world_points`` is (Npoints, 3) before calling this method.
+            Please ensure, the shape of the input ``world_points`` is (n_points, 3) before calling this method.
 
         Parameters
         ----------
         world_points : numpy.ndarray
-            The world points in global coordinates to be transformed. Shape (Npoints, 3).
+            The world points in global coordinates to be transformed. Shape (n_points, 3).
 
         dx : bool, optional
             If True, the jacobian with respect to the world points is computed. Default is False
@@ -103,23 +102,23 @@ class NoExtrinsic(Extrinsic):
         Returns
         -------
         normalized_points : numpy.ndarray
-            The normalized points in camera normalized coordinates, which are equal to the x and y componants of the world points. Shape (Npoints, 2).
+            The normalized points in camera normalized coordinates, which are equal to the x and y componants of the world points. Shape (n_points, 2).
 
         jacobian_dx : Optional[numpy.ndarray]
-            The jacobian of the normalized points with respect to the world points. Shape (Npoints, 2, 3) if dx is True, otherwise None.
+            The jacobian of the normalized points with respect to the world points. Shape (n_points, 2, 3) if dx is True, otherwise None.
 
         jacobian_dp : Optional[numpy.ndarray]
-            The jacobian of the normalized points with respect to the extrinsic parameters. Shape (Npoints, 2, 0) if dp is True, otherwise None.
+            The jacobian of the normalized points with respect to the extrinsic parameters. Shape (n_points, 2, 0) if dp is True, otherwise None.
         """
-        normalized_points = world_points[:, :2].copy() # shape (Npoints, 2)
-        jacobian_dx = None # shape (Npoints, 2, 2)
-        jacobian_dp = None # shape (Npoints, 2, Nparams)
+        normalized_points = world_points[:, :2].copy() # shape (n_points, 2)
+        jacobian_dx = None # shape (n_points, 2, 2)
+        jacobian_dp = None # shape (n_points, 2, n_params)
         if dx:
-            jacobian_dx = numpy.zeros((normalized_points.shape[0], 2, 3), dtype=Package.get_float_dtype()) # shape (Npoints, 2, 3)
+            jacobian_dx = numpy.zeros((normalized_points.shape[0], 2, 3), dtype=numpy.float64) # shape (n_points, 2, 3)
             jacobian_dx[:, 0, 0] = 1.0
             jacobian_dx[:, 1, 1] = 1.0
         if dp:
-            jacobian_dp = numpy.empty((normalized_points.shape[0], 2, 0), dtype=Package.get_float_dtype()) # shape (Npoints, 2, 0)
+            jacobian_dp = numpy.empty((normalized_points.shape[0], 2, 0), dtype=numpy.float64) # shape (n_points, 2, 0)
         return normalized_points, jacobian_dx, jacobian_dp
     
     
@@ -130,18 +129,18 @@ class NoExtrinsic(Extrinsic):
         Lets consider ``normalized_points`` in the camera normalized coordinate system :math:`\vec{x}_n = (x_n, y_n)`, the corresponding ``world_points`` in the global coordinate system are given by :math:`\vec{X}_w = (x_n, y_n, 1)`.
         Simply adding a z-coordinate of 1 for the normalization plane.
 
-        The jacobians with respect to the extrinsic parameters is an empty array with shape (Npoints, 2, 0), as there are no parameters to compute the jacobian for.
+        The jacobians with respect to the extrinsic parameters is an empty array with shape (n_points, 2, 0), as there are no parameters to compute the jacobian for.
         The jacobian with respect to the normalized points is set to the identity matrix (for x and y), as the normalized points are equal to the world points.
 
         .. warning::
 
             This method is not intended to be used directly, but rather through the :meth:`pycvcam.core.Transform.transform` method.
-            Please ensure, the shape of the input ``normalized_points`` is (Npoints, 2) before calling this method.
+            Please ensure, the shape of the input ``normalized_points`` is (n_points, 2) before calling this method.
 
         Parameters
         ----------
         normalized_points : numpy.ndarray
-            The normalized points in camera normalized coordinates to be transformed. Shape (Npoints, 2).
+            The normalized points in camera normalized coordinates to be transformed. Shape (n_points, 2).
 
         dx : bool, optional
             If True, the jacobian with respect to the normalized points is computed. Default is False
@@ -152,25 +151,25 @@ class NoExtrinsic(Extrinsic):
         Returns
         -------
         world_points : numpy.ndarray
-            The world 3D points in global coordinates, which are equal to the normalized points with z=1. Shape (Npoints, 3).
+            The world 3D points in global coordinates, which are equal to the normalized points with z=1. Shape (n_points, 3).
 
         jacobian_dx : Optional[numpy.ndarray]
-            The jacobian of the world 3D points with respect to the normalized points. Shape (Npoints, 3, 2) if dx is True, otherwise None.
+            The jacobian of the world 3D points with respect to the normalized points. Shape (n_points, 3, 2) if dx is True, otherwise None.
 
         jacobian_dp : Optional[numpy.ndarray]
-            The jacobian of the world 3D points with respect to the extrinsic parameters. Shape (Npoints, 3, 0) if dp is True, otherwise None.
+            The jacobian of the world 3D points with respect to the extrinsic parameters. Shape (n_points, 3, 0) if dp is True, otherwise None.
         """
-        world_points = numpy.empty((normalized_points.shape[0], 3), dtype=Package.get_float_dtype()) # shape (Npoints, 3)
+        world_points = numpy.empty((normalized_points.shape[0], 3), dtype=numpy.float64) # shape (n_points, 3)
         world_points[:, :2] = normalized_points.copy() # copy x and y coordinates
         world_points[:, 2] = 1.0 # set z coordinate
-        jacobian_dx = None # shape (Npoints, 2, 2)
-        jacobian_dp = None # shape (Npoints, 2, Nparams)
+        jacobian_dx = None # shape (n_points, 2, 2)
+        jacobian_dp = None # shape (n_points, 2, n_params)
         if dx:
-            jacobian_dx = numpy.zeros((normalized_points.shape[0], 3, 2), dtype=Package.get_float_dtype()) # shape (Npoints, 3, 2)
+            jacobian_dx = numpy.zeros((normalized_points.shape[0], 3, 2), dtype=numpy.float64) # shape (n_points, 3, 2)
             jacobian_dx[:, 0, 0] = 1.0
             jacobian_dx[:, 1, 1] = 1.0
         if dp:
-            jacobian_dp = numpy.empty((normalized_points.shape[0], 2, 0), dtype=Package.get_float_dtype()) # shape (Npoints, 2, 0)
+            jacobian_dp = numpy.empty((normalized_points.shape[0], 2, 0), dtype=numpy.float64) # shape (n_points, 2, 0)
         return normalized_points, jacobian_dx, jacobian_dp
 
     # =============================================
@@ -188,14 +187,14 @@ class NoExtrinsic(Extrinsic):
         Parameters
         ----------
         normalized_points : numpy.ndarray
-            The normalized points in the camera coordinate system. Shape (Npoints, 2).
+            The normalized points in the camera coordinate system. Shape (n_points, 2).
 
         Returns
         -------
         rays : numpy.ndarray
-            The rays in the world coordinate system. Shape (Npoints, 6).
+            The rays in the world coordinate system. Shape (n_points, 6).
         """
-        rays = numpy.empty((normalized_points.shape[0], 6), dtype=Package.get_float_dtype())
+        rays = numpy.empty((normalized_points.shape[0], 6), dtype=numpy.float64)
         rays[:, :2] = normalized_points.copy()  # copy x and y coordinates
         rays[:, 2] = 1.0  # set z coordinate to 1
         rays[:, 3] = 0.0  # direction x

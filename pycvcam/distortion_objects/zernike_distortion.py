@@ -19,7 +19,7 @@ import pyzernike
 
 from ..core import Distortion
 from ..optimize import optimize_input_points
-from ..core.package import Package
+
 
 
 class ZernikeDistortion(Distortion):
@@ -59,9 +59,9 @@ class ZernikeDistortion(Distortion):
 
         For more informations about Zernike polynomials, see the package pyzernike (https://github.com/Artezaru/pyzernike).
 
-    This transformation is caracterized by Nparams parameters and 4 constants:
+    This transformation is caracterized by n_params parameters and 4 constants:
 
-    - Nparams parameters :math:`C^{x}_{n,m}` and :math:`C^{y}_{n,m}` for the Zernike coefficients.
+    - n_params parameters :math:`C^{x}_{n,m}` and :math:`C^{y}_{n,m}` for the Zernike coefficients.
     - 4 constants :math:`(R_x, R_y, x_0, y_0)` for the radius and center of the ellipse of definition of the Zernike polynomials.
 
     Only coefficients for :math:`n \leq N_{zer}` and :math:`m \in [-n, n]` and :math:`n-m \equiv 0 \mod 2` are stored.
@@ -91,7 +91,7 @@ class ZernikeDistortion(Distortion):
         N_{params} = (N_{zer}+1)(N_{zer}+2)
 
     +---------------------------+---------------------------------+-------------------------------------+
-    | Ordre of Zernike ``Nzer`` | Nparameters for X or Y          | Nparameters in model ``Nparams``    |
+    | Ordre of Zernike ``Nzer`` | Nparameters for X or Y          | Nparameters in model ``n_params``   |
     +===========================+=================================+=====================================+
     | None                      | 0                               | 0                                   |
     +---------------------------+---------------------------------+-------------------------------------+
@@ -108,7 +108,7 @@ class ZernikeDistortion(Distortion):
 
     .. warning::
 
-        If the ordre of the zernike polynomials ``Nzer`` is given during instantiation, the given parameters are truncated or extended to the given number of parameters. Same for the number of parameters ``Nparams``.
+        If the ordre of the zernike polynomials ``Nzer`` is given during instantiation, the given parameters are truncated or extended to the given number of parameters. Same for the number of parameters ``n_params``.
 
     To compute the Distortion, the user must define the unit circle in which the normalized points are defined.
     The unit circle is defined by the radius :math:`R` and the center :math:`(x_{0}, y_{0})`.
@@ -116,17 +116,17 @@ class ZernikeDistortion(Distortion):
     Parameters
     ----------
     parameters : Optional[numpy.ndarray], optional
-        The parameters of the distortion transformation. It should be a numpy array of shape (Nparams,) containing the distortion coefficients ordered as described above. Default is None, which means no distortion is setted.
+        The parameters of the distortion transformation. It should be a numpy array of shape (n_params,) containing the distortion coefficients ordered as described above. Default is None, which means no distortion is setted.
 
     constants : numpy.ndarray, optional
         The constants of the distortion transformation. It should be a numpy array of shape (4,) containing the radius and center of the ellipse of definition of the Zernike polynomials in the order: (R_x, R_y, x_0, y_0). Default is [1.0, 1.0, 0.0, 0.0], which means the unit circle is defined with radius 1 and center (0, 0).
 
-    Nparams : Optional[Integral], optional
+    n_params : Optional[Integral], optional
         The number of parameters for the distortion model. If not specified, it will be inferred from the shape of the `parameters` array.
 
     Nzer : int, optional
         The order of the Zernike polynomials. If None, the order is set according to the number of parameters. The default is None.
-        Only use ``Nzer`` or ``Nparams``, not both.
+        Only use ``Nzer`` or ``n_params``, not both.
 
     Examples
     --------
@@ -138,16 +138,16 @@ class ZernikeDistortion(Distortion):
         from pycvcam import Cv2Distortion
 
         # Create a distortion object with 6 parameters
-        distortion = ZernikeDistortion(numpy.array([0.1, 0.2, 0.3, 0.4, 0.5, 0.6])) # Model with Nzer=1, -> Nparams=6
+        distortion = ZernikeDistortion(numpy.array([0.1, 0.2, 0.3, 0.4, 0.5, 0.6])) # Model with Nzer=1, -> n_params=6
 
     Then you can use the distortion object to transform ``normalized_points`` to ``distorted_points``:
 
     .. code-block:: python
 
-        normalized_points = numpy.array([[0.1, 0.2], [0.3, 0.4], [0.5, 0.6]]) # shape (Npoints, 2)
+        normalized_points = numpy.array([[0.1, 0.2], [0.3, 0.4], [0.5, 0.6]]) # shape (n_points, 2)
 
         result = distortion.transform(normalized_points)
-        distorted_points = result.distorted_points # Shape (Npoints, 2)
+        distorted_points = result.distorted_points # Shape (n_points, 2)
         print(distorted_points)
 
     You can also access to the jacobian of the distortion transformation:
@@ -155,8 +155,8 @@ class ZernikeDistortion(Distortion):
     .. code-block:: python
 
         result = distortion.transform(normalized_points, dx=True, dp=True)
-        distorted_points_dx = result.jacobian_dx  # Shape (Npoints, 2, 2)
-        distorted_points_dp = result.jacobian_dp  # Shape (Npoints, 2, Nparams = 5)
+        distorted_points_dx = result.jacobian_dx  # Shape (n_points, 2, 2)
+        distorted_points_dp = result.jacobian_dp  # Shape (n_points, 2, n_params = 5)
         print(distorted_points_dx) 
         print(distorted_points_dp)
 
@@ -165,7 +165,7 @@ class ZernikeDistortion(Distortion):
     .. code-block:: python
 
         inverse_result = distortion.inverse_transform(distorted_points, dx=True, dp=True)
-        normalized_points = inverse_result.normalized_points  # Shape (Npoints, 2)
+        normalized_points = inverse_result.normalized_points  # Shape (n_points, 2)
         print(normalized_points)
 
     .. note::
@@ -210,15 +210,15 @@ class ZernikeDistortion(Distortion):
         )
 
     """
-    def __init__(self, parameters: Optional[numpy.ndarray] = None, constants: Optional[numpy.ndarray] = None, Nparams: Optional[Integral] = None, Nzer: Optional[int] = None) -> None:
+    def __init__(self, parameters: Optional[numpy.ndarray] = None, constants: Optional[numpy.ndarray] = None, n_params: Optional[Integral] = None, Nzer: Optional[int] = None) -> None:
         # Initialize the Transform base class
         super().__init__(parameters=parameters, constants=constants)
-        if Nparams is not None and Nzer is not None:
-            raise ValueError("You can only use one of Nparams or Nzer, not both.")
+        if n_params is not None and Nzer is not None:
+            raise ValueError("You can only use one of n_params or Nzer, not both.")
         if Nzer is not None:
             self.Nzer = Nzer
-        if Nparams is not None:
-            self.Nparams = Nparams
+        if n_params is not None:
+            self.n_params = n_params
 
     # =============================================
     # Overwrite some properties from the base class
@@ -263,17 +263,17 @@ class ZernikeDistortion(Distortion):
     @parameters.setter
     def parameters(self, parameters: Optional[numpy.ndarray]) -> None:
         if parameters is not None:
-            parameters = numpy.asarray(parameters, dtype=Package.get_float_dtype())
+            parameters = numpy.asarray(parameters, dtype=numpy.float64)
             if parameters.ndim != 1:
                 raise ValueError("The parameters should be a 1D numpy array.")
             # Extend the number of parameters to a valid number
             Nzer = 0
             while (Nzer + 1) * (Nzer + 2) < parameters.size:
                 Nzer += 1
-            Nparams = (Nzer + 1) * (Nzer + 2)
+            n_params = (Nzer + 1) * (Nzer + 2)
             # Extend the parameters to the next valid size
-            if Nparams > parameters.size:
-                parameters = numpy.concatenate((parameters, numpy.zeros(Nparams - parameters.size)))
+            if n_params > parameters.size:
+                parameters = numpy.concatenate((parameters, numpy.zeros(n_params - parameters.size)))
             # Set to None if the number of parameters is 0
             if parameters.size == 0:
                 parameters = None
@@ -303,9 +303,9 @@ class ZernikeDistortion(Distortion):
     @constants.setter
     def constants(self, value: Optional[numpy.ndarray]) -> None:
         if value is None:
-            self._constants = numpy.array([1.0, 1.0, 0.0, 0.0], dtype=Package.get_float_dtype())
+            self._constants = numpy.array([1.0, 1.0, 0.0, 0.0], dtype=numpy.float64)
         else:
-            value = numpy.asarray(value, dtype=Package.get_float_dtype())
+            value = numpy.asarray(value, dtype=numpy.float64)
             if value.ndim != 1 or value.size != 4:
                 raise ValueError("The constants should be a 1D numpy array of shape (4,).")
             if not numpy.isfinite(value).all():
@@ -315,7 +315,7 @@ class ZernikeDistortion(Distortion):
             self._constants = value
 
     @property
-    def Nparams(self) -> int:
+    def n_params(self) -> int:
         r"""
         Get or set the number of parameters of the distortion model.
 
@@ -338,8 +338,8 @@ class ZernikeDistortion(Distortion):
         else:
             return self.parameters.size
         
-    @Nparams.setter
-    def Nparams(self, value: Integral) -> None:
+    @n_params.setter
+    def n_params(self, value: Integral) -> None:
         if not isinstance(value, Integral):
             raise TypeError("The number of parameters should be an integer.")
         if value < 0:
@@ -361,10 +361,10 @@ class ZernikeDistortion(Distortion):
             self.parameters = numpy.zeros(value)
             return
         
-        if value < self.Nparams:
+        if value < self.n_params:
             self.parameters = self.parameters[:value]
-        elif value > self.Nparams:
-            self.parameters = numpy.concatenate((self.parameters, numpy.zeros(value - self.Nparams)))
+        elif value > self.n_params:
+            self.parameters = numpy.concatenate((self.parameters, numpy.zeros(value - self.n_params)))
 
     @property
     def Nzer(self) -> Optional[int]:
@@ -386,9 +386,9 @@ class ZernikeDistortion(Distortion):
         if self.parameters is None:
             return None
         
-        Nparams = self.Nparams
+        n_params = self.n_params
         Nzer = 0
-        while (Nzer + 1) * (Nzer + 2) < Nparams:
+        while (Nzer + 1) * (Nzer + 2) < n_params:
             Nzer += 1
         return Nzer
     
@@ -400,7 +400,7 @@ class ZernikeDistortion(Distortion):
             raise ValueError("The order of the Zernike polynomials should be a non-negative integer.")
         
         value = int(value)
-        self.Nparams = (value + 1) * (value + 2)
+        self.n_params = (value + 1) * (value + 2)
 
     @property
     def parameter_names(self) -> List[str]:
@@ -563,7 +563,7 @@ class ZernikeDistortion(Distortion):
     
     @center.setter
     def center(self, value: numpy.ndarray) -> None:
-        value = numpy.asarray(value, dtype=Package.get_float_dtype())
+        value = numpy.asarray(value, dtype=numpy.float64)
         if value.ndim != 1 or value.size != 2:
             raise ValueError("The center should be a 1D numpy array of shape (2,).")
         if not numpy.isfinite(value).all():
@@ -660,7 +660,7 @@ class ZernikeDistortion(Distortion):
         .. warning::
 
             The value must be a 1D numpy array with the same number of elements as the number of parameters requested by the model.
-            Use ``parameters``, ``Nzer`` or ``Nparams`` to change the model !
+            Use ``parameters``, ``Nzer`` or ``n_params`` to change the model !
 
         Returns
         -------
@@ -675,11 +675,11 @@ class ZernikeDistortion(Distortion):
     def parameters_x(self, value: numpy.ndarray) -> None:
         if self.parameters is None:
             raise ValueError("No distortion model is defined. Set the parameters first.")
-        value = numpy.asarray(value, dtype=Package.get_float_dtype())
+        value = numpy.asarray(value, dtype=numpy.float64)
         if not value.ndim == 1:
             raise ValueError("The Zernike coefficients for the x coordinate should be a 1D numpy array.")
-        if not value.size == self.Nparams // 2:
-            raise ValueError(f"The number of Zernike coefficients for the x coordinate should be {self.Nparams // 2}.")
+        if not value.size == self.n_params // 2:
+            raise ValueError(f"The number of Zernike coefficients for the x coordinate should be {self.n_params // 2}.")
         if not numpy.all(numpy.isfinite(value)):
             raise ValueError("The Zernike coefficients for the x coordinate should be finite numbers.")
         self.parameters[0::2] = value
@@ -692,7 +692,7 @@ class ZernikeDistortion(Distortion):
         .. warning::
 
             The value must be a 1D numpy array with the same number of elements as the number of parameters requested by the model.
-            Use ``parameters``, ``Nzer`` or ``Nparams`` to change the model !
+            Use ``parameters``, ``Nzer`` or ``n_params`` to change the model !
 
         Returns
         -------
@@ -707,11 +707,11 @@ class ZernikeDistortion(Distortion):
     def parameters_y(self, value: numpy.ndarray) -> None:
         if self.parameters is None:
             raise ValueError("No distortion model is defined. Set the parameters first.")
-        value = numpy.asarray(value, dtype=Package.get_float_dtype())
+        value = numpy.asarray(value, dtype=numpy.float64)
         if not value.ndim == 1:
             raise ValueError("The Zernike coefficients for the y coordinate should be a 1D numpy array.")
-        if not value.size == self.Nparams // 2:
-            raise ValueError(f"The number of Zernike coefficients for the y coordinate should be {self.Nparams // 2}.")
+        if not value.size == self.n_params // 2:
+            raise ValueError(f"The number of Zernike coefficients for the y coordinate should be {self.n_params // 2}.")
         if not numpy.all(numpy.isfinite(value)):
             raise ValueError("The Zernike coefficients for the y coordinate should be finite numbers.")
         self.parameters[1::2] = value
@@ -840,8 +840,8 @@ class ZernikeDistortion(Distortion):
             return "ZernikeDistortion: No distortion model"
         
         Nzer = self.Nzer
-        Nparams = self.Nparams
-        parameters_str = f"ZernikeDistortion: {Nparams} parameters (Nzer={Nzer})\n"
+        n_params = self.n_params
+        parameters_str = f"ZernikeDistortion: {n_params} parameters (Nzer={Nzer})\n"
         for n in range(Nzer + 1):
             for m in range(-n, n + 1, 2):
                 parameters_str += f"  Cx[n={n}, m={m}] = {self.parameters[self.get_index(n, m, 'x')]:.6f}\n"
@@ -865,8 +865,8 @@ class ZernikeDistortion(Distortion):
 
             y_{d} = y_{n} + \sum_{n=0}^{N_{zer}} \sum_{m=-n}^{n} C^{y}_{n,m} Z_{nm}(\rho, \theta)
 
-        The jacobians with respect to the distortion parameters is an array with shape (Npoints, 2, Nparams), where the last dimension represents the parameters in the order of the class attributes (Cx[0,0], Cy[0,0], Cx[1,-1], Cy[1,-1], Cx[1,1], Cy[1,1], ...).
-        The jacobian with respect to the normalized points is an array with shape (Npoints, 2, 2).
+        The jacobians with respect to the distortion parameters is an array with shape (n_points, 2, n_params), where the last dimension represents the parameters in the order of the class attributes (Cx[0,0], Cy[0,0], Cx[1,-1], Cy[1,-1], Cx[1,1], Cy[1,1], ...).
+        The jacobian with respect to the normalized points is an array with shape (n_points, 2, 2).
 
         The derivative of the distorted points with respect to the normalized points is given by:
 
@@ -895,12 +895,12 @@ class ZernikeDistortion(Distortion):
         .. warning::
 
             This method is not intended to be used directly, but rather through the :meth:`pycvcam.core.Transform.transform` method.
-            Please ensure, the shape of the input ``normalized_points`` is (Npoints, 2) before calling this method.
+            Please ensure, the shape of the input ``normalized_points`` is (n_points, 2) before calling this method.
 
         Parameters
         ----------
         normalized_points : numpy.ndarray
-            The normalized points in camera normalized coordinates to be transformed. Shape (Npoints, 2).
+            The normalized points in camera normalized coordinates to be transformed. Shape (n_points, 2).
 
         dx : bool, optional
             If True, the jacobian with respect to the normalized points is computed. Default is False
@@ -916,27 +916,27 @@ class ZernikeDistortion(Distortion):
         Returns
         -------
         distorted_points : numpy.ndarray
-            The distorted points in camera normalized coordinates. Shape (Npoints, 2).
+            The distorted points in camera normalized coordinates. Shape (n_points, 2).
 
         jacobian_dx : Optional[numpy.ndarray]
-            The jacobian of the distorted points with respect to the normalized points. Shape (Npoints, 2, 2) if dx is True, otherwise None.
+            The jacobian of the distorted points with respect to the normalized points. Shape (n_points, 2, 2) if dx is True, otherwise None.
 
         jacobian_dp : Optional[numpy.ndarray]
-            The jacobian of the distorted points with respect to the distortion parameters. Shape (Npoints, 2, Nparams) if dp is True, otherwise None.
+            The jacobian of the distorted points with respect to the distortion parameters. Shape (n_points, 2, n_params) if dp is True, otherwise None.
         """
         # Prepare the inputs data for distortion
-        x_N = normalized_points[:, 0] # shape (Npoints,)
-        y_N = normalized_points[:, 1] # shape (Npoints,)
-        Nparams = self.Nparams
+        x_N = normalized_points[:, 0] # shape (n_points,)
+        y_N = normalized_points[:, 1] # shape (n_points,)
+        n_params = self.n_params
 
         # Prepare the output jacobian arrays
         if dx:
-            jacobian_dx = numpy.tile(numpy.eye(2, dtype=Package.get_float_dtype()), (x_N.size, 1, 1))  # shape (Npoints, 2, 2)
+            jacobian_dx = numpy.tile(numpy.eye(2, dtype=numpy.float64), (x_N.size, 1, 1))  # shape (n_points, 2, 2)
         else:
             jacobian_dx = None
 
         if dp:
-            jacobian_dp = numpy.empty((x_N.size, 2, Nparams), dtype=Package.get_float_dtype())
+            jacobian_dp = numpy.empty((x_N.size, 2, n_params), dtype=numpy.float64)
         else:
             jacobian_dp = None
 
@@ -994,7 +994,7 @@ class ZernikeDistortion(Distortion):
                     jacobian_dp[:, 1, index_y] = Z_nm
 
         # Convert the distorted points back to the original coordinates
-        distorted_points = numpy.empty_like(normalized_points, dtype=Package.get_float_dtype())
+        distorted_points = numpy.empty_like(normalized_points, dtype=numpy.float64)
         distorted_points[:, 0] = x_D
         distorted_points[:, 1] = y_D
 
@@ -1016,14 +1016,14 @@ class ZernikeDistortion(Distortion):
         .. warning::
 
             This method is not intended to be used directly, but rather through the :meth:`pycvcam.core.Transform.transform` method.
-            Please ensure, the shape of the input ``image_points`` is (Npoints, 2) before calling this method.
+            Please ensure, the shape of the input ``image_points`` is (n_points, 2) before calling this method.
 
             The jacobians with respect to the distortion parameters and the distorted points are always None, since it is an iterative algorithm.
 
         Parameters
         ----------
         distorted_points : numpy.ndarray
-            The distorted points in camera normalized coordinates to be transformed. Shape (Npoints, 2).
+            The distorted points in camera normalized coordinates to be transformed. Shape (n_points, 2).
 
         dx : bool, optional
             If True, the jacobian with respect to the distorted points is computed. Default is False
@@ -1037,7 +1037,7 @@ class ZernikeDistortion(Distortion):
         Returns
         -------
         normalized_points : numpy.ndarray
-            The normalized points in camera normalized coordinates, which are equal to the x and y components of the image points. Shape (Npoints, 2).
+            The normalized points in camera normalized coordinates, which are equal to the x and y components of the image points. Shape (n_points, 2).
 
         jacobian_dx : Optional[numpy.ndarray]
             Always None, since the jacobian with respect to the distorted points is not computed by an iterative algorithm.

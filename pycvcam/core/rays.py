@@ -32,15 +32,15 @@ class Rays:
     
     .. note::
 
-        If ``transpose`` is set to True during the transformation, the output rays will have shape (6, ...) instead of (..., 6). Same for the origins and directions (i.e., shape (3, ...) instead of (..., 3) respectively).
+        If ``transpose`` is set to :obj:`True` during the transformation, the output rays will have shape (6, ...) instead of (..., 6). Same for the origins and directions (i.e., shape (3, ...) instead of (..., 3) respectively).
 
     Attributes
     ----------
-    rays : numpy.ndarray
+    rays : :class:`numpy.ndarray`
         The rays in the world coordinate system. Shape (..., 6).
 
-    transpose : bool, optional
-        If True, the output rays will have shape (6, ...) instead of (..., 6). True if set during the transformation, otherwise False.
+    transpose : :class:`bool`, optional
+        If :obj:`True`, the output rays will have shape (6, ...) instead of (..., 6). :obj:`True` if set during the transformation, otherwise :obj:`False`.
 
     """
     rays: numpy.ndarray
@@ -53,7 +53,7 @@ class Rays:
 
         Returns
         -------
-        numpy.ndarray
+        :class:`numpy.ndarray`
             The origins of the rays in the world coordinate system. Shape (..., 3).
         """
         if self.rays is None:
@@ -69,7 +69,7 @@ class Rays:
 
         Returns
         -------
-        numpy.ndarray
+        :class:`numpy.ndarray`
             The directions of the rays in the world coordinate system. Shape (..., 3).
         """
         if self.rays is None:

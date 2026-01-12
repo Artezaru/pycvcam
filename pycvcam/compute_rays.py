@@ -21,7 +21,6 @@ from .core.distortion import Distortion
 from .core.intrinsic import Intrinsic
 from .core.extrinsic import Extrinsic
 from .core.rays import Rays
-from .core.package import Package
 
 from .distortion_objects.no_distortion import NoDistortion
 from .intrinsic_objects.no_intrinsic import NoIntrinsic
@@ -87,7 +86,7 @@ def compute_rays(
         Default is False.
 
     _skip : bool, optional
-            [INTERNAL USE], If True, skip the checks for the transformation parameters and assume the points are given in the (Npoints, input_dim) float format.
+            [INTERNAL USE], If True, skip the checks for the transformation parameters and assume the points are given in the (n_points, input_dim) float format.
             `transpose` is ignored if this parameter is set to True.
 
     **kwargs : dict
@@ -163,7 +162,7 @@ def compute_rays(
             raise ValueError("transpose must be a boolean value")
         
         # Create the array of points
-        image_points = numpy.asarray(image_points, dtype=Package.get_float_dtype())
+        image_points = numpy.asarray(image_points, dtype=numpy.float64)
 
         # Transpose the points if needed
         if transpose:
@@ -173,27 +172,27 @@ def compute_rays(
         shape = image_points.shape # (..., 2)
 
         # Flatten the points along the last axis
-        image_points = image_points.reshape(-1, shape[-1]) # shape (..., 2) -> shape (Npoints, 2)
+        image_points = image_points.reshape(-1, shape[-1]) # shape (..., 2) -> shape (n_points, 2)
 
         # Check the shape of the points
         if image_points.ndim !=2 or image_points.shape[1] != 2:
             raise ValueError(f"The points must be in the shape (..., 2) or (2, ...) if ``transpose`` is True. Got {image_points.shape} instead and transpose is {transpose}.")
 
-    Npoints = image_points.shape[0] # Npoints
+    n_points = image_points.shape[0] # n_points
     output_points = image_points
     
     # Realize the transformation:
     if not isinstance(intrinsic, NoIntrinsic):
-        output_points, _, _ = intrinsic._inverse_transform(output_points, dx=False, dp=False) # shape (Npoints, 2) -> shape (Npoints, 2)
+        output_points, _, _ = intrinsic._inverse_transform(output_points, dx=False, dp=False) # shape (n_points, 2) -> shape (n_points, 2)
     if not isinstance(distortion, NoDistortion):
         output_points, _, _ = distortion._inverse_transform(output_points, dx=False, dp=False, **kwargs)
 
     # Always use the extrinsic transformation to compute the rays:
-    rays = extrinsic._compute_rays(output_points) # shape (Npoints, 2) -> shape (Npoints, 6)
+    rays = extrinsic._compute_rays(output_points) # shape (n_points, 2) -> shape (n_points, 6)
     
     if not _skip:
         # Reshape the rays  back to the original shape
-        rays = rays.reshape((*shape[:-1], 6)) # shape (Npoints, 6) -> (..., 6)
+        rays = rays.reshape((*shape[:-1], 6)) # shape (n_points, 6) -> (..., 6)
 
         # Transpose the rays back to the original shape if needed
         if transpose:

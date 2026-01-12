@@ -12,23 +12,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import Optional, Tuple, Dict, List, ClassVar
+from typing import Optional, Tuple, Dict, List, ClassVar, Any
 import numpy
+import datetime
+import json
 
 from .transform_result import TransformResult
-from .package import Package
-
+from ..__version__ import __version__
 
 class Transform(ABC):
     r"""
-    Transform is the base class to manage transformations from :math:`\mathbb{R}^{input\_dim}` to :math:`\mathbb{R}^{output\_dim}`.
+    Transform is the base class to manage transformations from :math:`\mathbb{R}^{\text{input\_dim}}` to :math:`\mathbb{R}^{\text{output\_dim}}`.
 
     A tranformation is a function that maps points from an input space to an output space.
     The transformation is defined by:
     
-    - a set of ``Nparams`` parameters :math:`\{\lambda_1, \lambda_2, \ldots, \lambda_N\}` that define the transformation.
-    - a set of ``Nconstants`` constants that are constant for the transformation. (Can not be optimized and no jacobian with respect to these constants).
+    - a set of ``n_params`` parameters :math:`\{\lambda_1, \lambda_2, \ldots, \lambda_N\}` that define the transformation.
+    - a set of ``n_constants`` constants that are constant for the transformation. (Can not be optimized and no jacobian with respect to these constants).
 
     .. math::
 
@@ -48,23 +50,23 @@ class Transform(ABC):
 
     - ``_input_dim``: (class attribute) The dimension of the input points as integer (example: 2 for 2D points).
     - ``_output_dim``: (class attribute) The dimension of the output points as integer (example: 2 for 2D points).
-    - ``_transform``: (method) Apply the transformation to the given points with shape (Npoints, input_dim) and return the transformed points with shape (Npoints, output_dim), and optionally the Jacobian matrices if requested.
-    - ``_inverse_transform``: (method) Apply the inverse transformation to the given points with shape (Npoints, output_dim) and return the transformed points with shape (Npoints, input_dim), and optionally the Jacobian matrices if requested.
+    - ``_transform``: (method) Apply the transformation to the given points with shape (n_points, input_dim) and return the transformed points with shape (n_points, output_dim), and optionally the Jacobian matrices if requested.
+    - ``_inverse_transform``: (method) Apply the inverse transformation to the given points with shape (n_points, output_dim) and return the transformed points with shape (n_points, input_dim), and optionally the Jacobian matrices if requested.
 
     The following properties are not required but can be overwritting to provide additional information about the transformation:
 
-    - ``parameters`` (property and setter) The parameters of the transformation in a 1D numpy array of shape (Nparams,) or None if the transformation does not have parameters or they are not set. Default only impose 1D array of floats or None.
-    - ``constants`` (property and setter) The constants of the transformation in a 1D numpy array of shape (Nconsts,) or None if the transformation does not have constants or they are not set. Default only impose 1D array of floats or None.
+    - ``parameters`` (property and setter) The parameters of the transformation in a 1D numpy array of shape (``n_params``,) or None if the transformation does not have parameters or they are not set. Default only impose 1D array of floats or None.
+    - ``constants`` (property and setter) The constants of the transformation in a 1D numpy array of shape (``n_constants``,) or None if the transformation does not have constants or they are not set. Default only impose 1D array of floats or None.
     - ``parameter_names`` (property) The names of the parameters as a list of strings or None if the transformation does not have parameters or they are not set. Default is None.
     - ``constant_names`` (property) The names of the constants as a list of strings or None if the transformation does not have constants or they are not set. Default is None.
     - ``is_set``: (method) Check if the transformation is set (i.e., if the parameters are initialized). Default is to return True if the parameters and constants are not None. Default is to return True if the parameters and constants are not None.
     - ``_result_class``: (class attribute) The class used for the result of the transformation (sub-class of ``TransformResult``). Default is :class:`pycvcam.core.TransformResult`.
     - ``_inverse_result_class``: (class attribute) The class used for the result of the inverse transformation (sub-class of ``TransformResult``). Default is :class:`pycvcam.core.TransformResult`.
-    - ``_get_jacobian_short_hand``: (method) A dictionary of short-hand notation for the Jacobian matrices, which can be used to add custom views of the ``jacobian_dp`` matrix with respect to the parameters of the transformation. Default is an empty dictionary.
+    - ``_get_jacobian_shorthands``: (method) A dictionary of short-hand notation for the Jacobian matrices, which can be used to add custom views of the ``jacobian_dp`` matrix with respect to the parameters of the transformation. Default is an empty dictionary.
     - ``_get_transform_aliases``: (method) A dictionary of aliases for the transformation, which can be used to add custom names for the transformation parameters. Default is an empty list.
     - ``_get_inverse_transform_aliases``: (method) A dictionary of aliases for the inverse transformation, which can be used to add custom names for the inverse transformation parameters. Default is an empty list.
 
-    More details on the transformation methods are provided in the `transform` and `inverse_transform` methods. 
+    More details on the transformation methods are provided in the ``transform`` and ``inverse_transform`` methods. 
 
     .. seealso::
 
@@ -97,12 +99,13 @@ class Transform(ABC):
     @property
     def result_class(self) -> type:
         r"""
-        Property to return the class used for the result of the transformation.
+        [Get] the class used for the result of the transformation.
         
         Returns
         -------
         type
             The class used for the result of the transformation.
+        
         """
         if not issubclass(self._result_class, TransformResult):
             raise TypeError(f"result_class must be a subclass of TransformResult, got {self._result_class}")
@@ -111,7 +114,7 @@ class Transform(ABC):
     @property
     def inverse_result_class(self) -> type:
         r"""
-        Property to return the class used for the result of the inverse transformation.
+        [Get] the class used for the result of the inverse transformation.
                 
         Returns
         -------
@@ -125,11 +128,11 @@ class Transform(ABC):
     @property
     def input_dim(self) -> int:
         r"""
-        Property to return the input dimension of the transformation.
+        [Get] the input dimension of the transformation.
         
         Returns
         -------
-        int
+        :class:`int`
             The number of dimensions of the input points.
 
         Raises
@@ -144,11 +147,11 @@ class Transform(ABC):
     @property
     def output_dim(self) -> int:
         r"""
-        Property to return the output dimension of the transformation.
+        [Get] the output dimension of the transformation.
 
         Returns
         -------
-        int
+        :class:`int`
             The number of dimensions of the output points.
 
         Raises
@@ -163,34 +166,39 @@ class Transform(ABC):
     @property
     def parameters(self) -> Optional[numpy.ndarray]:
         r"""
-        Property to return the parameters of the transformation.
+        [Get/Set] the parameters of the transformation.
         
-        The parameters must be a 1-D numpy array of shape (Nparams,) where Nparams is the number of parameters of the transformation.
+        The parameters must be a 1-D numpy array of shape (``n_params``,) where ``n_params`` is the number of parameters of the transformation.
 
         If the transformation does not have parameters or they are not set, this property should return None.
         
+        .. note::   
+        
+            The given value is converted to a numpy array of ``dtype=numpy.float64`` if it is not None.
+        
+        Parameters
+        ----------
+        value : Optional[:class:`numpy.ndarray`]
+            The parameters of the transformation as a 1-D numpy array.
+        
+        
         Returns
         -------
-        Optional[numpy.ndarray]
+        Optional[:class:`numpy.ndarray`]
             The parameters of the transformation.
+            
+            
+        Raises
+        -------
+        ValueError
+            If the parameters are not a 1-D numpy array.
+            
         """
         return self._parameters
     
     @parameters.setter
     def parameters(self, value: Optional[numpy.ndarray]) -> None:
-        r"""
-        Setter for the parameters of the transformation.
-        
-        The parameters must be a 1-D float numpy array of shape (Nparams,) where Nparams is the number of parameters of the transformation.
-
-        If the transformation does not have parameters or they are not set, this setter should set the parameters to None.
-        
-        Parameters
-        ----------
-        value : Optional[numpy.ndarray]
-            The parameters of the transformation.
-        """
-        parameters = numpy.asarray(value, dtype=Package.get_float_dtype()) if value is not None else None
+        parameters = numpy.asarray(value, dtype=numpy.float64) if value is not None else None
         if parameters is not None and parameters.ndim != 1:
             raise ValueError(f"Parameters must be a 1-D numpy array, got shape {parameters.shape}")
         self._parameters = parameters
@@ -198,110 +206,126 @@ class Transform(ABC):
     @property
     def constants(self) -> Optional[numpy.ndarray]:
         r"""
-        Property to return the constants of the transformation.
+        [Get/Set] to return the constants of the transformation.
 
-        The constants must be a 1-D float numpy array of shape (Nconstants,) where Nconstants is the number of constants of the transformation.
+        The constants must be a 1-D float numpy array of shape (``n_constants``,) where ``n_constants`` is the number of constants of the transformation.
 
         If the transformation does not have constants or they are not set, this property should return None.
+        
+        .. note::
+        
+            The given value is converted to a numpy array of ``dtype=numpy.float64`` if it is not None.
+            
+        Parameters
+        ----------
+        value : Optional[:class:`numpy.ndarray`]
+            The constants of the transformation as a 1-D numpy array.
+            
 
         Returns
         -------
-        Optional[numpy.ndarray]
+        Optional[:class:`numpy.ndarray`]
             The constants of the transformation.
+            
+            
+        Raises
+        -------
+        ValueError
+            If the constants are not a 1-D numpy array.
         """
         return self._constants
 
     @constants.setter
     def constants(self, value: Optional[numpy.ndarray]) -> None:
-        r"""
-        Setter for the constants of the transformation.
-
-        The constants must be a 1-D float numpy array of shape (Nconstants,) where Nconstants is the number of constants of the transformation.
-
-        If the transformation does not have constants or they are not set, this setter should set the constants to None.
-
-        Parameters
-        ----------
-        value : Optional[numpy.ndarray]
-            The constants of the transformation.
-        """
-        constants = numpy.asarray(value, dtype=Package.get_float_dtype()) if value is not None else None
+        constants = numpy.asarray(value, dtype=numpy.float64) if value is not None else None
         if constants is not None and constants.ndim != 1:
             raise ValueError(f"Constants must be a 1-D numpy array, got shape {constants.shape}")
         self._constants = constants
 
     @property
-    def Nparams(self) -> int:
+    def n_params(self) -> int:
         r"""
-        Property to return the number of parameters of the transformation.
+        [Get] the number of parameters of the transformation.
         
-        The number of parameters must be a non-negative integer representing the number of parameters of the transformation.
+        .. note::
+        
+            For retro-compatibility, this property can also be accessed using the name ``Nparams``.
         
         Returns
         -------
-        int
+        :class:`int`
             The number of parameters of the transformation.
         """
         return self.parameters.size if self.parameters is not None else 0
+
+    @property
+    def Nparams(self) -> int:
+        return self.n_params
     
     @property
-    def Nconstants(self) -> int:
+    def n_constants(self) -> int:
         r"""
-        Property to return the number of coefficients of the transformation.
+        [Get] the number of constants of the transformation.
         
-        The number of coefficients must be a non-negative integer representing the number of coefficients of the transformation.
+        .. note::
+        
+            For retro-compatibility, this property can also be accessed using the name ``Nconstants``.
         
         Returns
         -------
-        int
+        :class:`int`
             The number of constants of the transformation.
         """
         return self.constants.size if self.constants is not None else 0
     
     @property
+    def Nconstants(self) -> int:
+        return self.n_constants
+    
+    @property
     def parameter_names(self) -> List[str]:
         r"""
-        Property to return the names of the parameters of the transformation.
+        [Get] the names of the parameters of the transformation.
 
-        The names must be a list of strings of length Nparams where Nparams is the number of parameters of the transformation.
+        The names is a list of strings of length ``n_params`` where ``n_params`` is the number of parameters of the transformation.
 
         If the transformation does not have parameters should return an empty list.
 
-        By default, the parameter names are generated as "p_0", "p_1", ..., "p_{Nparams-1}".
+        By default, the parameter names are generated as "p_0", "p_1", ..., "p_{n_params-1}". See sub-classes for more specific names.
 
         Returns
         -------
-        List[str]
+        :class:`List[str]`
             The names of the parameters of the transformation.
         """
-        return [f"p_{i}" for i in range(self.Nparams)]
+        return [f"p_{i}" for i in range(self.n_params)]
 
     @property
     def constant_names(self) -> List[str]:
         r"""
-        Property to return the names of the constants of the transformation.
-
-        The names must be a list of strings of length Nconstants where Nconstants is the number of constants of the transformation.
-
-        If the transformation does not have constants, this property should return an empty list.
-
-        By default, the constant names are generated as "c_0", "c_1", ..., "c_{Nconstants-1}".
-
+        [Get] the names of the constants of the transformation.
+        
+        The names is a list of strings of length ``n_constants`` where ``n_constants`` is the number of constants of the transformation.
+        
+        If the transformation does not have constants should return an empty list.
+        
+        By default, the constant names are generated as "c_0", "c_1", ..., "c_{n_constants-1}". See sub-classes for more specific names.
+        
         Returns
         -------
-        List[str]
+        :class:`List[str]`
             The names of the constants of the transformation.
         """
-        return [f"c_{i}" for i in range(self.Nconstants)]
+        return [f"c_{i}" for i in range(self.n_constants)]
 
     # =============================================
     # Methods for Transform Class
     # =============================================
-    def _get_jacobian_short_hand(self) -> Dict[str, Tuple[int, int, Optional[str]]]:
+    def _get_jacobian_shorthands(self) -> Dict[str, Tuple[int, int, Optional[str]]]:
         r"""
-        Property to return a dictionary of short-hand notation for the Jacobian matrices.
+        Return a dictionary of short-hand notation for the Jacobian matrices.
         
-        This dictionary can be used to add custom views of the `jacobian_dp` matrix with respect to the parameters of the transformation.
+        This dictionary can be used to add custom views of the ``jacobian_dp`` matrix with respect to the parameters of the transformation.
 
         .. code-block:: python
 
@@ -312,33 +336,33 @@ class Transform(ABC):
         
         Returns
         -------
-        Dict[str, Tuple[int, int, Optional[str]]]
+        :class:`Dict[str, Tuple[int, int, Optional[str]]]`
             A dictionary where keys are names of the custom Jacobian views and values are tuples containing:
 
-            - start index (int): The starting index of the parameters to include in the custom Jacobian view.
-            - end index (int): The ending index of the parameters to include in the custom Jacobian view.
-            - doc (Optional[str]): A documentation string for the custom Jacobian view.
+            - start index (:class:`int`): The starting index of the parameters to include in the custom Jacobian view.
+            - end index (:class:`int`): The ending index of the parameters to include in the custom Jacobian view.
+            - doc (Optional[:class:`str`]): A documentation string for the custom Jacobian view.
         """
         return {} 
     
     def _get_transform_aliases(self) -> List[str]:
         r"""
-        Property to return a list of aliases for the transformed points.
+        Return a list of aliases for the transformed points.
         
         Returns
         -------
-        List[str]
+        :class:`List[str]`
             A list of aliases for the transformed points.
         """
         return []
     
     def _get_inverse_transform_aliases(self) -> List[str]:
         r"""
-        Property to return a list of aliases for the inverse transformed points.
+        Return a list of aliases for the inverse transformed points.
 
         Returns
         -------
-        List[str]
+        :class:`List[str]`
             A list of aliases for the inverse transformed points.
         """
         return []
@@ -346,15 +370,17 @@ class Transform(ABC):
     def is_set(self) -> bool:
         r"""
         Method to check if the transformation parameters and constants are set.
-
-        This method returns True if the parameters and constants are not None, otherwise False.
+        
+        .. note::
+        
+            By default return :obj:`True`. Sub-classes can override this method to implement specific checks for the transformation parameters and constants.
 
         Returns
         -------
-        bool
-            True if the transformation parameters and constants are set, otherwise False.
+        :class:`bool`
+            :obj:`True` if the transformation parameters and constants are set, otherwise :obj:`False`.
         """
-        return self.parameters is not None and self.constants is not None
+        return True
 
     def __repr__(self) -> str:
         r"""
@@ -362,17 +388,17 @@ class Transform(ABC):
 
         .. code-block:: console
 
-            {class name} with {Nparams} parameters and {Nconstants} constants.
+            {class name} with {``n_params``} parameters and {``n_constants``} constants.
             Parameters: {parameters}
             Constants: {constants}
 
         Returns
         -------
-        str
+        :class:`str`
             A string representation of the transformation.
         """
-        return f"{self.__class__.__name__} with {self.Nparams} parameters and {self.Nconstants} constants.\nParameters: {self.parameters}\nConstants: {self.constants}"
-
+        return f"{self.__class__.__name__} with {self.n_params} parameters and {self.n_constants} constants.\nParameters: {self.parameters}\nConstants: {self.constants}"
+    
     def _return_transform_result(self, transform_result: TransformResult) -> TransformResult:
         r"""
         Return the result of the transformation as a ``TransformResult`` object.
@@ -383,19 +409,19 @@ class Transform(ABC):
 
         Parameters
         ----------
-        transform_result : TransformResult
+        transform_result : :class:`TransformResult`
             The result of the transformation containing the transformed points and the Jacobian matrices.
 
         Returns
         -------
-        TransformResult
+        :class:`TransformResult`
             The result of the transformation.
         """
         if not isinstance(transform_result, TransformResult):
             raise TypeError(f"transform_result must be an instance of TransformResult, got {type(transform_result)}")
         
         # Add custom Jacobian views to the TransformResult object
-        for name, (start, end, doc) in self._get_jacobian_short_hand().items():
+        for name, (start, end, doc) in self._get_jacobian_shorthands().items():
             transform_result.add_jacobian(name, start, end, doc=doc)
 
         # Add custom aliases to the TransformResult object
@@ -414,19 +440,19 @@ class Transform(ABC):
 
         Parameters
         ----------
-        transform_result : TransformResult
+        transform_result : :class:`TransformResult`
             The result of the inverse transformation containing the transformed points and the Jacobian matrices.
 
         Returns
         -------
-        TransformResult
+        :class:`TransformResult`
             The result of the inverse transformation.
         """
         if not isinstance(transform_result, TransformResult):
             raise TypeError(f"transform_result must be an instance of TransformResult, got {type(transform_result)}")
         
         # Add custom Jacobian views to the TransformResult object
-        for name, (start, end, doc) in self._get_jacobian_short_hand().items():
+        for name, (start, end, doc) in self._get_jacobian_shorthands().items():
             transform_result.add_jacobian(name, start, end, doc=doc)
 
         # Add custom aliases to the TransformResult object
@@ -455,26 +481,26 @@ class Transform(ABC):
 
         Parameters
         ----------
-        points : numpy.ndarray
-            The input points to be transformed. Shape (Npoints, input_dim).
+        points : :class:`numpy.ndarray`
+            The input points to be transformed. Shape (n_points, input_dim).
 
-        dx : bool, optional
-            If True, compute the Jacobian of the transformed points with respect to the input points. Default is False.
+        dx : :class:`bool`, optional
+            If :obj:`True`, compute the Jacobian of the transformed points with respect to the input points. Default is :obj:`False`.
 
-        dp : bool, optional
-            If True, compute the Jacobian of the transformed points with respect to the parameters of the transformation. Default is False.
+        dp : :class:`bool`, optional
+            If :obj:`True`, compute the Jacobian of the transformed points with respect to the parameters of the transformation. Default is :obj:`False`.
 
         **kwargs
             Additional keyword arguments for the transformation.
 
         Returns
         -------
-        Tuple[numpy.ndarray, Optional[numpy.ndarray], Optional[numpy.ndarray]]
+        Tuple[:class:`numpy.ndarray`, Optional[:class:`numpy.ndarray`], Optional[:class:`numpy.ndarray`]]
             A tuple containing:
 
-            - `transformed_points`: The transformed points of shape (Npoints, output_dim).
-            - `jacobian_dx`: The Jacobian matrix with respect to the input points of shape (Npoints, output_dim, input_dim) if `dx` is True, otherwise None.
-            - `jacobian_dp`: The Jacobian matrix with respect to the parameters of the transformation of shape (Npoints, output_dim, Nparams) if `dp` is True, otherwise None.
+            - :obj:`transformed_points`: The transformed points of shape (n_points, output_dim).
+            - :obj:`jacobian_dx`: The Jacobian matrix with respect to the input points of shape (n_points, output_dim, input_dim) if :obj:`dx` is True, otherwise None.
+            - :obj:`jacobian_dp`: The Jacobian matrix with respect to the parameters of the transformation of shape (n_points, output_dim, n_params) if :obj:`dp` is True, otherwise None.
         """
         raise NotImplementedError("Subclasses must implement the _transform method.")
     
@@ -494,26 +520,26 @@ class Transform(ABC):
 
         Parameters
         ----------
-        points : numpy.ndarray
-            The input points to be transformed. Shape (Npoints, output_dim).
+        points : :class:`numpy.ndarray`
+            The input points to be transformed. Shape (n_points, output_dim).
 
-        dx : bool, optional
-            If True, compute the Jacobian of the transformed points with respect to the input points. Default is False.
+        dx : :class:`bool`, optional
+            If :obj:`True`, compute the Jacobian of the transformed points with respect to the input points. Default is :obj:`False`.
 
-        dp : bool, optional
-            If True, compute the Jacobian of the transformed points with respect to the parameters of the transformation. Default is False.
+        dp : :class:`bool`, optional
+            If :obj:`True`, compute the Jacobian of the transformed points with respect to the parameters of the transformation. Default is :obj:`False`.
 
         **kwargs
             Additional keyword arguments for the transformation.
 
         Returns
         -------
-        Tuple[numpy.ndarray, Optional[numpy.ndarray], Optional[numpy.ndarray]]
+        Tuple[:class:`numpy.ndarray`, Optional[:class:`numpy.ndarray`], Optional[:class:`numpy.ndarray`]]
             A tuple containing:
 
-            - `transformed_points`: The transformed points of shape (Npoints, input_dim).
-            - `jacobian_dx`: The Jacobian matrix with respect to the input points of shape (Npoints, input_dim, output_dim) if `dx` is True, otherwise None.
-            - `jacobian_dp`: The Jacobian matrix with respect to the parameters of the transformation of shape (Npoints, input_dim, Nparams) if `dp` is True, otherwise None.
+            - :obj:`transformed_points`: The transformed points of shape (n_points, input_dim).
+            - :obj:`jacobian_dx`: The Jacobian matrix with respect to the input points of shape (n_points, input_dim, output_dim) if :obj:`dx` is True, otherwise None.
+            - :obj:`jacobian_dp`: The Jacobian matrix with respect to the parameters of the transformation of shape (n_points, input_dim, n_params) if :obj:`dp` is True, otherwise None.
         """
         raise NotImplementedError("Subclasses must implement the _inverse_transform method.")
 
@@ -532,19 +558,20 @@ class Transform(ABC):
         **kwargs
         ) -> numpy.ndarray:
         r"""
-        The given points ``points`` are assumed to be with shape (..., input_dim) or (input_dim, ...), depending on the value of ``transpose``.
+        Transform the given points using the transformation from :math:`\mathbb{R}^{\text{input\_dim}}` to :math:`\mathbb{R}^{\text{output\_dim}}`.
+        
+        The given points :obj:`points` are assumed to be with shape (..., input_dim) or (input_dim, ...), depending on the value of :obj:`transpose`.
 
-        The output ``transformed_points`` will have shape (..., output_dim) if ``transpose`` is False, or (output_dim, ...) if ``transpose`` is True.
+        The output :obj:`transformed_points` will have shape (..., output_dim) if :obj:`transpose` is :obj:`False`, or (output_dim, ...) if :obj:`transpose` is :obj:`True`.
 
-        .. warning::
-
-            The points are converting to float before applying the transformation.
-            See :class:`pycvcam.core.Package` for more details on the default data types used in the package.
+        .. note::
+        
+            The :obj:`points`  is converted to a numpy array of ``dtype=numpy.float64``.
 
         The method also computes 2 Jacobian matrices if requested:
 
-        - ``dx``: Jacobian of the transformed points with respect to the input points.
-        - ``dp``: Jacobian of the transformed points with respect to the parameters of the transformation.
+        - :obj:`dx`: Jacobian of the transformed points with respect to the input points.
+        - :obj:`dp`: Jacobian of the transformed points with respect to the parameters of the transformation.
 
         The jacobian matrice with respect to the input points is a (..., output_dim, input_dim) matrix where:
 
@@ -558,7 +585,7 @@ class Transform(ABC):
             jacobian_dx[..., 1, 1]  # ∂Y_o/∂Y_i
             ...
 
-        The Jacobian matrice with respect to the parameters is a (..., output_dim, Nparams) matrix where:
+        The Jacobian matrice with respect to the parameters is a (..., output_dim, n_params) matrix where:
 
         .. code-block:: python
 
@@ -570,54 +597,54 @@ class Transform(ABC):
             jacobian_dp[..., 1, 1]  # ∂Y_o/∂λ_2
             ...
 
-        The Jacobian matrices are computed only if ``dx`` or ``dp`` are set to True, respectively.
+        The Jacobian matrices are computed only if :obj:`dx` or :obj:`dp` are set to True, respectively.
 
-        The output will be a `TransformResult` object containing the transformed points and the Jacobian matrices if requested.
+        The output will be a :class:`TransformResult` object containing the transformed points and the Jacobian matrices if requested.
 
         .. note::
 
-            The _skip parameter is used to skip the checks for the transformation parameters and assume the points are given in the (Npoints, input_dim) float format.
+            The :obj:`_skip` parameter is used to skip the checks for the transformation parameters and assume the points are given in the (n_points, input_dim) float format.
             Please use this parameter with caution, as it may lead to unexpected results if the transformation parameters are not set correctly.
         
         Parameters
         ----------
-        points : numpy.ndarray
-            The input points to be transformed. Shape (..., input_dim) (or (input_dim, ...) if `transpose` is True).
+        points : :class:`numpy.ndarray`
+            The input points to be transformed. Shape (..., input_dim) (or (input_dim, ...) if :obj:`transpose` is :obj:`True`).
 
-        transpose : bool, optional
-            If True, the input points are transposed to shape (input_dim, ...). Default is False.
+        transpose : :class:`bool`, optional
+            If :obj:`True`, the input points are transposed to shape (input_dim, ...). Default is :obj:`False`.
 
-        dx : bool, optional
-            If True, compute the Jacobian of the transformed points with respect to the input points. Default is False.
+        dx : :class:`bool`, optional
+            If :obj:`True`, compute the Jacobian of the transformed points with respect to the input points. Default is :obj:`False`.
 
-        dp : bool, optional
-            If True, compute the Jacobian of the transformed points with respect to the parameters of the transformation. Default is False.
+        dp : :class:`bool`, optional
+            If :obj:`True`, compute the Jacobian of the transformed points with respect to the parameters of the transformation. Default is :obj:`False`.
 
-        _skip : bool, optional
-            [INTERNAL USE], If True, skip the checks for the transformation parameters and assume the points are given in the (Npoints, input_dim) float format.
-            `transpose` is ignored if this parameter is set to True.
+        _skip : :class:`bool`, optional
+            [INTERNAL USE], If :obj:`True`, skip the checks for the transformation parameters and assume the points are given in the (n_points, input_dim) float format.
+            :obj:`transpose` is ignored if this parameter is set to :obj:`True`.
 
         **kwargs
             Additional keyword arguments for the transformation.
 
         Returns
         -------
-        TransformResult
+        :class:`TransformResult`
             An object containing the transformed points and the Jacobian matrices if requested.
 
             
         Developer Notes
         ----------------
-        The subclasses must implement the `_transform` method to apply the transformation to the input points.
+        The subclasses must implement the ``_transform`` method to apply the transformation to the input points.
         
-        The `_transform` method should:
+        The ``_transform`` method should:
 
-        - take the input points as a numpy array of shape (Npoints, input_dim)
+        - take the input points as a numpy array of shape (n_points, input_dim)
         - return 3 numpy arrays:
 
-            - `transformed_points`: The transformed points of shape (Npoints, output_dim).
-            - `jacobian_dx`: The Jacobian matrix with respect to the input points of shape (Npoints, output_dim, input_dim) if `dx` is True, otherwise None.
-            - `jacobian_dp`: The Jacobian matrix with respect to the parameters of the transformation of shape (Npoints, output_dim, Nparams) if `dp` is True, otherwise None.
+            - ``transformed_points``: The transformed points of shape (n_points, output_dim).
+            - ``jacobian_dx``: The Jacobian matrix with respect to the input points of shape (n_points, output_dim, input_dim) if ``dx`` is True, otherwise None.
+            - ``jacobian_dp``: The Jacobian matrix with respect to the parameters of the transformation of shape (n_points, output_dim, n_params) if ``dp`` is True, otherwise None.
 
         """
         if not _skip:
@@ -634,7 +661,7 @@ class Transform(ABC):
                 raise ValueError("Transformation parameters are not set. Please set the parameters before transforming points.")
         
             # Convert input points to float
-            points = numpy.asarray(points, dtype=Package.get_float_dtype())
+            points = numpy.asarray(points, dtype=numpy.float64)
 
             # Check the shape of the input points
             if points.ndim < 2:
@@ -661,13 +688,13 @@ class Transform(ABC):
             # Reshape the transformed points to the original shape
             transformed_points = transformed_points.reshape(*shape[:-1], self.output_dim)  # (Npoints, output_dim) -> (..., output_dim)
             jacobian_dx = jacobian_dx.reshape(*shape[:-1], self.output_dim, self.input_dim) if jacobian_dx is not None else None  # (Npoints, output_dim, input_dim) -> (..., output_dim, input_dim)
-            jacobian_dp = jacobian_dp.reshape(*shape[:-1], self.output_dim, self.Nparams) if jacobian_dp is not None else None # (Npoints, output_dim, Nparams) -> (..., output_dim, Nparams)
+            jacobian_dp = jacobian_dp.reshape(*shape[:-1], self.output_dim, self.n_params) if jacobian_dp is not None else None # (Npoints, output_dim, n_params) -> (..., output_dim, n_params)
 
             # Transpose the transformed points if requested
             if transpose:
                 transformed_points = numpy.moveaxis(transformed_points, -1, 0) # (..., output_dim) -> (output_dim, ...)
                 jacobian_dx = numpy.moveaxis(jacobian_dx, -2, 0) if jacobian_dx is not None else None # (..., output_dim, input_dim) -> (output_dim, ..., input_dim)
-                jacobian_dp = numpy.moveaxis(jacobian_dp, -2, 0) if jacobian_dp is not None else None # (..., output_dim, Nparams) -> (output_dim, ..., Nparams)
+                jacobian_dp = numpy.moveaxis(jacobian_dp, -2, 0) if jacobian_dp is not None else None # (..., output_dim, n_params) -> (output_dim, ..., n_params)
 
         # Return the result as a TransformResult object
         return self._return_transform_result(self.result_class(
@@ -689,19 +716,20 @@ class Transform(ABC):
         **kwargs
         ) -> numpy.ndarray:
         r"""
-        The given points ``points`` are assumed to be with shape (..., output_dim) or (output_dim, ...), depending on the value of ``transpose``.
+        Apply the inverse transformation to the given points using the transformation from :math:`\mathbb{R}^{\text{output\_dim}}` to :math:`\mathbb{R}^{\text{input\_dim}}`.
+        
+        The given points :obj:`points` are assumed to be with shape (..., output_dim) or (output_dim, ...), depending on the value of :obj:`transpose`.
 
-        The output ``transformed_points`` will have shape (..., input_dim) if ``transpose`` is False, or (input_dim, ...) if ``transpose`` is True.
+        The output :obj:`transformed_points` will have shape (..., input_dim) if :obj:`transpose` is :obj:`False`, or (input_dim, ...) if :obj:`transpose` is :obj:`True`.
 
-        .. warning::
-
-            The points are converting to float before applying the inverse transformation.
-            See :class:`pycvcam.core.Package` for more details on the default data types used in the package.
+        .. note::
+        
+            The :obj:`points`  is converted to a numpy array of ``dtype=numpy.float64``.
 
         The method also computes 2 Jacobian matrices if requested:
 
-        - ``dx``: Jacobian of the transformed points with respect to the input points.
-        - ``dp``: Jacobian of the transformed points with respect to the parameters of the transformation.
+        - :obj:`dx`: Jacobian of the transformed points with respect to the input points.
+        - :obj:`dp`: Jacobian of the transformed points with respect to the parameters of the transformation.
 
         The jacobian matrice with respect to the input points is a (..., input_dim, output_dim) matrix where:
 
@@ -715,7 +743,7 @@ class Transform(ABC):
             jacobian_dx[..., 1, 1]  # ∂Y_i/∂Y_o
             ...
 
-        The Jacobian matrice with respect to the parameters is a (..., input_dim, Nparams) matrix where:
+        The Jacobian matrice with respect to the parameters is a (..., input_dim, n_params) matrix where:
 
         .. code-block:: python
 
@@ -727,39 +755,39 @@ class Transform(ABC):
             jacobian_dp[..., 1, 1]  # ∂Y_i/∂λ_2
             ...
 
-        The Jacobian matrices are computed only if ``dx`` or ``dp`` are set to True, respectively.
+        The Jacobian matrices are computed only if :obj:`dx` or :obj:`dp` are set to :obj:`True`, respectively.
 
-        The output will be a `TransformResult` object containing the transformed points and the Jacobian matrices if requested.
+        The output will be a :class:`TransformResult` object containing the transformed points and the Jacobian matrices if requested.
 
         .. note::
 
-            The _skip parameter is used to skip the checks for the transformation parameters and assume the points are given in the (Npoints, output_dim) float format.
+            The :obj:`_skip` parameter is used to skip the checks for the transformation parameters and assume the points are given in the (n_points, output_dim) float format.
             Please use this parameter with caution, as it may lead to unexpected results if the transformation parameters are not set correctly.
 
         Parameters
         ----------
-        points : numpy.ndarray
-            The input points to be transformed. Shape (..., output_dim) (or (output_dim, ...) if `transpose` is True).
+        points : :class:`numpy.ndarray`
+            The input points to be transformed. Shape (..., output_dim) (or (output_dim, ...) if :obj:`transpose` is :obj:`True`).
 
-        transpose : bool, optional
-            If True, the input points are transposed to shape (output_dim, ...). Default is False.
+        transpose : :class:`bool`, optional
+            If :obj:`True`, the input points are transposed to shape (output_dim, ...). Default is :obj:`False`.
 
-        dx : bool, optional
-            If True, compute the Jacobian of the transformed points with respect to the input points. Default is False.
+        dx : :class:`bool`, optional
+            If :obj:`True`, compute the Jacobian of the transformed points with respect to the input points. Default is :obj:`False`.
+            
+        dp : :class:`bool`, optional
+            If :obj:`True`, compute the Jacobian of the transformed points with respect to the parameters of the transformation. Default is :obj:`False`.
 
-        dp : bool, optional
-            If True, compute the Jacobian of the transformed points with respect to the parameters of the transformation. Default is False.
-
-        _skip : bool, optional
-            [INTERNAL USE], If True, skip the checks for the transformation parameters and assume the points are given in the (Npoints, output_dim) float format.
-            `transpose` is ignored if this parameter is set to True.
+        _skip : :class:`bool`, optional
+            [INTERNAL USE], If :obj:`True`, skip the checks for the transformation parameters and assume the points are given in the (n_points, output_dim) float format.
+            :obj:`transpose` is ignored if this parameter is set to :obj:`True`.
 
         **kwargs
             Additional keyword arguments for the transformation.
 
         Returns
         -------
-        TransformResult
+        :class:`TransformResult`
             An object containing the transformed points and the Jacobian matrices if requested.
 
             
@@ -767,14 +795,14 @@ class Transform(ABC):
         ----------------
         The subclasses must implement the `_inverse_transform` method to apply the inverse transformation to the input points.
 
-        The `_inverse_transform` method should:
+        The ``_inverse_transform`` method should:
 
-        - take the input points as a numpy array of shape (Npoints, output_dim)
+        - take the input points as a numpy array of shape (n_points, output_dim)
         - return 3 numpy arrays:
 
-            - `transformed_points`: The transformed points of shape (Npoints, input_dim).
-            - `jacobian_dx`: The Jacobian matrix with respect to the input points of shape (Npoints, input_dim, output_dim) if `dx` is True, otherwise None.
-            - `jacobian_dp`: The Jacobian matrix with respect to the parameters of the transformation of shape (Npoints, input_dim, Nparams) if `dp` is True, otherwise None.
+            - ``transformed_points``: The transformed points of shape (n_points, input_dim).
+            - ``jacobian_dx``: The Jacobian matrix with respect to the input points of shape (n_points, input_dim, output_dim) if ``dx`` is :obj:`True`, otherwise None.
+            - ``jacobian_dp``: The Jacobian matrix with respect to the parameters of the transformation of shape (n_points, input_dim, n_params) if ``dp`` is :obj:`True`, otherwise None.
         """
         if not _skip:
             # Check the boolean flags
@@ -790,7 +818,7 @@ class Transform(ABC):
                 raise ValueError("Transformation parameters are not set. Please set the parameters before transforming points.")
             
             # Convert input points to float
-            points = numpy.asarray(points, dtype=Package.get_float_dtype())
+            points = numpy.asarray(points, dtype=numpy.float64)
 
             # Check the shape of the input points
             if points.ndim < 2:
@@ -817,13 +845,13 @@ class Transform(ABC):
             # Reshape the transformed points to the original shape
             transformed_points = transformed_points.reshape(*shape[:-1], self.input_dim)  # (Npoints, input_dim) -> (..., input_dim)
             jacobian_dx = jacobian_dx.reshape(*shape[:-1], self.input_dim, self.output_dim) if jacobian_dx is not None else None  # (..., input_dim, output_dim)
-            jacobian_dp = jacobian_dp.reshape(*shape[:-1], self.input_dim, self.Nparams) if jacobian_dp is not None else None # (..., input_dim, Nparams)
+            jacobian_dp = jacobian_dp.reshape(*shape[:-1], self.input_dim, self.n_params) if jacobian_dp is not None else None # (..., input_dim, n_params)
 
             # Transpose the transformed points if requested
             if transpose:
                 transformed_points = numpy.moveaxis(transformed_points, -1, 0) # (..., input_dim) -> (input_dim, ...)
                 jacobian_dx = numpy.moveaxis(jacobian_dx, -2, 0) if jacobian_dx is not None else None # (..., input_dim, output_dim) -> (input_dim, ..., output_dim)
-                jacobian_dp = numpy.moveaxis(jacobian_dp, -2, 0) if jacobian_dp is not None else None # (..., input_dim, Nparams) -> (input_dim, ..., Nparams)
+                jacobian_dp = numpy.moveaxis(jacobian_dp, -2, 0) if jacobian_dp is not None else None # (..., input_dim, n_params) -> (input_dim, ..., n_params)
 
         # Return the result as a InverseTransformResult object
         return self._return_inverse_transform_result(self.inverse_result_class(
@@ -832,3 +860,202 @@ class Transform(ABC):
             jacobian_dp=jacobian_dp,
             transpose=transpose
         ))
+        
+        
+    # =============================================
+    # I/O Methods
+    # =============================================
+    def to_dict(self) -> Dict[str, Any]:
+        r"""
+        Serialize the transformation to a dictionary.
+        
+        Here is an example of the dictionary structure:
+        
+        .. code-block:: python
+
+            from pycvcam import Cv2Distortion
+            from pycvcam import write_transform
+
+            distortion = Cv2Distortion(...)
+            distortion.parameters = numpy.array([0.1, 0.2, 0.3, 0.01, 0.5])
+            disto_dict = distortion.to_dict()
+
+        The content of the dict will be similar to:
+
+        .. code-block:: json
+
+            {
+                "type": "Cv2Distortion",
+                "version": "1.3.0",
+                "date": "2023-01-01T00:00:00",
+                "parameters": [0.1, 0.2, 0.3, 0.01, 0.5],
+                "constants": null
+            }
+
+        .. seealso::
+
+            - :meth:`from_dict` : Method to create a Transform object from a dictionary.
+            - :meth:`to_json` : Method to write the Transform object to a JSON file.
+
+        Returns
+        -------
+        :class:`Dict[str, Any]`
+            A dictionary representation of the transformation.
+                    
+        """
+        # Create a dict containing the Transform object's data
+        transform_data = {}
+        transform_data['type'] = type(self).__name__
+        transform_data['version'] = __version__
+        transform_data['date'] = datetime.datetime.now().isoformat()
+        transform_data['parameters'] = list(self.parameters) if self.parameters is not None else None
+        transform_data['constants'] = list(self.constants) if self.constants is not None else None
+        
+        return transform_data
+    
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> Transform:
+        r"""
+        Create a Transform object from a dictionary.
+        
+        The input dictionary should have the following structure:
+        
+        .. code-block:: json
+
+            {
+                "type": "Cv2Distortion",
+                "version": "1.3.0",
+                "date": "2023-01-01T00:00:00",
+                "parameters": [0.1, 0.2, 0.3, 0.01, 0.5],
+                "constants": null
+            }
+
+        .. seealso::
+
+            - :meth:`to_dict` : Method to serialize the Transform object to a dictionary.
+            - :meth:`from_json` : Method to read a Transform object from a JSON file.
+
+        Parameters
+        ----------
+        data : :class:`Dict[str, Any]`
+            A dictionary representation of the transformation.
+
+        Returns
+        -------
+        :class:`Transform`
+            A Transform object created from the input dictionary.
+                    
+        Raises
+        -------
+        ValueError
+            If the input dictionary does not contain the required keys or has invalid values.
+        """
+        if not isinstance(data, dict):
+            raise TypeError(f"data must be a dictionary, got {type(data)}")
+        
+        if not "parameters" in data:
+            raise ValueError("Missing 'parameters' key in transform data.")
+
+        if not "constants" in data:
+            raise ValueError("Missing 'constants' key in transform data.")
+
+        if not "type" in data:
+            print("[pycvcam] Missing 'type' key in transform data. Loading without type verification.")
+
+        if "type" in data and not data["type"] == cls.__name__:
+            raise ValueError(f"Transform type mismatch, expected {cls.__name__} but got {data['type']}")
+
+        # Create an instance of the Transform subclass
+        transform = cls()
+        transform.parameters = data.get('parameters', None)
+        transform.constants = data.get('constants', None)
+        
+        return transform
+    
+    
+    def to_json(self, filepath: str) -> None:
+        r"""
+        Write the transformation to a JSON file.
+        
+        .. code-block:: python
+
+            from pycvcam import Cv2Distortion
+            from pycvcam import write_transform
+
+            distortion = Cv2Distortion(...)
+            distortion.parameters = numpy.array([0.1, 0.2, 0.3, 0.01, 0.5])
+            distortion.to_json("distortion.json")
+
+        The content of the JSON file will be similar to:
+
+        .. code-block:: json
+
+            {
+                "type": "Cv2Distortion",
+                "version": "1.3.0",
+                "date": "2023-01-01T00:00:00",
+                "parameters": [0.1, 0.2, 0.3, 0.01, 0.5],
+                "constants": null
+            }
+
+        .. seealso::
+
+            - :meth:`from_dict` : Method to create a Transform object from a dictionary.
+            - :meth:`from_json` : Method to read a Transform object from a JSON file.
+
+        Parameters
+        ----------
+        filepath : :class:`str`
+            The path to the JSON file where the transformation will be saved.
+                    
+        """
+        transform_data = self.to_dict()
+        
+        # Write the transform data to a JSON file
+        with open(filepath, 'w') as json_file:
+            json.dump(transform_data, json_file, indent=4)
+            
+    
+    @classmethod
+    def from_json(cls, filepath: str) -> Transform:
+        r"""
+        Read a Transform object from a JSON file.
+        
+        The input JSON file should have the following structure:
+        
+        .. code-block:: json
+
+            {
+                "type": "Cv2Distortion",
+                "version": "1.3.0",
+                "date": "2023-01-01T00:00:00",
+                "parameters": [0.1, 0.2, 0.3, 0.01, 0.5],
+                "constants": null
+            }
+
+        .. seealso::
+
+            - :meth:`to_dict` : Method to serialize the Transform object to a dictionary.
+            - :meth:`to_json` : Method to write the Transform object to a JSON file.
+
+        Parameters
+        ----------
+        filepath : :class:`str`
+            The path to the JSON file containing the transformation data.
+
+        Returns
+        -------
+        :class:`Transform`
+            A Transform object created from the input JSON file.
+                    
+        Raises
+        -------
+        ValueError
+            If the JSON file does not contain the required keys or has invalid values.
+        """
+        # Read the transform data from the JSON file
+        with open(filepath, 'r') as json_file:
+            transform_data = json.load(json_file)
+        
+        return cls.from_dict(transform_data)

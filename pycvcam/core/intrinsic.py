@@ -19,6 +19,7 @@ from .transform import Transform, TransformResult
 
 class Intrinsic(Transform):
     r"""
+    
     .. note::
 
         This class represents the intrinsic transformation, which is the last step of the process from the ``world_points`` to the ``image_points``.
@@ -50,8 +51,9 @@ class Intrinsic(Transform):
         
         Returns
         -------
-        List[str]
+        :class:`List[str]`
             A list of aliases for the transformed points.
+            
         """
         return ["image_points", "x_i"]
     
@@ -63,8 +65,9 @@ class Intrinsic(Transform):
 
         Returns
         -------
-        List[str]
+        :class:`List[str]`
             A list of aliases for the inverse transformed points.
+            
         """
         return ["distorted_points", "x_d"]
 
@@ -83,39 +86,48 @@ class Intrinsic(Transform):
         .. seealso::
 
             - :meth:`pycvcam.core.Transform.transform` for applying the transformation to points.
+            
+        .. note::
+        
+            The :obj:`distorted_points`  is converted to a numpy array of ``dtype=numpy.float64``.
 
+        Parameters
+        ----------
+        distorted_points : :class:`numpy.ndarray`
+            The distorted points to be transformed. Shape (..., 2).
+
+        transpose : :class:`bool`, optional
+            If :obj:`True`, the input points are assumed to have shape (2, ...) instead of (..., 2) and the output points will have shape (2, ...). Default is :obj:`False`.
+
+        dx : :class:`bool`, optional
+            If :obj:`True`, the jacobian with respect to the distorted points is computed. Default is :obj:`False`
+
+        dp : :class:`bool`, optional
+            If :obj:`True`, the jacobian with respect to the intrinsic parameters is computed. Default is :obj:`False`
+
+        Returns
+        -------
+        :class:`TransformResult`
+            The result of the transformation, which includes the ``image_points`` and the Jacobian matrices if available.
+            
+        
+        Examples
+        --------
+        
         .. code-block:: python
 
             intrinsic = ... # An instance of a subclass of Intrinsic
 
             import numpy
 
-            distorted_points = numpy.array([[0.0, 0.0], [1.0, 1.0], [2.0, 2.0]]) # shape (Npoints, 2)
+            distorted_points = numpy.array([[0.0, 0.0], [1.0, 1.0], [2.0, 2.0]]) # shape (n_points, 2)
             result = intrinsic.scale(distorted_points)
-            image_points = result.image_points  # shape (Npoints, 2)
+            image_points = result.image_points  # shape (n_points, 2)
 
             # SAME AS:
             result = intrinsic.transform(distorted_points)
-            image_points = result.transformed_points  # shape (Npoints, 2)
-
-        Parameters
-        ----------
-        distorted_points : numpy.ndarray
-            The distorted points to be transformed. Shape (..., 2).
-
-        transpose : bool, optional
-            If True, the input points are assumed to have shape (2, ...) instead of (..., 2) and the output points will have shape (2, ...). Default is False.
-
-        dx : bool, optional
-            If True, the jacobian with respect to the distorted points is computed. Default is False
-
-        dp : bool, optional
-            If True, the jacobian with respect to the intrinsic parameters is computed. Default is False
-
-        Returns
-        -------
-        TransformResult
-            The result of the transformation, which includes the ``image_points`` and the Jacobian matrices if available.
+            image_points = result.transformed_points  # shape (n_points, 2)
+            
         """
         return self.transform(distorted_points, transpose=transpose, dx=dx, dp=dp, **kwargs)
 
@@ -135,38 +147,46 @@ class Intrinsic(Transform):
 
             - :meth:`pycvcam.core.Transform.inverse_transform` for applying the inverse transformation to points.
 
+        .. note::
+        
+            The :obj:`image_points`  is converted to a numpy array of ``dtype=numpy.float64``.
+
+        Parameters
+        ----------
+        image_points : :class:`numpy.ndarray`
+            The image points to be transformed. Shape (..., 2).
+
+        transpose : :class:`bool`, optional
+            If :obj:`True`, the input points are assumed to have shape (2, ...) instead of (..., 2) and the output points will have shape (2, ...). Default is :obj:`False`.
+
+        dx : :class:`bool`, optional
+            If :obj:`True`, the jacobian with respect to the image points is computed. Default is :obj:`False`
+
+        dp : :class:`bool`, optional
+            If :obj:`True`, the jacobian with respect to the intrinsic parameters is computed. Default is :obj:`False`
+
+        Returns
+        -------
+        :class:`TransformResult`
+            The result of the inverse transformation, which includes the ``distorted_points`` and the Jacobian matrices if available.
+        
+            
+        Examples
+        --------
+        
         .. code-block:: python
 
             intrinsic = ... # An instance of a subclass of Intrinsic
 
             import numpy
 
-            image_points = numpy.array([[3.0, 3.0], [4.0, 4.0], [5.0, 5.0]]) # shape (Npoints, 2)
+            image_points = numpy.array([[3.0, 3.0], [4.0, 4.0], [5.0, 5.0]]) # shape (n_points, 2)
             result = intrinsic.unscale(image_points)
-            distorted_points = result.distorted_points  # shape (Npoints, 2)
+            distorted_points = result.distorted_points  # shape (n_points, 2)
 
             # SAME AS:
             result = intrinsic.inverse_transform(image_points)
-            distorted_points = result.transformed_points  # shape (Npoints, 2)
-
-        Parameters
-        ----------
-        image_points : numpy.ndarray
-            The image points to be transformed. Shape (..., 2).
-
-        transpose : bool, optional
-            If True, the input points are assumed to have shape (2, ...) instead of (..., 2) and the output points will have shape (2, ...). Default is False.
-
-        dx : bool, optional
-            If True, the jacobian with respect to the image points is computed. Default is False
-
-        dp : bool, optional
-            If True, the jacobian with respect to the intrinsic parameters is computed. Default is False
-
-        Returns
-        -------
-        TransformResult
-            The result of the inverse transformation, which includes the ``distorted_points`` and the Jacobian matrices if available.
+            distorted_points = result.transformed_points  # shape (n_points, 2)       
 
         """
         return self.inverse_transform(image_points, transpose=transpose, dx=dx, dp=dp, **kwargs)

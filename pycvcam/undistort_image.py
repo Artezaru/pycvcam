@@ -19,7 +19,6 @@ import scipy
 
 from .core.distortion import Distortion
 from .core.intrinsic import Intrinsic
-from .core.package import Package
 
 from .distortion_objects.no_distortion import NoDistortion
 from .intrinsic_objects.no_intrinsic import NoIntrinsic
@@ -181,21 +180,21 @@ def undistort_image(
     
     # Construct the pixel points in the image coordinate system
     height, width = src.shape[:2]
-    points = numpy.indices((height, width), dtype=Package.get_float_dtype()) # shape (2, H, W)
-    points = points.reshape(2, -1).T  # shape (2, H, W) [2, Y, X] -> shape (Npoints, 2) [Y, X]
-    points = points[:, [1, 0]]  # Switch to [X, Y] format, shape (Npoints, 2) [Y, X] -> shape (Npoints, 2) [X, Y]
+    points = numpy.indices((height, width), dtype=numpy.float64) # shape (2, H, W)
+    points = points.reshape(2, -1).T  # shape (2, H, W) [2, Y, X] -> shape (n_points, 2) [Y, X]
+    points = points[:, [1, 0]]  # Switch to [X, Y] format, shape (n_points, 2) [Y, X] -> shape (n_points, 2) [X, Y]
 
     # Distort the pixel points using the distortion model
     if not isinstance(intrinsic, NoIntrinsic):
-        points, _, _ = intrinsic._inverse_transform(points, dx=False, dp=False) # shape (Npoints, 2) [X, Y] -> shape (Npoints, 2) [X/Z, Y/Z]
+        points, _, _ = intrinsic._inverse_transform(points, dx=False, dp=False) # shape (n_points, 2) [X, Y] -> shape (n_points, 2) [X/Z, Y/Z]
     if not isinstance(distortion, NoDistortion):
-        points, _, _ = distortion._transform(points, dx=False, dp=False, **kwargs) # shape (Npoints, 2) [X/Z, Y/Z] -> shape (Npoints, 2) [X'/Z', Y'/Z']
+        points, _, _ = distortion._transform(points, dx=False, dp=False, **kwargs) # shape (n_points, 2) [X/Z, Y/Z] -> shape (n_points, 2) [X'/Z', Y'/Z']
     if not isinstance(intrinsic, NoIntrinsic):
-        points, _, _ = intrinsic._transform(points, dx=False, dp=False) # shape (Npoints, 2) [X'/Z', Y'/Z'] -> shape (Npoints, 2) [X', Y']
+        points, _, _ = intrinsic._transform(points, dx=False, dp=False) # shape (n_points, 2) [X'/Z', Y'/Z'] -> shape (n_points, 2) [X', Y']
 
     # Reshape the distorted image points for cv2.remap
-    points = points[:, [1, 0]]  # Switch to [Y, X] format, shape (Npoints, 2) [X', Y'] -> shape (Npoints, 2) [Y', X']
-    points = points.T.reshape(2, height, width) # shape (Npoints, 2) [Y', X'] -> shape (2, H, W) [Y', X']
+    points = points[:, [1, 0]]  # Switch to [Y, X] format, shape (n_points, 2) [X', Y'] -> shape (n_points, 2) [Y', X']
+    points = points.T.reshape(2, height, width) # shape (n_points, 2) [Y', X'] -> shape (2, H, W) [Y', X']
 
     if use_remap:
         # Create the map for cv2.remap
@@ -211,10 +210,10 @@ def undistort_image(
 
     elif use_bivariate_spline:
         # Create the values and the image (H, W, 1 * [C] * [D])
-        values = src.reshape(height, width, -1).astype(Package.get_float_dtype()) # shape (H, W, 1 * [C] * [D])
+        values = src.reshape(height, width, -1).astype(numpy.float64) # shape (H, W, 1 * [C] * [D])
 
         # Initialize the distorted image
-        undistorted_image = numpy.zeros_like(values, dtype=Package.get_float_dtype()) # shape (H, W, 1 * [C] * [D])
+        undistorted_image = numpy.zeros_like(values, dtype=numpy.float64) # shape (H, W, 1 * [C] * [D])
 
         # For all image data dimensions, interpolate the undistorted pixel points in the src image
         for i in range(values.shape[-1]):

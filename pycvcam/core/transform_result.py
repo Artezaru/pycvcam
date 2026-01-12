@@ -27,40 +27,40 @@ class TransformResult:
 
         - :class:`pycvcam.core.Transform` for the base class of all transformations.
         - :meth:`pycvcam.core.Transform.transform` for applying the transformation to points.
-        - :meth:`pycvcam.core.Transform.inverse_transform` for applying the inverse transformation to points (`output_dim` and `input_dim` are swapped).
+        - :meth:`pycvcam.core.Transform.inverse_transform` for applying the inverse transformation to points (``output_dim`` and ``input_dim`` are swapped).
 
-    For a transformation from :math:`\mathbb{R}^{input\_dim}` to :math:`\mathbb{R}^{output\_dim}`, the input points are assumed to have shape (..., input_dim) and the output points will have shape (..., output_dim).
+    For a transformation from :math:`\mathbb{R}^{\text{input\_dim}}` to :math:`\mathbb{R}^{\text{output\_dim}}`, the input points are assumed to have shape (..., input_dim) and the output points will have shape (..., output_dim).
     
     The Jacobian matrices are computed with respect to the input points and the parameters of the transformation:
 
     - The Jacobian with respect to the input points has shape (..., output_dim, input_dim).
-    - The Jacobian with respect to the parameters has shape (..., output_dim, Nparams), where Nparams is the number of parameters of the transformation.
+    - The Jacobian with respect to the parameters has shape (..., output_dim, n_params), where n_params is the number of parameters of the transformation.
 
     .. note::
 
-        If ``transpose`` is set to True during the transformation, the output points will have shape (output_dim, ...) instead of (..., output_dim), same for the Jacobian matrices (ie. shape (output_dim, ..., input_dim) and (output_dim, ..., Nparams) respectively).
-
+        If ``transpose`` is set to True during the transformation, the output points will have shape (output_dim, ...) instead of (..., output_dim), same for the Jacobian matrices (ie. shape (output_dim, ..., input_dim) and (output_dim, ..., n_params) respectively).
+        
     Attributes
     ----------
-    transformed_points : numpy.ndarray
+    transformed_points : :class:`clnumpy.ndarray`
         The transformed points after applying the transformation.
         Shape (..., output_dim).
 
-    jacobian_dx : Optional[numpy.ndarray]
+    jacobian_dx : Optional[:class:`numpy.ndarray`]
         The Jacobian matrix with respect to the input points.
         Shape (..., output_dim, input_dim).
 
-    jacobian_dp : Optional[numpy.ndarray]
+    jacobian_dp : Optional[:class:`numpy.ndarray`]
         The Jacobian matrix with respect to the parameters of the transformation.
-        Shape (..., output_dim, Nparams).
+        Shape (..., output_dim, n_params).
 
-    transpose : bool
-        If True, the output points and Jacobian matrices will have shape (output_dim, ...) instead of (..., output_dim). True if set during the transformation, otherwise False.
+    transpose : :class:`bool`
+        If :obj:`True`, the output points and Jacobian matrices will have shape (output_dim, ...) instead of (..., output_dim). :obj:`True` if set during the transformation, otherwise :obj:`False`.
 
         
     Jacobians Short-hand Notations
     -------------------------------
-    Short-hand notations for the Jacobian matrices can be added to the `TransformResult` class using the `add_jacobian` method. This allows adding custom views of the ``jacobian_dp`` matrix with respect to the parameters of the transformation.
+    Short-hand notations for the Jacobian matrices can be added to the :class:`TransformResult` class using the :meth:`add_jacobian` method. This allows adding custom views of the ``jacobian_dp`` matrix with respect to the parameters of the transformation.
 
     .. code-block:: python
 
@@ -72,7 +72,7 @@ class TransformResult:
 
     Aliases for Transformed Points
     -------------------------------
-    Aliases can be added to the `TransformResult` class to provide more convenient access to the transformed points, depending on the context of the transformation, via the `add_alias` method.
+    Aliases can be added to the :class:`TransformResult` class to provide more convenient access to the transformed points, depending on the context of the transformation, via the :meth:`add_alias` method.
 
     .. code-block:: python
 
@@ -91,23 +91,23 @@ class TransformResult:
 
     def add_jacobian(self, name: str, start: int, end: int, doc: Optional[str] = None) -> None:
         r"""
-        Add a custom view of the `jacobian_dp` matrix to the `TransformResult` object.
+        Add a custom view of the ``jacobian_dp`` matrix to the :class:`TransformResult` object.
 
-        This method allows to add custom views of the `jacobian_dp` matrix with respect to the parameters of the transformation.
-        The custom Jacobian can be accessed using the `name` attribute.
+        This method allows to add custom views of the ``jacobian_dp`` matrix with respect to the parameters of the transformation.
+        The custom Jacobian can be accessed using the :obj:`name` attribute.
 
         Parameters
         ----------
-        name : str
+        name : :class:`str`
             The name of the custom Jacobian view.
         
-        start : int
+        start : :class:`int`
             The starting index of the parameters to include in the custom Jacobian view.
         
-        end : int
+        end : :class:`int`
             The ending index of the parameters to include in the custom Jacobian view.
         
-        doc : Optional[str], optional
+        doc : Optional[:class:`str`], optional
             A documentation string for the custom Jacobian view. Default is None.
         """
         if not isinstance(name, str):
@@ -130,13 +130,13 @@ class TransformResult:
 
     def add_alias(self, name: str) -> None:
         r"""
-        Add an alias for the transformed points in the `TransformResult` object.
+        Add an alias for the transformed points in the :class:`TransformResult` object.
 
         This method allows to add an alias for the transformed points, which can be used to access the transformed points using a more convenient name.
 
         Parameters
         ----------
-        name : str
+        name : :class:`str`
             The name of the alias to add.
         """
         if not isinstance(name, str):
@@ -169,13 +169,13 @@ class TransformResult:
         r"""
         Print the descriptions of the properties and custom Jacobian views.
 
-        This method prints the names and documentation strings of the custom Jacobian views added to the `TransformResult` object.
+        This method prints the names and documentation strings of the custom Jacobian views added to the :class:`TransformResult` object.
         """
         print("transformed_points: The transformed points after applying the transformation with shape (..., output_dim)")
         for alias in self._custom_aliases:
             print(f"{alias}: Alias for transformed_points, same shape (..., output_dim)")
         print("jacobian_dx: The Jacobian matrix with respect to the input points with shape (..., output_dim, input_dim) [or None if not computed]")
-        print("jacobian_dp: The Jacobian matrix with respect to the parameters of the transformation with shape (..., output_dim, Nparams) [or None if not computed]")
+        print("jacobian_dp: The Jacobian matrix with respect to the parameters of the transformation with shape (..., output_dim, n_params) [or None if not computed]")
         for name, (start, end, doc) in self._custom_jacobians.items():
             print(f"jacobian_{name}: {doc if doc is not None else 'No description provided'} with shape (..., output_dim, {end - start}) [or None if not computed], view of jacobian_dp[..., {start}:{end}]")
 

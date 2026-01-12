@@ -46,7 +46,7 @@ class Distortion(Transform):
         
         Returns
         -------
-        List[str]
+        :class:`List[str]`
             A list of aliases for the transformed points.
         """
         return ["distorted_points", "x_d"]
@@ -59,7 +59,7 @@ class Distortion(Transform):
 
         Returns
         -------
-        List[str]
+        :class:`List[str]`
             A list of aliases for the inverse transformed points.
         """
         return ["normalized_points", "x_n"]
@@ -80,38 +80,47 @@ class Distortion(Transform):
 
             - :meth:`pycvcam.core.Transform.transform` for applying the transformation to points.
 
+        .. note::
+        
+            The :obj:`normalized_points`  is converted to a numpy array of ``dtype=numpy.float64``.
+            
+        Parameters
+        ----------
+        normalized_points : :class:`numpy.ndarray`
+            The normalized points to be transformed. Shape (..., 2).
+
+        transpose : :class:`bool`, optional
+            If :obj:`True`, the input points are assumed to have shape (2, ...) instead of (..., 2) and the output points will have shape (2, ...). Default is :obj:`False`.
+
+        dx : :class:`bool`, optional
+            If :obj:`True`, the jacobian with respect to the normalized points is computed. Default is :obj:`False`
+
+        dp : :class:`bool`, optional
+            If :obj:`True`, the jacobian with respect to the distortion parameters is computed. Default is :obj:`False`
+
+        Returns
+        -------
+        :class:`TransformResult`
+            The result of the transformation, which includes the ``distorted_points`` and the Jacobian matrices if available.
+            
+            
+        Examples
+        --------
+        
         .. code-block:: python
 
             distortion = ... # An instance of a subclass of Distortion
 
             import numpy
 
-            normalized_points = numpy.array([[0.0, 0.0], [1.0, 1.0], [2.0, 2.0]]) # shape (Npoints, 2)
+            normalized_points = numpy.array([[0.0, 0.0], [1.0, 1.0], [2.0, 2.0]]) # shape (n_points, 2)
             result = distortion.distort(normalized_points)
-            distorted_points = result.distorted_points  # shape (Npoints, 2)
+            distorted_points = result.distorted_points  # shape (n_points, 2)
 
             # SAME AS:
-            result = distortion.transform(distorted_points)
-            distorted_points = result.transformed_points  # shape (Npoints, 2)
-
-        Parameters
-        ----------
-        normalized_points : numpy.ndarray
-            The normalized points to be transformed. Shape (..., 2).
-
-        transpose : bool, optional
-            If True, the input points are assumed to have shape (2, ...) instead of (..., 2) and the output points will have shape (2, ...). Default is False.
-
-        dx : bool, optional
-            If True, the jacobian with respect to the normalized points is computed. Default is False
-
-        dp : bool, optional
-            If True, the jacobian with respect to the distortion parameters is computed. Default is False
-
-        Returns
-        -------
-        TransformResult
-            The result of the transformation, which includes the ``distorted_points`` and the Jacobian matrices if available.
+            result = distortion.transform(normalized_points)
+            distorted_points = result.transformed_points  # shape (n_points, 2)
+        
         """
         return self.transform(normalized_points, transpose=transpose, dx=dx, dp=dp, **kwargs)
 
@@ -131,37 +140,46 @@ class Distortion(Transform):
 
             - :meth:`pycvcam.core.Transform.inverse_transform` for applying the inverse transformation to points.
 
+        .. note::
+        
+            The :obj:`distorted_points`  is converted to a numpy array of ``dtype=numpy.float64``.
+
+        Parameters
+        ----------
+        distorted_points : :class:`numpy.ndarray`
+            The distorted points to be transformed. Shape (..., 2).
+
+        transpose : :class:`bool`, optional
+            If True, the input points are assumed to have shape (2, ...) instead of (..., 2) and the output points will have shape (2, ...). Default is False.
+
+        dx : :class:`bool`, optional
+            If True, the jacobian with respect to the distorted points is computed. Default is False.
+
+        dp : :class:`bool`, optional
+            If True, the jacobian with respect to the distortion parameters is computed. Default is False
+
+        Returns
+        -------
+        :class:`TransformResult`
+            The result of the inverse transformation, which includes the ``normalized_points`` and the Jacobian matrices if available.
+            
+            
+        Examples
+        --------
+        
         .. code-block:: python
 
             distortion = ... # An instance of a subclass of Distortion
 
             import numpy
 
-            distorted_points = numpy.array([[0.0, 0.0], [1.0, 1.0], [2.0, 2.0]]) # shape (Npoints, 2)
+            distorted_points = numpy.array([[0.0, 0.0], [1.0, 1.0], [2.0, 2.0]]) # shape (n_points, 2)
             result = distortion.undistort(distorted_points)
-            normalized_points = result.normalized_points  # shape (Npoints, 2)
+            normalized_points = result.normalized_points  # shape (n_points, 2)
 
             # SAME AS:
             result = distortion.inverse_transform(distorted_points)
-            normalized_points = result.transformed_points  # shape (Npoints, 2)
+            normalized_points = result.transformed_points  # shape (n_points, 2)
 
-        Parameters
-        ----------
-        distorted_points : numpy.ndarray
-            The distorted points to be transformed. Shape (..., 2).
-
-        transpose : bool, optional
-            If True, the input points are assumed to have shape (2, ...) instead of (..., 2) and the output points will have shape (2, ...). Default is False.
-
-        dx : bool, optional
-            If True, the jacobian with respect to the distorted points is computed. Default is False
-
-        dp : bool, optional
-            If True, the jacobian with respect to the distortion parameters is computed. Default is False
-
-        Returns
-        -------
-        TransformResult
-            The result of the inverse transformation, which includes the ``normalized_points`` and the Jacobian matrices if available.
         """
         return self.inverse_transform(distorted_points, transpose=transpose, dx=dx, dp=dp, **kwargs)

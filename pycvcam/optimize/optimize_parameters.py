@@ -19,7 +19,6 @@ from typing import Optional
 from numbers import Number
 
 from ..core.transform import Transform
-from ..core.package import Package
 
 def log_verbose(verbose_level: int, criterion: int, message: str):
     if verbose_level >= criterion:
@@ -82,7 +81,7 @@ def optimize_parameters(
 
     .. note::
 
-        The ``_skip`` parameter is used to skip the checks for the transformation parameters and assume the input and output points are given in the (Npoints, input_dim) and (Npoints, output_dim) float format, respectively.
+        The ``_skip`` parameter is used to skip the checks for the transformation parameters and assume the input and output points are given in the (n_points, input_dim) and (n_points, output_dim) float format, respectively.
         Please use this parameter with caution, as it may lead to unexpected results if the transformation parameters are not set correctly.
 
     For conditioning, the following steps are applied:
@@ -109,7 +108,7 @@ def optimize_parameters(
         The output points to be matched. Shape (..., output_dim) (or (output_dim, ...) if `transpose` is True).
 
     guess : Optional[numpy.ndarray], optional
-        The initial guess for the parameters of the transformation with shape (Nparams,). If None, the current parameters of the transformation are used (or a zero vector if the parameters are not set). Default is None.
+        The initial guess for the parameters of the transformation with shape (n_params,). If None, the current parameters of the transformation are used (or a zero vector if the parameters are not set). Default is None.
 
     transpose : bool, optional
         If True, the input and output points are transposed to shape (input_dim, ...) and (output_dim, ...), respectively. Default is False.
@@ -153,14 +152,14 @@ def optimize_parameters(
         If True, print the optimization progress and diagnostics. Default is False. This can be useful for debugging and understanding the optimization process but may slow down the optimization.
 
     _skip : bool, optional
-        If True, skip the checks for the transformation parameters and assume the input and output points are given in the (Npoints, input_dim) and (Npoints, output_dim) float format, respectively.
-        The guess must be given in the (Nparams,) float format.
+        If True, skip the checks for the transformation parameters and assume the input and output points are given in the (n_points, input_dim) and (n_points, output_dim) float format, respectively.
+        The guess must be given in the (n_params,) float format.
         `transpose` is ignored if this parameter is set to True.
 
     Returns
     -------
     numpy.ndarray
-        The optimized parameters of the transformation with shape (Nparams,).
+        The optimized parameters of the transformation with shape (n_params,).
 
     Raises
     ------
@@ -196,7 +195,7 @@ def optimize_parameters(
             guess=numpy.zeros_like(zernike_distortion.parameters),  # Initial guess for the parameters
         )
 
-        print("Optimized parameters:", optimized_parameters) # Shape (Nparams,)
+        print("Optimized parameters:", optimized_parameters) # Shape (n_params,)
 
     """
     if not isinstance(transform, Transform):
@@ -228,8 +227,8 @@ def optimize_parameters(
             raise TypeError(f"gradient_threshold must be a positive float, got {gradient_threshold}")
 
         # Convert input and output points to float
-        input_points = numpy.asarray(input_points, dtype=Package.get_float_dtype())
-        output_points = numpy.asarray(output_points, dtype=Package.get_float_dtype())
+        input_points = numpy.asarray(input_points, dtype=numpy.float64)
+        output_points = numpy.asarray(output_points, dtype=numpy.float64)
 
         # Check the shape of the input and output points
         if input_points.ndim < 2 or output_points.ndim < 2:
@@ -241,8 +240,8 @@ def optimize_parameters(
             output_points = numpy.moveaxis(output_points, 0, -1) # (output_dim, ...) -> (..., output_dim)
 
         # Flatten the input and output points to 2D for processing
-        input_points = input_points.reshape(-1, transform.input_dim)  # (..., input_dim) -> (Npoints, input_dim)
-        output_points = output_points.reshape(-1, transform.output_dim)  # (..., output_dim) -> (Npoints, output_dim)
+        input_points = input_points.reshape(-1, transform.input_dim)  # (..., input_dim) -> (n_points, input_dim)
+        output_points = output_points.reshape(-1, transform.output_dim)  # (..., output_dim) -> (n_points, output_dim)
 
         # Check the number of points
         if input_points.shape[0] != output_points.shape[0]:
@@ -259,27 +258,27 @@ def optimize_parameters(
 
         # Check the guess
         if guess is not None:
-            guess = numpy.asarray(guess, dtype=Package.get_float_dtype())
+            guess = numpy.asarray(guess, dtype=numpy.float64)
             if guess.ndim != 1:
                 raise ValueError(f"Guess must be a 1D array, got {guess.ndim} dimensions.")
-            if guess.shape[0] != transform.Nparams:
-                raise ValueError(f"Guess must have {transform.Nparams} parameters, got {guess.shape[0]} parameters.")
+            if guess.shape[0] != transform.n_params:
+                raise ValueError(f"Guess must have {transform.n_params} parameters, got {guess.shape[0]} parameters.")
         
         else:
             # Use the current parameters as the guess
-            guess = transform.parameters if transform.is_set() else numpy.zeros(transform.Nparams, dtype=Package.get_float_dtype())
+            guess = transform.parameters if transform.is_set() else numpy.zeros(transform.n_params, dtype=numpy.float64)
 
-    # Return empty arrays if Nparams is 0
-    if transform.Nparams == 0:
-        return numpy.zeros(0, dtype=Package.get_float_dtype())
+    # Return empty arrays if n_params is 0
+    if transform.n_params == 0:
+        return numpy.zeros(0, dtype=numpy.float64)
 
     # Create a perfect copy of the current class to avoid modifying the original one
     object_class = copy.deepcopy(transform)
-    Npoints = input_points.shape[0]  # Number of points in computation
+    n_points = input_points.shape[0]  # Number of points in computation
 
     # Set the parameters of the object class to the guess
     object_class.parameters = guess
-    delta_itk = numpy.zeros_like(object_class.parameters, dtype=Package.get_float_dtype())
+    delta_itk = numpy.zeros_like(object_class.parameters, dtype=numpy.float64)
     starting_time = time.perf_counter()
     R_precomputed = None
     J_precomputed = None
@@ -294,15 +293,15 @@ def optimize_parameters(
 
         # Compute the transformed points and the Jacobian with respect to the parameters
         if R_precomputed is None or J_precomputed is None:
-            transformed_points_itk, _, jacobian_dp = object_class._transform(input_points, dx=False, dp=True)  # shape (Npoints, output_dim), None, (Npoints, output_dim, Nparams)
+            transformed_points_itk, _, jacobian_dp = object_class._transform(input_points, dx=False, dp=True)  # shape (n_points, output_dim), None, (n_points, output_dim, n_params)
 
             # Check if the jacobian_dp is None
             if jacobian_dp is None:
                 raise ValueError("Jacobian with respect to the parameters is not available. Please implement the _transform method to return the Jacobian with respect to the parameters.")
 
             # Compute the operator residual
-            R = output_points - transformed_points_itk  # shape (Npoints, output_dim)
-            J = jacobian_dp  # shape (Npoints, output_dim, Nparams)
+            R = output_points - transformed_points_itk  # shape (n_points, output_dim)
+            J = jacobian_dp  # shape (n_points, output_dim, n_params)
 
         else:
             R = R_precomputed
@@ -310,7 +309,7 @@ def optimize_parameters(
         
         # Check the convergence of the optimization
         if verbose_level >= 2 or eps_threshold is not None or eps_sum_threshold is not None:
-            diff = numpy.linalg.norm(R, axis=1)  # shape (Npoints,)
+            diff = numpy.linalg.norm(R, axis=1)  # shape (n_points,)
             log_verbose(verbose_level, 2, f"Iteration {it+1} [Before updating]: |X_O - X_I| - Max difference: {numpy.nanmax(diff)}, Mean difference: {numpy.nanmean(diff)}")
 
         if eps_threshold is not None and numpy.all(diff[~numpy.isnan(diff)] < eps_threshold):
@@ -325,19 +324,19 @@ def optimize_parameters(
         mask_R = numpy.isfinite(R).all(axis=1)  # Create a mask for finite values in R
         mask_J = numpy.isfinite(J).all(axis=(1, 2))  # Create a mask for finite values in each row of J
         mask = mask_R & mask_J  # Combine the masks to filter out invalid points
-        log_verbose(verbose_level, 3, f"Iteration {it+1}: {numpy.sum(mask)} valid points out of {Npoints}.")
+        log_verbose(verbose_level, 3, f"Iteration {it+1}: {numpy.sum(mask)} valid points out of {n_points}.")
 
         # Apply the masks to R_flat and J_flat
         R = R[mask, :]  # shape (Nvalid_points, output_dim)
-        J = J[mask, :, :]  # shape (Nvalid_points, output_dim, Nparams)
+        J = J[mask, :, :]  # shape (Nvalid_points, output_dim, n_params)
 
         # Flatten the residual vector and Jacobian matrix
-        R_flat = R.flatten()  # Flatten the residual vector to shape (Npoints * output_dim,)
-        J_flat = J.reshape(Npoints * transform.output_dim, -1)  # Flatten the Jacobian to shape (Npoints * output_dim, Nparams)
+        R_flat = R.flatten()  # Flatten the residual vector to shape (n_points * output_dim,)
+        J_flat = J.reshape(n_points * transform.output_dim, -1)  # Flatten the Jacobian to shape (n_points * output_dim, n_params)
 
         # Compute the delta using the normal equations: J^T J delta = J^T R
-        JTJ = numpy.dot(J_flat.T, J_flat)  # shape (Nparams, Nparams)
-        JTR = numpy.dot(J_flat.T, R_flat)  # shape (Nparams,)
+        JTJ = numpy.dot(J_flat.T, J_flat)  # shape (n_params, n_params)
+        JTR = numpy.dot(J_flat.T, R_flat)  # shape (n_params,)
 
         # Check the gradient threshold
         if verbose_level >= 3 or gradient_threshold is not None:
@@ -350,7 +349,7 @@ def optimize_parameters(
 
         # Add regularization if requested
         if reg_factor is not None:
-            JTJ += reg_factor * numpy.eye(transform.Nparams, dtype=Package.get_float_dtype())
+            JTJ += reg_factor * numpy.eye(transform.n_params, dtype=numpy.float64)
 
         # Apply preconditioning if requested
         if precond_jacobi:
@@ -377,21 +376,21 @@ def optimize_parameters(
 
         if cond_cutoff is not None and cond_number > cond_cutoff:
             log_verbose(verbose_level, 1, f"[cond_number flag reached] : Warning Condition number {cond_number} exceeds cutoff {cond_cutoff}. Optimization may be unstable. skipping iteration {it+1} and returning NaN array.")
-            return numpy.full(transform.Nparams, numpy.nan, dtype=Package.get_float_dtype())
+            return numpy.full(transform.n_params, numpy.nan, dtype=numpy.float64)
 
         # Solve the linear system to find the delta
-        delta_itk = numpy.linalg.solve(JTJ, JTR) # shape (Nparams,)
+        delta_itk = numpy.linalg.solve(JTJ, JTR) # shape (n_params,)
         log_verbose(verbose_level, 2, f"Iteration {it+1}: Solved delta parameters:\n{delta_itk}")
 
         # Update the parameters of the object class
-        object_class.parameters = object_class.parameters + delta_itk  # shape (Nparams,)
+        object_class.parameters = object_class.parameters + delta_itk  # shape (n_params,)
         log_verbose(verbose_level, 2, f"Iteration {it+1}: Updated parameters:\n{object_class.parameters}")
 
         # If full verbose is True, compute the new residuals after updating the parameters
         if verbose_level >= 3:
-            transformed_points_itk, _, jacobian_dp = object_class._transform(input_points, dx=False, dp=True)  # shape (Npoints, output_dim), None, (Npoints, output_dim, Nparams)
-            R_precomputed = output_points - transformed_points_itk  # shape (Npoints, output_dim)
-            J_precomputed = jacobian_dp  # shape (Npoints, output_dim, Nparams)
+            transformed_points_itk, _, jacobian_dp = object_class._transform(input_points, dx=False, dp=True)  # shape (n_points, output_dim), None, (n_points, output_dim, n_params)
+            R_precomputed = output_points - transformed_points_itk  # shape (n_points, output_dim)
+            J_precomputed = jacobian_dp  # shape (n_points, output_dim, n_params)
             log_verbose(verbose_level, 3, f"Iteration {it+1} [After updating]: |X_O - X_I| - Max difference: {numpy.nanmax(R_precomputed)}, Mean difference: {numpy.nanmean(R_precomputed)}")
 
         # Check the delta_p_threshold
@@ -409,4 +408,4 @@ def optimize_parameters(
                 log_verbose(verbose_level, 1, f"[max_time flag reached] : Warning Elapsed time {elapsed_time} seconds exceeds max_time {max_time} seconds - Optimization stopped at iteration {it+1}.")
                 break
     
-    return object_class.parameters  # shape (Nparams,)
+    return object_class.parameters  # shape (n_params,)
