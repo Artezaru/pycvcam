@@ -48,3 +48,6 @@ __all__.extend([ "undistort_image", "undistort_points", "project_points", "compu
 from .read_transform import read_transform
 from .write_transform import write_transform
 __all__.extend(['read_transform', 'write_transform'])
+
+from .triangulate import triangulate
+__all__.extend(['triangulate'])
