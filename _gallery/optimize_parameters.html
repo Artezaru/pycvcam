@@ -1,0 +1,882 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Optimizing distortion parameters with least squares &#8212; pycvcam 1.5.7 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=2b2ec289"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_gallery/optimize_parameters';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Projecting 3D points to 2D image points with project_points" href="project_points.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">pycvcam 1.5.7 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../usage.html">
+    Usage
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../usage.html">
+    Usage
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="distort_image.html">Distorting an image with <code class="docutils literal notranslate"><span class="pre">distort_image</span></code> and <code class="docutils literal notranslate"><span class="pre">undistort_image</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="project_points.html">Projecting 3D points to 2D image points with <code class="docutils literal notranslate"><span class="pre">project_points</span></code></a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Optimizing distortion parameters with least squares</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../usage.html" class="nav-link">Usage</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Optimizing distortion parameters with least squares</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-docs-source-gallery-optimize-parameters-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="optimizing-distortion-parameters-with-least-squares">
+<span id="sphx-glr-gallery-optimize-parameters-py"></span><span id="sphx-glr-docs-source-gallery-optimize-parameters-py"></span><h1>Optimizing distortion parameters with least squares<a class="headerlink" href="#optimizing-distortion-parameters-with-least-squares" title="Link to this heading">#</a></h1>
+<p>This example illustrate how to use the <code class="docutils literal notranslate"><span class="pre">optimize_parameters_least_squares</span></code> function to optimize the distortion parameters of a camera model, which includes the intrinsic and distortion transformations.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">pycvcam.optimize_parameters_least_squares()</span></code> for the function to optimize distortion parameters.</p></li>
+<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">pycvcam.optimize_camera_least_squares()</span></code> for the function to optimize camera parameters (intrinsic, distortion, and extrinsic).</p></li>
+<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">pycvcam.optimize_chain_parameters_least_squares()</span></code> for the function to optimize parameters of chains of transformations.</p></li>
+</ul>
+</div>
+<section id="optimizing-parameters-to-fit-a-distortion-model-image-alignment">
+<h2>Optimizing Parameters to fit a Distortion model (Image Alignment)<a class="headerlink" href="#optimizing-parameters-to-fit-a-distortion-model-image-alignment" title="Link to this heading">#</a></h2>
+<p>In this example, we consider a random image, an intrinsic matrix and a distortion model.
+We distort the image by the distortion model and then add noise.</p>
+<p>The objective is to optimize the distortion parameters of the distortion model to
+fit the distorted image with noise.
+To do this, we will compute the flow between the both images and then optimize the
+distortion parameters to minimize the flow in the normalized image space.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
+
+<span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">36</span><span class="p">)</span>  <span class="c1"># For reproducibility</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pycvcam</span><span class="w"> </span><span class="kn">import</span> <span class="n">Cv2Distortion</span><span class="p">,</span> <span class="n">Cv2Extrinsic</span><span class="p">,</span> <span class="n">Cv2Intrinsic</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pycvcam</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pycvcam.optimize</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pycvopt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">image</span> <span class="o">=</span> <span class="n">pycvcam</span><span class="o">.</span><span class="n">get_lena_image</span><span class="p">()</span>
+<span class="n">image_height</span><span class="p">,</span> <span class="n">image_width</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Image shape:&quot;</span><span class="p">,</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">intrinsic</span> <span class="o">=</span> <span class="n">Cv2Intrinsic</span><span class="o">.</span><span class="n">from_matrix</span><span class="p">(</span>
+    <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">image_width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">image_height</span> <span class="o">/</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+<span class="n">distortion</span> <span class="o">=</span> <span class="n">Cv2Distortion</span><span class="p">(</span>
+    <span class="n">parameters</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.04</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">distorted_image</span> <span class="o">=</span> <span class="n">pycvcam</span><span class="o">.</span><span class="n">distort_image</span><span class="p">(</span>
+    <span class="n">image</span><span class="p">,</span> <span class="n">intrinsic</span><span class="p">,</span> <span class="n">distortion</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s2">&quot;spline3&quot;</span>
+<span class="p">)</span>
+<span class="n">noise_image</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">distorted_image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+<span class="n">distorted_image</span> <span class="o">=</span> <span class="n">distorted_image</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="o">+</span> <span class="n">noise_image</span>
+<span class="n">distorted_image</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">distorted_image</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">ax1</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Original Image&quot;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+<span class="n">ax2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">distorted_image</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Distorted Image with Noise&quot;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_optimize_parameters_001.png" srcset="../_images/sphx_glr_optimize_parameters_001.png" alt="Original Image, Distorted Image with Noise" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Image shape: (474, 474)
+
+(np.float64(-0.5), np.float64(473.5), np.float64(473.5), np.float64(-0.5))
+</pre></div>
+</div>
+<p>Then compute the optical flow between both images and convert it to the normalized image
+space.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">flow_x</span><span class="p">,</span> <span class="n">flow_y</span> <span class="o">=</span> <span class="n">pycvcam</span><span class="o">.</span><span class="n">compute_optical_flow</span><span class="p">(</span>
+    <span class="n">image</span><span class="p">,</span>
+    <span class="n">distorted_image</span><span class="p">,</span>
+    <span class="n">disflow_params</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;PatchSize&quot;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
+        <span class="s2">&quot;PatchStride&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">)</span>
+
+<span class="n">images_mask</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+<span class="n">border_size</span> <span class="o">=</span> <span class="mi">50</span>
+<span class="n">images_mask</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">border_size</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">images_mask</span><span class="p">[</span><span class="o">-</span><span class="n">border_size</span><span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">images_mask</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="n">border_size</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">images_mask</span><span class="p">[:,</span> <span class="o">-</span><span class="n">border_size</span><span class="p">:]</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="n">pixel_points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span>
+    <span class="p">(</span><span class="n">image_height</span><span class="p">,</span> <span class="n">image_width</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span>
+<span class="p">)</span>  <span class="c1"># shape (2, H, W)</span>
+<span class="n">pixel_points</span> <span class="o">=</span> <span class="n">pixel_points</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>  <span class="c1"># shape (H*W, 2) WARNING: [H, W -&gt; Y, X]</span>
+<span class="n">image_points</span> <span class="o">=</span> <span class="n">pixel_points</span><span class="p">[:,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>  <span class="c1"># Swap to [X, Y] format</span>
+
+<span class="n">flow</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">flow_x</span><span class="p">,</span> <span class="n">flow_y</span><span class="p">),</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># shape (H*W, 2)</span>
+<span class="n">distorted_points</span> <span class="o">=</span> <span class="n">image_points</span> <span class="o">+</span> <span class="n">flow</span>  <span class="c1"># shape (H*W, 2)</span>
+
+<span class="n">normalized_points</span> <span class="o">=</span> <span class="n">intrinsic</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">image_points</span><span class="p">)</span><span class="o">.</span><span class="n">transformed_points</span>
+<span class="n">distorted_points</span> <span class="o">=</span> <span class="n">intrinsic</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">distorted_points</span><span class="p">)</span><span class="o">.</span><span class="n">transformed_points</span>
+<span class="n">normalized_points</span> <span class="o">=</span> <span class="n">normalized_points</span><span class="p">[</span><span class="n">images_mask</span><span class="o">.</span><span class="n">flatten</span><span class="p">()]</span>
+<span class="n">distorted_points</span> <span class="o">=</span> <span class="n">distorted_points</span><span class="p">[</span><span class="n">images_mask</span><span class="o">.</span><span class="n">flatten</span><span class="p">()]</span>
+
+<span class="c1"># pycvcam.display_optical_flow(image, flow_x, flow_y)</span>
+</pre></div>
+</div>
+<p>To finish, we optimize the distortion parameters to minimize the
+flow in the normalized image space.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">initial_distortion</span> <span class="o">=</span> <span class="n">Cv2Distortion</span><span class="p">(</span><span class="n">parameters</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">))</span>
+<span class="n">parameters</span><span class="p">,</span> <span class="n">result</span> <span class="o">=</span> <span class="n">pycvopt</span><span class="o">.</span><span class="n">optimize_parameters_least_squares</span><span class="p">(</span>
+    <span class="n">initial_distortion</span><span class="p">,</span>
+    <span class="n">normalized_points</span><span class="p">,</span>
+    <span class="n">distorted_points</span><span class="p">,</span>
+    <span class="n">auto</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Set ftol, xtol and gtol to 1e-8</span>
+    <span class="n">return_result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">verbose_level</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">error</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">parameters</span> <span class="o">-</span> <span class="n">distortion</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
+<span class="n">rel_error</span> <span class="o">=</span> <span class="n">error</span> <span class="o">/</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">distortion</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Optimized parameters:&quot;</span><span class="p">,</span> <span class="n">parameters</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Optimization success:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">success</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Optimization message:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Optimization cost:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">cost</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error:&quot;</span><span class="p">,</span> <span class="n">error</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">rel_error</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>|  Iteration   |     Cost     |   Cost red   |  Step norm   |   cond(J)    |   Min cov    |   Max cov    |  Trace cov   |
+|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|
+|        0     |  +4.14e+03   |              |              |  +2.54e+02   |  +2.26e-09   |  +7.04e-07   |  +8.85e-07   |
+|        1     |  +4.93e+02   |  +3.65e+03   |  +2.85e-01   |  +2.54e+02   |  +2.68e-10   |  +8.38e-08   |  +1.05e-07   |
+|        2     |  +4.93e+02   |  +0.00e+00   |  +0.00e+00   |  +2.54e+02   |  +2.68e-10   |  +8.38e-08   |  +1.05e-07   |
+Optimized parameters: [ 2.67722230e-01 -9.68922487e-02  8.46151326e-05  5.34648033e-04
+  8.82706445e-03]
+Optimization success: True
+Optimization message: `xtol` termination condition is satisfied.
+Optimization cost: 493.14951111279834
+Error: 0.21693205796830697 (198.86%)
+</pre></div>
+</div>
+</section>
+<section id="optimizing-parameters-of-a-complete-camera-model-pnp-problem">
+<h2>Optimizing Parameters of a complete Camera Model (PnP problem)<a class="headerlink" href="#optimizing-parameters-of-a-complete-camera-model-pnp-problem" title="Link to this heading">#</a></h2>
+<p>In this example, we optimize the parameters of a complete camera model,
+which includes the intrinsic, distortion and extrinsic transformations.
+To do this, consider a PnP problem with a set of 3D points and their
+corresponding 2D projections in the image.</p>
+<p>For example, create a point cloud in a rectangle with bounds <span class="math notranslate nohighlight">\([-1, 1]\)</span> meters in the <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> directions and with a <span class="math notranslate nohighlight">\(z\)</span> component in the range <span class="math notranslate nohighlight">\([4.5, 5.5]\)</span> meters.
+Then place a camera near the origin with a small rotation and translation and project the 3D points to 2D image points using a pinhole camera model with Brown-Conrady distortion with a focal length of 1000 pixels and a principal point at (320, 240) pixels.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Define the 3D points in the world coordinate system</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>  <span class="c1"># shape (100, 1)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>  <span class="c1"># shape (100, 1)</span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">,</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>  <span class="c1"># shape (100, 1)</span>
+<span class="n">world_points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">))</span>  <span class="c1"># shape (100, 3)</span>
+
+<span class="c1"># Define the Extrinsic transformation, example rotation vector and translation vector</span>
+<span class="n">rvec</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">])</span>  <span class="c1"># small rotation</span>
+<span class="n">tvec</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.01</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.04</span><span class="p">])</span>  <span class="c1"># small translation</span>
+<span class="n">extrinsic</span> <span class="o">=</span> <span class="n">Cv2Extrinsic</span><span class="o">.</span><span class="n">from_rt</span><span class="p">(</span><span class="n">rvec</span><span class="p">,</span> <span class="n">tvec</span><span class="p">)</span>
+
+<span class="c1"># Define the Intrinsic transformation, example intrinsic camera matrix</span>
+<span class="n">K</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1000.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">320.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1000.0</span><span class="p">,</span> <span class="mf">240.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]])</span>
+<span class="n">intrinsic</span> <span class="o">=</span> <span class="n">Cv2Intrinsic</span><span class="o">.</span><span class="n">from_matrix</span><span class="p">(</span><span class="n">K</span><span class="p">)</span>
+
+<span class="c1"># Define the Distortion transformation, example Brown-Conrady 5 parameters</span>
+<span class="n">distortion</span> <span class="o">=</span> <span class="n">Cv2Distortion</span><span class="p">(</span><span class="n">parameters</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">])</span>
+
+<span class="c1"># Project the 3D points to 2D image points (without Jacobians)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">pycvcam</span><span class="o">.</span><span class="n">project_points</span><span class="p">(</span>
+    <span class="n">world_points</span><span class="p">,</span>
+    <span class="n">intrinsic</span><span class="o">=</span><span class="n">intrinsic</span><span class="p">,</span>
+    <span class="n">distortion</span><span class="o">=</span><span class="n">distortion</span><span class="p">,</span>
+    <span class="n">extrinsic</span><span class="o">=</span><span class="n">extrinsic</span><span class="p">,</span>
+<span class="p">)</span>  <span class="c1"># pycvcam.TransformResult data class</span>
+
+<span class="n">image_points</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">image_points</span>  <span class="c1"># shape (100, 2)</span>
+
+<span class="c1"># Add noise to the image points</span>
+<span class="n">noise</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">image_points</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>  <span class="c1"># shape (100, 2)</span>
+<span class="n">noisy_image_points</span> <span class="o">=</span> <span class="n">image_points</span>  <span class="c1"># + noise</span>
+
+<span class="c1"># Optimize the camera parameters to fit the noisy image points</span>
+<span class="n">initial_distortion</span> <span class="o">=</span> <span class="n">Cv2Distortion</span><span class="p">(</span><span class="n">parameters</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">))</span>
+<span class="n">initial_extrinsic</span> <span class="o">=</span> <span class="n">Cv2Extrinsic</span><span class="o">.</span><span class="n">from_rt</span><span class="p">(</span>
+    <span class="n">rvec</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span> <span class="n">tvec</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">distortion_bounds</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">]),</span>  <span class="c1"># k1, k2, p1, p2, k3 lower bounds</span>
+    <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]),</span>  <span class="c1"># k1, k2, p1, p2, k3 upper bounds</span>
+<span class="p">)</span>
+<span class="n">extrinsic_bounds</span> <span class="o">=</span> <span class="p">(</span>  <span class="c1"># rvec and tvec bounds</span>
+    <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">]),</span>  <span class="c1"># rvec and tvec lower bounds</span>
+    <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]),</span>  <span class="c1"># rvec and tvec upper bounds</span>
+<span class="p">)</span>
+
+<span class="n">optimized_intrinsic</span><span class="p">,</span> <span class="n">optimized_distortion</span><span class="p">,</span> <span class="n">optimized_extrinsic</span><span class="p">,</span> <span class="n">result</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">pycvopt</span><span class="o">.</span><span class="n">optimize_camera_least_squares</span><span class="p">(</span>
+        <span class="n">intrinsic</span><span class="p">,</span>
+        <span class="n">initial_distortion</span><span class="p">,</span>
+        <span class="n">initial_extrinsic</span><span class="p">,</span>
+        <span class="n">world_points</span><span class="p">,</span>
+        <span class="n">noisy_image_points</span><span class="p">,</span>
+        <span class="n">mask_intrinsic</span><span class="o">=</span><span class="p">[</span><span class="kc">False</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)],</span>  <span class="c1"># Do not optimize intrinsic</span>
+        <span class="n">bounds_distortion</span><span class="o">=</span><span class="n">distortion_bounds</span><span class="p">,</span>
+        <span class="n">bounds_extrinsic</span><span class="o">=</span><span class="n">extrinsic_bounds</span><span class="p">,</span>
+        <span class="n">auto</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Set ftol, xtol and gtol to 1e-8</span>
+        <span class="n">return_result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_level</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">optimized_intrinsic</span><span class="p">,</span> <span class="n">optimized_distortion</span><span class="p">,</span> <span class="n">optimized_extrinsic</span><span class="p">,</span> <span class="n">result</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">pycvopt</span><span class="o">.</span><span class="n">optimize_camera_least_squares</span><span class="p">(</span>
+        <span class="n">intrinsic</span><span class="p">,</span>
+        <span class="n">initial_distortion</span><span class="p">,</span>
+        <span class="n">initial_extrinsic</span><span class="p">,</span>
+        <span class="n">world_points</span><span class="p">,</span>
+        <span class="n">noisy_image_points</span><span class="p">,</span>
+        <span class="n">mask_intrinsic</span><span class="o">=</span><span class="p">[</span><span class="kc">False</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)],</span>  <span class="c1"># Do not optimize intrinsic</span>
+        <span class="n">bounds_distortion</span><span class="o">=</span><span class="n">distortion_bounds</span><span class="p">,</span>
+        <span class="n">bounds_extrinsic</span><span class="o">=</span><span class="n">extrinsic_bounds</span><span class="p">,</span>
+        <span class="n">auto</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Set ftol, xtol and gtol to 1e-8</span>
+        <span class="n">return_result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_level</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">error_distortion</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">optimized_distortion</span> <span class="o">-</span> <span class="n">distortion</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
+<span class="n">error_extrinsic</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">optimized_extrinsic</span> <span class="o">-</span> <span class="n">extrinsic</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
+<span class="n">rel_error_distortion</span> <span class="o">=</span> <span class="n">error_distortion</span> <span class="o">/</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">distortion</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
+<span class="n">rel_error_extrinsic</span> <span class="o">=</span> <span class="n">error_extrinsic</span> <span class="o">/</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">extrinsic</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Optimized Distortion Parameters:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">optimized_distortion</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Optimized Extrinsic Parameters:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">optimized_extrinsic</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Optimization success:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">success</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Optimization message:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Optimization cost:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">cost</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error Distortion:&quot;</span><span class="p">,</span> <span class="n">error_distortion</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">rel_error_distortion</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error Extrinsic:&quot;</span><span class="p">,</span> <span class="n">error_extrinsic</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">rel_error_extrinsic</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>   Iteration     Total nfev        Cost      Cost reduction    Step norm     Optimality
+       0              1         4.5659e+04                                    2.29e+05
+       1              2         1.0794e+03      4.46e+04       4.48e-02       2.84e+04
+       2              3         2.0223e+01      1.06e+03       6.88e-02       8.41e+02
+       3              4         3.9603e+00      1.63e+01       9.57e-02       2.99e+01
+       4              5         2.1281e-01      3.75e+00       2.59e-02       3.74e+00
+       5              6         1.0408e-02      2.02e-01       1.03e-02       2.51e-01
+       6              7         1.6104e-03      8.80e-03       4.42e-03       6.75e-03
+       7              8         4.0408e-04      1.21e-03       1.82e-03       1.35e-03
+       8              9         2.7533e-04      1.29e-04       8.03e-03       1.26e-03
+       9             10         3.2109e-05      2.43e-04       5.80e-02       3.55e-04
+      10             11         5.0014e-06      2.71e-05       4.23e-02       2.77e-05
+      11             12         7.3441e-07      4.27e-06       3.20e-02       4.29e-06
+      12             13         1.4632e-07      5.88e-07       1.10e-02       1.18e-06
+      13             14         6.6180e-08      8.01e-08       1.02e-02       1.41e-07
+      14             15         1.4013e-08      5.22e-08       2.37e-02       1.15e-07
+      15             16         3.2612e-09      1.08e-08       1.03e-02       2.11e-08
+      16             17         8.0356e-10      2.46e-09       4.76e-03       4.88e-09
+`gtol` termination condition is satisfied.
+Function evaluations 17, initial cost 4.5659e+04, final cost 8.0356e-10, first-order optimality 4.88e-09.
+|  Iteration   |     Cost     |   Cost red   |  Step norm   |   cond(J)    |   Min cov    |   Max cov    |  Trace cov   |
+|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|
+|        0     |  +4.57e+04   |              |              |  +1.07e+06   |  +1.86e-04   |  +5.04e+06   |  +5.12e+06   |
+|        1     |  +1.08e+03   |  +4.46e+04   |  +4.48e-02   |  +1.07e+06   |  +4.40e-06   |  +1.19e+05   |  +1.21e+05   |
+|        2     |  +2.02e+01   |  +1.06e+03   |  +6.88e-02   |  +1.29e+06   |  +8.20e-08   |  +3.31e+03   |  +3.36e+03   |
+|        3     |  +3.96e+00   |  +1.63e+01   |  +9.57e-02   |  +1.28e+06   |  +1.61e-08   |  +6.30e+02   |  +6.39e+02   |
+|        4     |  +2.13e-01   |  +3.75e+00   |  +2.59e-02   |  +1.28e+06   |  +8.62e-10   |  +3.39e+01   |  +3.43e+01   |
+|        5     |  +1.04e-02   |  +2.02e-01   |  +1.03e-02   |  +1.28e+06   |  +4.22e-11   |  +1.66e+00   |  +1.68e+00   |
+|        6     |  +1.61e-03   |  +8.80e-03   |  +4.42e-03   |  +1.28e+06   |  +6.53e-12   |  +2.57e-01   |  +2.61e-01   |
+|        7     |  +4.04e-04   |  +1.21e-03   |  +1.82e-03   |  +1.28e+06   |  +1.64e-12   |  +6.46e-02   |  +6.55e-02   |
+|        8     |  +2.75e-04   |  +1.29e-04   |  +8.03e-03   |  +1.28e+06   |  +1.12e-12   |  +4.40e-02   |  +4.46e-02   |
+|        9     |  +3.21e-05   |  +2.43e-04   |  +5.80e-02   |  +1.28e+06   |  +1.30e-13   |  +5.14e-03   |  +5.21e-03   |
+|       10     |  +5.00e-06   |  +2.71e-05   |  +4.23e-02   |  +1.28e+06   |  +2.03e-14   |  +8.01e-04   |  +8.11e-04   |
+|       11     |  +7.34e-07   |  +4.27e-06   |  +3.20e-02   |  +1.28e+06   |  +2.98e-15   |  +1.18e-04   |  +1.19e-04   |
+|       12     |  +1.46e-07   |  +5.88e-07   |  +1.10e-02   |  +1.28e+06   |  +5.93e-16   |  +2.34e-05   |  +2.37e-05   |
+|       13     |  +6.62e-08   |  +8.01e-08   |  +1.02e-02   |  +1.28e+06   |  +2.68e-16   |  +1.06e-05   |  +1.07e-05   |
+|       14     |  +1.40e-08   |  +5.22e-08   |  +2.37e-02   |  +1.28e+06   |  +5.68e-17   |  +2.24e-06   |  +2.27e-06   |
+|       15     |  +3.26e-09   |  +1.08e-08   |  +1.03e-02   |  +1.28e+06   |  +1.32e-17   |  +5.22e-07   |  +5.29e-07   |
+|       16     |  +8.04e-10   |  +2.46e-09   |  +4.76e-03   |  +1.28e+06   |  +3.26e-18   |  +1.29e-07   |  +1.30e-07   |
+Optimized Distortion Parameters:
+ [0.09998003 0.05055725 0.00999999 0.01000001 0.00536268]
+Optimized Extrinsic Parameters:
+ [ 0.00999999  0.02        0.03        0.01       -0.05000004  0.039999  ]
+Optimization success: True
+Optimization message: `gtol` termination condition is satisfied.
+Optimization cost: 8.035590616976464e-10
+Error Distortion: 0.004670722065141567 (4.13%)
+Error Extrinsic: 1.0057794706032908e-06 (0.00%)
+</pre></div>
+</div>
+</section>
+<section id="optimize-a-complete-camera-setup-with-chains-of-transformations">
+<h2>Optimize a complete camera setup with chains of transformations<a class="headerlink" href="#optimize-a-complete-camera-setup-with-chains-of-transformations" title="Link to this heading">#</a></h2>
+<p>Lets assume, we have camera with same intrinsic and distortion
+transformations as before but with two different extrinsic transformations
+(for example, two different poses of the camera).</p>
+<p>To optimize the parameters of this camera setup, we can use the
+<code class="docutils literal notranslate"><span class="pre">optimize_chain_parameters_least_squares</span></code> function, which allows to optimize the
+parameters of a chain of transformations.</p>
+<p>Define the first chain of transformations as :</p>
+<ul class="simple">
+<li><p>Extrinsic transformation 1 + Distortion transformation + Intrinsic transformation</p></li>
+</ul>
+<p>Define the second chain of transformations as :</p>
+<ul class="simple">
+<li><p>Extrinsic transformation 2 + Distortion transformation + Intrinsic transformation</p></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The order of the transformations in the chain is important and should be consistent
+with the order of the parameters in the optimization function.</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>  <span class="c1"># shape (100, 1)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>  <span class="c1"># shape (100, 1)</span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">,</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>  <span class="c1"># shape (100, 1)</span>
+<span class="n">world_points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">))</span>  <span class="c1"># shape (100, 3)</span>
+
+<span class="n">K</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1000.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">320.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1000.0</span><span class="p">,</span> <span class="mf">240.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]])</span>
+<span class="n">intrinsic</span> <span class="o">=</span> <span class="n">Cv2Intrinsic</span><span class="o">.</span><span class="n">from_matrix</span><span class="p">(</span><span class="n">K</span><span class="p">)</span>
+
+<span class="n">distortion</span> <span class="o">=</span> <span class="n">Cv2Distortion</span><span class="p">(</span><span class="n">parameters</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">])</span>
+
+<span class="n">rvec1</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">])</span>  <span class="c1"># small rotation</span>
+<span class="n">tvec1</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.01</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.04</span><span class="p">])</span>  <span class="c1"># small translation</span>
+<span class="n">extrinsic1</span> <span class="o">=</span> <span class="n">Cv2Extrinsic</span><span class="o">.</span><span class="n">from_rt</span><span class="p">(</span><span class="n">rvec1</span><span class="p">,</span> <span class="n">tvec1</span><span class="p">)</span>
+
+<span class="n">rvec2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.01</span><span class="p">])</span>  <span class="c1"># small rotation</span>
+<span class="n">tvec2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.03</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.01</span><span class="p">])</span>  <span class="c1"># small translation</span>
+<span class="n">extrinsic2</span> <span class="o">=</span> <span class="n">Cv2Extrinsic</span><span class="o">.</span><span class="n">from_rt</span><span class="p">(</span><span class="n">rvec2</span><span class="p">,</span> <span class="n">tvec2</span><span class="p">)</span>
+
+<span class="n">transforms</span> <span class="o">=</span> <span class="p">[</span><span class="n">extrinsic1</span><span class="p">,</span> <span class="n">extrinsic2</span><span class="p">,</span> <span class="n">distortion</span><span class="p">,</span> <span class="n">intrinsic</span><span class="p">]</span>
+<span class="n">chains</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>  <span class="c1"># Chain 1: Extrinsic 1 + Distortion + Intrinsic</span>
+    <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>  <span class="c1"># Chain 2: Extrinsic 2 + Distortion + Intrinsic</span>
+<span class="p">]</span>
+
+<span class="n">image_points_chain1</span> <span class="o">=</span> <span class="n">pycvcam</span><span class="o">.</span><span class="n">project_points</span><span class="p">(</span>
+    <span class="n">world_points</span><span class="p">,</span>
+    <span class="n">intrinsic</span><span class="o">=</span><span class="n">intrinsic</span><span class="p">,</span>
+    <span class="n">distortion</span><span class="o">=</span><span class="n">distortion</span><span class="p">,</span>
+    <span class="n">extrinsic</span><span class="o">=</span><span class="n">extrinsic1</span><span class="p">,</span>
+<span class="p">)</span><span class="o">.</span><span class="n">image_points</span>
+
+<span class="n">image_points_chain2</span> <span class="o">=</span> <span class="n">pycvcam</span><span class="o">.</span><span class="n">project_points</span><span class="p">(</span>
+    <span class="n">world_points</span><span class="p">,</span>
+    <span class="n">intrinsic</span><span class="o">=</span><span class="n">intrinsic</span><span class="p">,</span>
+    <span class="n">distortion</span><span class="o">=</span><span class="n">distortion</span><span class="p">,</span>
+    <span class="n">extrinsic</span><span class="o">=</span><span class="n">extrinsic2</span><span class="p">,</span>
+<span class="p">)</span><span class="o">.</span><span class="n">image_points</span>
+
+
+<span class="n">initial_distortion</span> <span class="o">=</span> <span class="n">Cv2Distortion</span><span class="p">(</span><span class="n">parameters</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">))</span>
+<span class="n">initial_extrinsic1</span> <span class="o">=</span> <span class="n">Cv2Extrinsic</span><span class="o">.</span><span class="n">from_rt</span><span class="p">(</span>
+    <span class="n">rvec</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span> <span class="n">tvec</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">initial_extrinsic2</span> <span class="o">=</span> <span class="n">Cv2Extrinsic</span><span class="o">.</span><span class="n">from_rt</span><span class="p">(</span>
+    <span class="n">rvec</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span> <span class="n">tvec</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">optimized_transforms</span><span class="p">,</span> <span class="n">result</span> <span class="o">=</span> <span class="n">pycvopt</span><span class="o">.</span><span class="n">optimize_chain_parameters_least_squares</span><span class="p">(</span>
+    <span class="n">transforms</span><span class="p">,</span>
+    <span class="n">chains</span><span class="p">,</span>
+    <span class="p">[</span><span class="n">world_points</span><span class="p">,</span> <span class="n">world_points</span><span class="p">],</span>
+    <span class="p">[</span><span class="n">image_points_chain1</span><span class="p">,</span> <span class="n">image_points_chain2</span><span class="p">],</span>
+    <span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)]],</span>  <span class="c1"># Do not optimize intrinsic</span>
+    <span class="n">bounds</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">extrinsic_bounds</span><span class="p">,</span>  <span class="c1"># Extrinsic 1 bounds</span>
+        <span class="n">extrinsic_bounds</span><span class="p">,</span>  <span class="c1"># Extrinsic 2 bounds</span>
+        <span class="n">distortion_bounds</span><span class="p">,</span>  <span class="c1"># Distortion bounds</span>
+        <span class="kc">None</span><span class="p">,</span>  <span class="c1"># No bounds for intrinsic</span>
+    <span class="p">],</span>
+    <span class="n">auto</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Set ftol, xtol and gtol to 1e-8</span>
+    <span class="n">return_result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">optimized_extrinsic1</span> <span class="o">=</span> <span class="n">optimized_transforms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">optimized_extrinsic2</span> <span class="o">=</span> <span class="n">optimized_transforms</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">optimized_distortion</span> <span class="o">=</span> <span class="n">optimized_transforms</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+<span class="n">error_distortion</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">optimized_distortion</span> <span class="o">-</span> <span class="n">distortion</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
+<span class="n">error_extrinsic1</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">optimized_extrinsic1</span> <span class="o">-</span> <span class="n">extrinsic1</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
+<span class="n">error_extrinsic2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">optimized_extrinsic2</span> <span class="o">-</span> <span class="n">extrinsic2</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
+<span class="n">rel_error_distortion</span> <span class="o">=</span> <span class="n">error_distortion</span> <span class="o">/</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">distortion</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
+<span class="n">rel_error_extrinsic1</span> <span class="o">=</span> <span class="n">error_extrinsic1</span> <span class="o">/</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">extrinsic1</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
+<span class="n">rel_error_extrinsic2</span> <span class="o">=</span> <span class="n">error_extrinsic2</span> <span class="o">/</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">extrinsic2</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Optimized Distortion Parameters:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">optimized_distortion</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Optimized Extrinsic 1 Parameters:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">optimized_extrinsic1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Optimized Extrinsic 2 Parameters:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">optimized_extrinsic2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Optimization success:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">success</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Optimization message:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Optimization cost:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">cost</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error Distortion:&quot;</span><span class="p">,</span> <span class="n">error_distortion</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">rel_error_distortion</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error Extrinsic 1:&quot;</span><span class="p">,</span> <span class="n">error_extrinsic1</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">rel_error_extrinsic1</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error Extrinsic 2:&quot;</span><span class="p">,</span> <span class="n">error_extrinsic2</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">rel_error_extrinsic2</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Optimized Distortion Parameters:
+ [ 0.1         0.04987834 -0.00815639  0.02820631  0.00997752]
+Optimized Extrinsic 1 Parameters:
+ [-0.00148612  0.01017054  0.01212519  0.00254562 -0.03597339  0.02406219]
+Optimized Extrinsic 2 Parameters:
+ [ 0.00800104  0.02352514  0.01351864 -0.01091058 -0.00590832  0.01031192]
+Optimization success: True
+Optimization message: `xtol` termination condition is satisfied.
+Optimization cost: 109201.87999182506
+Error Distortion: 0.025712632361914463 (22.73%)
+Error Extrinsic 1: 0.03247130212183981 (43.39%)
+Error Extrinsic 2: 0.05448242801537628 (121.83%)
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.690 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-docs-source-gallery-optimize-parameters-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/ddae46e9abcb87cfa920092cef7fd541/optimize_parameters.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">optimize_parameters.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/0ea9b31ed8ab208604d9eee8e70e937c/optimize_parameters.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">optimize_parameters.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/5ec9014da5284b7d1cf81ca33eb911ff/optimize_parameters.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">optimize_parameters.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="project_points.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Projecting 3D points to 2D image points with <code class="docutils literal notranslate"><span class="pre">project_points</span></code></p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optimizing-parameters-to-fit-a-distortion-model-image-alignment">Optimizing Parameters to fit a Distortion model (Image Alignment)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optimizing-parameters-of-a-complete-camera-model-pnp-problem">Optimizing Parameters of a complete Camera Model (PnP problem)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optimize-a-complete-camera-setup-with-chains-of-transformations">Optimize a complete camera setup with chains of transformations</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_gallery/optimize_parameters.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025-2026, Artezaru.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

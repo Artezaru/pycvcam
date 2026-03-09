@@ -1,0 +1,903 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pycvcam.optical_flow &#8212; pycvcam 1.5.7 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=2b2ec289"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pycvcam/optical_flow';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">pycvcam 1.5.7 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../usage.html">
+    Usage
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../usage.html">
+    Usage
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pycvcam.optical_flow</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for pycvcam.optical_flow</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numbers</span><span class="w"> </span><span class="kn">import</span> <span class="n">Integral</span><span class="p">,</span> <span class="n">Real</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpy.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArrayLike</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+
+
+<div class="viewcode-block" id="compute_optical_flow">
+<a class="viewcode-back" href="../../_docs/optical_flow.html#pycvcam.compute_optical_flow">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_optical_flow</span><span class="p">(</span>
+    <span class="n">image1</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">image2</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">channel</span><span class="p">:</span> <span class="n">Integral</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">estimate_flow_x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">estimate_flow_y</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">region</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Integral</span><span class="p">,</span> <span class="n">Integral</span><span class="p">,</span> <span class="n">Integral</span><span class="p">,</span> <span class="n">Integral</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">disflow_params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the optical flow between two images using the DIS method of ``OpenCV``.</span>
+
+<span class="sd">    The optical flow is computed between two images using the Dense Inverse Search (DIS)</span>
+<span class="sd">    algorithm implemented in OpenCV. The function allows selecting a specific channel</span>
+<span class="sd">    from multi-channel images and provides options to customize the DIS algorithm</span>
+<span class="sd">    through a parameters dictionary.</span>
+
+<span class="sd">    Lets consider two images :math:`I_1` and :math:`I_2` of shape :math:`(H, W)`. The</span>
+<span class="sd">    optical flow is represented as two 2D arrays :math:`F_x` and :math:`F_y`, each of</span>
+<span class="sd">    shape :math:`(H, W)`, where :math:`F_x[i, j]` and :math:`F_y[i, j]` denote the</span>
+<span class="sd">    horizontal and vertical displacements (in pixels) of the pixel located at</span>
+<span class="sd">    :math:`(i, j)` in the first image to its corresponding position in the second image.</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        I_2(i + F_y[i, j], j + F_x[i, j]) \approx I_1(i, j)</span>
+
+<span class="sd">    With image array indices :math:`i` and :math:`j` representing the row (vertical)</span>
+<span class="sd">    and column (horizontal) indices, respectively.</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">        - The method convert the images data to `uint8` before processing, as required by OpenCV&#39;s DIS optical flow implementation.</span>
+<span class="sd">        - The method convert the estimated flow to `float32`, as required by OpenCV&#39;s DIS optical flow implementation.</span>
+
+<span class="sd">    The ``disflow_params`` dictionary can contain the following keys:</span>
+
+<span class="sd">    - ``&quot;FinestScale&quot;``: :class:`int` (default: ``0``) - The finest scale to use in the image pyramid.</span>
+<span class="sd">    - ``&quot;VariationalRefinementAlpha&quot;``: :class:`float` (default: ``1``) - Weight for the smoothness term in the variational refinement.</span>
+<span class="sd">    - ``&quot;VariationalRefinementDelta&quot;``: :class:`float` (default: ``1``) - Weight for the data term in the variational refinement.</span>
+<span class="sd">    - ``&quot;VariationalRefinementGamma&quot;``: :class:`float` (default: ``1``) - Weight for the gradient constancy term in the variational refinement.</span>
+<span class="sd">    - ``&quot;VariationalRefinementEpsilon&quot;``: :class:`float` (default: ``0.02``) -- Small constant to avoid division by zero in the variational refinement.</span>
+<span class="sd">    - ``&quot;VariationalRefinementIterations&quot;``: :class:`int` (default: ``10``) - Number of iterations for the variational refinement.</span>
+<span class="sd">    - ``&quot;UseMeanNormalization&quot;``: :class:`bool` (default: ``True``) - Whether to use mean normalization.</span>
+<span class="sd">    - ``&quot;GradientDescentIterations&quot;``: :class:`int` (default: ``500``) - Number of gradient descent iterations.</span>
+<span class="sd">    - ``&quot;UseSpatialPropagation&quot;``: :class:`bool` (default: ``True``) - Whether to use spatial propagation.</span>
+<span class="sd">    - ``&quot;PatchSize&quot;``: :class:`int` (default: ``50``) - Size of the patches.</span>
+<span class="sd">    - ``&quot;PatchStride&quot;``: :class:`int` (default: ``10``) - Stride between patches.</span>
+
+<span class="sd">    .. warning::</span>
+
+<span class="sd">        ``x`` and ``y`` components of the optical flow are defined in image coordinates</span>
+<span class="sd">        and not in array indices. This means that the x-component corresponds to</span>
+<span class="sd">        the horizontal displacement (columns) and the y-component corresponds to the</span>
+<span class="sd">        vertical displacement (rows).</span>
+
+<span class="sd">        The optical flow is compute with :obj:`numpy.uint8` images, so the input images</span>
+<span class="sd">        will be scaled to fit into the range of :obj:`numpy.uint8` if they are of a</span>
+<span class="sd">        different unsigned integer type. The output flow will be in pixels and can be</span>
+<span class="sd">        positive or negative depending on the direction of motion.</span>
+
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image1: ArrayLike</span>
+<span class="sd">        The first image with shape :math:`(H, W)` or :math:`(H, W, C)` where</span>
+<span class="sd">        :math:`C` is the number of channels.</span>
+<span class="sd">        The image must be unsigned integer type.</span>
+
+<span class="sd">    image2: ArrayLike</span>
+<span class="sd">        The second image with shape :math:`(H, W)` or :math:`(H, W, C)` where</span>
+<span class="sd">        :math:`C` is the number of channels.</span>
+<span class="sd">        The image must be unsigned integer type.</span>
+
+<span class="sd">    channel: Integral, optional</span>
+<span class="sd">        The channel of the images to use for optical flow computation. Default is 0.</span>
+
+<span class="sd">    estimate_flow_x : Optional[ArrayLike], optional</span>
+<span class="sd">        An initial estimate for the x-component of the optical flow with shape</span>
+<span class="sd">        :math:`(H, W)`. Default is None.</span>
+
+<span class="sd">    estimate_flow_y : Optional[ArrayLike], optional</span>
+<span class="sd">        An initial estimate for the y-component of the optical flow with shape</span>
+<span class="sd">        :math:`(H, W)`. Default is None.</span>
+
+<span class="sd">    region: Optional[Tuple[Integral, Integral, Integral, Integral]], optional</span>
+<span class="sd">        A tuple specifying the region of interest in the format (x, y, width, height).</span>
+<span class="sd">        If None, the entire image is computed. Default is None.</span>
+
+<span class="sd">    disflow_params: Optional[Dict[str, Any]], optional</span>
+<span class="sd">        Parameters for the DIS optical flow algorithm. See above for details.</span>
+<span class="sd">        Default is None.</span>
+
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    flow_x: :class:`numpy.ndarray`</span>
+<span class="sd">        The x-component of the optical flow (horizontal displacement) in pixels with</span>
+<span class="sd">        shape :math:`(H, W)`.</span>
+<span class="sd">        The pixels outside the specified region (if any) will be set to :obj:`numpy.nan`.</span>
+
+<span class="sd">    flow_y: :class:`numpy.ndarray`</span>
+<span class="sd">        The y-component of the optical flow (vertical displacement) in pixels with</span>
+<span class="sd">        shape :math:`(H, W)`.</span>
+<span class="sd">        The pixels outside the specified region (if any) will be set to :obj:`numpy.nan`.</span>
+
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    pycvcam.display_optical_flow</span>
+<span class="sd">        Display the optical flow overlaid on the given image using Matplotlib.</span>
+
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Create two example images and compute the optical flow between them.</span>
+
+<span class="sd">    .. figure:: /_static/textures/lena_texture.png</span>
+<span class="sd">        :align: center</span>
+<span class="sd">        :width: 50%</span>
+
+<span class="sd">        Lena image used for the example.</span>
+
+<span class="sd">    .. code-block:: python</span>
+<span class="sd">        :linenos:</span>
+
+<span class="sd">        import numpy</span>
+<span class="sd">        from pycvcam import compute_optical_flow</span>
+<span class="sd">        from pycvcam import get_lena_image</span>
+
+<span class="sd">        # Create two example images</span>
+<span class="sd">        image1 = get_lena_image() # numpy array of shape (474, 474)</span>
+
+<span class="sd">        # Shift the image to create a second image</span>
+<span class="sd">        image2 = numpy.roll(image1, shift=5, axis=1) # Shift right by 5 pixels</span>
+<span class="sd">        image2 = numpy.roll(image2, shift=3, axis=0) # Shift down by 3 pixels</span>
+
+<span class="sd">        # Compute optical flow</span>
+<span class="sd">        flow_x, flow_y = compute_optical_flow(image1, image2)</span>
+
+<span class="sd">        # Check if all flow values in the center of the image are approximately (5, 3)</span>
+<span class="sd">        valid_x = numpy.isclose(flow_x[100:300, 100:300], 5, atol=0.5)</span>
+<span class="sd">        valid_y = numpy.isclose(flow_y[100:300, 100:300], 3, atol=0.5)</span>
+<span class="sd">        valid = valid_x &amp; valid_y</span>
+<span class="sd">        assert valid.all(), &quot;Flow values in the center of the image should be approximately (5, 3)&quot;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Input validation</span>
+    <span class="n">image1</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">image1</span><span class="p">)</span>
+    <span class="n">image2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">image2</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">image1</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">image2</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input images must have the same shape.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">image1</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">unsignedinteger</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Input images must be of unsigned integer type.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">image2</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">unsignedinteger</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Input images must be of unsigned integer type.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">image1</span><span class="o">.</span><span class="n">ndim</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input images must be 2D or 3D arrays.&quot;</span><span class="p">)</span>
+
+    <span class="n">use_estimate_flow</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="n">estimate_flow_x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">use_estimate_flow</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">estimate_flow_x</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">estimate_flow_x</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">estimate_flow_x</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">image1</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;estimate_flow_x must have shape compatible with the input images.&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">estimate_flow_y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">use_estimate_flow</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">estimate_flow_y</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">estimate_flow_y</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">estimate_flow_y</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">image1</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;estimate_flow_y must have shape compatible with the input images.&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">use_estimate_flow</span> <span class="ow">and</span> <span class="p">(</span><span class="n">estimate_flow_x</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">estimate_flow_y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Both estimate_flow_x and estimate_flow_y must be provided if using initial &quot;</span>
+            <span class="s2">&quot;flow estimates.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">region</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">region</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Region coordinates and size must be integers.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">x</span> <span class="o">+</span> <span class="n">w</span> <span class="o">&gt;</span> <span class="n">image1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">or</span> <span class="n">y</span> <span class="o">+</span> <span class="n">h</span> <span class="o">&gt;</span> <span class="n">image1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Region is out of image bounds.&quot;</span><span class="p">)</span>
+        <span class="n">w_slice</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span> <span class="o">+</span> <span class="n">w</span><span class="p">)</span>
+        <span class="n">h_slice</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y</span> <span class="o">+</span> <span class="n">h</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">w_slice</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">image1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">h_slice</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">image1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">channel</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Channel must be an integer.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">image1</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="p">(</span><span class="n">channel</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">channel</span> <span class="o">&gt;=</span> <span class="n">image1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Channel index out of bounds.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">disflow_params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">disflow_params</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;disflow_params must be a dictionary.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">disflow_params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">disflow_params</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># Create DIS optical flow object</span>
+    <span class="n">dis_optical_flow</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">DISOpticalFlow_create</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">DISOPTICAL_FLOW_PRESET_MEDIUM</span><span class="p">)</span>
+
+    <span class="n">dis_optical_flow</span><span class="o">.</span><span class="n">setFinestScale</span><span class="p">(</span><span class="n">disflow_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;FinestScale&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">dis_optical_flow</span><span class="o">.</span><span class="n">setVariationalRefinementAlpha</span><span class="p">(</span>
+        <span class="n">disflow_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;VariationalRefinementAlpha&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">dis_optical_flow</span><span class="o">.</span><span class="n">setVariationalRefinementDelta</span><span class="p">(</span>
+        <span class="n">disflow_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;VariationalRefinementDelta&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">dis_optical_flow</span><span class="o">.</span><span class="n">setVariationalRefinementGamma</span><span class="p">(</span>
+        <span class="n">disflow_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;VariationalRefinementGamma&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">dis_optical_flow</span><span class="o">.</span><span class="n">setVariationalRefinementEpsilon</span><span class="p">(</span>
+        <span class="n">disflow_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;VariationalRefinementEpsilon&quot;</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">dis_optical_flow</span><span class="o">.</span><span class="n">setVariationalRefinementIterations</span><span class="p">(</span>
+        <span class="n">disflow_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;VariationalRefinementIterations&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">dis_optical_flow</span><span class="o">.</span><span class="n">setUseMeanNormalization</span><span class="p">(</span>
+        <span class="n">disflow_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;UseMeanNormalization&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">dis_optical_flow</span><span class="o">.</span><span class="n">setGradientDescentIterations</span><span class="p">(</span>
+        <span class="n">disflow_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;GradientDescentIterations&quot;</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">dis_optical_flow</span><span class="o">.</span><span class="n">setUseSpatialPropagation</span><span class="p">(</span>
+        <span class="n">disflow_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;UseSpatialPropagation&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">dis_optical_flow</span><span class="o">.</span><span class="n">setPatchSize</span><span class="p">(</span><span class="n">disflow_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;PatchSize&quot;</span><span class="p">,</span> <span class="mi">50</span><span class="p">))</span>
+    <span class="n">dis_optical_flow</span><span class="o">.</span><span class="n">setPatchStride</span><span class="p">(</span><span class="n">disflow_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;PatchStride&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+
+    <span class="c1"># Extract the specified channel</span>
+    <span class="k">if</span> <span class="n">image1</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">img1_channel</span> <span class="o">=</span> <span class="n">image1</span><span class="p">[</span><span class="n">h_slice</span><span class="p">,</span> <span class="n">w_slice</span><span class="p">,</span> <span class="n">channel</span><span class="p">]</span>
+        <span class="n">img2_channel</span> <span class="o">=</span> <span class="n">image2</span><span class="p">[</span><span class="n">h_slice</span><span class="p">,</span> <span class="n">w_slice</span><span class="p">,</span> <span class="n">channel</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">img1_channel</span> <span class="o">=</span> <span class="n">image1</span><span class="p">[</span><span class="n">h_slice</span><span class="p">,</span> <span class="n">w_slice</span><span class="p">]</span>
+        <span class="n">img2_channel</span> <span class="o">=</span> <span class="n">image2</span><span class="p">[</span><span class="n">h_slice</span><span class="p">,</span> <span class="n">w_slice</span><span class="p">]</span>
+
+    <span class="c1"># Convert images to uint8</span>
+    <span class="n">image1_range</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">img1_channel</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">max</span>
+    <span class="n">image2_range</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">img2_channel</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">max</span>
+    <span class="n">uint8_range</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span><span class="o">.</span><span class="n">max</span>
+
+    <span class="c1"># Scale images to uint8</span>
+    <span class="n">alpha1</span> <span class="o">=</span> <span class="n">uint8_range</span> <span class="o">/</span> <span class="n">image1_range</span> <span class="k">if</span> <span class="n">image1_range</span> <span class="o">&gt;</span> <span class="n">uint8_range</span> <span class="k">else</span> <span class="mf">1.0</span>
+    <span class="n">alpha2</span> <span class="o">=</span> <span class="n">uint8_range</span> <span class="o">/</span> <span class="n">image2_range</span> <span class="k">if</span> <span class="n">image2_range</span> <span class="o">&gt;</span> <span class="n">uint8_range</span> <span class="k">else</span> <span class="mf">1.0</span>
+
+    <span class="n">img1_float64</span> <span class="o">=</span> <span class="n">img1_channel</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="o">*</span> <span class="n">alpha1</span>
+    <span class="n">img2_float64</span> <span class="o">=</span> <span class="n">img2_channel</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="o">*</span> <span class="n">alpha2</span>
+    <span class="n">img1_uint8</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">img1_float64</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">uint8_range</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
+        <span class="n">numpy</span><span class="o">.</span><span class="n">uint8</span>
+    <span class="p">)</span>
+    <span class="n">img2_uint8</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">img2_float64</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">uint8_range</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
+        <span class="n">numpy</span><span class="o">.</span><span class="n">uint8</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Compute optical flow</span>
+    <span class="n">estimate_flow</span> <span class="o">=</span> <span class="p">(</span><span class="n">estimate_flow_x</span><span class="p">,</span> <span class="n">estimate_flow_y</span><span class="p">)</span> <span class="k">if</span> <span class="n">use_estimate_flow</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="n">flow</span> <span class="o">=</span> <span class="n">dis_optical_flow</span><span class="o">.</span><span class="n">calc</span><span class="p">(</span><span class="n">img1_uint8</span><span class="p">,</span> <span class="n">img2_uint8</span><span class="p">,</span> <span class="n">estimate_flow</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
+        <span class="n">numpy</span><span class="o">.</span><span class="n">float64</span>
+    <span class="p">)</span>
+
+    <span class="n">flow_x</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">image1</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">flow_y</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">image1</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">flow_x</span><span class="p">[</span><span class="n">h_slice</span><span class="p">,</span> <span class="n">w_slice</span><span class="p">]</span> <span class="o">=</span> <span class="n">flow</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">flow_y</span><span class="p">[</span><span class="n">h_slice</span><span class="p">,</span> <span class="n">w_slice</span><span class="p">]</span> <span class="o">=</span> <span class="n">flow</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">flow_x</span><span class="p">,</span> <span class="n">flow_y</span></div>
+
+
+
+<div class="viewcode-block" id="display_optical_flow">
+<a class="viewcode-back" href="../../_docs/optical_flow.html#pycvcam.display_optical_flow">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">display_optical_flow</span><span class="p">(</span>
+    <span class="n">image</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">flow_x</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">flow_y</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">region</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Integral</span><span class="p">,</span> <span class="n">Integral</span><span class="p">,</span> <span class="n">Integral</span><span class="p">,</span> <span class="n">Integral</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">display_region</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Integral</span><span class="p">,</span> <span class="n">Integral</span><span class="p">,</span> <span class="n">Integral</span><span class="p">,</span> <span class="n">Integral</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="p">:</span> <span class="n">Real</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">channel</span><span class="p">:</span> <span class="n">Integral</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">norm_cmap</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;inferno&quot;</span><span class="p">,</span>
+    <span class="n">comp_cmap</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;bwr&quot;</span><span class="p">,</span>
+    <span class="n">norm_vmin</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">norm_vmax</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">comp_vmin</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">comp_vmax</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Display the optical flow overlaid on the given image using Matplotlib.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image: ArrayLike</span>
+<span class="sd">        The background image with shape :math:`(H, W)` or :math:`(H, W, C)`.</span>
+
+<span class="sd">    flow_x: ArrayLike</span>
+<span class="sd">        The x-component of the optical flow (horizontal displacement) in pixels with</span>
+<span class="sd">        shape :math:`(H, W)`.</span>
+
+<span class="sd">    flow_y: ArrayLike</span>
+<span class="sd">        The y-component of the optical flow (vertical displacement) in pixels with</span>
+<span class="sd">        shape :math:`(H, W)`.</span>
+
+<span class="sd">    region: Optional[Tuple[Integral, Integral, Integral, Integral]], optional</span>
+<span class="sd">        A tuple specifying the region of interest in the format (x, y, width, height).</span>
+<span class="sd">        If None, the entire image is displayed. Default is None.</span>
+
+<span class="sd">    display_region: Optional[Tuple[Integral, Integral, Integral, Integral]], optional</span>
+<span class="sd">        A tuple specifying the region of the flow to display in the format</span>
+<span class="sd">        (x, y, width, height).</span>
+<span class="sd">        If None, the entire flow is displayed. Default is None.</span>
+
+<span class="sd">    alpha: Real, optional</span>
+<span class="sd">        The alpha blending value for overlaying the optical flow on the image.</span>
+<span class="sd">        Default is 0.5.</span>
+
+<span class="sd">    channel: Integral, optional</span>
+<span class="sd">        The channel of the image to display if it is multi-channel. Default is 0.</span>
+
+<span class="sd">    norm_cmap: :class:`str`, optional</span>
+<span class="sd">        The colormap for the flow magnitude. Default is &#39;inferno&#39;.</span>
+
+<span class="sd">    comp_cmap: :class:`str`, optional</span>
+<span class="sd">        The colormap for the flow components. Default is &#39;bwr&#39;.</span>
+
+<span class="sd">    norm_vmin: Optional[Real], optional</span>
+<span class="sd">        Minimum value for flow magnitude colormap normalization. Default is None.</span>
+
+<span class="sd">    norm_vmax: Optional[Real], optional</span>
+<span class="sd">        Maximum value for flow magnitude colormap normalization. Default is None.</span>
+
+<span class="sd">    comp_vmin: Optional[Real], optional</span>
+<span class="sd">        Minimum value for flow component colormap normalization. Default is None.</span>
+
+<span class="sd">    comp_vmax: Optional[Real], optional</span>
+<span class="sd">        Maximum value for flow component colormap normalization. Default is None.</span>
+
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">        Displays the optical flow overlay on the image.</span>
+
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    pycvcam.compute_optical_flow</span>
+<span class="sd">        Compute the optical flow between two images using the DIS method of OpenCV.</span>
+
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Create two example images and compute the optical flow between them.</span>
+
+<span class="sd">    .. figure:: /_static/textures/lena_texture.png</span>
+<span class="sd">        :align: center</span>
+<span class="sd">        :width: 50%</span>
+
+<span class="sd">        Lena image used for the example.</span>
+
+<span class="sd">    .. code-block:: python</span>
+<span class="sd">        :linenos:</span>
+
+<span class="sd">        import numpy</span>
+<span class="sd">        import cv2</span>
+<span class="sd">        from pycvcam import compute_optical_flow, display_optical_flow</span>
+<span class="sd">        from pycvcam import get_lena_image</span>
+
+<span class="sd">        # Create two example images</span>
+<span class="sd">        image1 = get_lena_image() # numpy array of shape (474, 474)</span>
+
+<span class="sd">        # cv2 distortion to create a second image</span>
+<span class="sd">        image2 = cv2.undistort(image1, cameraMatrix=numpy.array(</span>
+<span class="sd">            [[300, 0, 237], [0, 300, 237], [0, 0, 1]]</span>
+<span class="sd">        ), distCoeffs=numpy.array([-0.2, 0.1, 0, 0]))</span>
+
+<span class="sd">        # Compute optical flow</span>
+<span class="sd">        flow_x, flow_y = compute_optical_flow(image1, image2)</span>
+
+<span class="sd">        # Select a region of interest (optional)</span>
+<span class="sd">        display_region = (10, 10, image1.shape[1]-20, image1.shape[0]-20) # (x, y, width, height)</span>
+
+<span class="sd">        # Display the optical flow</span>
+<span class="sd">        display_optical_flow(image1, flow_x, flow_y, display_region=display_region)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Input validation</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+    <span class="n">flow_x</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">flow_x</span><span class="p">)</span>
+    <span class="n">flow_y</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">flow_y</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="n">flow_x</span><span class="o">.</span><span class="n">shape</span> <span class="ow">or</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="n">flow_y</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Image and flow components must have compatible shapes.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">unsignedinteger</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Input image must be of unsigned integer type.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">image</span><span class="o">.</span><span class="n">ndim</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input image must be 2D or 3D array.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">channel</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">channel</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Channel must be an integer.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">image</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="p">(</span><span class="n">channel</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">channel</span> <span class="o">&gt;=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Channel index out of bounds.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">region</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">region</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Region coordinates and size must be integers.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">x</span> <span class="o">+</span> <span class="n">w</span> <span class="o">&gt;</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">or</span> <span class="n">y</span> <span class="o">+</span> <span class="n">h</span> <span class="o">&gt;</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Region is out of image bounds.&quot;</span><span class="p">)</span>
+        <span class="n">w_slice</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span> <span class="o">+</span> <span class="n">w</span><span class="p">)</span>
+        <span class="n">h_slice</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y</span> <span class="o">+</span> <span class="n">h</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">w_slice</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">h_slice</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">display_region</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fx</span><span class="p">,</span> <span class="n">fy</span><span class="p">,</span> <span class="n">fw</span><span class="p">,</span> <span class="n">fh</span> <span class="o">=</span> <span class="n">display_region</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">fx</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fy</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fw</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fh</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Flow region coordinates and size must be integers.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">fx</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">fy</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">fx</span> <span class="o">+</span> <span class="n">fw</span> <span class="o">&gt;</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">or</span> <span class="n">fy</span> <span class="o">+</span> <span class="n">fh</span> <span class="o">&gt;</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Flow region is out of image bounds.&quot;</span><span class="p">)</span>
+        <span class="n">fw_slice</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">fx</span><span class="p">,</span> <span class="n">w_slice</span><span class="o">.</span><span class="n">start</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">fx</span> <span class="o">+</span> <span class="n">fw</span><span class="p">,</span> <span class="n">w_slice</span><span class="o">.</span><span class="n">stop</span><span class="p">))</span>
+        <span class="n">fh_slice</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">fy</span><span class="p">,</span> <span class="n">h_slice</span><span class="o">.</span><span class="n">start</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">fy</span> <span class="o">+</span> <span class="n">fh</span><span class="p">,</span> <span class="n">h_slice</span><span class="o">.</span><span class="n">stop</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fw_slice</span> <span class="o">=</span> <span class="n">w_slice</span>
+        <span class="n">fh_slice</span> <span class="o">=</span> <span class="n">h_slice</span>
+
+    <span class="c1"># Extract the useful channel</span>
+    <span class="k">if</span> <span class="n">image</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">img_channel</span> <span class="o">=</span> <span class="n">image</span><span class="p">[</span><span class="n">h_slice</span><span class="p">,</span> <span class="n">w_slice</span><span class="p">,</span> <span class="n">channel</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">img_channel</span> <span class="o">=</span> <span class="n">image</span><span class="p">[</span><span class="n">h_slice</span><span class="p">,</span> <span class="n">w_slice</span><span class="p">]</span>
+
+    <span class="c1"># Set the flow to nan outside the specified flow region</span>
+    <span class="n">flow_x_display</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">flow_x</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+    <span class="n">flow_y_display</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">flow_y</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+    <span class="n">flow_x_display</span><span class="p">[</span><span class="n">fh_slice</span><span class="p">,</span> <span class="n">fw_slice</span><span class="p">]</span> <span class="o">=</span> <span class="n">flow_x</span><span class="p">[</span><span class="n">fh_slice</span><span class="p">,</span> <span class="n">fw_slice</span><span class="p">]</span>
+    <span class="n">flow_y_display</span><span class="p">[</span><span class="n">fh_slice</span><span class="p">,</span> <span class="n">fw_slice</span><span class="p">]</span> <span class="o">=</span> <span class="n">flow_y</span><span class="p">[</span><span class="n">fh_slice</span><span class="p">,</span> <span class="n">fw_slice</span><span class="p">]</span>
+
+    <span class="c1"># Extract the flow in the specified region</span>
+    <span class="n">flow_x_region</span> <span class="o">=</span> <span class="n">flow_x_display</span><span class="p">[</span><span class="n">h_slice</span><span class="p">,</span> <span class="n">w_slice</span><span class="p">]</span>
+    <span class="n">flow_y_region</span> <span class="o">=</span> <span class="n">flow_y_display</span><span class="p">[</span><span class="n">h_slice</span><span class="p">,</span> <span class="n">w_slice</span><span class="p">]</span>
+
+    <span class="c1"># Compute flow magnitude</span>
+    <span class="n">flow_magnitude</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">flow_x_region</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">flow_y_region</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="c1"># Plotting</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img_channel</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span>
+    <span class="n">fplot</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
+        <span class="n">flow_magnitude</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">norm_cmap</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="n">norm_vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">norm_vmax</span>
+    <span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Flow Magnitude $\|\mathbf</span><span class="si">{F}</span><span class="s2">\|$ (pixels)&quot;</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">fplot</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img_channel</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span>
+    <span class="n">fxplot</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
+        <span class="n">flow_x_region</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">comp_cmap</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="n">comp_vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">comp_vmax</span>
+    <span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Flow X Component $F_x$ (pixels)&quot;</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">fxplot</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img_channel</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span>
+    <span class="n">fyplot</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
+        <span class="n">flow_y_region</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">comp_cmap</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="n">comp_vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">comp_vmax</span>
+    <span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Flow Y Component $F_y$ (pixels)&quot;</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">fyplot</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025-2026, Artezaru.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

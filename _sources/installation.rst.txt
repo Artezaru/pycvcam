@@ -13,19 +13,13 @@ Or install it directly from the GitHub repository using:
 
     pip install git+https://github.com/Artezaru/pycvcam.git
 
-Development Installation
-------------------------------
+Requiements
+------------
 
-To install the package for development, first clone the repository using:
+The following dependencies are required to use ``pycvcam``:
 
-.. code-block:: bash
-
-    git clone https://github.com/Artezaru/pycvcam.git
-
-Then, go to the directory and run the following command:
-
-.. code-block:: bash
-
-    pip install -e .
-
-Use ``-e .[dev]`` to install it with the development dependencies.
+- **NumPy**: (https://numpy.org/) A fundamental package for scientific computing.
+- **SciPy**: (https://scipy.org/) A library used for scientific and technical computing.
+- **OpenCV**: (https://opencv.org/) A library for computer vision and image processing.
+- **Py3DFrame**: (https://github.com/Artezaru/py3dframe) A library for working with 3D data frames.
+- **PyZernike**: (https://github.com/Artezaru/pyzernike) A library for working with Zernike polynomials.

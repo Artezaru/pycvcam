@@ -1,0 +1,671 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>pycvcam.SkewIntrinsic.principal_point_y &#8212; pycvcam 1.5.7 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=2b2ec289"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_autosummary/pycvcam.SkewIntrinsic.principal_point_y';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="pycvcam.SkewIntrinsic.skew" href="pycvcam.SkewIntrinsic.skew.html" />
+    <link rel="prev" title="pycvcam.SkewIntrinsic.principal_point_x" href="pycvcam.SkewIntrinsic.principal_point_x.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">pycvcam 1.5.7 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../api.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../usage.html">
+    Usage
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../api.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../usage.html">
+    Usage
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../_docs/transform.html">pycvcam.core.Transform</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.core.Transform.input_dim.html">pycvcam.core.Transform.input_dim</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.core.Transform.output_dim.html">pycvcam.core.Transform.output_dim</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.core.Transform.parameters.html">pycvcam.core.Transform.parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.core.Transform.n_params.html">pycvcam.core.Transform.n_params</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.core.Transform.parameter_names.html">pycvcam.core.Transform.parameter_names</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.core.Transform.constants.html">pycvcam.core.Transform.constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.core.Transform.n_constants.html">pycvcam.core.Transform.n_constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.core.Transform.constant_names.html">pycvcam.core.Transform.constant_names</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.core.Transform.transform.html">pycvcam.core.Transform.transform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.core.Transform.inverse_transform.html">pycvcam.core.Transform.inverse_transform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.core.Transform.to_dict.html">pycvcam.core.Transform.to_dict</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.core.Transform.from_dict.html">pycvcam.core.Transform.from_dict</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.core.Transform.to_json.html">pycvcam.core.Transform.to_json</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.core.Transform.from_json.html">pycvcam.core.Transform.from_json</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.core.Transform._get_jacobian_shorthands.html">pycvcam.core.Transform._get_jacobian_shorthands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.core.Transform._get_transform_aliases.html">pycvcam.core.Transform._get_transform_aliases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.core.Transform._get_inverse_transform_aliases.html">pycvcam.core.Transform._get_inverse_transform_aliases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.core.Transform.is_set.html">pycvcam.core.Transform.is_set</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.core.Transform._return_transform_result.html">pycvcam.core.Transform._return_transform_result</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.core.Transform._return_inverse_transform_result.html">pycvcam.core.Transform._return_inverse_transform_result</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.core.Transform._transform.html">pycvcam.core.Transform._transform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.core.Transform._inverse_transform.html">pycvcam.core.Transform._inverse_transform</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../_docs/transform_result.html">pycvcam.core.TransformResult</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../_docs/transform_composition.html">pycvcam.core.TransformComposition</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.core.TransformComposition._transform.html">pycvcam.core.TransformComposition._transform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.core.TransformComposition._inverse_transform.html">pycvcam.core.TransformComposition._inverse_transform</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../_docs/intrinsic.html">pycvcam.core.Intrinsic</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.core.Intrinsic.scale.html">pycvcam.core.Intrinsic.scale</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.core.Intrinsic.unscale.html">pycvcam.core.Intrinsic.unscale</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../_docs/distortion.html">pycvcam.core.Distortion</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.core.Distortion.distort.html">pycvcam.core.Distortion.distort</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.core.Distortion.undistort.html">pycvcam.core.Distortion.undistort</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../_docs/extrinsic.html">pycvcam.core.Extrinsic</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.core.Extrinsic.project.html">pycvcam.core.Extrinsic.project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.core.Extrinsic.unproject.html">pycvcam.core.Extrinsic.unproject</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.core.Extrinsic.compute_rays.html">pycvcam.core.Extrinsic.compute_rays</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.core.Extrinsic._compute_rays.html">pycvcam.core.Extrinsic._compute_rays</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../_docs/rays.html">pycvcam.core.Rays</a></li>
+</ul>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../_docs/implemented_extrinsic.html">Implemented Extrinsic Transformations</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../_docs/no_extrinsic.html">pycvcam.NoExtrinsic</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../_docs/cv2_extrinsic.html">pycvcam.Cv2Extrinsic</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Extrinsic.from_frame.html">pycvcam.Cv2Extrinsic.from_frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Extrinsic.from_rt.html">pycvcam.Cv2Extrinsic.from_rt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Extrinsic.from_tmatrix.html">pycvcam.Cv2Extrinsic.from_tmatrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Extrinsic.frame.html">pycvcam.Cv2Extrinsic.frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Extrinsic.rotation_vector.html">pycvcam.Cv2Extrinsic.rotation_vector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Extrinsic.transformation_matrix.html">pycvcam.Cv2Extrinsic.transformation_matrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Extrinsic.translation_vector.html">pycvcam.Cv2Extrinsic.translation_vector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Extrinsic._transform.html">pycvcam.Cv2Extrinsic._transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Extrinsic._inverse_transform.html">pycvcam.Cv2Extrinsic._inverse_transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Extrinsic._compute_rays.html">pycvcam.Cv2Extrinsic._compute_rays</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../_docs/orthographic_extrinsic.html">pycvcam.OrthographicExtrinsic</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.OrthographicExtrinsic.from_frame.html">pycvcam.OrthographicExtrinsic.from_frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.OrthographicExtrinsic.from_rt.html">pycvcam.OrthographicExtrinsic.from_rt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.OrthographicExtrinsic.from_tmatrix.html">pycvcam.OrthographicExtrinsic.from_tmatrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.OrthographicExtrinsic.frame.html">pycvcam.OrthographicExtrinsic.frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.OrthographicExtrinsic.rotation_vector.html">pycvcam.OrthographicExtrinsic.rotation_vector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.OrthographicExtrinsic.transformation_matrix.html">pycvcam.OrthographicExtrinsic.transformation_matrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.OrthographicExtrinsic.translation_vector.html">pycvcam.OrthographicExtrinsic.translation_vector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.OrthographicExtrinsic._transform.html">pycvcam.OrthographicExtrinsic._transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.OrthographicExtrinsic._inverse_transform.html">pycvcam.OrthographicExtrinsic._inverse_transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.OrthographicExtrinsic._compute_rays.html">pycvcam.OrthographicExtrinsic._compute_rays</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../_docs/implemented_distortion.html">Implemented Distortion Transformations</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../_docs/no_distortion.html">pycvcam.NoDistortion</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../_docs/cv2_distortion.html">pycvcam.Cv2Distortion</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Distortion.k1.html">pycvcam.Cv2Distortion.k1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Distortion.k2.html">pycvcam.Cv2Distortion.k2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Distortion.k3.html">pycvcam.Cv2Distortion.k3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Distortion.k4.html">pycvcam.Cv2Distortion.k4</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Distortion.k5.html">pycvcam.Cv2Distortion.k5</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Distortion.k6.html">pycvcam.Cv2Distortion.k6</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Distortion.p1.html">pycvcam.Cv2Distortion.p1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Distortion.p2.html">pycvcam.Cv2Distortion.p2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Distortion.s1.html">pycvcam.Cv2Distortion.s1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Distortion.s2.html">pycvcam.Cv2Distortion.s2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Distortion.s3.html">pycvcam.Cv2Distortion.s3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Distortion.s4.html">pycvcam.Cv2Distortion.s4</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Distortion.tau_x.html">pycvcam.Cv2Distortion.tau_x</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Distortion.tau_y.html">pycvcam.Cv2Distortion.tau_y</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Distortion._compute_tilt_matrix.html">pycvcam.Cv2Distortion._compute_tilt_matrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Distortion._transform.html">pycvcam.Cv2Distortion._transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Distortion._transform_opencv.html">pycvcam.Cv2Distortion._transform_opencv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Distortion._inverse_transform.html">pycvcam.Cv2Distortion._inverse_transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Distortion._inverse_transform_opencv.html">pycvcam.Cv2Distortion._inverse_transform_opencv</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../_docs/zernike_distortion.html">pycvcam.ZernikeDistortion</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.ZernikeDistortion.center.html">pycvcam.ZernikeDistortion.center</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.ZernikeDistortion.center_x.html">pycvcam.ZernikeDistortion.center_x</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.ZernikeDistortion.center_y.html">pycvcam.ZernikeDistortion.center_y</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.ZernikeDistortion.n_zer.html">pycvcam.ZernikeDistortion.n_zer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.ZernikeDistortion.parameters_x.html">pycvcam.ZernikeDistortion.parameters_x</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.ZernikeDistortion.parameter_x_names.html">pycvcam.ZernikeDistortion.parameter_x_names</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.ZernikeDistortion.parameters_y.html">pycvcam.ZernikeDistortion.parameters_y</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.ZernikeDistortion.parameter_y_names.html">pycvcam.ZernikeDistortion.parameter_y_names</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.ZernikeDistortion.radius.html">pycvcam.ZernikeDistortion.radius</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.ZernikeDistortion.radius_x.html">pycvcam.ZernikeDistortion.radius_x</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.ZernikeDistortion.radius_y.html">pycvcam.ZernikeDistortion.radius_y</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.ZernikeDistortion.get_index.html">pycvcam.ZernikeDistortion.get_index</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.ZernikeDistortion.get_Cx.html">pycvcam.ZernikeDistortion.get_Cx</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.ZernikeDistortion.get_Cy.html">pycvcam.ZernikeDistortion.get_Cy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.ZernikeDistortion.set_Cx.html">pycvcam.ZernikeDistortion.set_Cx</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.ZernikeDistortion.set_Cy.html">pycvcam.ZernikeDistortion.set_Cy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.ZernikeDistortion._transform.html">pycvcam.ZernikeDistortion._transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.ZernikeDistortion._inverse_transform.html">pycvcam.ZernikeDistortion._inverse_transform</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../_docs/fisheye_distortion.html">pycvcam.FisheyeDistortion</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.FisheyeDistortion.get_di.html">pycvcam.FisheyeDistortion.get_di</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.FisheyeDistortion.set_di.html">pycvcam.FisheyeDistortion.set_di</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.FisheyeDistortion._cartesian_to_polar.html">pycvcam.FisheyeDistortion._cartesian_to_polar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.FisheyeDistortion._polar_to_cartesian.html">pycvcam.FisheyeDistortion._polar_to_cartesian</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.FisheyeDistortion._transform.html">pycvcam.FisheyeDistortion._transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.FisheyeDistortion._inverse_transform.html">pycvcam.FisheyeDistortion._inverse_transform</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../_docs/implemented_intrinsic.html">Implemented Intrinsic Transformations</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../_docs/no_intrinsic.html">pycvcam.NoIntrinsic</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../_docs/cv2_intrinsic.html">pycvcam.Cv2Intrinsic</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Intrinsic.from_matrix.html">pycvcam.Cv2Intrinsic.from_matrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Intrinsic.focal_length_x.html">pycvcam.Cv2Intrinsic.focal_length_x</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Intrinsic.focal_length_y.html">pycvcam.Cv2Intrinsic.focal_length_y</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Intrinsic.intrinsic_matrix.html">pycvcam.Cv2Intrinsic.intrinsic_matrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Intrinsic.intrinsic_vector.html">pycvcam.Cv2Intrinsic.intrinsic_vector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Intrinsic.principal_point_x.html">pycvcam.Cv2Intrinsic.principal_point_x</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Intrinsic.principal_point_y.html">pycvcam.Cv2Intrinsic.principal_point_y</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Intrinsic._transform.html">pycvcam.Cv2Intrinsic._transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.Cv2Intrinsic._inverse_transform.html">pycvcam.Cv2Intrinsic._inverse_transform</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="../_docs/skew_intrinsic.html">pycvcam.SkewIntrinsic</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.SkewIntrinsic.from_matrix.html">pycvcam.SkewIntrinsic.from_matrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.SkewIntrinsic.focal_length_x.html">pycvcam.SkewIntrinsic.focal_length_x</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.SkewIntrinsic.focal_length_y.html">pycvcam.SkewIntrinsic.focal_length_y</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.SkewIntrinsic.intrinsic_matrix.html">pycvcam.SkewIntrinsic.intrinsic_matrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.SkewIntrinsic.intrinsic_vector.html">pycvcam.SkewIntrinsic.intrinsic_vector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.SkewIntrinsic.principal_point_x.html">pycvcam.SkewIntrinsic.principal_point_x</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">pycvcam.SkewIntrinsic.principal_point_y</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.SkewIntrinsic.skew.html">pycvcam.SkewIntrinsic.skew</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.SkewIntrinsic._transform.html">pycvcam.SkewIntrinsic._transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycvcam.SkewIntrinsic._inverse_transform.html">pycvcam.SkewIntrinsic._inverse_transform</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../_docs/write_transform.html">pycvcam.write_transform</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_docs/read_transform.html">pycvcam.read_transform</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../_docs/distort_undistort_image.html">Distort and Undistort Images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_docs/undistort_points.html">pycvcam.undistort_points</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_docs/project_points.html">pycvcam.project_points</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_docs/compute_rays.html">pycvcam.compute_rays</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_docs/optical_flow.html">Optical Flow Operations</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../_docs/optimize_parameters_least_squares.html">Optimize Parameters with Least Squares</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_docs/optimize_input_points.html">optimize_input_points</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../api.html" class="nav-link">API Reference</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../_docs/implemented_intrinsic.html" class="nav-link">Implemented Intrinsic Transformations</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../_docs/skew_intrinsic.html" class="nav-link">pycvcam.SkewIntrinsic</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pycvcam.SkewIntrinsic.principal_point_y</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="pycvcam-skewintrinsic-principal-point-y">
+<h1>pycvcam.SkewIntrinsic.principal_point_y<a class="headerlink" href="#pycvcam-skewintrinsic-principal-point-y" title="Link to this heading">#</a></h1>
+<dl class="py property">
+<dt class="sig sig-object py" id="pycvcam.SkewIntrinsic.principal_point_y">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">SkewIntrinsic.</span></span><span class="sig-name descname"><span class="pre">principal_point_y</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#pycvcam.SkewIntrinsic.principal_point_y" title="Link to this definition">#</a></dt>
+<dd><p>Get or set the principal point <code class="docutils literal notranslate"><span class="pre">cy</span></code> of the intrinsic transformation.</p>
+<p>The principal point is a float representing the principal point of the camera in pixels in y direction.</p>
+<p>This parameter is the component K[1, 2] of the intrinsic matrix K of the camera.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>An alias for <code class="docutils literal notranslate"><span class="pre">principal_point_y</span></code> is <code class="docutils literal notranslate"><span class="pre">cy</span></code>.</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="pycvcam.SkewIntrinsic.principal_point_x.html#pycvcam.SkewIntrinsic.principal_point_x" title="pycvcam.SkewIntrinsic.principal_point_x"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pycvcam.SkewIntrinsic.principal_point_x()</span></code></a> or <code class="docutils literal notranslate"><span class="pre">cx</span></code> to set the principal point in pixels in x direction.</p></li>
+</ul>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The principal point of the camera in pixels in y direction. (or None if not set)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="pycvcam.SkewIntrinsic.principal_point_x.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">pycvcam.SkewIntrinsic.principal_point_x</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="pycvcam.SkewIntrinsic.skew.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">pycvcam.SkewIntrinsic.skew</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.SkewIntrinsic.principal_point_y"><code class="docutils literal notranslate"><span class="pre">SkewIntrinsic.principal_point_y</span></code></a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_autosummary/pycvcam.SkewIntrinsic.principal_point_y.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025-2026, Artezaru.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
