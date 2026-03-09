@@ -51,7 +51,7 @@ def optimize_input_points(
 
         \nabla_{X} T (\vec{X}_{I_0}, \lambda) \delta \vec{X}_I = \vec{X}_O - T(\vec{X}_{I_0}, \lambda)
 
-    The corrections are computed using the following equations:
+    The corrections are computed using the following equations :
 
     .. math::
 

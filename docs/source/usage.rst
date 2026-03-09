@@ -1,31 +1,26 @@
 Usage
 ==============
 
+This section contains a collection of examples demonstrating how to use the package ``pycvcam`` 
+for various applications. 
+
+.. contents:: Table of Contents
+   :local:
+   :depth: 2
+   :backlinks: top
+
+Nomenclature and Definitions
+-------------------------------
+
 .. include:: ../../pycvcam/resources/definition.rst
 
-Examples
---------
 
-The examples are provided in the `examples` directory of the package.
+Gallery Examples
+--------------------------
 
-.. literalinclude:: ../../examples/project_points.py
-   :language: python
-   :caption: Example of Projecting Points
+The package ``pycvcam`` provides a collection of examples demonstrating how to use the 
+package for various applications.
 
-.. literalinclude:: ../../examples/undistort_points.py
-   :language: python
-   :caption: Example of Undistorting Points
-
-.. literalinclude:: ../../examples/distort_image.py
-   :language: python
-   :caption: Example of Distorting an Image
-
-.. literalinclude:: ../../examples/undistort_image.py
-   :language: python
-   :caption: Example of Undistorting an Image
-
-.. literalinclude:: ../../examples/compute_rays.py
-   :language: python
-   :caption: Example of Computing Rays
-
+.. include:: /_gallery/index.rst
+   :start-after: _gallery:
 

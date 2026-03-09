@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Optional
+from typing import Optional, Dict
 import numpy
 import cv2
 import scipy
@@ -26,6 +26,7 @@ from .distortion_objects.no_distortion import NoDistortion
 from .intrinsic_objects.no_intrinsic import NoIntrinsic
 from .extrinsic_objects.no_extrinsic import NoExtrinsic
 
+
 def compute_rays(
     image_points: numpy.ndarray,
     intrinsic: Optional[Intrinsic],
@@ -33,9 +34,11 @@ def compute_rays(
     extrinsic: Optional[Extrinsic],
     *,
     transpose: bool = False,
+    intrinsic_kwargs: Optional[Dict] = None,
+    distortion_kwargs: Optional[Dict] = None,
+    extrinsic_kwargs: Optional[Dict] = None,
     _skip: bool = False,
-    **kwargs
-    ) -> Rays:
+) -> Rays:
     r"""
 
     Compute the rays emitted from the camera to the scene based on the given image points, intrinsic parameters, distortion model, and extrinsic parameters.
@@ -85,21 +88,28 @@ def compute_rays(
         If True, the input image points are transposed before processing, the input shape is expected to be (2, ...) instead of (..., 2) and the output shape will be (6, ...).
         Default is False.
 
+    intrinsic_kwargs : Optional[Dict], optional
+        Additional keyword arguments to be passed to the intrinsic transformation's inverse method.
+
+    distortion_kwargs : Optional[Dict], optional
+        Additional keyword arguments to be passed to the distortion transformation's inverse method.
+
+    extrinsic_kwargs : Optional[Dict], optional
+        Additional keyword arguments to be passed to the extrinsic transformation's method to compute the rays.
+
     _skip : bool, optional
             [INTERNAL USE], If True, skip the checks for the transformation parameters and assume the points are given in the (n_points, input_dim) float format.
             `transpose` is ignored if this parameter is set to True.
 
-    **kwargs : dict
-        Additional keyword arguments for distortion models ``undistort`` method.
 
     Returns
     -------
     Rays
         The rays in the world coordinate system.
 
+
     Example
     -------
-
     Create a simple example to construct the rays from an image to the scene:
 
     .. code-block:: python
@@ -108,7 +118,7 @@ def compute_rays(
         import cv2
         from pycvcam import compute_rays, Cv2Extrinsic, Cv2Intrinsic, Cv2Distortion
 
-        # Read the image : 
+        # Read the image :
         image = cv2.imread('image.jpg')
         image_height, image_width = image.shape[:2]
 
@@ -143,59 +153,89 @@ def compute_rays(
     if extrinsic is None:
         extrinsic = NoExtrinsic()
 
+    if intrinsic_kwargs is None:
+        intrinsic_kwargs = {}
+    if distortion_kwargs is None:
+        distortion_kwargs = {}
+    if extrinsic_kwargs is None:
+        extrinsic_kwargs = {}
+
     # Check the types of the parameters
     if not isinstance(intrinsic, Intrinsic):
         raise ValueError("intrinsic must be an instance of the Intrinsic class")
     if not intrinsic.is_set():
-        raise ValueError("The intrinsic object must be ready to transform the points, check is_set() method.")
+        raise ValueError(
+            "The intrinsic object must be ready to transform the points, check is_set() method."
+        )
     if not isinstance(distortion, Distortion):
         raise ValueError("distortion must be an instance of the Distortion class.")
     if not distortion.is_set():
-        raise ValueError("The distortion object must be ready to transform the points, check is_set() method.")
+        raise ValueError(
+            "The distortion object must be ready to transform the points, check is_set() method."
+        )
     if not isinstance(extrinsic, Extrinsic):
         raise ValueError("extrinsic must be an instance of the Extrinsic class")
     if not extrinsic.is_set():
-        raise ValueError("The extrinsic object must be ready to transform the points, check is_set() method.")
-    
+        raise ValueError(
+            "The extrinsic object must be ready to transform the points, check is_set() method."
+        )
+
+    if not isinstance(intrinsic_kwargs, dict):
+        raise ValueError("intrinsic_kwargs must be a dictionary")
+    if not isinstance(distortion_kwargs, dict):
+        raise ValueError("distortion_kwargs must be a dictionary")
+    if not isinstance(extrinsic_kwargs, dict):
+        raise ValueError("extrinsic_kwargs must be a dictionary")
+
     if not _skip:
         if not isinstance(transpose, bool):
             raise ValueError("transpose must be a boolean value")
-        
+
         # Create the array of points
         image_points = numpy.asarray(image_points, dtype=numpy.float64)
 
         # Transpose the points if needed
         if transpose:
-            image_points = numpy.moveaxis(image_points, 0, -1) # (2, ...) -> (..., 2)
+            image_points = numpy.moveaxis(image_points, 0, -1)  # (2, ...) -> (..., 2)
 
         # Extract the original shape
-        shape = image_points.shape # (..., 2)
+        shape = image_points.shape  # (..., 2)
 
         # Flatten the points along the last axis
-        image_points = image_points.reshape(-1, shape[-1]) # shape (..., 2) -> shape (n_points, 2)
+        image_points = image_points.reshape(
+            -1, shape[-1]
+        )  # shape (..., 2) -> shape (n_points, 2)
 
         # Check the shape of the points
-        if image_points.ndim !=2 or image_points.shape[1] != 2:
-            raise ValueError(f"The points must be in the shape (..., 2) or (2, ...) if ``transpose`` is True. Got {image_points.shape} instead and transpose is {transpose}.")
+        if image_points.ndim != 2 or image_points.shape[1] != 2:
+            raise ValueError(
+                f"The points must be in the shape (..., 2) or (2, ...) if ``transpose`` is True. Got {image_points.shape} instead and transpose is {transpose}."
+            )
 
-    n_points = image_points.shape[0] # n_points
+    n_points = image_points.shape[0]  # n_points
     output_points = image_points
-    
+
     # Realize the transformation:
     if not isinstance(intrinsic, NoIntrinsic):
-        output_points, _, _ = intrinsic._inverse_transform(output_points, dx=False, dp=False) # shape (n_points, 2) -> shape (n_points, 2)
+        output_points, _, _ = intrinsic._inverse_transform(
+            output_points, dx=False, dp=False, **intrinsic_kwargs
+        )  # shape (n_points, 2) -> shape (n_points, 2)
     if not isinstance(distortion, NoDistortion):
-        output_points, _, _ = distortion._inverse_transform(output_points, dx=False, dp=False, **kwargs)
+        output_points, _, _ = distortion._inverse_transform(
+            output_points, dx=False, dp=False, **distortion_kwargs
+        )
 
     # Always use the extrinsic transformation to compute the rays:
-    rays = extrinsic._compute_rays(output_points) # shape (n_points, 2) -> shape (n_points, 6)
-    
+    rays = extrinsic._compute_rays(
+        output_points, **extrinsic_kwargs
+    )  # shape (n_points, 2) -> shape (n_points, 6)
+
     if not _skip:
         # Reshape the rays  back to the original shape
-        rays = rays.reshape((*shape[:-1], 6)) # shape (n_points, 6) -> (..., 6)
+        rays = rays.reshape((*shape[:-1], 6))  # shape (n_points, 6) -> (..., 6)
 
         # Transpose the rays back to the original shape if needed
         if transpose:
-            rays = numpy.moveaxis(rays, -1, 0) # (..., 6) -> (6, ...)
+            rays = numpy.moveaxis(rays, -1, 0)  # (..., 6) -> (6, ...)
 
     return Rays(rays=rays, transpose=transpose)

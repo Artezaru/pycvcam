@@ -7,7 +7,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pycvcam"
-requires-python = ">= 3.10"
+requires-python = ">= 3.11"
 dynamic = ["version"]
 description = "Python Computer Vision Cameras Operations and Models"
 license = {file = "LICENSE"}
@@ -23,8 +23,8 @@ dependencies = [
     "numpy>=1.26",
     "opencv-python-headless>=4.9",
     "scipy>=1.12",
-    "pyzernike-polynomials>=2.0.5",
-    "py3dframe>=1.0.1",
+    "pyzernike-polynomials>=2.3.1",
+    "py3dframe>=2.0.1",
 ]
 
 [project.urls]
@@ -43,21 +43,6 @@ exclude = ["laboratory", "laboratory.*", "tests", "tests*", "examples", "example
 
 [tool.setuptools.dynamic]
 version = {attr = "pycvcam.__version__.__version__"}
-
-[project.optional-dependencies]
-dev = [
-    "sphinx",
-    "pydata-sphinx-theme",
-    "numpydoc",
-    "pytest",
-    "pytest-cov",
-    "bumpver",
-    "twine",
-    "wheel",
-    "build",
-    "setuptools",
-    "setuptools-scm",
-]
 
 [project.readme]
 file = "README.md"

@@ -14,8 +14,10 @@
 
 from typing import ClassVar, List
 import numpy
+from numpy.typing import ArrayLike
 
 from .transform import Transform, TransformResult
+
 
 class Distortion(Transform):
     r"""
@@ -32,8 +34,9 @@ class Distortion(Transform):
     To process the transformation, the methods ``distort`` and ``undistort`` are provided, which are aliases for the ``transform`` and ``inverse_transform`` methods respectively.
 
     """
-    _input_dim : ClassVar[int] = 2
-    _output_dim : ClassVar[int] = 2
+
+    _input_dim: ClassVar[int] = 2
+    _output_dim: ClassVar[int] = 2
 
     # =============================================
     # Addind aliases for the transformation
@@ -43,10 +46,10 @@ class Distortion(Transform):
         Property to return a list of aliases for the transformed points.
 
         - ``distorted_points`` and ``x_d`` are added.
-        
+
         Returns
         -------
-        :class:`List[str]`
+        List[str]
             A list of aliases for the transformed points.
         """
         return ["distorted_points", "x_d"]
@@ -59,20 +62,20 @@ class Distortion(Transform):
 
         Returns
         -------
-        :class:`List[str]`
+        List[str]
             A list of aliases for the inverse transformed points.
         """
         return ["normalized_points", "x_n"]
-    
+
     def distort(
-        self, 
-        normalized_points: numpy.ndarray, 
-        *, 
+        self,
+        normalized_points: ArrayLike,
+        *,
         transpose: bool = False,
         dx: bool = False,
         dp: bool = False,
-        **kwargs
-        ) -> TransformResult:
+        **kwargs,
+    ) -> TransformResult:
         r"""
         Alias for the ``transform`` method, which applies the distortion transformation to the points.
 
@@ -81,32 +84,32 @@ class Distortion(Transform):
             - :meth:`pycvcam.core.Transform.transform` for applying the transformation to points.
 
         .. note::
-        
+
             The :obj:`normalized_points`  is converted to a numpy array of ``dtype=numpy.float64``.
-            
+
         Parameters
         ----------
-        normalized_points : :class:`numpy.ndarray`
+        normalized_points : ArrayLike
             The normalized points to be transformed. Shape (..., 2).
 
-        transpose : :class:`bool`, optional
-            If :obj:`True`, the input points are assumed to have shape (2, ...) instead of (..., 2) and the output points will have shape (2, ...). Default is :obj:`False`.
+        transpose : bool, optional
+            If True, the input points are assumed to have shape (2, ...) instead of (..., 2) and the output points will have shape (2, ...). Default is False.
 
-        dx : :class:`bool`, optional
-            If :obj:`True`, the jacobian with respect to the normalized points is computed. Default is :obj:`False`
+        dx : bool, optional
+            If True, the jacobian with respect to the normalized points is computed. Default is False
 
-        dp : :class:`bool`, optional
+        dp : bool, optional
             If :obj:`True`, the jacobian with respect to the distortion parameters is computed. Default is :obj:`False`
 
         Returns
         -------
         :class:`TransformResult`
             The result of the transformation, which includes the ``distorted_points`` and the Jacobian matrices if available.
-            
-            
+
+
         Examples
         --------
-        
+
         .. code-block:: python
 
             distortion = ... # An instance of a subclass of Distortion
@@ -120,19 +123,21 @@ class Distortion(Transform):
             # SAME AS:
             result = distortion.transform(normalized_points)
             distorted_points = result.transformed_points  # shape (n_points, 2)
-        
+
         """
-        return self.transform(normalized_points, transpose=transpose, dx=dx, dp=dp, **kwargs)
+        return self.transform(
+            normalized_points, transpose=transpose, dx=dx, dp=dp, **kwargs
+        )
 
     def undistort(
-        self, 
-        distorted_points: numpy.ndarray, 
-        *, 
+        self,
+        distorted_points: ArrayLike,
+        *,
         transpose: bool = False,
         dx: bool = False,
         dp: bool = False,
-        **kwargs
-        ) -> TransformResult:
+        **kwargs,
+    ) -> TransformResult:
         r"""
         Alias for the ``inverse_transform`` method, which applies the inverse distortion transformation to the points.
 
@@ -141,32 +146,32 @@ class Distortion(Transform):
             - :meth:`pycvcam.core.Transform.inverse_transform` for applying the inverse transformation to points.
 
         .. note::
-        
+
             The :obj:`distorted_points`  is converted to a numpy array of ``dtype=numpy.float64``.
 
         Parameters
         ----------
-        distorted_points : :class:`numpy.ndarray`
+        distorted_points : ArrayLike
             The distorted points to be transformed. Shape (..., 2).
 
-        transpose : :class:`bool`, optional
+        transpose : bool, optional
             If True, the input points are assumed to have shape (2, ...) instead of (..., 2) and the output points will have shape (2, ...). Default is False.
 
-        dx : :class:`bool`, optional
+        dx : bool, optional
             If True, the jacobian with respect to the distorted points is computed. Default is False.
 
-        dp : :class:`bool`, optional
+        dp : bool, optional
             If True, the jacobian with respect to the distortion parameters is computed. Default is False
 
         Returns
         -------
         :class:`TransformResult`
             The result of the inverse transformation, which includes the ``normalized_points`` and the Jacobian matrices if available.
-            
-            
+
+
         Examples
         --------
-        
+
         .. code-block:: python
 
             distortion = ... # An instance of a subclass of Distortion
@@ -182,4 +187,6 @@ class Distortion(Transform):
             normalized_points = result.transformed_points  # shape (n_points, 2)
 
         """
-        return self.inverse_transform(distorted_points, transpose=transpose, dx=dx, dp=dp, **kwargs)
+        return self.inverse_transform(
+            distorted_points, transpose=transpose, dx=dx, dp=dp, **kwargs
+        )

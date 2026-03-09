@@ -19,6 +19,7 @@ import datetime
 from .__version__ import __version__
 from .core.transform import Transform
 
+
 def write_transform(file_path, transform: Transform) -> None:
     """
     Writes the Transform object to a JSON file.
@@ -68,14 +69,16 @@ def write_transform(file_path, transform: Transform) -> None:
 
     # Create a dict containing the Transform object's data
     transform_data = {}
-    transform_data['type'] = type(transform).__name__
-    transform_data['version'] = __version__
-    transform_data['date'] = datetime.datetime.now().isoformat()
-    transform_data['parameters'] = list(transform.parameters) if transform.parameters is not None else None
-    transform_data['constants'] = list(transform.constants) if transform.constants is not None else None
+    transform_data["type"] = type(transform).__name__
+    transform_data["version"] = __version__
+    transform_data["date"] = datetime.datetime.now().isoformat()
+    transform_data["parameters"] = (
+        list(transform.parameters) if transform.parameters is not None else None
+    )
+    transform_data["constants"] = (
+        list(transform.constants) if transform.constants is not None else None
+    )
 
     # Write the Transform object to the JSON file
-    with open(file_path, 'w') as f:
+    with open(file_path, "w") as f:
         json.dump(transform_data, f, indent=4)
-
-    

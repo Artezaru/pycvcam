@@ -3,10 +3,11 @@ import numpy
 
 from pycvcam import ZernikeDistortion
 
+
 @pytest.fixture
 def default():
     """Creates a default Distortion object with known parameters."""
-    distortion = ZernikeDistortion(Nzer=7)
+    distortion = ZernikeDistortion(n_zer=7)
 
     # Set Zernike coefficients
     distortion.set_Cx(0, 0, 0.017083945091492785)
@@ -88,6 +89,7 @@ def default():
 
     return distortion
 
+
 def test_parameters(default):
     """Test the parameters property returns the correct distortion parameters."""
     assert default.get_Cx(0, 0) == 0.017083945091492785
@@ -95,6 +97,7 @@ def test_parameters(default):
     assert default.get_Cx(1, 1) == 0.04280641095874525
     assert default.get_Cx(1, -1) == -0.11948575638043393
     assert default.get_Cy(1, 1) == 0.0908833886027441
+
 
 def test_jacobian_analytic_numeric_match(default):
     """Test that the analytic Jacobian of the distortion transform matches the numeric approximation."""
@@ -108,13 +111,20 @@ def test_jacobian_analytic_numeric_match(default):
         points_plus = points.copy()
         points_plus[:, i] += epsilon
         result_plus = default.transform(points_plus, dx=False, dp=False)
-        jacobian_numeric = (result_plus.transformed_points - result_analytic.transformed_points) / epsilon
+        jacobian_numeric = (
+            result_plus.transformed_points - result_analytic.transformed_points
+        ) / epsilon
         try:
             numpy.testing.assert_allclose(
-                result_analytic.jacobian_dx[..., i], jacobian_numeric, rtol=1e-3, atol=1e-5
+                result_analytic.jacobian_dx[..., i],
+                jacobian_numeric,
+                rtol=1e-3,
+                atol=1e-5,
             )
         except AssertionError as e:
-            print(f"Jacobian mismatch with respect to input coordinate '{dx_labels[i]}'")
+            print(
+                f"Jacobian mismatch with respect to input coordinate '{dx_labels[i]}'"
+            )
             raise e
 
     # --- dp (∂output/∂distortion parameters) ---
@@ -127,18 +137,28 @@ def test_jacobian_analytic_numeric_match(default):
         distortion_plus.radius = default.radius
         distortion_plus.center = default.center
         result_plus = distortion_plus.transform(points, dx=False, dp=False)
-        jacobian_numeric = (result_plus.transformed_points - result_analytic.transformed_points) / epsilon
-        nan_mask = numpy.logical_and(numpy.any(numpy.isnan(jacobian_numeric), axis=-1), 
-                                     numpy.any(numpy.isnan(result_analytic.jacobian_dp[..., i]), axis=-1))
+        jacobian_numeric = (
+            result_plus.transformed_points - result_analytic.transformed_points
+        ) / epsilon
+        nan_mask = numpy.logical_and(
+            numpy.any(numpy.isnan(jacobian_numeric), axis=-1),
+            numpy.any(numpy.isnan(result_analytic.jacobian_dp[..., i]), axis=-1),
+        )
         if numpy.sum(nan_mask) > 5:
-            print(f"Warning: more than 50% of the points have NaN values in the Jacobian for parameter '{i}'")
+            print(
+                f"Warning: more than 50% of the points have NaN values in the Jacobian for parameter '{i}'"
+            )
         try:
             numpy.testing.assert_allclose(
-                result_analytic.jacobian_dp[nan_mask, :, i], jacobian_numeric[nan_mask, :], rtol=1e-3, atol=1e-5
+                result_analytic.jacobian_dp[nan_mask, :, i],
+                jacobian_numeric[nan_mask, :],
+                rtol=1e-3,
+                atol=1e-5,
             )
         except AssertionError as e:
             print(f"Jacobian mismatch with respect to parameter '{[i]}'")
             raise e
+
 
 def test_transform_inverse_transform_consistency(default):
     """Test that transforming and then inverse transforming returns the original points."""
@@ -148,4 +168,6 @@ def test_transform_inverse_transform_consistency(default):
     inverse_transformed = default.inverse_transform(transformed.transformed_points)
 
     # Check if the inverse transformed points match the original points
-    assert numpy.allclose(inverse_transformed.transformed_points, points, rtol=1e-3, atol=1e-5)
+    assert numpy.allclose(
+        inverse_transformed.transformed_points, points, rtol=1e-3, atol=1e-5
+    )

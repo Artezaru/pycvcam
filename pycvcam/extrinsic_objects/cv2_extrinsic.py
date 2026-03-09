@@ -1,4 +1,3 @@
-
 # Copyright 2025 Artezaru
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -63,79 +62,14 @@ class Cv2Extrinsic(Extrinsic):
     - ``jacobian_dr``: The Jacobian of the normalized points with respect to the rotation vector. It has shape (..., 2, 3).
     - ``jacobian_dt``: The Jacobian of the normalized points with respect to the translation vector. It has shape (..., 2, 3).
 
-    .. note::
-
-        The ``Cv2Extrinsic`` class can be instantiated with 3 different ways:
-
-        - Setting directly the parameters as a numpy array of shape (6,) (__init__ method) containing the rotation vector and translation vector concatenated.
-        - Using the classmethod ``from_rt`` to set the rotation vector and translation vector.
-        - Using the classmethod ``from_frame`` to set the 3D frame of the camera in the world coordinate system.
 
     Parameters
     ----------
     parameters : Optional[numpy.ndarray]
         The parameters of the extrinsic transformation. It should be a numpy array of shape (6,) containing the rotation vector and translation vector concatenated.
 
-    Examples
-    --------
-    Create an extrinsic object with a rotation vector and a translation vector:
-
-    .. code-block:: python
-
-        import numpy
-        from pycvcam import Cv2Extrinsic
-
-        rvec = numpy.array([0.1, 0.2, 0.3])
-        tvec = numpy.array([0.5, 0.5, 0.5])
-
-        extrinsic = Cv2Extrinsic.from_rt(rvec, tvec)
-
-    Then you can use the extrinsic object to transform ``world_points`` to ``normalized_points``:
-
-    .. code-block:: python
-
-        world_points = numpy.array([[1, 2, 3],
-                                   [4, 5, 6],
-                                   [7, 8, 9],
-                                   [10, 11, 12]]) # shape (n_points, 3)
-
-        result = extrinsic.transform(world_points)
-        normalized_points = result.normalized_points # shape (n_points, 2)
-        print(normalized_points)
-
-    You can also access to the jacobian of the extrinsic transformation:
-
-    .. code-block:: python
-
-        result = extrinsic.transform(world_points, dx=True, dp=True)
-        normalized_points_dx = result.jacobian_dx  # Shape (n_points, 2, 3)
-        normalized_points_dp = result.jacobian_dp  # Shape (n_points, 2, 6)
-        print(normalized_points_dx) 
-        print(normalized_points_dp)
-
-    The inverse transformation can be computed using the `inverse_transform` method:
-    By default, the depth is assumed to be 1.0 for all points, but you can provide a specific depth for each point with shape (...,).
-
-    .. code-block:: python
-
-        depth = numpy.array([1.0, 2.0, 3.0, 4.0])  # Example depth values for each point
-
-        inverse_result = extrinsic.inverse_transform(normalized_points, dx=True, dp=True, depth=depth)
-        world_points = inverse_result.world_points  # Shape (n_points, 3)
-        print(world_points)
-
-    .. note::
-
-        The jacobian with respect to the depth is not computed.
-    
-    .. seealso::
-
-        For more information about the transformation process, see:
-
-        - :meth:`pycvcam.Cv2Extrinsic._transform` to transform the ``world_points`` to ``normalized_points``.
-        - :meth:`pycvcam.Cv2Extrinsic._inverse_transform` to transform the ``normalized_points`` back to ``world_points``.
-
     """
+
     __slots__ = ["_rvec", "_tvec"]
 
     def __init__(self, parameters: Optional[numpy.ndarray] = None) -> None:
@@ -165,7 +99,7 @@ class Cv2Extrinsic(Extrinsic):
             "dr": (0, 3, "Jacobian with respect to the rotation vector (rvec)"),
             "dt": (3, 6, "Jacobian with respect to the translation vector (tvec)"),
         }
-    
+
     @property
     def n_params(self) -> int:
         r"""
@@ -198,7 +132,7 @@ class Cv2Extrinsic(Extrinsic):
         if self._rvec is None or self._tvec is None:
             return None
         return numpy.concatenate((self._rvec, self._tvec), axis=0)
-    
+
     @parameters.setter
     def parameters(self, value: Optional[numpy.ndarray]) -> None:
         if value is None:
@@ -219,11 +153,13 @@ class Cv2Extrinsic(Extrinsic):
         Always returns None for the Cv2Extrinsic class, as it does not have any constants.
         """
         return None
-    
+
     @constants.setter
     def constants(self, value: Optional[numpy.ndarray]) -> None:
         if value is not None:
-            raise ValueError("Cv2Extrinsic model has no constants, must be set to None.")
+            raise ValueError(
+                "Cv2Extrinsic model has no constants, must be set to None."
+            )
         self._constants = None
 
     @property
@@ -280,7 +216,7 @@ class Cv2Extrinsic(Extrinsic):
             The translation vector of the camera in the world coordinate system. (or None if not set)
         """
         return self._tvec
-    
+
     @translation_vector.setter
     def translation_vector(self, tvec: numpy.ndarray) -> None:
         if tvec is None:
@@ -325,7 +261,7 @@ class Cv2Extrinsic(Extrinsic):
             The rotation vector of the camera in the world coordinate system. (or None if not set)
         """
         return self._rvec
-    
+
     @rotation_vector.setter
     def rotation_vector(self, rvec: Optional[numpy.ndarray]) -> None:
         if rvec is None:
@@ -341,7 +277,7 @@ class Cv2Extrinsic(Extrinsic):
     @property
     def rvec(self) -> Optional[numpy.ndarray]:
         return self.rotation_vector
-    
+
     @rvec.setter
     def rvec(self, rvec: Optional[numpy.ndarray]) -> None:
         self.rotation_vector = rvec
@@ -369,7 +305,7 @@ class Cv2Extrinsic(Extrinsic):
         if self._rvec is None:
             return None
         return cv2.Rodrigues(self._rvec)[0]
-    
+
     @rotation_matrix.setter
     def rotation_matrix(self, rmat: Optional[numpy.ndarray]) -> None:
         if rmat is None:
@@ -385,10 +321,68 @@ class Cv2Extrinsic(Extrinsic):
     @property
     def rmat(self) -> Optional[numpy.ndarray]:
         return self.rotation_matrix
-    
+
     @rmat.setter
     def rmat(self, rmat: Optional[numpy.ndarray]) -> None:
         self.rotation_matrix = rmat
+
+    # ===========================================
+    # Transformation matrix
+    # ===========================================
+    @property
+    def transformation_matrix(self) -> Optional[numpy.ndarray]:
+        r"""
+        Get the 4x4 transformation matrix of the extrinsic transformation.
+
+        The transformation matrix is a numpy array of shape (4, 4) representing the rotation and translation of the camera in the world coordinate system.
+
+        .. math::
+        
+            \begin{bmatrix}
+            R & T \\
+            0 & 1
+            \end{bmatrix}
+            
+        .. note::
+        
+            An alias for ``transformation_matrix`` is ``tmatrix``.
+        
+        Returns
+        -------
+        Optional[numpy.ndarray]
+            The 4x4 transformation matrix of the camera in the world coordinate system. (or None if not set)
+        """
+        if self._rvec is None or self._tvec is None:
+            return None
+        rmat = cv2.Rodrigues(self._rvec)[0]
+        transformation_matrix = numpy.eye(4, dtype=numpy.float64)
+        transformation_matrix[:3, :3] = rmat
+        transformation_matrix[:3, 3] = self._tvec
+        return transformation_matrix
+
+    @transformation_matrix.setter
+    def transformation_matrix(self, tmatrix: Optional[numpy.ndarray]) -> None:
+        if tmatrix is None:
+            self._rvec = None
+            self._tvec = None
+            return
+        tmatrix = numpy.asarray(tmatrix, dtype=numpy.float64)
+        if tmatrix.shape != (4, 4):
+            raise ValueError("Transformation matrix must be a 4x4 matrix.")
+        if not numpy.isfinite(tmatrix).all():
+            raise ValueError("Transformation matrix must be a finite 4x4 matrix.")
+        rmat = tmatrix[:3, :3]
+        tvec = tmatrix[:3, 3]
+        self.rotation_matrix = rmat
+        self.translation_vector = tvec
+
+    @property
+    def tmatrix(self) -> Optional[numpy.ndarray]:
+        return self.transformation_matrix
+
+    @tmatrix.setter
+    def tmatrix(self, tmatrix: Optional[numpy.ndarray]) -> None:
+        self.transformation_matrix = tmatrix
 
     # =============================================
     # Frame (from py3dframe)
@@ -411,8 +405,10 @@ class Cv2Extrinsic(Extrinsic):
         """
         if self._rvec is None or self._tvec is None:
             return None
-        return Frame.from_rotation_vector(translation=self._tvec, rotation_vector=self._rvec, convention=4)
-    
+        return Frame.from_rotation_vector(
+            translation=self._tvec, rotation_vector=self._rvec, convention=4
+        )
+
     @frame.setter
     def frame(self, frame: Optional[Frame]) -> None:
         if frame is None:
@@ -424,7 +420,6 @@ class Cv2Extrinsic(Extrinsic):
         self._rvec = frame.get_global_rotation_vector(convention=4).flatten()
         self._tvec = frame.get_global_translation(convention=4).flatten()
 
-    
     # =============================================
     # Instantiation methods
     # =============================================
@@ -446,6 +441,7 @@ class Cv2Extrinsic(Extrinsic):
         Cv2Extrinsic
             A new instance of the Cv2Extrinsic class with the specified rotation and translation vectors.
 
+
         Examples
         --------
         Create an extrinsic object with a rotation vector and a translation vector:
@@ -460,13 +456,13 @@ class Cv2Extrinsic(Extrinsic):
             tvec = numpy.array([0.5, 0.5, 0.5])
 
             extrinsic = Cv2Extrinsic.from_rt(rvec, tvec)
-        
+
         """
         extrinsic = cls()
         extrinsic.rotation_vector = rvec
         extrinsic.translation_vector = tvec
         return extrinsic
-    
+
     @classmethod
     def from_frame(cls, frame: Frame) -> Cv2Extrinsic:
         r"""
@@ -482,6 +478,7 @@ class Cv2Extrinsic(Extrinsic):
         Cv2Extrinsic
             A new instance of the Cv2Extrinsic class with the specified 3D frame.
 
+
         Examples
         --------
         Create an extrinsic object with a 3D frame:
@@ -493,16 +490,56 @@ class Cv2Extrinsic(Extrinsic):
 
             frame = Frame(translation=[0.5, 0.5, 0.5], rotation_vector=[0.1, 0.2, 0.3], convention=4)
             extrinsic = Cv2Extrinsic.from_frame(frame)
-        
+
         """
         extrinsic = cls()
         extrinsic.frame = frame
         return extrinsic
-    
+
+    @classmethod
+    def from_tmatrix(cls, tmatrix: numpy.ndarray) -> Cv2Extrinsic:
+        r"""
+        Class method to create a Cv2Extrinsic object from a 4x4 transformation matrix.
+
+        Parameters
+        ----------
+        tmatrix : numpy.ndarray
+            The 4x4 transformation matrix of the camera in the world coordinate system. It should be a numpy array of shape (4, 4).
+
+        Returns
+        -------
+        Cv2Extrinsic
+            A new instance of the Cv2Extrinsic class with the specified transformation matrix.
+
+
+        Examples
+        --------
+        Create an extrinsic object with a transformation matrix:
+
+        .. code-block:: python
+
+            import numpy as np
+
+            from pycvcam import Cv2Extrinsic
+
+            tmatrix = numpy.array([[0.93629336, -0.27509585, 0.21835066, 0.5],
+                                   [0.28962948, 0.95642509, -0.03695701, 0.5],
+                                   [-0.19866933, 0.0978434, 0.97517033, 0.5],
+                                   [0.0, 0.0, 0.0, 1.0]])
+
+            extrinsic = Cv2Extrinsic.from_tmatrix(tmatrix)
+
+        """
+        extrinsic = cls()
+        extrinsic.transformation_matrix = tmatrix
+        return extrinsic
+
     # =============================================
     # Transform methods
     # =============================================
-    def _transform(self, world_points: numpy.ndarray, *, dx: bool = False, dp: bool = False) -> Tuple[numpy.ndarray, Optional[numpy.ndarray], Optional[numpy.ndarray]]:
+    def _transform(
+        self, world_points: numpy.ndarray, *, dx: bool = False, dp: bool = False
+    ) -> Tuple[numpy.ndarray, Optional[numpy.ndarray], Optional[numpy.ndarray]]:
         r"""
         Compute the transformation from the ``world_points`` to the ``normalized_points``.
 
@@ -555,48 +592,74 @@ class Cv2Extrinsic(Extrinsic):
 
         # Get the rotation matrix and translation vector
         rmat, jacobian = cv2.Rodrigues(self._rvec)
-        rmat = numpy.asarray(rmat, dtype=numpy.float64) # shape (3, 3)
-        jacobian = numpy.asarray(jacobian, dtype=numpy.float64) # shape (3, 9) [R11,R12,R13,R21,R22,R23,R31,R32,R33]
-        rmat_dr = jacobian.reshape(3, 3, 3).transpose(1, 2, 0) # shape (3, 3, 3) # [i, j, k] = dR[i,j]/drvec[k]
+        rmat = numpy.asarray(rmat, dtype=numpy.float64)  # shape (3, 3)
+        jacobian = numpy.asarray(
+            jacobian, dtype=numpy.float64
+        )  # shape (3, 9) [R11,R12,R13,R21,R22,R23,R31,R32,R33]
+        rmat_dr = jacobian.reshape(3, 3, 3).transpose(
+            1, 2, 0
+        )  # shape (3, 3, 3) # [i, j, k] = dR[i,j]/drvec[k]
 
         # ==================
         # Camera points
         # ==================
         # Compute the camera points
-        points_camera_flat = world_points @ rmat.T + self._tvec[numpy.newaxis, :] # shape (n_points, 3)
-        X_C = points_camera_flat[:, 0] # shape (n_points,)
-        Y_C = points_camera_flat[:, 1] # shape (n_points,)
-        Z_C = points_camera_flat[:, 2] # shape (n_points,)
+        points_camera_flat = (
+            world_points @ rmat.T + self._tvec[numpy.newaxis, :]
+        )  # shape (n_points, 3)
+        X_C = points_camera_flat[:, 0]  # shape (n_points,)
+        Y_C = points_camera_flat[:, 1]  # shape (n_points,)
+        Z_C = points_camera_flat[:, 2]  # shape (n_points,)
 
         # Compute the jacobian with respect to the world points
         if dx:
             points_camera_flat_dx = numpy.broadcast_to(rmat, (n_points, 3, 3))
-            X_C_dx = points_camera_flat_dx[:, 0, :] # shape (n_points, 3)
-            Y_C_dx = points_camera_flat_dx[:, 1, :] # shape (n_points, 3)
-            Z_C_dx = points_camera_flat_dx[:, 2, :] # shape (n_points, 3)
+            X_C_dx = points_camera_flat_dx[:, 0, :]  # shape (n_points, 3)
+            Y_C_dx = points_camera_flat_dx[:, 1, :]  # shape (n_points, 3)
+            Z_C_dx = points_camera_flat_dx[:, 2, :]  # shape (n_points, 3)
 
         # Compute the jacobian with respect to the extrinsic parameters
         if dp:
-            points_camera_flat_dp = numpy.empty((n_points, 3, 6), dtype=numpy.float64) # shape (n_points, 3, 6)
+            points_camera_flat_dp = numpy.empty(
+                (n_points, 3, 6), dtype=numpy.float64
+            )  # shape (n_points, 3, 6)
             for k in range(3):
-                points_camera_flat_dp[:, :, k] = world_points @ rmat_dr[:, :, k].T # shape (n_points, 3)
-            points_camera_flat_dp[:, :, 3] = numpy.array([1.0, 0.0, 0.0], dtype=numpy.float64)[numpy.newaxis, :] # shape (n_points, 3)
-            points_camera_flat_dp[:, :, 4] = numpy.array([0.0, 1.0, 0.0], dtype=numpy.float64)[numpy.newaxis, :] # shape (n_points, 3)
-            points_camera_flat_dp[:, :, 5] = numpy.array([0.0, 0.0, 1.0], dtype=numpy.float64)[numpy.newaxis, :] # shape (n_points, 3)
-            X_C_dp = points_camera_flat_dp[:, 0, :] # shape (n_points, 6)
-            Y_C_dp = points_camera_flat_dp[:, 1, :] # shape (n_points, 6)
-            Z_C_dp = points_camera_flat_dp[:, 2, :] # shape (n_points, 6)
+                points_camera_flat_dp[:, :, k] = (
+                    world_points @ rmat_dr[:, :, k].T
+                )  # shape (n_points, 3)
+            points_camera_flat_dp[:, :, 3] = numpy.array(
+                [1.0, 0.0, 0.0], dtype=numpy.float64
+            )[
+                numpy.newaxis, :
+            ]  # shape (n_points, 3)
+            points_camera_flat_dp[:, :, 4] = numpy.array(
+                [0.0, 1.0, 0.0], dtype=numpy.float64
+            )[
+                numpy.newaxis, :
+            ]  # shape (n_points, 3)
+            points_camera_flat_dp[:, :, 5] = numpy.array(
+                [0.0, 0.0, 1.0], dtype=numpy.float64
+            )[
+                numpy.newaxis, :
+            ]  # shape (n_points, 3)
+            X_C_dp = points_camera_flat_dp[:, 0, :]  # shape (n_points, 6)
+            Y_C_dp = points_camera_flat_dp[:, 1, :]  # shape (n_points, 6)
+            Z_C_dp = points_camera_flat_dp[:, 2, :]  # shape (n_points, 6)
 
         # ==================
         # Normalized points
         # ==================
         if numpy.any(numpy.abs(points_camera_flat[:, 2]) < 1e-6):
-            raise ValueError("The Z coordinate of the camera points is too close to zero. This may cause numerical instability.")
+            raise ValueError(
+                "The Z coordinate of the camera points is too close to zero. This may cause numerical instability."
+            )
 
         # Compute the normalized points
-        iZ_C = 1.0 / Z_C # shape (n_points,)
+        iZ_C = 1.0 / Z_C  # shape (n_points,)
 
-        normalized_points_flat = numpy.empty((n_points, 2), dtype=numpy.float64) # shape (n_points, 2)
+        normalized_points_flat = numpy.empty(
+            (n_points, 2), dtype=numpy.float64
+        )  # shape (n_points, 2)
         x_N = X_C * iZ_C
         y_N = Y_C * iZ_C
         normalized_points_flat[:, 0] = x_N
@@ -604,15 +667,35 @@ class Cv2Extrinsic(Extrinsic):
 
         # Compute the jacobian with respect to the camera points
         if dx:
-            jacobian_flat_dx = numpy.empty((n_points, 2, 3), dtype=numpy.float64) # shape (n_points, 2, 3)
-            jacobian_flat_dx[:, 0, :] = (X_C_dx - x_N[:, numpy.newaxis] * Z_C_dx) * iZ_C[:, numpy.newaxis] # shape (n_points, 3)
-            jacobian_flat_dx[:, 1, :] = (Y_C_dx - y_N[:, numpy.newaxis] * Z_C_dx) * iZ_C[:, numpy.newaxis] # shape (n_points, 3)
+            jacobian_flat_dx = numpy.empty(
+                (n_points, 2, 3), dtype=numpy.float64
+            )  # shape (n_points, 2, 3)
+            jacobian_flat_dx[:, 0, :] = (
+                X_C_dx - x_N[:, numpy.newaxis] * Z_C_dx
+            ) * iZ_C[
+                :, numpy.newaxis
+            ]  # shape (n_points, 3)
+            jacobian_flat_dx[:, 1, :] = (
+                Y_C_dx - y_N[:, numpy.newaxis] * Z_C_dx
+            ) * iZ_C[
+                :, numpy.newaxis
+            ]  # shape (n_points, 3)
 
         # Compute the jacobian with respect to the extrinsic parameters
         if dp:
-            jacobian_flat_dp = numpy.empty((n_points, 2, 6), dtype=numpy.float64) # shape (n_points, 2, 6)
-            jacobian_flat_dp[:, 0, :] = (X_C_dp - x_N[:, numpy.newaxis] * Z_C_dp) * iZ_C[:, numpy.newaxis] # shape (n_points, 6)
-            jacobian_flat_dp[:, 1, :] = (Y_C_dp - y_N[:, numpy.newaxis] * Z_C_dp) * iZ_C[:, numpy.newaxis] # shape (n_points, 6)
+            jacobian_flat_dp = numpy.empty(
+                (n_points, 2, 6), dtype=numpy.float64
+            )  # shape (n_points, 2, 6)
+            jacobian_flat_dp[:, 0, :] = (
+                X_C_dp - x_N[:, numpy.newaxis] * Z_C_dp
+            ) * iZ_C[
+                :, numpy.newaxis
+            ]  # shape (n_points, 6)
+            jacobian_flat_dp[:, 1, :] = (
+                Y_C_dp - y_N[:, numpy.newaxis] * Z_C_dp
+            ) * iZ_C[
+                :, numpy.newaxis
+            ]  # shape (n_points, 6)
 
         if not dx:
             jacobian_flat_dx = None
@@ -620,9 +703,15 @@ class Cv2Extrinsic(Extrinsic):
             jacobian_flat_dp = None
 
         return normalized_points_flat, jacobian_flat_dx, jacobian_flat_dp
-    
 
-    def _inverse_transform(self, normalized_points: numpy.ndarray, *, dx: bool = False, dp: bool = False, depth: Optional[numpy.ndarray] = None) -> Tuple[numpy.ndarray, Optional[numpy.ndarray], Optional[numpy.ndarray]]:
+    def _inverse_transform(
+        self,
+        normalized_points: numpy.ndarray,
+        *,
+        dx: bool = False,
+        dp: bool = False,
+        depth: Optional[numpy.ndarray] = None,
+    ) -> Tuple[numpy.ndarray, Optional[numpy.ndarray], Optional[numpy.ndarray]]:
         r"""
         Compute the transformation from the ``normalized_points`` to the ``world_points``.
 
@@ -679,11 +768,17 @@ class Cv2Extrinsic(Extrinsic):
 
         # Get the rotation matrix and translation vector
         rmat, jacobian = cv2.Rodrigues(self._rvec)
-        rmat = numpy.asarray(rmat, dtype=numpy.float64) # shape (3, 3)
-        rmat_inv = rmat.T # Inverse of the rotation matrix (R^{-1} = R^{T})
-        jacobian = numpy.asarray(jacobian, dtype=numpy.float64) # shape (3, 9) [R11,R12,R13,R21,R22,R23,R31,R32,R33]
-        rmat_dr = jacobian.reshape(3, 3, 3).transpose(1, 2, 0) # shape (3, 3, 3) # [i, j, k] = dR[i,j]/drvec[k]
-        rmat_inv_dr = rmat_dr.transpose(1, 0, 2) # shape (3, 3, 3) # [i, j, k] = dR^{-1}[i,j]/drvec[k] = dR^{T}[i,j]/drvec[k] = dR[j,i]/drvec[k]
+        rmat = numpy.asarray(rmat, dtype=numpy.float64)  # shape (3, 3)
+        rmat_inv = rmat.T  # Inverse of the rotation matrix (R^{-1} = R^{T})
+        jacobian = numpy.asarray(
+            jacobian, dtype=numpy.float64
+        )  # shape (3, 9) [R11,R12,R13,R21,R22,R23,R31,R32,R33]
+        rmat_dr = jacobian.reshape(3, 3, 3).transpose(
+            1, 2, 0
+        )  # shape (3, 3, 3) # [i, j, k] = dR[i,j]/drvec[k]
+        rmat_inv_dr = rmat_dr.transpose(
+            1, 0, 2
+        )  # shape (3, 3, 3) # [i, j, k] = dR^{-1}[i,j]/drvec[k] = dR^{T}[i,j]/drvec[k] = dR[j,i]/drvec[k]
 
         # ==================
         # Check depth
@@ -693,28 +788,34 @@ class Cv2Extrinsic(Extrinsic):
         else:
             depth = numpy.asarray(depth, dtype=numpy.float64).flatten()
             if depth.shape != (n_points,):
-                raise ValueError("Depth must be a 1D array with the same number of points as normalized_points.")
+                raise ValueError(
+                    "Depth must be a 1D array with the same number of points as normalized_points."
+                )
 
         # ==================
         # Camera points
         # ==================
         # Compute the camera points
-        X_C = normalized_points[:, 0] * depth # shape (n_points,)
-        Y_C = normalized_points[:, 1] * depth # shape (n_points,)
-        Z_C = depth # shape (n_points,)
+        X_C = normalized_points[:, 0] * depth  # shape (n_points,)
+        Y_C = normalized_points[:, 1] * depth  # shape (n_points,)
+        Z_C = depth  # shape (n_points,)
 
-        points_camera_flat = numpy.empty((n_points, 3), dtype=numpy.float64) # shape (n_points, 3)
+        points_camera_flat = numpy.empty(
+            (n_points, 3), dtype=numpy.float64
+        )  # shape (n_points, 3)
         points_camera_flat[:, 0] = X_C
         points_camera_flat[:, 1] = Y_C
         points_camera_flat[:, 2] = Z_C
 
         # Compute the jacobian with respect to the normalized points
         if dx:
-            points_camera_flat_dx = numpy.empty((n_points, 3, 2), dtype=numpy.float64) # shape (n_points, 3, 2)
-            points_camera_flat_dx[:, 0, 0] = depth # shape (n_points, 2)
+            points_camera_flat_dx = numpy.empty(
+                (n_points, 3, 2), dtype=numpy.float64
+            )  # shape (n_points, 3, 2)
+            points_camera_flat_dx[:, 0, 0] = depth  # shape (n_points, 2)
             points_camera_flat_dx[:, 0, 1] = 0.0
             points_camera_flat_dx[:, 1, 0] = 0.0
-            points_camera_flat_dx[:, 1, 1] = depth # shape (n_points, 2)
+            points_camera_flat_dx[:, 1, 1] = depth  # shape (n_points, 2)
             points_camera_flat_dx[:, 2, 0] = 0.0
             points_camera_flat_dx[:, 2, 1] = 0.0
 
@@ -722,22 +823,43 @@ class Cv2Extrinsic(Extrinsic):
         # World points
         # ===================
         # Compute the world points
-        world_points_flat = (points_camera_flat - self._tvec[numpy.newaxis, :]) @ rmat_inv.T # shape (n_points, 3)
+        world_points_flat = (
+            points_camera_flat - self._tvec[numpy.newaxis, :]
+        ) @ rmat_inv.T  # shape (n_points, 3)
 
         # Compute the jacobian with respect to the camera points
         if dx:
-            world_points_flat_dx = numpy.empty((n_points, 3, 2), dtype=numpy.float64) # shape (n_points, 3, 2)
-            world_points_flat_dx[:, :, 0] = points_camera_flat_dx[:, :, 0] @ rmat_inv.T # shape (n_points, 3)
-            world_points_flat_dx[:, :, 1] = points_camera_flat_dx[:, :, 1] @ rmat_inv.T # shape (n_points, 3)
+            world_points_flat_dx = numpy.empty(
+                (n_points, 3, 2), dtype=numpy.float64
+            )  # shape (n_points, 3, 2)
+            world_points_flat_dx[:, :, 0] = (
+                points_camera_flat_dx[:, :, 0] @ rmat_inv.T
+            )  # shape (n_points, 3)
+            world_points_flat_dx[:, :, 1] = (
+                points_camera_flat_dx[:, :, 1] @ rmat_inv.T
+            )  # shape (n_points, 3)
 
         # Compute the jacobian with respect to the extrinsic parameters
         if dp:
-            world_points_flat_dp = numpy.empty((n_points, 3, 6), dtype=numpy.float64) # shape (n_points, 3, 6)
+            world_points_flat_dp = numpy.empty(
+                (n_points, 3, 6), dtype=numpy.float64
+            )  # shape (n_points, 3, 6)
             for k in range(3):
-                world_points_flat_dp[:, :, k] = (points_camera_flat - self._tvec[numpy.newaxis, :]) @ rmat_inv_dr[:, :, k].T
-            world_points_flat_dp[:, :, 3] = - numpy.array([1.0, 0.0, 0.0], dtype=numpy.float64)[numpy.newaxis, :] @ rmat_inv.T
-            world_points_flat_dp[:, :, 4] = - numpy.array([0.0, 1.0, 0.0], dtype=numpy.float64)[numpy.newaxis, :] @ rmat_inv.T
-            world_points_flat_dp[:, :, 5] = - numpy.array([0.0, 0.0, 1.0], dtype=numpy.float64)[numpy.newaxis, :] @ rmat_inv.T
+                world_points_flat_dp[:, :, k] = (
+                    points_camera_flat - self._tvec[numpy.newaxis, :]
+                ) @ rmat_inv_dr[:, :, k].T
+            world_points_flat_dp[:, :, 3] = (
+                -numpy.array([1.0, 0.0, 0.0], dtype=numpy.float64)[numpy.newaxis, :]
+                @ rmat_inv.T
+            )
+            world_points_flat_dp[:, :, 4] = (
+                -numpy.array([0.0, 1.0, 0.0], dtype=numpy.float64)[numpy.newaxis, :]
+                @ rmat_inv.T
+            )
+            world_points_flat_dp[:, :, 5] = (
+                -numpy.array([0.0, 0.0, 1.0], dtype=numpy.float64)[numpy.newaxis, :]
+                @ rmat_inv.T
+            )
 
         if not dx:
             world_points_flat_dx = None
@@ -745,7 +867,6 @@ class Cv2Extrinsic(Extrinsic):
             world_points_flat_dp = None
 
         return world_points_flat, world_points_flat_dx, world_points_flat_dp
-
 
     def _compute_rays(self, normalized_points: numpy.ndarray) -> numpy.ndarray:
         r"""
@@ -789,17 +910,30 @@ class Cv2Extrinsic(Extrinsic):
         tvec = self._tvec
 
         # Compute the origin of the ray in the world coordinate system
-        origin_world = (- tvec[numpy.newaxis, :] @ rmat_inv.T).flatten()  # shape (3,)
+        origin_world = (-tvec[numpy.newaxis, :] @ rmat_inv.T).flatten()  # shape (3,)
 
         # Compute the normalized points in the world coordinate system
-        normalized_points_world = (numpy.concatenate((normalized_points, numpy.ones((n_points, 1), dtype=numpy.float64)), axis=1) - tvec[numpy.newaxis, :]) @ rmat_inv.T # shape (n_points, 3)
+        normalized_points_world = (
+            numpy.concatenate(
+                (normalized_points, numpy.ones((n_points, 1), dtype=numpy.float64)),
+                axis=1,
+            )
+            - tvec[numpy.newaxis, :]
+        ) @ rmat_inv.T  # shape (n_points, 3)
 
         # Compute the direction of the ray in the world coordinate system
-        direction_world = normalized_points_world - origin_world[numpy.newaxis, :]  # shape (n_points, 3)
+        direction_world = (
+            normalized_points_world - origin_world[numpy.newaxis, :]
+        )  # shape (n_points, 3)
 
         # Create the rays in the world coordinate system
-        rays = numpy.empty((n_points, 6), dtype=numpy.float64) # shape (n_points, 6)
-        rays[:, :3] = normalized_points_world # The first 3 elements are the origin of the ray in the world coordinate system
-        rays[:, 3:] = direction_world / numpy.linalg.norm(direction_world, axis=1)[:, numpy.newaxis] # The last 3 elements are the direction of the ray in the world coordinate system
+        rays = numpy.empty((n_points, 6), dtype=numpy.float64)  # shape (n_points, 6)
+        rays[:, :3] = (
+            normalized_points_world  # The first 3 elements are the origin of the ray in the world coordinate system
+        )
+        rays[:, 3:] = (
+            direction_world
+            / numpy.linalg.norm(direction_world, axis=1)[:, numpy.newaxis]
+        )  # The last 3 elements are the direction of the ray in the world coordinate system
 
         return rays

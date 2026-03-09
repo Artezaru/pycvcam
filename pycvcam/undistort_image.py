@@ -12,8 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Optional
+from typing import Optional, Dict
 import numpy
+from numpy.typing import ArrayLike
 import cv2
 import scipy
 
@@ -25,17 +26,18 @@ from .intrinsic_objects.no_intrinsic import NoIntrinsic
 
 
 def undistort_image(
-        src: numpy.ndarray,
-        intrinsic: Optional[Intrinsic],
-        distortion: Optional[Distortion],
-        interpolation: str = "linear",
-        **kwargs
-    ) -> numpy.ndarray:
+    src: ArrayLike,
+    intrinsic: Optional[Intrinsic],
+    distortion: Optional[Distortion],
+    interpolation: str = "linear",
+    intrinsic_kwargs: Optional[Dict] = None,
+    distortion_kwargs: Optional[Dict] = None,
+) -> numpy.ndarray:
     r"""
     Undistort an image using the camera intrinsic and distortion coefficients.
 
     This method use the same architecture as the `cv2.undistort` function from OpenCV, but it is implemented in a more flexible way to allow the use of different distortion models.
-    
+
     .. seealso::
 
         - :func:`pycvcam.undistort_image` for a more general undistort function that can handle different types of points and transformations (extrinsic, intrinsic, distortion).
@@ -72,7 +74,7 @@ def undistort_image(
     +----------------+----------------------------------------------------------------------------------------------------------------+
     | "spline3"      | Spline interpolation. Use scipy.interpolate.RectBivariateSpline for kx=ky=3                                    |
     +----------------+----------------------------------------------------------------------------------------------------------------+
-    
+
     .. note::
 
         - For an image the X dimension corresponds to the width and the Y dimension corresponds to the height.
@@ -81,30 +83,36 @@ def undistort_image(
     .. warning::
 
         - For scipy, output values are not positive integer values (even if the input image is integer).
-    
+
+
     Parameters
     ----------
-    src : numpy.ndarray
+    src : ArrayLike
         The input image to be undistorted. Shape (H, W, ...) where H is the height, W is the width.
 
-    intrinsic : Optional[Intrinsic]
+    intrinsic : Optional[:class:`Intrinsic`]
         The intrinsic transformation to be applied to the image points.
         If None, a zero intrinsic is applied (i.e., identity transformation).
 
-    distortion : Optional[Distortion]
+    distortion : Optional[:class:`Distortion`]
         The distortion model to be applied. If None, no distortion is applied.
 
     interpolation : str, optional
         The interpolation method to be used for remapping the pixels. Default is "linear".
 
-    kwargs : dict
-        Additional arguments to be passed to the distortion model "distort" method.
-    
+    intrinsic_kwargs : Optional[Dict], optional
+        Additional keyword arguments to be passed to the intrinsic transformation. Default is None.
+
+    distortion_kwargs : Optional[Dict], optional
+        Additional keyword arguments to be passed to the distortion transformation. Default is None.
+
+
     Returns
     -------
     numpy.ndarray
         The undistorted image. Shape (H, W, ...) where H is the height, W is the width.
-    
+
+
     Example
     -------
 
@@ -130,30 +138,45 @@ def undistort_image(
         # Undistort the image
         undistorted_image = undistort_image(src, intrinsic=intrinsic, distortion=distortion)
 
-    """   
+    """
     # Set the default values if None
     if intrinsic is None:
         intrinsic = NoIntrinsic()
     if distortion is None:
         distortion = NoDistortion()
+    if intrinsic_kwargs is None:
+        intrinsic_kwargs = {}
+    if distortion_kwargs is None:
+        distortion_kwargs = {}
 
     # Check the types of the parameters
     if not isinstance(intrinsic, Intrinsic):
         raise ValueError("intrinsic must be an instance of the Intrinsic class")
     if not intrinsic.is_set():
-        raise ValueError("The intrinsic object must be ready to transform the points, check is_set() method.")
+        raise ValueError(
+            "The intrinsic object must be ready to transform the points, check is_set() method."
+        )
     if not isinstance(distortion, Distortion):
         raise ValueError("distortion must be an instance of the Distortion class.")
     if not distortion.is_set():
-        raise ValueError("The distortion object must be ready to transform the points, check is_set() method.")
-    
+        raise ValueError(
+            "The distortion object must be ready to transform the points, check is_set() method."
+        )
+
+    if not isinstance(interpolation, str):
+        raise ValueError("interpolation must be a string.")
+    if not isinstance(intrinsic_kwargs, dict):
+        raise ValueError("intrinsic_kwargs must be a dictionary.")
+    if not isinstance(distortion_kwargs, dict):
+        raise ValueError("distortion_kwargs must be a dictionary.")
+
     # Check if the input image is a valid numpy array
     if not isinstance(src, numpy.ndarray):
         raise ValueError("src must be a numpy array")
-    
+
     if src.ndim < 2 or src.ndim > 4:
         raise ValueError("src must have 2 to 4 dimensions (H, W, [C], [D])")
-    
+
     # Get the interpolation method
     use_remap = False
     use_bivariate_spline = False
@@ -176,25 +199,41 @@ def undistort_image(
         interpolation_method = scipy.interpolate.RectBivariateSpline
         use_bivariate_spline = True
     else:
-        raise ValueError(f"Invalid interpolation method: {interpolation}. Available methods: 'linear', 'nearest', 'cubic', 'area', 'lanczos4', 'spline3'.")
-    
+        raise ValueError(
+            f"Invalid interpolation method: {interpolation}. Available methods: 'linear', 'nearest', 'cubic', 'area', 'lanczos4', 'spline3'."
+        )
+
     # Construct the pixel points in the image coordinate system
     height, width = src.shape[:2]
-    points = numpy.indices((height, width), dtype=numpy.float64) # shape (2, H, W)
-    points = points.reshape(2, -1).T  # shape (2, H, W) [2, Y, X] -> shape (n_points, 2) [Y, X]
-    points = points[:, [1, 0]]  # Switch to [X, Y] format, shape (n_points, 2) [Y, X] -> shape (n_points, 2) [X, Y]
+    points = numpy.indices((height, width), dtype=numpy.float64)  # shape (2, H, W)
+    points = points.reshape(
+        2, -1
+    ).T  # shape (2, H, W) [2, Y, X] -> shape (n_points, 2) [Y, X]
+    points = points[
+        :, [1, 0]
+    ]  # Switch to [X, Y] format, shape (n_points, 2) [Y, X] -> shape (n_points, 2) [X, Y]
 
     # Distort the pixel points using the distortion model
     if not isinstance(intrinsic, NoIntrinsic):
-        points, _, _ = intrinsic._inverse_transform(points, dx=False, dp=False) # shape (n_points, 2) [X, Y] -> shape (n_points, 2) [X/Z, Y/Z]
+        points, _, _ = intrinsic._inverse_transform(
+            points, dx=False, dp=False, **intrinsic_kwargs
+        )  # shape (n_points, 2) [X, Y] -> shape (n_points, 2) [X/Z, Y/Z]
     if not isinstance(distortion, NoDistortion):
-        points, _, _ = distortion._transform(points, dx=False, dp=False, **kwargs) # shape (n_points, 2) [X/Z, Y/Z] -> shape (n_points, 2) [X'/Z', Y'/Z']
+        points, _, _ = distortion._transform(
+            points, dx=False, dp=False, **distortion_kwargs
+        )  # shape (n_points, 2) [X/Z, Y/Z] -> shape (n_points, 2) [X'/Z', Y'/Z']
     if not isinstance(intrinsic, NoIntrinsic):
-        points, _, _ = intrinsic._transform(points, dx=False, dp=False) # shape (n_points, 2) [X'/Z', Y'/Z'] -> shape (n_points, 2) [X', Y']
+        points, _, _ = intrinsic._transform(
+            points, dx=False, dp=False, **intrinsic_kwargs
+        )  # shape (n_points, 2) [X'/Z', Y'/Z'] -> shape (n_points, 2) [X', Y']
 
     # Reshape the distorted image points for cv2.remap
-    points = points[:, [1, 0]]  # Switch to [Y, X] format, shape (n_points, 2) [X', Y'] -> shape (n_points, 2) [Y', X']
-    points = points.T.reshape(2, height, width) # shape (n_points, 2) [Y', X'] -> shape (2, H, W) [Y', X']
+    points = points[
+        :, [1, 0]
+    ]  # Switch to [Y, X] format, shape (n_points, 2) [X', Y'] -> shape (n_points, 2) [Y', X']
+    points = points.T.reshape(
+        2, height, width
+    )  # shape (n_points, 2) [Y', X'] -> shape (2, H, W) [Y', X']
 
     if use_remap:
         # Create the map for cv2.remap
@@ -203,17 +242,37 @@ def undistort_image(
         map_y = points[0, :, :]  # Y' coordinates, shape (H, W)
 
         # Remap the image using OpenCV
-        undistorted_image = cv2.remap(src, map_x.astype(numpy.float32), map_y.astype(numpy.float32), interpolation=interpolation_method, borderMode=cv2.BORDER_CONSTANT, borderValue=(0,0,0))
+        undistorted_image = cv2.remap(
+            src,
+            map_x.astype(numpy.float32),
+            map_y.astype(numpy.float32),
+            interpolation=interpolation_method,
+            borderMode=cv2.BORDER_CONSTANT,
+            borderValue=(0, 0, 0),
+        )
 
         return undistorted_image
-    
 
     elif use_bivariate_spline:
         # Create the values and the image (H, W, 1 * [C] * [D])
-        values = src.reshape(height, width, -1).astype(numpy.float64) # shape (H, W, 1 * [C] * [D])
+        values = src.reshape(height, width, -1).astype(
+            numpy.float64
+        )  # shape (H, W, 1 * [C] * [D])
 
         # Initialize the distorted image
-        undistorted_image = numpy.zeros_like(values, dtype=numpy.float64) # shape (H, W, 1 * [C] * [D])
+        undistorted_image = numpy.zeros_like(
+            values, dtype=numpy.float64
+        )  # shape (H, W, 1 * [C] * [D])
+
+        # Create the mask for points that are within the image bounds and finite
+        mask = (
+            numpy.isfinite(points[0, :, :])
+            & numpy.isfinite(points[1, :, :])
+            & (0.0 <= points[0, :, :])
+            & (points[0, :, :] <= height - 1.0)
+            & (0.0 <= points[1, :, :])
+            & (points[1, :, :] <= width - 1.0)
+        )
 
         # For all image data dimensions, interpolate the undistorted pixel points in the src image
         for i in range(values.shape[-1]):
@@ -222,25 +281,17 @@ def undistort_image(
                 numpy.arange(height),
                 numpy.arange(width),
                 values[:, :, i],
-                kx=3, ky=3, s=0 # Spline interpolation with kx=ky=3
+                kx=3,
+                ky=3,
+                s=0,  # Spline interpolation with kx=ky=3
             )
-
-            # Create the mask for points that are within the image bounds and finite
-            mask = numpy.isfinite(points[0, :, :]) & numpy.isfinite(points[1, :, :]) & (0.0 <= points[0, :, :]) & (points[0, :, :] <= height-1.0) & (0.0 <= points[1, :, :]) & (points[1, :, :] <= width-1.0)
 
             # Interpolate the pixel points in the distorted image
             result = interp.ev(points[0, mask], points[1, mask])
             undistorted_image[mask, i] = result
 
         # Reshape the distorted image to the original shape
-        undistorted_image = undistorted_image.reshape(height, width, *src.shape[2:]) # (H, W, 1 * [C] * [D]) -> (H, W, [C], [D])
+        undistorted_image = undistorted_image.reshape(
+            height, width, *src.shape[2:]
+        )  # (H, W, 1 * [C] * [D]) -> (H, W, [C], [D])
         return undistorted_image
-
-
-
-
-
-
-    
-
-    

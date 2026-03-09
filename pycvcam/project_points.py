@@ -12,8 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Optional
+from typing import Optional, Dict
 import numpy
+from numpy.typing import ArrayLike
 
 from .core.transform import TransformResult
 from .core.distortion import Distortion
@@ -25,22 +26,22 @@ from .intrinsic_objects.no_intrinsic import NoIntrinsic
 from .extrinsic_objects.no_extrinsic import NoExtrinsic
 
 
-
 def project_points(
-        world_points: numpy.ndarray, 
-        intrinsic: Optional[Intrinsic],
-        distortion: Optional[Distortion],
-        extrinsic: Optional[Extrinsic],
-        *,
-        transpose: bool = False,
-        dx: bool = False, 
-        dp: bool = False,
-        dintrinsic: bool = False,
-        ddistortion: bool = False,
-        dextrinsic: bool = False,
-        _skip: bool = False,
-        **kwargs
-    ) -> TransformResult:
+    world_points: ArrayLike,
+    intrinsic: Optional[Intrinsic],
+    distortion: Optional[Distortion],
+    extrinsic: Optional[Extrinsic],
+    *,
+    transpose: bool = False,
+    dx: bool = False,
+    dp: bool = False,
+    dintrinsic: bool = False,
+    ddistortion: bool = False,
+    dextrinsic: bool = False,
+    intrinsic_kwargs: Optional[Dict] = None,
+    distortion_kwargs: Optional[Dict] = None,
+    extrinsic_kwargs: Optional[Dict] = None,
+) -> TransformResult:
     r"""
     Project 3D ``world_points`` to 2D ``image_points`` using the camera intrinsic, distortion and extrinsic transformations.
 
@@ -74,25 +75,21 @@ def project_points(
     - ``jacobian_ddistortion``: Alias for ``jacobian_dp[..., Nintrinsic:Nintrinsic + Ndistortion]`` to represent the Jacobian with respect to the distortion parameters. Shape (..., 2, Ndistortion).
     - ``jacobian_dextrinsic``: Alias for ``jacobian_dp[..., Nintrinsic + Ndistortion:]`` to represent the Jacobian with respect to the extrinsic parameters. Shape (..., 2, Nextrinsic).
 
-    .. warning::
-
-        The points are converting to float before applying the inverse transformation.
-        See :class:`pycvcam.core.Package` for more details on the default data types used in the package.
 
     Parameters
     ----------
-    world_points : numpy.ndarray
+    world_points : ArrayLike
         The 3D points in the world coordinate system. Shape (..., 3).
     
-    intrinsic : Optional[Intrinsic]
+    intrinsic : Optional[:class:`Intrinsic`]
         The intrinsic transformation to be applied to the distorted points.
         If None, a no intrinsic transformation is applied (identity intrinsic).
 
-    distortion : Optional[Distortion]
+    distortion : Optional[:class:`Distortion`]
         The distortion model to be applied to the normalized points.
         If None, a no distortion transformation is applied (identity distortion).
 
-    extrinsic : Optional[Extrinsic]
+    extrinsic : Optional[:class:`Extrinsic`]
         The extrinsic transformation to be applied to the 3D world points.
         If None, a no extrinsic transformation is applied (identity transformation).
 
@@ -117,74 +114,28 @@ def project_points(
         
     dextrinsic : bool, optional
         If True, compute the Jacobian of the image points with respect to the extrinsic parameters only (other dp components are ignored for efficiency and set to nan in the result).
-
-    _skip : bool, optional
-        [INTERNAL USE], If True, skip the checks for the transformation parameters and assume the points are given in the (n_points, input_dim) float format.
-        `transpose` is ignored if this parameter is set to True.
-
-    **kwargs : dict
-        Additional keyword arguments to be passed. [warning]
+        
+    intrinsic_kwargs : Optional[dict], optional
+        Additional keyword arguments to be passed to the intrinsic transformation.
+        
+    distortion_kwargs : Optional[dict], optional
+        Additional keyword arguments to be passed to the distortion transformation.
+        
+    extrinsic_kwargs : Optional[dict], optional
+        Additional keyword arguments to be passed to the extrinsic transformation.
+        
         
     Returns
     -------
-    TransformResult
+    :class:`TransformResult`
         The result of the projection transformation.
+        
         
     Examples
     --------
-    Create a simple example to project 3D points to 2D image points using the intrinsic and extrinsic parameters of the camera.
-
-    .. code-block:: python
-
-        import numpy
-        from pycvcam import project_points, Cv2Distortion, Cv2Extrinsic, Cv2Intrinsic
-
-        # Define the 3D points in the world coordinate system
-        world_points = numpy.array([[0.0, 0.0, 5.0],
-                                    [0.1, -0.1, 5.0],
-                                    [-0.1, 0.2, 5.0],
-                                    [0.2, 0.1, 5.0],
-                                    [-0.2, -0.2, 5.0]]) # shape (5, 3)
-
-        # Define the rotation vector and translation vector
-        rvec = numpy.array([0.01, 0.02, 0.03])  # small rotation
-        tvec = numpy.array([0.1, -0.1, 0.2])    # small translation
-        extrinsic = Cv2Extrinsic.from_rt(rvec, tvec)
-
-        # Define the intrinsic camera matrix
-        K = numpy.array([[1000.0, 0.0, 320.0],
-                        [0.0, 1000.0, 240.0],
-                        [0.0, 0.0, 1.0]])
-
-        intrinsic = Cv2Intrinsic.from_matrix(K)
-
-        # Define the distortion model (optional)
-        distortion = Cv2Distortion(parameters = [0.1, 0.2, 0.3, 0.4, 0.5])
-
-        # Project the 3D points to 2D image points
-        result = project_points(world_points, intrinsic=intrinsic, distortion=distortion, extrinsic=extrinsic, transpose=False)
-        print("Projected image points:")
-        print(result.image_points) # shape (5, 2)
-
-    You can also compute the Jacobians of the image points with respect to the input 3D world points and the projection parameters by setting the ``dx`` and ``dp`` parameters to True.
-
-    .. code-block:: python
-
-        # Project the 3D points to 2D image points with Jacobians
-        result = project_points(world_points, intrinsic=intrinsic, distortion=distortion, extrinsic=extrinsic, transpose=False, dx=True, dp=True)
-
-        print("Jacobian with respect to 3D points:")
-        print(result.jacobian_dx) # shape (5, 2, 3)
-        print("Jacobian with respect to projection parameters:")
-        print(result.jacobian_dp) # shape (5, 2, n_params)
-        print("Jacobian with respect to extrinsic parameters:")
-        print(result.jacobian_dextrinsic) # shape (5, 2, Nextrinsic) -> ordered as given by the selected extrinsic object
-        print("Jacobian with respect to distortion parameters:")
-        print(result.jacobian_ddistortion) # shape (5, 2, Ndistortion) -> ordered as given by the selected distortion object
-        print("Jacobian with respect to intrinsic parameters:")
-        print(result.jacobian_dintrinsic) # shape (5, 2, Nintrinsic) -> ordered as given by the selected intrinsic object
-
-    This method can also be used without any extrinsic, distortion or intrinsic parameters by passing None.
+    
+    See a complete example in the gallery: :ref:`sphx_glr__gallery_project_points.py`. 
+    
     """
     # Set the default values if None
     if intrinsic is None:
@@ -193,137 +144,226 @@ def project_points(
         extrinsic = NoExtrinsic()
     if distortion is None:
         distortion = NoDistortion()
+    if intrinsic_kwargs is None:
+        intrinsic_kwargs = {}
+    if distortion_kwargs is None:
+        distortion_kwargs = {}
+    if extrinsic_kwargs is None:
+        extrinsic_kwargs = {}
 
     # Check the types of the parameters
     if not isinstance(intrinsic, Intrinsic):
         raise ValueError("intrinsic must be an instance of the Intrinsic class")
     if not intrinsic.is_set():
-        raise ValueError("The intrinsic object must be ready to transform the points, check is_set() method.")
+        raise ValueError(
+            "The intrinsic object must be ready to transform the points, check is_set() method."
+        )
     if not isinstance(extrinsic, Extrinsic):
         raise ValueError("extrinsic must be an instance of the Extrinsic class")
     if not extrinsic.is_set():
-        raise ValueError("The extrinsic object must be ready to transform the points, check is_set() method.")
+        raise ValueError(
+            "The extrinsic object must be ready to transform the points, check is_set() method."
+        )
     if not isinstance(distortion, Distortion):
         raise ValueError("distortion must be an instance of the Distortion class.")
     if not distortion.is_set():
-        raise ValueError("The distortion object must be ready to transform the points, check is_set() method.")
+        raise ValueError(
+            "The distortion object must be ready to transform the points, check is_set() method."
+        )
 
     # Initialize the jacobians
     jacobian_dx = None
     jacobian_dp = None
 
-    if not _skip:
-        if not isinstance(transpose, bool):
-            raise ValueError("transpose must be a boolean value")
-        if not isinstance(dx, bool):
-            raise ValueError("dx must be a boolean value")
-        if not isinstance(dp, bool):
-            raise ValueError("dp must be a boolean value")
-        if not isinstance(dintrinsic, bool):
-            raise ValueError("dintrinsic must be a boolean value")
-        if not isinstance(ddistortion, bool):
-            raise ValueError("ddistortion must be a boolean value")
-        if not isinstance(dextrinsic, bool):
-            raise ValueError("dextrinsic must be a boolean value")
-        
-        if dp:
-            # If dp is True, compute all the jacobians
-            dintrinsic = True
-            ddistortion = True
-            dextrinsic = True
-        else:
-            # If dp is False, set the jacobians to be computed according to the flags
-            dp = dintrinsic or ddistortion or dextrinsic
+    if not isinstance(transpose, bool):
+        raise ValueError("transpose must be a boolean value")
+    if not isinstance(dx, bool):
+        raise ValueError("dx must be a boolean value")
+    if not isinstance(dp, bool):
+        raise ValueError("dp must be a boolean value")
+    if not isinstance(dintrinsic, bool):
+        raise ValueError("dintrinsic must be a boolean value")
+    if not isinstance(ddistortion, bool):
+        raise ValueError("ddistortion must be a boolean value")
+    if not isinstance(dextrinsic, bool):
+        raise ValueError("dextrinsic must be a boolean value")
+    if not isinstance(intrinsic_kwargs, dict):
+        raise ValueError("intrinsic_kwargs must be a dictionary")
+    if not isinstance(distortion_kwargs, dict):
+        raise ValueError("distortion_kwargs must be a dictionary")
+    if not isinstance(extrinsic_kwargs, dict):
+        raise ValueError("extrinsic_kwargs must be a dictionary")
 
-        # Create the array of points
-        world_points = numpy.asarray(world_points, dtype=numpy.float64)
+    # Create the array of points
+    world_points = numpy.asarray(world_points, dtype=numpy.float64)
 
-        # Transpose the points if needed
-        if transpose:
-            world_points = numpy.moveaxis(world_points, 0, -1) # (3, ...) -> (..., 3)
+    # Transpose the points if needed
+    if transpose:
+        world_points = numpy.moveaxis(world_points, 0, -1)  # (3, ...) -> (..., 3)
 
-        # Extract the original shape
-        shape = world_points.shape # (..., 3)
+    # Extract the original shape
+    shape = world_points.shape  # (..., 3)
 
-        # Flatten the points along the last axis
-        world_points = world_points.reshape(-1, shape[-1]) # shape (..., 3) -> shape (n_points, 3)
+    # Flatten the points along the last axis
+    world_points = world_points.reshape(
+        -1, shape[-1]
+    )  # shape (..., 3) -> shape (n_points, 3)
 
-        # Check the shape of the points
-        if world_points.ndim !=2 or world_points.shape[1] != 3:
-            raise ValueError(f"The points must be in the shape (..., 3) or (3, ...) if ``transpose`` is True. Got {shape} instead and transpose is {transpose}.")
-        
+    # Check the shape of the points
+    if world_points.ndim != 2 or world_points.shape[1] != 3:
+        raise ValueError(
+            f"The points must be in the shape (..., 3) or (3, ...) if ``transpose`` is True. Got {shape} instead and transpose is {transpose}."
+        )
+
+    # Select the parameters to compute the Jacobian with respect to
+    if dp:
+        # If dp is True, compute all the jacobians
+        dintrinsic = True
+        ddistortion = True
+        dextrinsic = True
+    atleast1dp = dintrinsic or ddistortion or dextrinsic
+
+    # Check if some transformations can be skipped for the Jacobian computation for efficiency
+    skip_intrinsic = isinstance(intrinsic, NoIntrinsic)
+    skip_distortion = isinstance(distortion, NoDistortion)
+    skip_extrinsic = isinstance(extrinsic, NoExtrinsic)
+
     # Extract the useful constants
-    n_points = world_points.shape[0] # n_points
-    n_params = intrinsic.n_params + distortion.n_params + extrinsic.n_params # Total number of parameters
+    n_points = world_points.shape[0]  # n_points
+    n_params = (
+        intrinsic.n_params + distortion.n_params + extrinsic.n_params
+    )  # Total number of parameters
 
     # Realize the transformation:
-    normalized_points, extrinsic_jacobian_dx, extrinsic_jacobian_dp = extrinsic._transform(world_points, dx=dx, dp=dextrinsic)
-    distorted_points, distortion_jacobian_dx, distortion_jacobian_dp = distortion._transform(normalized_points, dx=dx or dp, dp=ddistortion, **kwargs) # (dx is requiered for propagation of dp)
-    image_points, intrinsic_jacobian_dx, intrinsic_jacobian_dp = intrinsic._transform(distorted_points, dx=dx or dp, dp=dintrinsic) # (dx is requiered for propagation of dp)
+    normalized_points, extrinsic_jacobian_dx, extrinsic_jacobian_dp = (
+        extrinsic._transform(world_points, dx=dx, dp=dextrinsic, **extrinsic_kwargs)
+    )
+    distorted_points, distortion_jacobian_dx, distortion_jacobian_dp = (
+        distortion._transform(
+            normalized_points,
+            dx=(dx or dextrinsic) and not skip_distortion,
+            dp=ddistortion,
+            **distortion_kwargs,
+        )
+    )  # (dx is requiered for propagation of dp)
+    image_points, intrinsic_jacobian_dx, intrinsic_jacobian_dp = intrinsic._transform(
+        distorted_points,
+        dx=(dx or dextrinsic or ddistortion) and not skip_intrinsic,
+        dp=dintrinsic,
+        **intrinsic_kwargs,
+    )  # (dx is requiered for propagation of dp)
 
     # Apply the chain rules to compute the Jacobians with respect to the projection parameters
-    if dp:
-        jacobian_flat_dp = numpy.full((n_points, 2, n_params), numpy.nan, dtype=numpy.float64)
+    if atleast1dp:
+        jacobian_flat_dp = numpy.full(
+            (n_points, 2, n_params), numpy.nan, dtype=numpy.float64
+        )
         # wrt the extrinsic parameters
         if dextrinsic:
-            if isinstance(intrinsic, NoIntrinsic) and isinstance(distortion, NoDistortion):
-                jacobian_flat_dp[..., intrinsic.n_params + distortion.n_params:] = extrinsic_jacobian_dp
-            elif isinstance(intrinsic, NoIntrinsic):
-                jacobian_flat_dp[..., intrinsic.n_params + distortion.n_params:] = numpy.matmul(distortion_jacobian_dx, extrinsic_jacobian_dp)
-            elif isinstance(distortion, NoDistortion):
-                jacobian_flat_dp[..., intrinsic.n_params + distortion.n_params:] = numpy.matmul(intrinsic_jacobian_dx, extrinsic_jacobian_dp)
+            if skip_intrinsic and skip_distortion:
+                jacobian_flat_dp[..., intrinsic.n_params + distortion.n_params :] = (
+                    extrinsic_jacobian_dp
+                )
+            elif skip_intrinsic:
+                jacobian_flat_dp[..., intrinsic.n_params + distortion.n_params :] = (
+                    numpy.matmul(distortion_jacobian_dx, extrinsic_jacobian_dp)
+                )
+            elif skip_distortion:
+                jacobian_flat_dp[..., intrinsic.n_params + distortion.n_params :] = (
+                    numpy.matmul(intrinsic_jacobian_dx, extrinsic_jacobian_dp)
+                )
             else:
-                jacobian_flat_dp[..., intrinsic.n_params + distortion.n_params:] = numpy.matmul(intrinsic_jacobian_dx, numpy.matmul(distortion_jacobian_dx, extrinsic_jacobian_dp))
+                jacobian_flat_dp[..., intrinsic.n_params + distortion.n_params :] = (
+                    numpy.matmul(
+                        intrinsic_jacobian_dx,
+                        numpy.matmul(distortion_jacobian_dx, extrinsic_jacobian_dp),
+                    )
+                )
 
         # wrt the distortion parameters
         if ddistortion:
-            if isinstance(intrinsic, NoIntrinsic):
-                jacobian_flat_dp[..., intrinsic.n_params:intrinsic.n_params + distortion.n_params] = distortion_jacobian_dp
+            if skip_intrinsic:
+                jacobian_flat_dp[
+                    ..., intrinsic.n_params : intrinsic.n_params + distortion.n_params
+                ] = distortion_jacobian_dp
             else:
-                jacobian_flat_dp[..., intrinsic.n_params:intrinsic.n_params + distortion.n_params] = numpy.matmul(intrinsic_jacobian_dx, distortion_jacobian_dp)
-                
+                jacobian_flat_dp[
+                    ..., intrinsic.n_params : intrinsic.n_params + distortion.n_params
+                ] = numpy.matmul(intrinsic_jacobian_dx, distortion_jacobian_dp)
+
         # wrt the intrinsic parameters
         if dintrinsic:
-            jacobian_flat_dp[..., :intrinsic.n_params] = intrinsic_jacobian_dp # (intrinsic parameters)
+            jacobian_flat_dp[..., : intrinsic.n_params] = (
+                intrinsic_jacobian_dp  # (intrinsic parameters)
+            )
 
     # Apply the chain rules to compute the Jacobians with respect to the input 3D world points
     if dx:
-        if isinstance(intrinsic, NoIntrinsic) and isinstance(distortion, NoDistortion):
+        if skip_intrinsic and skip_distortion:
             jacobian_flat_dx = extrinsic_jacobian_dx
-        elif isinstance(intrinsic, NoIntrinsic):
-            jacobian_flat_dx = numpy.matmul(distortion_jacobian_dx, extrinsic_jacobian_dx)
-        elif isinstance(distortion, NoDistortion):
-            jacobian_flat_dx = numpy.matmul(intrinsic_jacobian_dx, extrinsic_jacobian_dx)
+        elif skip_intrinsic:
+            jacobian_flat_dx = numpy.matmul(
+                distortion_jacobian_dx, extrinsic_jacobian_dx
+            )
+        elif skip_distortion:
+            jacobian_flat_dx = numpy.matmul(
+                intrinsic_jacobian_dx, extrinsic_jacobian_dx
+            )
         else:
-            jacobian_flat_dx = numpy.matmul(intrinsic_jacobian_dx, numpy.matmul(distortion_jacobian_dx, extrinsic_jacobian_dx)) # shape (n_points, 2, 3)
+            jacobian_flat_dx = numpy.matmul(
+                intrinsic_jacobian_dx,
+                numpy.matmul(distortion_jacobian_dx, extrinsic_jacobian_dx),
+            )  # shape (n_points, 2, 3)
 
-    if not _skip:
-        # Reshape the normalized points back to the original shape (Warning shape is (..., 3) and not (..., 2))
-        image_points = image_points.reshape((*shape[:-1], 2)) # shape (n_points, 2) -> (..., 2)
-        jacobian_dx = jacobian_flat_dx.reshape((*shape[:-1], 2, 3)) if dx else None # shape (n_points, 2, 3) -> (..., 2, 3)
-        jacobian_dp = jacobian_flat_dp.reshape((*shape[:-1], 2, n_params)) if dp else None # shape (n_points, 2, n_params) -> (..., 2, n_params)
+    # Reshape the normalized points back to the original shape (Warning shape is (..., 3) and not (..., 2))
+    image_points = image_points.reshape(
+        (*shape[:-1], 2)
+    )  # shape (n_points, 2) -> (..., 2)
+    jacobian_dx = (
+        jacobian_flat_dx.reshape((*shape[:-1], 2, 3)) if dx else None
+    )  # shape (n_points, 2, 3) -> (..., 2, 3)
+    jacobian_dp = (
+        jacobian_flat_dp.reshape((*shape[:-1], 2, n_params)) if atleast1dp else None
+    )  # shape (n_points, 2, n_params) -> (..., 2, n_params)
 
-        # Transpose the points back to the original shape if needed
-        if transpose:
-            image_points = numpy.moveaxis(image_points, -1, 0) # (..., 2) -> (2, ...)
-            jacobian_dx = numpy.moveaxis(jacobian_dx, -2, 0) if dx else None # (..., 2, 2) -> (2, ..., 2)
-            jacobian_dp = numpy.moveaxis(jacobian_dp, -2, 0) if dp else None # (..., 2, n_params) -> (2, ..., n_params)
+    # Transpose the points back to the original shape if needed
+    if transpose:
+        image_points = numpy.moveaxis(image_points, -1, 0)  # (..., 2) -> (2, ...)
+        jacobian_dx = (
+            numpy.moveaxis(jacobian_dx, -2, 0) if dx else None
+        )  # (..., 2, 2) -> (2, ..., 2)
+        jacobian_dp = (
+            numpy.moveaxis(jacobian_dp, -2, 0) if atleast1dp else None
+        )  # (..., 2, n_params) -> (2, ..., n_params)
 
     # Return the result
     result = TransformResult(
         transformed_points=image_points,
         jacobian_dx=jacobian_dx,
         jacobian_dp=jacobian_dp,
-        transpose=transpose
+        transpose=transpose,
     )
 
     # Add the short-hand properties for the jacobians
-    result.add_jacobian("dintrinsic", 0, intrinsic.n_params, f"Jacobian of the image points with respect to the intrinsic parameters (see {intrinsic.__class__.__name__}) for more details on their order")
-    result.add_jacobian("ddistortion", intrinsic.n_params, intrinsic.n_params + distortion.n_params, f"Jacobian of the image points with respect to the distortion parameters (see {distortion.__class__.__name__}) for more details on their order")
-    result.add_jacobian("dextrinsic", intrinsic.n_params + distortion.n_params, n_params, f"Jacobian of the image points with respect to the extrinsic parameters (see {extrinsic.__class__.__name__}) for more details on their order")
+    result.add_jacobian(
+        "dintrinsic",
+        0,
+        intrinsic.n_params,
+        f"Jacobian of the image points with respect to the intrinsic parameters (see {intrinsic.__class__.__name__}) for more details on their order",
+    )
+    result.add_jacobian(
+        "ddistortion",
+        intrinsic.n_params,
+        intrinsic.n_params + distortion.n_params,
+        f"Jacobian of the image points with respect to the distortion parameters (see {distortion.__class__.__name__}) for more details on their order",
+    )
+    result.add_jacobian(
+        "dextrinsic",
+        intrinsic.n_params + distortion.n_params,
+        n_params,
+        f"Jacobian of the image points with respect to the extrinsic parameters (see {extrinsic.__class__.__name__}) for more details on their order",
+    )
 
     # Add the alias for the transformed points
     result.add_alias("image_points")
     return result
-
-

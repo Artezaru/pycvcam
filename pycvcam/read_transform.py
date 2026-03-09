@@ -18,6 +18,7 @@ from typing import Type
 
 from .core.transform import Transform
 
+
 def read_transform(file_path, cls: Type[Transform]) -> Transform:
     """
     Reads a json files containing a transformation.
@@ -50,7 +51,7 @@ def read_transform(file_path, cls: Type[Transform]) -> Transform:
         raise FileNotFoundError("Transform file not found.")
 
     # Read the JSON file
-    with open(file_path, 'r') as f:
+    with open(file_path, "r") as f:
         transform_data = json.load(f)
 
     if not "parameters" in transform_data:
@@ -60,14 +61,18 @@ def read_transform(file_path, cls: Type[Transform]) -> Transform:
         raise ValueError("Missing 'constants' key in transform data.")
 
     if not "type" in transform_data:
-        print("[pycvcam] Missing 'type' key in transform data. Loading without type verification.")
+        print(
+            "[pycvcam] Missing 'type' key in transform data. Loading without type verification."
+        )
 
     if "type" in transform_data and not transform_data["type"] == cls.__name__:
-        raise ValueError(f"Transform type mismatch, expected {cls.__name__} but got {transform_data['type']}")
+        raise ValueError(
+            f"Transform type mismatch, expected {cls.__name__} but got {transform_data['type']}"
+        )
 
     # Create an instance of the Transform subclass
     transform = cls()
-    transform.parameters = transform_data.get('parameters', None)
-    transform.constants = transform_data.get('constants', None)
+    transform.parameters = transform_data.get("parameters", None)
+    transform.constants = transform_data.get("constants", None)
 
     return transform

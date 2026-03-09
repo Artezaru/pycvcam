@@ -15,9 +15,11 @@
 from typing import ClassVar, List
 from abc import abstractmethod
 import numpy
+from numpy.typing import ArrayLike
 
 from .transform import Transform, TransformResult
 from .rays import Rays
+
 
 class Extrinsic(Transform):
     r"""
@@ -35,10 +37,11 @@ class Extrinsic(Transform):
 
     The extrinsic transformation also implement the method ``compute_rays`` to compute the rays emitted by the camera from the world points, which is useful for ray tracing or other applications.
     The subclass must implement the ``_compute_rays`` method to define how to compute the rays from the normalized points.
-    
+
     """
-    _input_dim : ClassVar[int] = 3
-    _output_dim : ClassVar[int] = 2
+
+    _input_dim: ClassVar[int] = 3
+    _output_dim: ClassVar[int] = 2
 
     # =============================================
     # Addind aliases for the transformation
@@ -48,10 +51,10 @@ class Extrinsic(Transform):
         Property to return a list of aliases for the transformed points.
 
         - ``normalized_points`` and ``x_n`` for the result of the transformation.
-        
+
         Returns
         -------
-        :class:`List[str]`
+        List[str]
             A list of aliases for the transformed points.
         """
         return ["normalized_points", "x_n"]
@@ -64,20 +67,20 @@ class Extrinsic(Transform):
 
         Returns
         -------
-        :class:`List[str]`
+        List[str]
             A list of aliases for the inverse transformed points.
         """
         return ["world_points", "x_w"]
-    
+
     def project(
-        self, 
-        world_points: numpy.ndarray, 
-        *, 
+        self,
+        world_points: ArrayLike,
+        *,
         transpose: bool = False,
         dx: bool = False,
         dp: bool = False,
-        **kwargs
-        ) -> TransformResult:
+        **kwargs,
+    ) -> TransformResult:
         r"""
         Alias for the ``transform`` method, which applies the extrinsic transformation to the points.
 
@@ -86,32 +89,32 @@ class Extrinsic(Transform):
             - :meth:`pycvcam.core.Transform.transform` for applying the transformation to points.
 
         .. note::
-        
+
             The :obj:`world_points`  is converted to a numpy array of ``dtype=numpy.float64``.
 
         Parameters
         ----------
-        world_points : :class:`numpy.ndarray`
+        world_points : ArrayLike
             The world points to be transformed. Shape (..., 3).
 
-        transpose : :class:`bool`, optional
-            If :obj:`True`, the input points are assumed to have shape (3, ...) instead of (..., 3) and the output points will have shape (2, ...). Default is :obj:`False`.
+        transpose : bool, optional
+            If True, the input points are assumed to have shape (3, ...) instead of (..., 3) and the output points will have shape (2, ...). Default is False.
 
-        dx : :class:`bool`, optional
-            If :obj:`True`, the jacobian with respect to the world points is computed. Default is :obj:`False`
+        dx : bool, optional
+            If True, the jacobian with respect to the world points is computed. Default is False
 
-        dp : :class:`bool`, optional
-            If :obj:`True`, the jacobian with respect to the distortion parameters is computed. Default is :obj:`False`
+        dp : bool, optional
+            If True, the jacobian with respect to the distortion parameters is computed. Default is False
 
         Returns
         -------
         :class:`TransformResult`
             The result of the transformation, which includes the ``normalized_points`` and the Jacobian matrices if available.
-            
-            
+
+
         Examples
         --------
-        
+
         .. code-block:: python
 
             extrinsic = ... # An instance of a subclass of Extrinsic
@@ -125,18 +128,18 @@ class Extrinsic(Transform):
             # SAME AS:
             result = extrinsic.transform(world_points)
             normalized_points = result.transformed_points  # shape (n_points, 2)
-            
+
         """
         return self.transform(world_points, transpose=transpose, dx=dx, dp=dp, **kwargs)
 
     def unproject(
         self,
-        normalized_points: numpy.ndarray,
+        normalized_points: ArrayLike,
         *,
         transpose: bool = False,
         dx: bool = False,
         dp: bool = False,
-        **kwargs
+        **kwargs,
     ) -> TransformResult:
         r"""
         Alias for the ``inverse_transform`` method, which applies the inverse extrinsic transformation to the points.
@@ -146,32 +149,32 @@ class Extrinsic(Transform):
             - :meth:`pycvcam.core.Transform.inverse_transform` for applying the inverse transformation to points.
 
         .. note::
-        
+
             The :obj:`normalized_points`  is converted to a numpy array of ``dtype=numpy.float64``.
-            
+
         Parameters
         ----------
-        normalized_points : :class:`numpy.ndarray`
+        normalized_points : ArrayLike
             The normalized points in the camera coordinate system to be transformed. Shape (..., 2).
 
-        transpose : :class:`bool`, optional
-            If :obj:`True`, the input points are assumed to have shape (2, ...) instead of (..., 2) and the output points will have shape (3, ...). Default is :obj:`False`.
+        transpose : bool, optional
+            If True, the input points are assumed to have shape (2, ...) instead of (..., 2) and the output points will have shape (3, ...). Default is False.
 
-        dx : :class:`bool`, optional
-            If :obj:`True`, the jacobian with respect to the normalized points is computed. Default is :obj:`False`
-            
-        dp : :class:`bool`, optional
-            If :obj:`True`, the jacobian with respect to the extrinsic parameters is computed. Default is :obj:`False`
+        dx : bool, optional
+            If True, the jacobian with respect to the normalized points is computed. Default is False
+
+        dp : bool, optional
+            If True, the jacobian with respect to the extrinsic parameters is computed. Default is False
 
         Returns
         -------
         :class:`TransformResult`
             The result of the transformation, which includes the ``world_points`` and the Jacobian matrices if available.
-            
-            
+
+
         Examples
         --------
-        
+
         .. code-block:: python
 
             extrinsic = ... # An instance of a subclass of Extrinsic
@@ -187,19 +190,21 @@ class Extrinsic(Transform):
             world_points = result.transformed_points  # shape (n_points, 3)
 
         """
-        return self.inverse_transform(normalized_points, transpose=transpose, dx=dx, dp=dp, **kwargs)
+        return self.inverse_transform(
+            normalized_points, transpose=transpose, dx=dx, dp=dp, **kwargs
+        )
 
     # =============================================
     # Implementing the rays computation
     # =============================================
     def compute_rays(
-        self, 
-        normalized_points: numpy.ndarray,
+        self,
+        normalized_points: ArrayLike,
         *,
         transpose: bool = False,
         _skip: bool = False,
-        **kwargs
-        ) -> Rays:
+        **kwargs,
+    ) -> Rays:
         r"""
         Compute the rays emitted from the camera to the scene.
 
@@ -207,16 +212,16 @@ class Extrinsic(Transform):
 
         Parameters
         ----------
-        normalized_points : :class:`numpy.ndarray`
+        normalized_points : ArrayLike
             The normalized points in the camera coordinate system. Shape (..., 2).
 
-        transpose : :class:`bool`, optional
-            If :obj:`True`, the input and output arrays are transposed to shape (2, ...) and (6, ...), respectively. Default is :obj:`False`.
+        transpose : bool, optional
+            If True, the input and output arrays are transposed to shape (2, ...) and (6, ...), respectively. Default is False.
 
-        _skip : :class:`bool`, optional
-            If :obj:`True`, skip the checks and transformations. Default is :obj:`False`.
+        _skip : bool, optional
+            If True, skip the checks and transformations. Default is False.
 
-        kwargs : :class:`dict`
+        kwargs : dict
             Additional arguments to be passed to the transformation method.
 
         Returns
@@ -227,7 +232,7 @@ class Extrinsic(Transform):
 
         Examples
         --------
-        
+
         .. code-block:: python
 
             result = compute_rays(normalized_points)
@@ -238,55 +243,64 @@ class Extrinsic(Transform):
 
             result.origins  # (..., 3)  # The origins of the rays in the world coordinate system
             result.directions  # (..., 3)  # The directions of the rays in the world coordinate system
-            
+
         """
         if not _skip:
             # Check the boolean flags
             if not isinstance(transpose, bool):
                 raise TypeError(f"transpose must be a boolean, got {type(transpose)}")
-            
+
             # Check if the transformation is set
             if not self.is_set():
-                raise ValueError("Transformation parameters are not set. Please set the parameters before transforming points.")
+                raise ValueError(
+                    "Transformation parameters are not set. Please set the parameters before transforming points."
+                )
 
             # Convert input points to float
             points = numpy.asarray(normalized_points, dtype=numpy.float64)
 
             # Check the shape of the input points
             if points.ndim < 2:
-                raise ValueError(f"Input points must have at least 2 dimensions, got {points.ndim} dimensions.")
-            
+                raise ValueError(
+                    f"Input points must have at least 2 dimensions, got {points.ndim} dimensions."
+                )
+
             # Transpose the input points if requested
             if transpose:
-                points = numpy.moveaxis(points, 0, -1) # (output_dim, ...) -> (..., output_dim)
-            
+                points = numpy.moveaxis(
+                    points, 0, -1
+                )  # (output_dim, ...) -> (..., output_dim)
+
             # Save the shape of the input points
-            shape = points.shape # (..., output_dim)
+            shape = points.shape  # (..., output_dim)
 
             # Check the last dimension of the input points
             if shape[-1] != self.output_dim:
-                raise ValueError(f"Input points must have {self.output_dim} dimensions, got {shape[-1]} dimensions.")
-            
+                raise ValueError(
+                    f"Input points must have {self.output_dim} dimensions, got {shape[-1]} dimensions."
+                )
+
             # Flatten the input points to 2D for processing
-            points = points.reshape(-1, self.output_dim) # (n_points, output_dim)
+            points = points.reshape(-1, self.output_dim)  # (n_points, output_dim)
 
         # Apply the inverse transformation
-        rays = self._compute_rays(points, **kwargs) # (n_points, 6)
+        rays = self._compute_rays(points, **kwargs)  # (n_points, 6)
 
         if not _skip:
             # Reshape the transformed points to the original shape
-            rays = rays.reshape(*shape[:-1], 6) # (n_points, 6) -> (..., 6)
+            rays = rays.reshape(*shape[:-1], 6)  # (n_points, 6) -> (..., 6)
 
             # Transpose the transformed points if requested
             if transpose:
-                rays = numpy.moveaxis(rays, -1, 0) # (..., 6) -> (6, ...)
+                rays = numpy.moveaxis(rays, -1, 0)  # (..., 6) -> (6, ...)
 
         # Return the result as a InverseTransformResult object
         return Rays(rays, transpose=transpose)
-    
-    
+
     @abstractmethod
-    def _compute_rays(self, normalized_points: numpy.ndarray, **kwargs) -> numpy.ndarray:
+    def _compute_rays(
+        self, normalized_points: numpy.ndarray, **kwargs
+    ) -> numpy.ndarray:
         r"""
         Computes the rays in the world coordinate system for the given normalized points.
 
@@ -299,12 +313,12 @@ class Extrinsic(Transform):
 
         Parameters
         ----------
-        normalized_points : :class:`numpy.ndarray`
+        normalized_points : numpy.ndarray
             The normalized points in the camera coordinate system. Shape (n_points, 2).
 
         Returns
         -------
-        :class:`numpy.ndarray`
+        numpy.ndarray
             The rays in the world coordinate system. Shape (n_points, 6).
         """
         raise NotImplementedError("This method should be implemented by subclasses.")

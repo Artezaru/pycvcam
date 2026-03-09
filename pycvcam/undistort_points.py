@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Optional
+from typing import Optional, Dict
 import numpy
 
 
@@ -25,18 +25,20 @@ from .intrinsic_objects.no_intrinsic import NoIntrinsic
 from .extrinsic_objects.no_extrinsic import NoExtrinsic
 
 
-
 def undistort_points(
-        image_points: numpy.ndarray,
-        intrinsic: Optional[Intrinsic],
-        distortion: Optional[Distortion],
-        R: Optional[Extrinsic] = None,
-        P: Optional[Intrinsic] = None,
-        *,
-        transpose: bool = False,
-        _skip: bool = False,
-        **kwargs
-    ) -> numpy.ndarray:
+    image_points: numpy.ndarray,
+    intrinsic: Optional[Intrinsic],
+    distortion: Optional[Distortion],
+    R: Optional[Extrinsic] = None,
+    P: Optional[Intrinsic] = None,
+    *,
+    transpose: bool = False,
+    intrinsic_kwargs: Optional[Dict] = None,
+    distortion_kwargs: Optional[Dict] = None,
+    R_kwargs: Optional[Dict] = None,
+    P_kwargs: Optional[Dict] = None,
+    _skip: bool = False,
+) -> numpy.ndarray:
     r"""
     Undistort 2D ``image_points`` using the camera intrinsic, distortion transformations to obtain the ``normalized_points`` in the camera coordinate system or ``undistorted_points`` if ``R`` or ``P`` are provided.
 
@@ -66,25 +68,26 @@ def undistort_points(
 
         The points are converting to float before applying the inverse transformation.
         See :class:`pycvcam.core.Package` for more details on the default data types used in the package.
-        
+
+
     Parameters
     ----------
     image_points : numpy.ndarray
         The 2D image points in the camera normalized coordinate system. Shape (..., 2)
-        
-    intrinsic : Optional[Intrinsic]
+
+    intrinsic : Optional[:class:`Intrinsic`]
         The intrinsic transformation to be applied to the image points.
         If None, a no intrinsic transformation is applied (i.e., identity transformation).
 
-    distortion : Optional[Distortion]
+    distortion : Optional[:class:`Distortion`]
         The distortion model to be applied to the normalized points.
         If None, a no distortion transformation is applied (i.e., identity transformation).
 
-    R : Optional[Extrinsic], optional
+    R : Optional[:class:`Extrinsic`], optional
         The rectification extrinsic transformation (rotation and translation) to be applied to the normalized points.
         If None, a no extrinsic transformation is applied (i.e., identity transformation). Default is None.
 
-    P : Optional[Intrinsic], optional
+    P : Optional[:class:`Intrinsic`], optional
         The projection intrinsic transformation to be applied to the normalized points.
         If None, a no intrinsic transformation is applied (i.e., identity transformation).
         This is useful to return the undistorted points in the image coordinate system.
@@ -93,17 +96,28 @@ def undistort_points(
         If True, the input points are assumed to be in the shape (2, ...) instead of (..., 2). Default is False.
         The output points will be in the same shape as the input points.
 
+    intrinsic_kwargs : Optional[Dict], optional
+        Additional keyword arguments to be passed to the intrinsic transformation. Default is None.
+
+    distortion_kwargs : Optional[Dict], optional
+        Additional keyword arguments to be passed to the distortion transformation. Default is None.
+
+    R_kwargs : Optional[Dict], optional
+        Additional keyword arguments to be passed to the rectification extrinsic transformation. Default is None.
+
+    P_kwargs : Optional[Dict], optional
+        Additional keyword arguments to be passed to the projection intrinsic transformation. Default is None.
+
     _skip : bool, optional
             [INTERNAL USE], If True, skip the checks for the transformation parameters and assume the points are given in the (n_points, input_dim) float format.
             `transpose` is ignored if this parameter is set to True.
-    
-    **kwargs : optional
-        Additional keyword arguments to be passed. [warning]
+
 
     Returns
     -------
     numpy.ndarray
         The undistorted 2D image points in the camera coordinate system. Shape (..., 2). If no ``P`` is given, the ``normalized_points`` are returned instead of the ``undistorted_points``.
+
 
     Example
     --------
@@ -125,7 +139,7 @@ def undistort_points(
         K = numpy.array([[1000.0, 0.0, 320.0],
                         [0.0, 1000.0, 240.0],
                         [0.0, 0.0, 1.0]])
-    
+
         # Create the intrinsic object
         intrinsic = Cv2Intrinsic.from_matrix(K)
 
@@ -140,7 +154,7 @@ def undistort_points(
     .. code-block:: python
 
         undistorted_points = undistort_points(image_points, intrinsic=intrinsic, distortion=distortion, P=K)
-    
+
     """
     # Set the default values if None
     if intrinsic is None:
@@ -151,68 +165,109 @@ def undistort_points(
         R = NoExtrinsic()
     if P is None:
         P = NoIntrinsic()
+    if intrinsic_kwargs is None:
+        intrinsic_kwargs = {}
+    if distortion_kwargs is None:
+        distortion_kwargs = {}
+    if R_kwargs is None:
+        R_kwargs = {}
+    if P_kwargs is None:
+        P_kwargs = {}
 
     # Check the types of the parameters
     if not isinstance(intrinsic, Intrinsic):
         raise ValueError("intrinsic must be an instance of the Intrinsic class")
     if not intrinsic.is_set():
-        raise ValueError("The intrinsic object must be ready to transform the points, check is_set() method.")
+        raise ValueError(
+            "The intrinsic object must be ready to transform the points, check is_set() method."
+        )
     if not isinstance(distortion, Distortion):
         raise ValueError("distortion must be an instance of the Distortion class.")
     if not distortion.is_set():
-        raise ValueError("The distortion object must be ready to transform the points, check is_set() method.")
+        raise ValueError(
+            "The distortion object must be ready to transform the points, check is_set() method."
+        )
     if not isinstance(R, Extrinsic):
         raise ValueError("R must be an instance of the Extrinsic class")
     if not R.is_set():
-        raise ValueError("The rectification extrinsic object must be ready to transform the points, check is_set() method.")
+        raise ValueError(
+            "The rectification extrinsic object must be ready to transform the points, check is_set() method."
+        )
     if not isinstance(P, Intrinsic):
         raise ValueError("P must be an instance of the Intrinsic class")
     if not P.is_set():
-        raise ValueError("The projection intrinsic object must be ready to transform the points, check is_set() method.")
+        raise ValueError(
+            "The projection intrinsic object must be ready to transform the points, check is_set() method."
+        )
+
+    if not isinstance(intrinsic_kwargs, dict):
+        raise ValueError("intrinsic_kwargs must be a dictionary")
+    if not isinstance(distortion_kwargs, dict):
+        raise ValueError("distortion_kwargs must be a dictionary")
+    if not isinstance(R_kwargs, dict):
+        raise ValueError("R_kwargs must be a dictionary")
+    if not isinstance(P_kwargs, dict):
+        raise ValueError("P_kwargs must be a dictionary")
 
     if not _skip:
         if not isinstance(transpose, bool):
             raise ValueError("transpose must be a boolean value")
-        
+
         # Create the array of points
         image_points = numpy.asarray(image_points, dtype=numpy.float64)
 
         # Transpose the points if needed
         if transpose:
-            image_points = numpy.moveaxis(image_points, 0, -1) # (2, ...) -> (..., 2)
+            image_points = numpy.moveaxis(image_points, 0, -1)  # (2, ...) -> (..., 2)
 
         # Extract the original shape
-        shape = image_points.shape # (..., 2)
+        shape = image_points.shape  # (..., 2)
 
         # Flatten the points along the last axis
-        image_points = image_points.reshape(-1, shape[-1]) # shape (..., 2) -> shape (n_points, 2)
-        
-        # Check the shape of the points
-        if image_points.ndim !=2 or image_points.shape[1] != 2:
-            raise ValueError(f"The points must be in the shape (..., 2) or (2, ...) if ``transpose`` is True. Got {image_points.shape} instead and transpose is {transpose}.")
+        image_points = image_points.reshape(
+            -1, shape[-1]
+        )  # shape (..., 2) -> shape (n_points, 2)
 
-    n_points = image_points.shape[0] # n_points
-    output_points = image_points.copy() # shape (n_points, 2)
+        # Check the shape of the points
+        if image_points.ndim != 2 or image_points.shape[1] != 2:
+            raise ValueError(
+                f"The points must be in the shape (..., 2) or (2, ...) if ``transpose`` is True. Got {image_points.shape} instead and transpose is {transpose}."
+            )
+
+    n_points = image_points.shape[0]  # n_points
+    output_points = image_points.copy()  # shape (n_points, 2)
 
     # Realize the transformation:
     if not isinstance(intrinsic, NoIntrinsic):
-        output_points, _, _ = intrinsic._inverse_transform(output_points, dx=False, dp=False) # shape (n_points, 2) -> shape (n_points, 2)
+        output_points, _, _ = intrinsic._inverse_transform(
+            output_points, dx=False, dp=False, **intrinsic_kwargs
+        )  # shape (n_points, 2) -> shape (n_points, 2)
     if not isinstance(distortion, NoDistortion):
-        output_points, _, _ = distortion._inverse_transform(output_points, dx=False, dp=False, **kwargs) # shape (n_points, 2) -> shape (n_points, 2)
+        output_points, _, _ = distortion._inverse_transform(
+            output_points, dx=False, dp=False, **distortion_kwargs
+        )  # shape (n_points, 2) -> shape (n_points, 2)
     if not isinstance(R, NoExtrinsic):
-        output_points, _, _ = R._transform(numpy.concatenate((output_points, numpy.ones((n_points, 1))), axis=1), dx=False, dp=False) # shape (n_points, 2) -> shape (n_points, 3)
-        output_points = output_points[:, :2] # shape (n_points, 3) -> shape (n_points, 2)
+        output_points, _, _ = R._transform(
+            numpy.concatenate((output_points, numpy.ones((n_points, 1))), axis=1),
+            dx=False,
+            dp=False,
+            **R_kwargs,
+        )  # shape (n_points, 2) -> shape (n_points, 3)
+        output_points = output_points[
+            :, :2
+        ]  # shape (n_points, 3) -> shape (n_points, 2)
 
     if not isinstance(P, NoIntrinsic):
-        output_points, _, _ = P._transform(output_points, dx=False, dp=False) # shape (n_points, 2) -> shape (n_points, 2)
+        output_points, _, _ = P._transform(
+            output_points, dx=False, dp=False, **P_kwargs
+        )  # shape (n_points, 2) -> shape (n_points, 2)
 
     if not _skip:
         # Reshape the normalized points back to the original shape
-        output_points = output_points.reshape(shape) # shape (n_points, 2) -> (..., 2)
+        output_points = output_points.reshape(shape)  # shape (n_points, 2) -> (..., 2)
 
         # Transpose the points back to the original shape if needed
         if transpose:
-            output_points = numpy.moveaxis(output_points, -1, 0) # (..., 2) -> (2, ...)
+            output_points = numpy.moveaxis(output_points, -1, 0)  # (..., 2) -> (2, ...)
 
     return output_points
-
