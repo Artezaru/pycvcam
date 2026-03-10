@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pycvcam.ZernikeDistortion &#8212; pycvcam 2.1.0 documentation</title>
+    <title>pycvcam.ZernikeDistortion &#8212; pycvcam 2.1.2 documentation</title>
   
   
   
@@ -44,7 +44,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=20623aea"></script>
+    <script src="../_static/documentation_options.js?v=b3e23499"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -120,7 +120,7 @@
   
   
   
-    <p class="title logo__title">pycvcam 2.1.0 documentation</p>
+    <p class="title logo__title">pycvcam 2.1.2 documentation</p>
   
 </a></div>
     
@@ -647,8 +647,8 @@ The unit circle is defined by the radius <span class="math notranslate nohighlig
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>parameters</strong> (<em>Optional</em><em>[</em><em>numpy.ndarray</em><em>]</em><em>, </em><em>optional</em>) – The parameters of the distortion transformation. It should be a numpy array of shape (n_params,) containing the distortion coefficients ordered as described above. Default is None, which means no distortion is setted.</p></li>
-<li><p><strong>constants</strong> (<em>numpy.ndarray</em><em>, </em><em>optional</em>) – The constants of the distortion transformation. It should be a numpy array of shape (4,) containing the radius and center of the ellipse of definition of the Zernike polynomials in the order: (R_x, R_y, x_0, y_0). Default is [1.0, 1.0, 0.0, 0.0], which means the unit circle is defined with radius 1 and center (0, 0).</p></li>
+<li><p><strong>parameters</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em>]</em><em>, </em><em>optional</em>) – The parameters of the distortion transformation. It should be a numpy array of shape (n_params,) containing the distortion coefficients ordered as described above. Default is None, which means no distortion is setted.</p></li>
+<li><p><strong>constants</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em>, </em><em>optional</em>) – The constants of the distortion transformation. It should be a numpy array of shape (4,) containing the radius and center of the ellipse of definition of the Zernike polynomials in the order: (R_x, R_y, x_0, y_0). Default is [1.0, 1.0, 0.0, 0.0], which means the unit circle is defined with radius 1 and center (0, 0).</p></li>
 <li><p><strong>n_params</strong> (<em>Optional</em><em>[</em><em>Integral</em><em>]</em><em>, </em><em>optional</em>) – The number of parameters for the distortion model. If not specified, it will be inferred from the shape of the <cite>parameters</cite> array.</p></li>
 <li><p><strong>n_zer</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – The order of the Zernike polynomials. If None, the order is set according to the number of parameters. The default is None.
 Only use <code class="docutils literal notranslate"><span class="pre">n_zer</span></code> or <code class="docutils literal notranslate"><span class="pre">n_params</span></code>, not both.</p></li>
