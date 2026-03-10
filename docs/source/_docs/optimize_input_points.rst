@@ -1,4 +1,9 @@
-optimize_input_points
+.. currentmodule:: pycvcam
+
+Optimize Input Points
 =============================================
 
-.. autofunction:: pycvcam.optimize.optimize_input_points.optimize_input_points
+.. autosummary::
+   :toctree: ../_autosummary/
+
+   optimize_input_points

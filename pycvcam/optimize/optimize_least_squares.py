@@ -23,6 +23,7 @@ def _study_jacobian_least_squares(
     parameters: numpy.ndarray,
     _pretext: Optional[str] = None,
     _start: bool = True,
+    _sparse: bool = False,
 ) -> None:
     """
     Study the Jacobian matrix of the least squares problem to analyze the observability
@@ -50,6 +51,10 @@ def _study_jacobian_least_squares(
 
     _start : bool, optional
         True = Iter 0 before the optimization, False = Iter N after the optimization.
+
+    _sparse : bool, optional
+        If True, the Jacobian is treated as a sparse matrix for the analysis.
+        Default is False.
 
     """
     if _start:
@@ -87,17 +92,28 @@ def _study_jacobian_least_squares(
             print("No parameters to optimize.")
             return
 
-    if _start:
+    if _start and not _sparse:
         density = numpy.count_nonzero(jacobian) / (m * n)
         print(f"Density: {density*100:.2f}%")
+    if _start and _sparse:
+        density = scipy.sparse.csr_matrix(jacobian).count_nonzero() / (m * n)
+        print(f"Density (sparse): {density*100:.2f}%")
 
     # SVD
-    U, S, Vt = numpy.linalg.svd(jacobian, full_matrices=False)
-    sigma_max = S[0]
-    sigma_min = S[-1]
-    cond_number = sigma_max / sigma_min
-    print(f"Singular values (max/min): {sigma_max:.3e} / {sigma_min:.3e}")
-    print(f"Condition number: {cond_number:.3e}")
+    if not _sparse:
+        U, S, Vt = numpy.linalg.svd(jacobian, full_matrices=False)
+        sigma_max = S[0]
+        sigma_min = S[-1]
+        cond_number = sigma_max / sigma_min
+        print(f"Singular values (max/min): {sigma_max:.3e} / {sigma_min:.3e}")
+        print(f"Condition number: {cond_number:.3e}")
+    else:
+        U, S, Vt = scipy.sparse.linalg.svds(jacobian, k=min(m, n) - 1)
+        sigma_max = S[-1]
+        sigma_min = S[0]
+        cond_number = sigma_max / sigma_min
+        print(f"Singular values (max/min): {sigma_max:.3e} / {sigma_min:.3e}")
+        print(f"Condition number: {cond_number:.3e}")
 
     # Variance contribution of each singular value (1/sigma^2)
     print("\nSingular values and their contribution to the variance:")
@@ -131,7 +147,10 @@ def _study_jacobian_least_squares(
     # Parameters Covariances
     cost = 0.5 * numpy.sum(residual**2)
     sigma2 = 2 * cost / (m - n) if m > n else numpy.inf
-    cov = sigma2 * numpy.linalg.inv(jacobian.T @ jacobian)
+    if not _sparse:
+        cov = sigma2 * numpy.linalg.inv(jacobian.T @ jacobian)
+    else:
+        cov = sigma2 * scipy.sparse.linalg.inv(jacobian.T @ jacobian).toarray()
     print("\nEstimated variances of the parameters:")
     header = f"| {'Parameter':^10} | {'Value P':^15} | {'Var = σ^2 (J.T J)^-1':^20} | {'Ratio √V/|P|':^15} |"
     print(header)
@@ -157,6 +176,11 @@ def _study_jacobian_least_squares(
         print("-" * 50 + "\n")
     if not _start:
         print("\n" + "=" * 50 + "\n")
+
+
+# -------------
+# DEPRECATED - Use optimize_chains_trf instead
+# -------------
 
 
 def _build_optimize_parameters_lsq_functions(
@@ -277,6 +301,12 @@ def optimize_parameters_least_squares(
     _pretext: Optional[str] = None,
 ) -> numpy.ndarray:
     r"""
+
+    .. deprecated:: 2.1.0
+
+        This function is deprecated and will be removed in a future version.
+
+
     Optimize the ``parameters`` of a :class:`Transform` object such that the transformed
     input points match the output points using the ``scipy.optimize.least_squares``
     method. The computation is done with Trust Region Reflective algorithm.
@@ -788,6 +818,12 @@ def optimize_camera_least_squares(
     return_history: bool = False,
 ) -> Tuple[Optional[numpy.ndarray], Optional[numpy.ndarray], Optional[numpy.ndarray]]:
     """
+
+    .. deprecated:: 2.1.0
+
+        This function is deprecated and will be removed in a future version.
+
+
     Optimize the parameters of the intrinsic, distortion, and extrinsic transformations
     of a camera model such that the projection of the world points matches the image
     points using the ``scipy.optimize.least_squares`` method.
@@ -1538,6 +1574,12 @@ def optimize_chain_parameters_least_squares(
     return_history: bool = False,
 ) -> Tuple[numpy.ndarray, ...]:
     r"""
+
+    .. deprecated:: 2.1.0
+
+        This function is deprecated and will be removed in a future version.
+
+
     Optimize several :class:`Transform` objects according multiple chains of
     transformations using the ``scipy.optimize.least_squares`` method. The computation
     is done with Trust Region Reflective algorithm.

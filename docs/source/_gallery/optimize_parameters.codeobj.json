@@ -17,15 +17,6 @@
    "name": "ndarray"
   }
  ],
- "_": [
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "numpy",
-   "module_short": "numpy",
-   "name": "ndarray"
-  }
- ],
  "ax1": [
   {
    "is_class": false,
@@ -3176,15 +3167,6 @@
    "name": "ABC.parameters"
   }
  ],
- "optimized_distortio_params": [
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "numpy",
-   "module_short": "numpy",
-   "name": "ndarray"
-  }
- ],
  "optimized_distortion": [
   {
    "is_class": false,
@@ -3278,6 +3260,15 @@
    "module": "abc",
    "module_short": "abc",
    "name": "ABC.parameters"
+  }
+ ],
+ "optimized_distortion_params": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
   }
  ],
  "optimized_extrinsic": [
@@ -3402,6 +3393,15 @@
    "name": "ndarray"
   }
  ],
+ "optimized_intrinsic_params": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
  "parameters": [
   {
    "is_class": false,
@@ -3409,6 +3409,15 @@
    "module": "numpy",
    "module_short": "numpy",
    "name": "ndarray"
+  }
+ ],
+ "params": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "tuple"
   }
  ],
  "params_error": [
@@ -3461,6 +3470,22 @@
    "module": "matplotlib.pyplot",
    "module_short": "matplotlib.pyplot",
    "name": "figure"
+  }
+ ],
+ "plt.show": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "show"
   }
  ],
  "pycvcam.Cv2Distortion": [
@@ -3843,31 +3868,50 @@
    "name": "get_lena_image"
   }
  ],
- "pycvcam.optimize_camera_least_squares": [
+ "pycvcam.optimize_camera_trf": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "optimize_camera_trf"
+  },
   {
    "is_class": false,
    "is_explicit": true,
    "module": "pycvcam",
    "module_short": "pycvcam",
-   "name": "optimize_camera_least_squares"
+   "name": "optimize_camera_trf"
   }
  ],
- "pycvcam.optimize_chain_parameters_least_squares": [
+ "pycvcam.optimize_parameters_trf": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "optimize_parameters_trf"
+  },
   {
    "is_class": false,
    "is_explicit": true,
    "module": "pycvcam",
    "module_short": "pycvcam",
-   "name": "optimize_chain_parameters_least_squares"
-  }
- ],
- "pycvcam.optimize_parameters_least_squares": [
-  {
-   "is_class": false,
-   "is_explicit": true,
-   "module": "pycvcam",
-   "module_short": "pycvcam",
-   "name": "optimize_parameters_least_squares"
+   "name": "optimize_parameters_trf"
   }
  ],
  "pycvcam.project_points": [
@@ -3884,38 +3928,6 @@
    "module": "pycvcam",
    "module_short": "pycvcam",
    "name": "project_points"
-  }
- ],
- "pycvopt.optimize_camera_least_squares": [
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "builtins",
-   "module_short": "builtins",
-   "name": "function"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "pycvcam.optimize",
-   "module_short": "pycvcam.optimize",
-   "name": "optimize_camera_least_squares"
-  }
- ],
- "pycvopt.optimize_parameters_least_squares": [
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "builtins",
-   "module_short": "builtins",
-   "name": "function"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "pycvcam.optimize",
-   "module_short": "pycvcam.optimize",
-   "name": "optimize_parameters_least_squares"
   }
  ],
  "rel_error_distortion": [

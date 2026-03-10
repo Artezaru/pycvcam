@@ -18,7 +18,7 @@ from numbers import Number, Integral
 import pyzernike
 
 from ..core import Distortion
-from ..optimize import optimize_input_points
+from ..optimize.optimize_input_points import optimize_input_points
 
 
 class ZernikeDistortion(Distortion):

@@ -164,16 +164,15 @@ Optimisation processes
 ----------------------
 
 The package provides a set of optimisation processes that can be used to estimate the parameters of the transformations.
-The optimisations are located in the ``pycvcam.optimize`` module.
 
-- :doc:`Optimize Parameters Least Squares <_docs/optimize_parameters_least_squares>`: A process to optimize the parameters of a transformation or a camera model using a Scipy least squares optimization with bounds and scaling.
-- :doc:`Optimize Input Points <_docs/optimize_input_points>`: A process to optimize the input points of a transformation using a least squares optimization.
+- :doc:`Optimize Parameters <_docs/optimize_parameters>`: A process to optimize the parameters of the transformation using Gaussian-Newton gradient or Trust Region Reflective optimization.
+- :doc:`Optimize Input Points <_docs/optimize_input_points>`: A process to optimize the input points of a transformation using Gaussian-Newton gradient descent optimization.
 
 .. toctree::
    :maxdepth: 1
    :hidden:
 
-   ./_docs/optimize_parameters_least_squares.rst
+   ./_docs/optimize_parameters.rst
    ./_docs/optimize_input_points.rst
    
 
