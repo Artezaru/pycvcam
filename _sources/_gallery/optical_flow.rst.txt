@@ -205,7 +205,7 @@ the difference between the distorted and original pixel coordinates.
     Flow X component range: [-5.293, 6.182]
     Flow Y component range: [-24.122, 5.986]
     Mean flow magnitude: 6.324732682604786
-    /home/runner/work/pycvcam/pycvcam/gallery/optical_flow.py:148: UserWarning: tight_layout not applied: number of columns in subplot specifications must be multiples of one another.
+    /home/fdahe241/Programs/pycvcam/gallery/optical_flow.py:148: UserWarning: tight_layout not applied: number of columns in subplot specifications must be multiples of one another.
       plt.tight_layout()
 
 
@@ -320,7 +320,7 @@ the effect of the borders on the error computation.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 14.663 seconds)
+   **Total running time of the script:** (0 minutes 9.346 seconds)
 
 
 .. _sphx_glr_download_.._.._docs_source__gallery_optical_flow.py:
