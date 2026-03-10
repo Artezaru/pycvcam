@@ -1,0 +1,967 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Index &#8212; pycvcam 2.1.6 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=4f932e3e"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'genindex';</script>
+    <link rel="index" title="Index" href="#" />
+    <link rel="search" title="Search" href="search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">pycvcam 2.1.6 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="usage.html">
+    Usage
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="usage.html">
+    Usage
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none"></div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+
+<h1 id="index">Index</h1>
+
+<div class="genindex-jumpbox">
+ <a href="#_"><strong>_</strong></a>
+ | <a href="#A"><strong>A</strong></a>
+ | <a href="#C"><strong>C</strong></a>
+ | <a href="#D"><strong>D</strong></a>
+ | <a href="#E"><strong>E</strong></a>
+ | <a href="#F"><strong>F</strong></a>
+ | <a href="#G"><strong>G</strong></a>
+ | <a href="#I"><strong>I</strong></a>
+ | <a href="#J"><strong>J</strong></a>
+ | <a href="#K"><strong>K</strong></a>
+ | <a href="#N"><strong>N</strong></a>
+ | <a href="#O"><strong>O</strong></a>
+ | <a href="#P"><strong>P</strong></a>
+ | <a href="#R"><strong>R</strong></a>
+ | <a href="#S"><strong>S</strong></a>
+ | <a href="#T"><strong>T</strong></a>
+ | <a href="#U"><strong>U</strong></a>
+ | <a href="#W"><strong>W</strong></a>
+ | <a href="#X"><strong>X</strong></a>
+ | <a href="#Z"><strong>Z</strong></a>
+ 
+</div>
+<h2 id="_">_</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_docs/no_distortion.html#pycvcam.NoDistortion._abc_impl">_abc_impl (NoDistortion attribute)</a>
+
+      <ul>
+        <li><a href="_docs/no_extrinsic.html#pycvcam.NoExtrinsic._abc_impl">(NoExtrinsic attribute)</a>
+</li>
+        <li><a href="_docs/no_intrinsic.html#pycvcam.NoIntrinsic._abc_impl">(NoIntrinsic attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="_autosummary/pycvcam.FisheyeDistortion._cartesian_to_polar.html#pycvcam.FisheyeDistortion._cartesian_to_polar">_cartesian_to_polar() (FisheyeDistortion method)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.Cv2Extrinsic._compute_rays.html#pycvcam.Cv2Extrinsic._compute_rays">_compute_rays() (Cv2Extrinsic method)</a>
+
+      <ul>
+        <li><a href="_autosummary/pycvcam.core.Extrinsic._compute_rays.html#pycvcam.core.Extrinsic._compute_rays">(Extrinsic method)</a>
+</li>
+        <li><a href="_docs/no_extrinsic.html#pycvcam.NoExtrinsic._compute_rays">(NoExtrinsic method)</a>
+</li>
+        <li><a href="_autosummary/pycvcam.OrthographicExtrinsic._compute_rays.html#pycvcam.OrthographicExtrinsic._compute_rays">(OrthographicExtrinsic method)</a>
+</li>
+      </ul></li>
+      <li><a href="_autosummary/pycvcam.Cv2Distortion._compute_tilt_matrix.html#pycvcam.Cv2Distortion._compute_tilt_matrix">_compute_tilt_matrix() (Cv2Distortion method)</a>
+</li>
+      <li><a href="_docs/no_distortion.html#pycvcam.NoDistortion._constants">_constants (NoDistortion attribute)</a>
+
+      <ul>
+        <li><a href="_docs/no_extrinsic.html#pycvcam.NoExtrinsic._constants">(NoExtrinsic attribute)</a>
+</li>
+        <li><a href="_docs/no_intrinsic.html#pycvcam.NoIntrinsic._constants">(NoIntrinsic attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="_autosummary/pycvcam.core.Transform._get_inverse_transform_aliases.html#pycvcam.core.Transform._get_inverse_transform_aliases">_get_inverse_transform_aliases() (Transform method)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.core.Transform._get_jacobian_shorthands.html#pycvcam.core.Transform._get_jacobian_shorthands">_get_jacobian_shorthands() (Transform method)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.core.Transform._get_transform_aliases.html#pycvcam.core.Transform._get_transform_aliases">_get_transform_aliases() (Transform method)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.Cv2Distortion._inverse_transform.html#pycvcam.Cv2Distortion._inverse_transform">_inverse_transform() (Cv2Distortion method)</a>
+
+      <ul>
+        <li><a href="_autosummary/pycvcam.Cv2Extrinsic._inverse_transform.html#pycvcam.Cv2Extrinsic._inverse_transform">(Cv2Extrinsic method)</a>
+</li>
+        <li><a href="_autosummary/pycvcam.Cv2Intrinsic._inverse_transform.html#pycvcam.Cv2Intrinsic._inverse_transform">(Cv2Intrinsic method)</a>
+</li>
+        <li><a href="_autosummary/pycvcam.FisheyeDistortion._inverse_transform.html#pycvcam.FisheyeDistortion._inverse_transform">(FisheyeDistortion method)</a>
+</li>
+        <li><a href="_docs/no_distortion.html#pycvcam.NoDistortion._inverse_transform">(NoDistortion method)</a>
+</li>
+        <li><a href="_docs/no_extrinsic.html#pycvcam.NoExtrinsic._inverse_transform">(NoExtrinsic method)</a>
+</li>
+        <li><a href="_docs/no_intrinsic.html#pycvcam.NoIntrinsic._inverse_transform">(NoIntrinsic method)</a>
+</li>
+        <li><a href="_autosummary/pycvcam.OrthographicExtrinsic._inverse_transform.html#pycvcam.OrthographicExtrinsic._inverse_transform">(OrthographicExtrinsic method)</a>
+</li>
+        <li><a href="_autosummary/pycvcam.SkewIntrinsic._inverse_transform.html#pycvcam.SkewIntrinsic._inverse_transform">(SkewIntrinsic method)</a>
+</li>
+        <li><a href="_autosummary/pycvcam.core.Transform._inverse_transform.html#pycvcam.core.Transform._inverse_transform">(Transform method)</a>
+</li>
+        <li><a href="_autosummary/pycvcam.core.TransformComposition._inverse_transform.html#pycvcam.core.TransformComposition._inverse_transform">(TransformComposition method)</a>
+</li>
+        <li><a href="_autosummary/pycvcam.ZernikeDistortion._inverse_transform.html#pycvcam.ZernikeDistortion._inverse_transform">(ZernikeDistortion method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/pycvcam.Cv2Distortion._inverse_transform_opencv.html#pycvcam.Cv2Distortion._inverse_transform_opencv">_inverse_transform_opencv() (Cv2Distortion method)</a>
+</li>
+      <li><a href="_docs/no_distortion.html#pycvcam.NoDistortion._parameters">_parameters (NoDistortion attribute)</a>
+
+      <ul>
+        <li><a href="_docs/no_extrinsic.html#pycvcam.NoExtrinsic._parameters">(NoExtrinsic attribute)</a>
+</li>
+        <li><a href="_docs/no_intrinsic.html#pycvcam.NoIntrinsic._parameters">(NoIntrinsic attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="_autosummary/pycvcam.FisheyeDistortion._polar_to_cartesian.html#pycvcam.FisheyeDistortion._polar_to_cartesian">_polar_to_cartesian() (FisheyeDistortion method)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.core.Transform._return_inverse_transform_result.html#pycvcam.core.Transform._return_inverse_transform_result">_return_inverse_transform_result() (Transform method)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.core.Transform._return_transform_result.html#pycvcam.core.Transform._return_transform_result">_return_transform_result() (Transform method)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.Cv2Distortion._transform.html#pycvcam.Cv2Distortion._transform">_transform() (Cv2Distortion method)</a>
+
+      <ul>
+        <li><a href="_autosummary/pycvcam.Cv2Extrinsic._transform.html#pycvcam.Cv2Extrinsic._transform">(Cv2Extrinsic method)</a>
+</li>
+        <li><a href="_autosummary/pycvcam.Cv2Intrinsic._transform.html#pycvcam.Cv2Intrinsic._transform">(Cv2Intrinsic method)</a>
+</li>
+        <li><a href="_autosummary/pycvcam.FisheyeDistortion._transform.html#pycvcam.FisheyeDistortion._transform">(FisheyeDistortion method)</a>
+</li>
+        <li><a href="_docs/no_distortion.html#pycvcam.NoDistortion._transform">(NoDistortion method)</a>
+</li>
+        <li><a href="_docs/no_extrinsic.html#pycvcam.NoExtrinsic._transform">(NoExtrinsic method)</a>
+</li>
+        <li><a href="_docs/no_intrinsic.html#pycvcam.NoIntrinsic._transform">(NoIntrinsic method)</a>
+</li>
+        <li><a href="_autosummary/pycvcam.OrthographicExtrinsic._transform.html#pycvcam.OrthographicExtrinsic._transform">(OrthographicExtrinsic method)</a>
+</li>
+        <li><a href="_autosummary/pycvcam.SkewIntrinsic._transform.html#pycvcam.SkewIntrinsic._transform">(SkewIntrinsic method)</a>
+</li>
+        <li><a href="_autosummary/pycvcam.core.Transform._transform.html#pycvcam.core.Transform._transform">(Transform method)</a>
+</li>
+        <li><a href="_autosummary/pycvcam.core.TransformComposition._transform.html#pycvcam.core.TransformComposition._transform">(TransformComposition method)</a>
+</li>
+        <li><a href="_autosummary/pycvcam.ZernikeDistortion._transform.html#pycvcam.ZernikeDistortion._transform">(ZernikeDistortion method)</a>
+</li>
+      </ul></li>
+      <li><a href="_autosummary/pycvcam.Cv2Distortion._transform_opencv.html#pycvcam.Cv2Distortion._transform_opencv">_transform_opencv() (Cv2Distortion method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="A">A</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_docs/transform_result.html#pycvcam.core.TransformResult.add_alias">add_alias() (TransformResult method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_docs/transform_result.html#pycvcam.core.TransformResult.add_jacobian">add_jacobian() (TransformResult method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="C">C</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/pycvcam.ZernikeDistortion.center.html#pycvcam.ZernikeDistortion.center">center (ZernikeDistortion property)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.ZernikeDistortion.center_x.html#pycvcam.ZernikeDistortion.center_x">center_x (ZernikeDistortion property)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.ZernikeDistortion.center_y.html#pycvcam.ZernikeDistortion.center_y">center_y (ZernikeDistortion property)</a>
+</li>
+      <li><a href="_docs/optical_flow.html#pycvcam.compute_optical_flow">compute_optical_flow() (in module pycvcam)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.core.Extrinsic.compute_rays.html#pycvcam.core.Extrinsic.compute_rays">compute_rays() (Extrinsic method)</a>
+
+      <ul>
+        <li><a href="_docs/compute_rays.html#pycvcam.compute_rays">(in module pycvcam)</a>
+</li>
+      </ul></li>
+      <li><a href="_autosummary/pycvcam.core.Transform.constant_names.html#pycvcam.core.Transform.constant_names">constant_names (Transform property)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_docs/no_distortion.html#pycvcam.NoDistortion.constants">constants (NoDistortion property)</a>
+
+      <ul>
+        <li><a href="_docs/no_extrinsic.html#pycvcam.NoExtrinsic.constants">(NoExtrinsic property)</a>
+</li>
+        <li><a href="_docs/no_intrinsic.html#pycvcam.NoIntrinsic.constants">(NoIntrinsic property)</a>
+</li>
+        <li><a href="_autosummary/pycvcam.core.Transform.constants.html#pycvcam.core.Transform.constants">(Transform property)</a>
+</li>
+      </ul></li>
+      <li><a href="_autosummary/pycvcam.core.Transform.copy.html#pycvcam.core.Transform.copy">copy() (Transform method)</a>
+</li>
+      <li><a href="_docs/cv2_distortion.html#pycvcam.Cv2Distortion">Cv2Distortion (class in pycvcam)</a>
+</li>
+      <li><a href="_docs/cv2_extrinsic.html#pycvcam.Cv2Extrinsic">Cv2Extrinsic (class in pycvcam)</a>
+</li>
+      <li><a href="_docs/cv2_intrinsic.html#pycvcam.Cv2Intrinsic">Cv2Intrinsic (class in pycvcam)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="D">D</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_docs/rays.html#pycvcam.core.Rays.directions">directions (Rays property)</a>
+</li>
+      <li><a href="_docs/optical_flow.html#pycvcam.display_optical_flow">display_optical_flow() (in module pycvcam)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.core.Distortion.distort.html#pycvcam.core.Distortion.distort">distort() (Distortion method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/pycvcam.distort_image.html#pycvcam.distort_image">distort_image() (in module pycvcam)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.distort_points.html#pycvcam.distort_points">distort_points() (in module pycvcam)</a>
+</li>
+      <li><a href="_docs/distortion.html#pycvcam.core.Distortion">Distortion (class in pycvcam.core)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="E">E</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_docs/extrinsic.html#pycvcam.core.Extrinsic">Extrinsic (class in pycvcam.core)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="F">F</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_docs/fisheye_distortion.html#pycvcam.FisheyeDistortion">FisheyeDistortion (class in pycvcam)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.Cv2Intrinsic.focal_length_x.html#pycvcam.Cv2Intrinsic.focal_length_x">focal_length_x (Cv2Intrinsic property)</a>
+
+      <ul>
+        <li><a href="_autosummary/pycvcam.SkewIntrinsic.focal_length_x.html#pycvcam.SkewIntrinsic.focal_length_x">(SkewIntrinsic property)</a>
+</li>
+      </ul></li>
+      <li><a href="_autosummary/pycvcam.Cv2Intrinsic.focal_length_y.html#pycvcam.Cv2Intrinsic.focal_length_y">focal_length_y (Cv2Intrinsic property)</a>
+
+      <ul>
+        <li><a href="_autosummary/pycvcam.SkewIntrinsic.focal_length_y.html#pycvcam.SkewIntrinsic.focal_length_y">(SkewIntrinsic property)</a>
+</li>
+      </ul></li>
+      <li><a href="_autosummary/pycvcam.Cv2Extrinsic.frame.html#pycvcam.Cv2Extrinsic.frame">frame (Cv2Extrinsic property)</a>
+
+      <ul>
+        <li><a href="_autosummary/pycvcam.OrthographicExtrinsic.frame.html#pycvcam.OrthographicExtrinsic.frame">(OrthographicExtrinsic property)</a>
+</li>
+      </ul></li>
+      <li><a href="_autosummary/pycvcam.core.Transform.from_dict.html#pycvcam.core.Transform.from_dict">from_dict() (Transform class method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/pycvcam.Cv2Extrinsic.from_frame.html#pycvcam.Cv2Extrinsic.from_frame">from_frame() (Cv2Extrinsic class method)</a>
+
+      <ul>
+        <li><a href="_autosummary/pycvcam.OrthographicExtrinsic.from_frame.html#pycvcam.OrthographicExtrinsic.from_frame">(OrthographicExtrinsic class method)</a>
+</li>
+      </ul></li>
+      <li><a href="_autosummary/pycvcam.core.Transform.from_json.html#pycvcam.core.Transform.from_json">from_json() (Transform class method)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.Cv2Intrinsic.from_matrix.html#pycvcam.Cv2Intrinsic.from_matrix">from_matrix() (Cv2Intrinsic class method)</a>
+
+      <ul>
+        <li><a href="_autosummary/pycvcam.SkewIntrinsic.from_matrix.html#pycvcam.SkewIntrinsic.from_matrix">(SkewIntrinsic class method)</a>
+</li>
+      </ul></li>
+      <li><a href="_autosummary/pycvcam.Cv2Extrinsic.from_rt.html#pycvcam.Cv2Extrinsic.from_rt">from_rt() (Cv2Extrinsic class method)</a>
+
+      <ul>
+        <li><a href="_autosummary/pycvcam.OrthographicExtrinsic.from_rt.html#pycvcam.OrthographicExtrinsic.from_rt">(OrthographicExtrinsic class method)</a>
+</li>
+      </ul></li>
+      <li><a href="_autosummary/pycvcam.Cv2Extrinsic.from_tmatrix.html#pycvcam.Cv2Extrinsic.from_tmatrix">from_tmatrix() (Cv2Extrinsic class method)</a>
+
+      <ul>
+        <li><a href="_autosummary/pycvcam.OrthographicExtrinsic.from_tmatrix.html#pycvcam.OrthographicExtrinsic.from_tmatrix">(OrthographicExtrinsic class method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/pycvcam.ZernikeDistortion.get_Cx.html#pycvcam.ZernikeDistortion.get_Cx">get_Cx() (ZernikeDistortion method)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.ZernikeDistortion.get_Cy.html#pycvcam.ZernikeDistortion.get_Cy">get_Cy() (ZernikeDistortion method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/pycvcam.FisheyeDistortion.get_di.html#pycvcam.FisheyeDistortion.get_di">get_di() (FisheyeDistortion method)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.ZernikeDistortion.get_index.html#pycvcam.ZernikeDistortion.get_index">get_index() (ZernikeDistortion method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="I">I</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/pycvcam.core.Transform.input_dim.html#pycvcam.core.Transform.input_dim">input_dim (Transform property)</a>
+</li>
+      <li><a href="_docs/intrinsic.html#pycvcam.core.Intrinsic">Intrinsic (class in pycvcam.core)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.Cv2Intrinsic.intrinsic_matrix.html#pycvcam.Cv2Intrinsic.intrinsic_matrix">intrinsic_matrix (Cv2Intrinsic property)</a>
+
+      <ul>
+        <li><a href="_autosummary/pycvcam.SkewIntrinsic.intrinsic_matrix.html#pycvcam.SkewIntrinsic.intrinsic_matrix">(SkewIntrinsic property)</a>
+</li>
+      </ul></li>
+      <li><a href="_autosummary/pycvcam.Cv2Intrinsic.intrinsic_vector.html#pycvcam.Cv2Intrinsic.intrinsic_vector">intrinsic_vector (Cv2Intrinsic property)</a>
+
+      <ul>
+        <li><a href="_autosummary/pycvcam.SkewIntrinsic.intrinsic_vector.html#pycvcam.SkewIntrinsic.intrinsic_vector">(SkewIntrinsic property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/pycvcam.core.Transform.inverse_transform.html#pycvcam.core.Transform.inverse_transform">inverse_transform() (Transform method)</a>
+</li>
+      <li><a href="_docs/no_distortion.html#pycvcam.NoDistortion.is_set">is_set() (NoDistortion method)</a>
+
+      <ul>
+        <li><a href="_docs/no_extrinsic.html#pycvcam.NoExtrinsic.is_set">(NoExtrinsic method)</a>
+</li>
+        <li><a href="_docs/no_intrinsic.html#pycvcam.NoIntrinsic.is_set">(NoIntrinsic method)</a>
+</li>
+        <li><a href="_autosummary/pycvcam.core.Transform.is_set.html#pycvcam.core.Transform.is_set">(Transform method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="J">J</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_docs/transform_result.html#pycvcam.core.TransformResult.jacobian_dp">jacobian_dp (TransformResult attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_docs/transform_result.html#pycvcam.core.TransformResult.jacobian_dx">jacobian_dx (TransformResult attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="K">K</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/pycvcam.Cv2Distortion.k1.html#pycvcam.Cv2Distortion.k1">k1 (Cv2Distortion property)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.Cv2Distortion.k2.html#pycvcam.Cv2Distortion.k2">k2 (Cv2Distortion property)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.Cv2Distortion.k3.html#pycvcam.Cv2Distortion.k3">k3 (Cv2Distortion property)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/pycvcam.Cv2Distortion.k4.html#pycvcam.Cv2Distortion.k4">k4 (Cv2Distortion property)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.Cv2Distortion.k5.html#pycvcam.Cv2Distortion.k5">k5 (Cv2Distortion property)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.Cv2Distortion.k6.html#pycvcam.Cv2Distortion.k6">k6 (Cv2Distortion property)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="N">N</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/pycvcam.core.Transform.n_constants.html#pycvcam.core.Transform.n_constants">n_constants (Transform property)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.core.Transform.n_params.html#pycvcam.core.Transform.n_params">n_params (Transform property)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.ZernikeDistortion.n_zer.html#pycvcam.ZernikeDistortion.n_zer">n_zer (ZernikeDistortion property)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_docs/no_distortion.html#pycvcam.NoDistortion">NoDistortion (class in pycvcam)</a>
+</li>
+      <li><a href="_docs/no_extrinsic.html#pycvcam.NoExtrinsic">NoExtrinsic (class in pycvcam)</a>
+</li>
+      <li><a href="_docs/no_intrinsic.html#pycvcam.NoIntrinsic">NoIntrinsic (class in pycvcam)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="O">O</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/pycvcam.optimize_camera_gn.html#pycvcam.optimize_camera_gn">optimize_camera_gn() (in module pycvcam)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.optimize_camera_trf.html#pycvcam.optimize_camera_trf">optimize_camera_trf() (in module pycvcam)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.optimize_chains_gn.html#pycvcam.optimize_chains_gn">optimize_chains_gn() (in module pycvcam)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.optimize_chains_trf.html#pycvcam.optimize_chains_trf">optimize_chains_trf() (in module pycvcam)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.optimize_input_points.html#pycvcam.optimize_input_points">optimize_input_points() (in module pycvcam)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/pycvcam.optimize_parameters_gn.html#pycvcam.optimize_parameters_gn">optimize_parameters_gn() (in module pycvcam)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.optimize_parameters_trf.html#pycvcam.optimize_parameters_trf">optimize_parameters_trf() (in module pycvcam)</a>
+</li>
+      <li><a href="_docs/rays.html#pycvcam.core.Rays.origins">origins (Rays property)</a>
+</li>
+      <li><a href="_docs/orthographic_extrinsic.html#pycvcam.OrthographicExtrinsic">OrthographicExtrinsic (class in pycvcam)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.core.Transform.output_dim.html#pycvcam.core.Transform.output_dim">output_dim (Transform property)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="P">P</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/pycvcam.Cv2Distortion.p1.html#pycvcam.Cv2Distortion.p1">p1 (Cv2Distortion property)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.Cv2Distortion.p2.html#pycvcam.Cv2Distortion.p2">p2 (Cv2Distortion property)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.core.Transform.parameter_names.html#pycvcam.core.Transform.parameter_names">parameter_names (Transform property)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.ZernikeDistortion.parameter_x_names.html#pycvcam.ZernikeDistortion.parameter_x_names">parameter_x_names (ZernikeDistortion property)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.ZernikeDistortion.parameter_y_names.html#pycvcam.ZernikeDistortion.parameter_y_names">parameter_y_names (ZernikeDistortion property)</a>
+</li>
+      <li><a href="_docs/no_distortion.html#pycvcam.NoDistortion.parameters">parameters (NoDistortion property)</a>
+
+      <ul>
+        <li><a href="_docs/no_extrinsic.html#pycvcam.NoExtrinsic.parameters">(NoExtrinsic property)</a>
+</li>
+        <li><a href="_docs/no_intrinsic.html#pycvcam.NoIntrinsic.parameters">(NoIntrinsic property)</a>
+</li>
+        <li><a href="_autosummary/pycvcam.core.Transform.parameters.html#pycvcam.core.Transform.parameters">(Transform property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/pycvcam.ZernikeDistortion.parameters_x.html#pycvcam.ZernikeDistortion.parameters_x">parameters_x (ZernikeDistortion property)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.ZernikeDistortion.parameters_y.html#pycvcam.ZernikeDistortion.parameters_y">parameters_y (ZernikeDistortion property)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.Cv2Intrinsic.principal_point_x.html#pycvcam.Cv2Intrinsic.principal_point_x">principal_point_x (Cv2Intrinsic property)</a>
+
+      <ul>
+        <li><a href="_autosummary/pycvcam.SkewIntrinsic.principal_point_x.html#pycvcam.SkewIntrinsic.principal_point_x">(SkewIntrinsic property)</a>
+</li>
+      </ul></li>
+      <li><a href="_autosummary/pycvcam.Cv2Intrinsic.principal_point_y.html#pycvcam.Cv2Intrinsic.principal_point_y">principal_point_y (Cv2Intrinsic property)</a>
+
+      <ul>
+        <li><a href="_autosummary/pycvcam.SkewIntrinsic.principal_point_y.html#pycvcam.SkewIntrinsic.principal_point_y">(SkewIntrinsic property)</a>
+</li>
+      </ul></li>
+      <li><a href="_docs/transform_result.html#pycvcam.core.TransformResult.print_help">print_help() (TransformResult method)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.core.Extrinsic.project.html#pycvcam.core.Extrinsic.project">project() (Extrinsic method)</a>
+</li>
+      <li><a href="_docs/project_points.html#pycvcam.project_points">project_points() (in module pycvcam)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="R">R</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/pycvcam.ZernikeDistortion.radius.html#pycvcam.ZernikeDistortion.radius">radius (ZernikeDistortion property)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.ZernikeDistortion.radius_x.html#pycvcam.ZernikeDistortion.radius_x">radius_x (ZernikeDistortion property)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.ZernikeDistortion.radius_y.html#pycvcam.ZernikeDistortion.radius_y">radius_y (ZernikeDistortion property)</a>
+</li>
+      <li><a href="_docs/rays.html#pycvcam.core.Rays">Rays (class in pycvcam.core)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_docs/rays.html#pycvcam.core.Rays.rays">rays (Rays attribute)</a>
+</li>
+      <li><a href="_docs/read_transform.html#pycvcam.read_transform">read_transform() (in module pycvcam)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.Cv2Extrinsic.rotation_vector.html#pycvcam.Cv2Extrinsic.rotation_vector">rotation_vector (Cv2Extrinsic property)</a>
+
+      <ul>
+        <li><a href="_autosummary/pycvcam.OrthographicExtrinsic.rotation_vector.html#pycvcam.OrthographicExtrinsic.rotation_vector">(OrthographicExtrinsic property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="S">S</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/pycvcam.Cv2Distortion.s1.html#pycvcam.Cv2Distortion.s1">s1 (Cv2Distortion property)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.Cv2Distortion.s2.html#pycvcam.Cv2Distortion.s2">s2 (Cv2Distortion property)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.Cv2Distortion.s3.html#pycvcam.Cv2Distortion.s3">s3 (Cv2Distortion property)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.Cv2Distortion.s4.html#pycvcam.Cv2Distortion.s4">s4 (Cv2Distortion property)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.core.Intrinsic.scale.html#pycvcam.core.Intrinsic.scale">scale() (Intrinsic method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/pycvcam.ZernikeDistortion.set_Cx.html#pycvcam.ZernikeDistortion.set_Cx">set_Cx() (ZernikeDistortion method)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.ZernikeDistortion.set_Cy.html#pycvcam.ZernikeDistortion.set_Cy">set_Cy() (ZernikeDistortion method)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.FisheyeDistortion.set_di.html#pycvcam.FisheyeDistortion.set_di">set_di() (FisheyeDistortion method)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.SkewIntrinsic.skew.html#pycvcam.SkewIntrinsic.skew">skew (SkewIntrinsic property)</a>
+</li>
+      <li><a href="_docs/skew_intrinsic.html#pycvcam.SkewIntrinsic">SkewIntrinsic (class in pycvcam)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="T">T</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/pycvcam.Cv2Distortion.tau_x.html#pycvcam.Cv2Distortion.tau_x">tau_x (Cv2Distortion property)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.Cv2Distortion.tau_y.html#pycvcam.Cv2Distortion.tau_y">tau_y (Cv2Distortion property)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.core.Transform.to_dict.html#pycvcam.core.Transform.to_dict">to_dict() (Transform method)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.core.Transform.to_json.html#pycvcam.core.Transform.to_json">to_json() (Transform method)</a>
+</li>
+      <li><a href="_docs/transform.html#pycvcam.core.Transform">Transform (class in pycvcam.core)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.core.Transform.transform.html#pycvcam.core.Transform.transform">transform() (Transform method)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.Cv2Extrinsic.transformation_matrix.html#pycvcam.Cv2Extrinsic.transformation_matrix">transformation_matrix (Cv2Extrinsic property)</a>
+
+      <ul>
+        <li><a href="_autosummary/pycvcam.OrthographicExtrinsic.transformation_matrix.html#pycvcam.OrthographicExtrinsic.transformation_matrix">(OrthographicExtrinsic property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_docs/transform_composition.html#pycvcam.core.TransformComposition">TransformComposition (class in pycvcam.core)</a>
+</li>
+      <li><a href="_docs/transform_result.html#pycvcam.core.TransformResult.transformed_points">transformed_points (TransformResult attribute)</a>
+</li>
+      <li><a href="_docs/transform_result.html#pycvcam.core.TransformResult">TransformResult (class in pycvcam.core)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.Cv2Extrinsic.translation_vector.html#pycvcam.Cv2Extrinsic.translation_vector">translation_vector (Cv2Extrinsic property)</a>
+
+      <ul>
+        <li><a href="_autosummary/pycvcam.OrthographicExtrinsic.translation_vector.html#pycvcam.OrthographicExtrinsic.translation_vector">(OrthographicExtrinsic property)</a>
+</li>
+      </ul></li>
+      <li><a href="_docs/rays.html#pycvcam.core.Rays.transpose">transpose (Rays attribute)</a>
+
+      <ul>
+        <li><a href="_docs/transform_result.html#pycvcam.core.TransformResult.transpose">(TransformResult attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="U">U</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/pycvcam.core.Distortion.undistort.html#pycvcam.core.Distortion.undistort">undistort() (Distortion method)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.undistort_image.html#pycvcam.undistort_image">undistort_image() (in module pycvcam)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/pycvcam.undistort_points.html#pycvcam.undistort_points">undistort_points() (in module pycvcam)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.core.Extrinsic.unproject.html#pycvcam.core.Extrinsic.unproject">unproject() (Extrinsic method)</a>
+</li>
+      <li><a href="_autosummary/pycvcam.core.Intrinsic.unscale.html#pycvcam.core.Intrinsic.unscale">unscale() (Intrinsic method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="W">W</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_docs/write_transform.html#pycvcam.write_transform">write_transform() (in module pycvcam)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="X">X</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_docs/transform_result.html#pycvcam.core.TransformResult.x">x (TransformResult property)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="Z">Z</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_docs/zernike_distortion.html#pycvcam.ZernikeDistortion">ZernikeDistortion (class in pycvcam)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025-2026, Artezaru.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
