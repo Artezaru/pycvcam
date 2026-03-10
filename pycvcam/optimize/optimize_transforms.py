@@ -374,8 +374,13 @@ def _build_residual_jacobian_functions(
     C_mask = [numpy.concatenate([seq_masks[i] for i in c]) for c in seq_chains]  # Nc
     C_start_eq = numpy.cumsum([0] + C_n_equations[:-1])  # Nc
     C_end_eq = numpy.cumsum(C_n_equations)  # Nc
+    C_local_offsets = [
+        numpy.cumsum([0] + [T_n_reduced_parameters[it] for it in c[:-1]])
+        for c in seq_chains
+    ]
 
     C_tc = [TransformComposition([seq_transforms[it] for it in c]) for c in seq_chains]
+    C_kwargs = [[seq_transform_kwargs[it] for it in c] for c in seq_chains]
 
     def compute_func(params: numpy.ndarray) -> Tuple[numpy.ndarray, numpy.ndarray]:
         nonlocal seq_last_params, seq_last_res, seq_last_jac
@@ -395,25 +400,7 @@ def _build_residual_jacobian_functions(
                 transform.parameters = p
 
         # Compute the residuals and Jacobians for each chain
-        R_list = []
-        J_list = []
-        for ic, chain in enumerate(seq_chains):
-            tc = C_tc[ic]
-            list_kwargs = [seq_transform_kwargs[it] for it in chain]
-            transformed_points, _, jacobian_dp = tc._transform(
-                seq_inputs[ic], dx=False, dp=True, list_kwargs=list_kwargs
-            )  # shape (n_points, output_dim) and (n_points, output_dim, n_parameters)
-            R = seq_outputs[ic] - transformed_points  # shape (n_points, output_dim)
-            R_list.append(R.flatten())  # shape (n_points * output_dim,)
-            jacobian_dp = -jacobian_dp[
-                :, :, C_mask[ic]
-            ]  # shape (..., n_reduced_parameters)
-            J_list.append(
-                jacobian_dp.reshape(C_n_points[ic] * C_output_dim[ic], -1)
-            )  # shape (n_points * output_dim, C_n_reduced_params)
-
-        # Concatenate the residuals and Jacobians for all chains
-        R = numpy.concatenate(R_list)  # shape (sum(n_points * output_dim),)
+        R_full = numpy.empty((sum(C_n_equations),), dtype=numpy.float64)
 
         if _sparse:
             J_full = scipy.sparse.lil_matrix(
@@ -423,25 +410,37 @@ def _build_residual_jacobian_functions(
             J_full = numpy.zeros((sum(C_n_equations), sum(T_n_reduced_parameters)))
 
         for ic, chain in enumerate(seq_chains):
-            local_offsets = numpy.cumsum(
-                [0] + [T_n_reduced_parameters[it] for it in chain[:-1]]
-            )
+            tc = C_tc[ic]
+            list_kwargs = C_kwargs[ic]
+            transformed_points, _, jacobian_dp = tc._transform(
+                seq_inputs[ic], dx=False, dp=True, list_kwargs=list_kwargs
+            )  # shape (n_points, output_dim) and (n_points, output_dim, n_parameters)
+
+            R = seq_outputs[ic] - transformed_points  # shape (n_points, output_dim)
+            R_full[C_start_eq[ic] : C_end_eq[ic]] = (
+                R.ravel()
+            )  # shape (n_points * output_dim,)
+
+            jacobian_dp = -jacobian_dp[
+                :, :, C_mask[ic]
+            ]  # shape (..., n_reduced_parameters)
+            jacobian_dp = jacobian_dp.reshape(
+                C_n_points[ic] * C_output_dim[ic], -1
+            )  # shape (n_points * output_dim, n_reduced_parameters)
+
+            local_offsets = C_local_offsets[ic]
             for index, it in enumerate(chain):
                 local_start = local_offsets[index]
                 local_end = local_start + T_n_reduced_parameters[it]
-                if _sparse:
-                    J_full[
-                        C_start_eq[ic] : C_end_eq[ic],
-                        T_start_rp[it] : T_end_rp[it],
-                    ] = J_list[ic][:, local_start:local_end]
-                else:
-                    J_full[
-                        C_start_eq[ic] : C_end_eq[ic],
-                        T_start_rp[it] : T_end_rp[it],
-                    ] += J_list[ic][:, local_start:local_end]
+
+                J_full[
+                    C_start_eq[ic] : C_end_eq[ic], T_start_rp[it] : T_end_rp[it]
+                ] += jacobian_dp[:, local_start:local_end]
+
+        # Filter NaN or infinite values in the residuals and Jacobian by setting them to zero
 
         if filter_nans:
-            filter_mask_R = ~numpy.isfinite(R)
+            filter_mask_R = ~numpy.isfinite(R_full)
             if not _sparse:
                 filter_mask_J = ~numpy.isfinite(J_full).any(axis=1)
             if _sparse:
@@ -453,15 +452,15 @@ def _build_residual_jacobian_functions(
                     "All residuals are NaN or infinite, filtering set empty matrix, optimization cannot proceed."
                 )
 
-            R[filter_mask] = 0.0
+            R_full[filter_mask] = 0.0
             J_full[filter_mask, :] = 0.0
             print(
-                f"Warning: Filtered {numpy.sum(filter_mask)} out of {R.size} equations due to NaN or infinite values in the residuals or Jacobian."
+                f"Warning: Filtered {numpy.sum(filter_mask)} out of {R_full.size} equations due to NaN or infinite values in the residuals or Jacobian."
             )
 
+        R = R_full
         if _sparse:
             J = J_full.tocsr()  # Convert to CSR for efficient arithmetic operations
-
         else:
             J = J_full  # Already a dense array
 

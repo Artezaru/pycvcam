@@ -294,6 +294,9 @@ print("\n")
 optimized_intrinsic_params, optimized_distortion_params, optimized_extrinsic_params = (
     params
 )
+print("Optimized Intrinsic Parameters:", optimized_intrinsic_params)
+print("Optimized Distortion Parameters:", optimized_distortion_params)
+print("Optimized Extrinsic Parameters:", optimized_extrinsic_params)
 
 optimized_distortion = initial_distortion.copy()
 optimized_distortion.parameters = optimized_distortion_params

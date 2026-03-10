@@ -279,12 +279,12 @@ extrinsic_bounds = (  # rvec and tvec bounds
 print("\n")
 params, result = pycvcam.optimize_camera_trf(
     intrinsic,
-    pycvcam.NoDistortion(),
+    initial_distortion,
     initial_extrinsic,
     world_points,
     image_points,
     mask_intrinsic=[False for _ in range(4)],  # Do not optimize intrinsic
-    bounds_distortion=None,
+    bounds_distortion=distortion_bounds,
     bounds_extrinsic=extrinsic_bounds,
     auto=True,  # Set ftol, xtol and gtol to 1e-8
     return_result=True,

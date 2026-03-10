@@ -278,7 +278,7 @@ effects of the distortion and undistortion.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 3.917 seconds)
+   **Total running time of the script:** (0 minutes 3.824 seconds)
 
 
 .. _sphx_glr_download_.._.._docs_source__gallery_distorting_image.py:
