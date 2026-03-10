@@ -935,7 +935,6 @@ def _solve_optimize_chains_gauss_newton(
 
     # Run the least squares optimization with Gauss-Newton method
     start_time = time.time()
-    last_params = params_initial.copy()
     params = params_initial.copy()
     iteration = 0
     R = None
@@ -944,9 +943,10 @@ def _solve_optimize_chains_gauss_newton(
     JTJ = None
     cost = None
     optimality = None
-    last_cost = None
+    last_costs = []
     last_optimality = None
     history = [] if return_history else None
+    oscillation_window = 10  # Number of iterations to check for oscillations
     end = False
 
     if verbose_level >= 2:
@@ -958,7 +958,7 @@ def _solve_optimize_chains_gauss_newton(
         if R is None or J is None:
             R, J = f(params), jac(params)
         if JTR is None:
-            JTR = J.T @ R
+            JTR = -J.T @ R  # Warning (-) sign for the gradient as J = dR/dparams here
         if JTJ is None:
             JTJ = J.T @ J
 
@@ -967,13 +967,13 @@ def _solve_optimize_chains_gauss_newton(
         else:
             delta = scipy.sparse.linalg.spsolve(JTJ, JTR)
 
-        params = last_params + delta
-        last_params = params.copy()
+        params = params + delta
 
         if cost is None:
-            last_cost = 0.5 * numpy.dot(R, R)
+            cost = 0.5 * numpy.dot(R, R)
         else:
-            last_cost = cost
+            cost = cost
+        last_costs.append(cost)
 
         if optimality is None:
             last_optimality = numpy.linalg.norm(JTR, ord=numpy.inf)
@@ -991,18 +991,18 @@ def _solve_optimize_chains_gauss_newton(
 
         if verbose_level >= 2 and iteration == 0:
             print(
-                f" {iteration:^10}   {iteration+1:^10}   {last_cost:^10.3e}   {'':^15}   {'':^10}   {last_optimality:^10.3e}"
+                f" {iteration:^10}   {iteration+1:^10}   {last_costs[0]:^10.3e}   {'':^15}   {'':^10}   {last_optimality:^10.3e}"
             )
 
         if verbose_level >= 2 or ftol is not None:
             if R is None or J is None:
                 R, J = f(params), jac(params)
             cost = 0.5 * numpy.dot(R, R)
-            cost_reduction = last_cost - cost
+            cost_reduction = last_costs[-1] - cost
 
         if verbose_level >= 2 or gtol is not None:
             if JTR is None:
-                JTR = J.T @ R
+                JTR = -J.T @ R  # Warning (-) sign for the gradient
             optimality = numpy.linalg.norm(JTR, ord=numpy.inf)
 
         if verbose_level >= 2 or xtol is not None:
@@ -1027,10 +1027,24 @@ def _solve_optimize_chains_gauss_newton(
             history.append(parameters)
 
         if ftol is not None:
-            if cost_reduction < ftol * cost:
+            if cost_reduction < ftol * cost and cost_reduction >= 0:
                 if verbose_level >= 1:
                     print(
                         f"Cost reduction {cost_reduction:.3e} is less than ftol * cost {ftol * cost:.3e}, stopping optimization."
+                    )
+                end = True
+
+        if len(last_costs) > oscillation_window:
+            recent_costs = last_costs[-oscillation_window:]
+            diffs = numpy.diff(recent_costs)
+            signs = numpy.sign(diffs)
+            signs[signs == 0] = numpy.roll(signs, 1)[signs == 0]
+            oscillating = numpy.all(signs[1:] * signs[:-1] < 0)
+
+            if oscillating:
+                if verbose_level >= 1:
+                    print(
+                        f"Cost function value oscillations detected in the last {oscillation_window} iterations, stopping optimization."
                     )
                 end = True
 
@@ -1069,7 +1083,7 @@ def _solve_optimize_chains_gauss_newton(
             jac(params),
             params,
             _pretext,
-            _start=True,
+            _start=False,
             _sparse=_sparse,
         )
 
@@ -1104,6 +1118,7 @@ def optimize_parameters_gn(
     filter_nans: bool = False,
     verbose_level: Integral = 0,
     return_history: bool = False,
+    inplace: bool = False,
 ) -> numpy.ndarray:
     r"""
     Optimize the ``parameters`` of a :class:`Transform` object such that the transformed
@@ -1153,7 +1168,7 @@ def optimize_parameters_gn(
         the optimization if the `guess` parameter is None. Note that the input
         :class:`Transform` object is not modified during the optimization process,
         a copy of the object is created and modified internally to perform the
-        optimization.
+        optimization if `inplace` is False.
 
     input_points : ArrayLike
         The input points with shape (..., input_dim) such that their transformation
@@ -1234,6 +1249,12 @@ def optimize_parameters_gn(
         If True, the function returns a history of the parameters during the
         optimization process. Default is False.
 
+    inplace : bool, optional
+        If True, the optimization is performed in-place, modifying the parameters of the
+        input transformation. If False (default), a copy of the transformation is created
+        and modified internally to perform the optimization, leaving the input transformation
+        unchanged.
+
 
     Returns
     -------
@@ -1270,6 +1291,10 @@ def optimize_parameters_gn(
         raise TypeError(
             f"transform must be an instance of Transform, got {type(transform)}"
         )
+    if not isinstance(inplace, bool):
+        raise TypeError(f"inplace must be a boolean, got {type(inplace)}")
+    if not inplace:
+        transform = transform.copy()
 
     input_points = numpy.asarray(input_points, dtype=numpy.float64)
     output_points = numpy.asarray(output_points, dtype=numpy.float64)
@@ -1468,6 +1493,7 @@ def optimize_parameters_trf(
     verbose_level: Integral = 0,
     return_result: bool = False,
     return_history: bool = False,
+    inplace: bool = False,
 ) -> numpy.ndarray:
     r"""
     Optimize the ``parameters`` of a :class:`Transform` object such that the transformed
@@ -1535,7 +1561,7 @@ def optimize_parameters_trf(
         the optimization if the `guess` parameter is None. Note that the input
         :class:`Transform` object is not modified during the optimization process,
         a copy of the object is created and modified internally to perform the
-        optimization.
+        optimization if `inplace` is False.
 
     input_points : ArrayLike
         The input points with shape (..., input_dim) such that their transformation
@@ -1641,6 +1667,12 @@ def optimize_parameters_trf(
         If True, the function returns a history of the parameters during the
         optimization process. Default is False.
 
+    inplace : bool, optional
+        If True, the optimization is performed in-place, modifying the parameters of the
+        input transformation. If False (default), a copy of the transformation is created
+        and modified internally to perform the optimization, leaving the input transformation
+        unchanged.
+
 
     Returns
     -------
@@ -1688,6 +1720,10 @@ def optimize_parameters_trf(
         raise TypeError(
             f"transform must be an instance of Transform, got {type(transform)}"
         )
+    if not isinstance(inplace, bool):
+        raise TypeError(f"inplace must be a boolean, got {type(inplace)}")
+    if not inplace:
+        transform = transform.copy()
 
     input_points = numpy.asarray(input_points, dtype=numpy.float64)
     output_points = numpy.asarray(output_points, dtype=numpy.float64)
@@ -1957,6 +1993,7 @@ def optimize_camera_gn(
     filter_nans: bool = False,
     verbose_level: Integral = 0,
     return_history: bool = False,
+    inplace: bool = False,
 ) -> Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]:
     """
     Optimize the parameters of the intrinsic, distortion, and extrinsic transformations
@@ -2095,6 +2132,12 @@ def optimize_camera_gn(
         If True, the function returns a history of the parameters during the
         optimization process. Default is False.
 
+    inplace : bool, optional
+        If True, the optimization is performed in-place, modifying the parameters of the
+        input transformations. If False (default), copies of the transformations are created
+        and modified internally to perform the optimization, leaving the input transformations
+        unchanged.
+
 
     Returns
     -------
@@ -2155,6 +2198,13 @@ def optimize_camera_gn(
         raise TypeError(
             f"extrinsic must be an instance of Extrinsic or None, got {type(extrinsic)}"
         )
+
+    if not isinstance(inplace, bool):
+        raise TypeError(f"inplace must be a boolean, got {type(inplace)}")
+    if not inplace:
+        intrinsic = intrinsic.copy()
+        distortion = distortion.copy()
+        extrinsic = extrinsic.copy()
 
     if guess_intrinsic is None and not intrinsic.is_set():
         raise ValueError(
@@ -2421,6 +2471,7 @@ def optimize_camera_trf(
     verbose_level: Integral = 0,
     return_result: bool = False,
     return_history: bool = False,
+    inplace: bool = False,
 ) -> Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]:
     """
     Optimize the parameters of the intrinsic, distortion, and extrinsic transformations
@@ -2618,6 +2669,12 @@ def optimize_camera_trf(
         If True, the function returns a history of the parameters during
         the optimization process. Default is False.
 
+    inplace : bool, optional
+        If True, the optimization is performed in-place, modifying the parameters of the
+        input transformations. If False (default), copies of the transformations are created
+        and modified internally to perform the optimization, leaving the input transformations
+        unchanged.
+
 
     Returns
     -------
@@ -2690,6 +2747,13 @@ def optimize_camera_trf(
         raise TypeError(
             f"extrinsic must be an instance of Extrinsic or None, got {type(extrinsic)}"
         )
+
+    if not isinstance(inplace, bool):
+        raise TypeError(f"inplace must be a boolean, got {type(inplace)}")
+    if not inplace:
+        intrinsic = intrinsic.copy()
+        distortion = distortion.copy()
+        extrinsic = extrinsic.copy()
 
     if guess_intrinsic is None and not intrinsic.is_set():
         raise ValueError(
@@ -3044,6 +3108,7 @@ def optimize_chains_gn(
     filter_nans: bool = False,
     verbose_level: Integral = 0,
     return_history: bool = False,
+    inplace: bool = False,
 ) -> Tuple[numpy.ndarray, ...]:
     r"""
     Optimize several :class:`Transform` objects according multiple chains of
@@ -3092,7 +3157,7 @@ def optimize_chains_gn(
         it will be used as the initial guess for the optimization if the `seq_guesses`
         parameter is None. Note that the input :class:`Transform` objects are not
         modified during the optimization process, a copy of each object is created
-        and modified internally to perform the optimization.
+        and modified internally to perform the optimization if `inplace` is False.
 
     seq_chains : Sequence[Sequence[int]]
         A sequence of :math:`N_C` chains of transformations. Each chain is defined as a
@@ -3181,6 +3246,13 @@ def optimize_chains_gn(
         If True, the function returns a history of the parameters during the optimization
         process. Default is False.
 
+    inplace : bool, optional
+        If True, the optimization is performed in-place, modifying the parameters of the
+        input transformations. If False (default), copies of the transformations are created
+        and modified internally to perform the optimization, leaving the input transformations
+        unchanged.
+
+
     Returns
     -------
     parameters : Tuple[numpy.ndarray, ...]
@@ -3222,6 +3294,12 @@ def optimize_chains_gn(
             f"got {[type(t) for t in seq_transforms]}"
         )
     n_transforms = len(seq_transforms)
+
+    if not isinstance(inplace, bool):
+        raise TypeError(f"inplace must be a boolean, got {type(inplace)}")
+
+    if not inplace:
+        seq_transforms = [t.copy() for t in seq_transforms]
 
     if not isinstance(seq_chains, Sequence):
         raise TypeError(
@@ -3506,6 +3584,7 @@ def optimize_chains_trf(
     verbose_level: Integral = 0,
     return_result: bool = False,
     return_history: bool = False,
+    inplace: bool = False,
 ) -> Tuple[numpy.ndarray, ...]:
     r"""
     Optimize several :class:`Transform` objects according multiple chains of
@@ -3555,7 +3634,7 @@ def optimize_chains_trf(
         it will be used as the initial guess for the optimization if the `seq_guesses`
         parameter is None. Note that the input :class:`Transform` objects are not
         modified during the optimization process, a copy of each object is created
-        and modified internally to perform the optimization.
+        and modified internally to perform the optimization if `inplace` is False.
 
     seq_chains : Sequence[Sequence[int]]
         A sequence of :math:`N_C` chains of transformations. Each chain is defined as a
@@ -3670,6 +3749,12 @@ def optimize_chains_trf(
         If True, the function returns a history of the parameters during the optimization
         process. Default is False.
 
+    inplace : bool, optional
+        If True, the optimization is performed in-place, modifying the parameters of the
+        input transformations. If False (default), copies of the transformations are created
+        and modified internally to perform the optimization, leaving the input transformations
+        unchanged.
+
 
     Returns
     -------
@@ -3717,6 +3802,12 @@ def optimize_chains_trf(
             f"got {[type(t) for t in seq_transforms]}"
         )
     n_transforms = len(seq_transforms)
+
+    if not isinstance(inplace, bool):
+        raise TypeError(f"inplace must be a boolean, got {type(inplace)}")
+
+    if not inplace:
+        seq_transforms = [t.copy() for t in seq_transforms]
 
     if not isinstance(seq_chains, Sequence):
         raise TypeError(
