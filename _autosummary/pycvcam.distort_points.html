@@ -539,9 +539,10 @@ system or <code class="docutils literal notranslate"><span class="pre">transform
 <p>As a reminder,</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\vec{x}_n = \text{Intrinsic}^{-1}(\vec{x}_i) \\
-\vec{x}_d = \text{Distortion}(\vec{x}_n) \\
-\text{Then optionally:} \\
-\vec{x}_u = P(R(\vec{x}_d)))\end{split}\]</div>
+\vec{x}_d = \text{Distortion}(\vec{x}_n)\end{split}\]</div>
+<p>Then optionally,</p>
+<div class="math notranslate nohighlight">
+\[\vec{x}_u = P(R(\vec{x}_d)))\]</div>
 <p>Where:</p>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(\vec{x}_i\)</span> are the 2D <code class="docutils literal notranslate"><span class="pre">image_points</span></code> in the image coordinate system <span class="math notranslate nohighlight">\((\vec{e}_x, \vec{e}_y)\)</span>.</p></li>
