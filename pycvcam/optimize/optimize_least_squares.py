@@ -15,8 +15,6 @@ from ..core.extrinsic import Extrinsic
 from ..intrinsic_objects.no_intrinsic import NoIntrinsic
 from ..distortion_objects.no_distortion import NoDistortion
 from ..extrinsic_objects.no_extrinsic import NoExtrinsic
-from pycvcam.core import extrinsic
-from pycvcam.core import intrinsic
 
 
 def _study_jacobian_least_squares(
@@ -103,8 +101,9 @@ def _study_jacobian_least_squares(
 
     # Variance contribution of each singular value (1/sigma^2)
     print("\nSingular values and their contribution to the variance:")
-    header = f"| {'Index':^10} | {'Singular Value λ':^18} | {'Var = 1/λ^2':^20} |"
-    print(header)
+    print(
+        f"| {"Index":^10} | {"Singular Value \u03BB":^18} | {"Var = 1/\u03BB^2":^20} |"
+    )
     for i, sigma in enumerate(S):
         var_contribution = 1 / (sigma**2) if sigma > 1e-12 else numpy.inf
         print(f"| {i:^10} | {sigma:^18.3e} | {var_contribution:^20.3e} |")
@@ -135,8 +134,9 @@ def _study_jacobian_least_squares(
     sigma2 = 2 * cost / (m - n) if m > n else numpy.inf
     cov = sigma2 * numpy.linalg.inv(jacobian.T @ jacobian)
     print("\nEstimated variances of the parameters:")
-    header = f"| {'Parameter':^10} | {'Value P':^15} | {'Var = σ^2 (J.T J)^-1':^20} | {'Ratio √V/|P|':^15} |"
-    print(header)
+    print(
+        f"| {'Parameter':^10} | {'Value P':^15} | {'Var = \u03C3^2 (J.T J)^-1':^20} | {'Ratio \u221AV/|P|':^15} |"
+    )
     for i in range(n):
         var = cov[i, i]
         rel_sqrt = (
@@ -149,10 +149,9 @@ def _study_jacobian_least_squares(
         else:
             rel_sqrt_str = f"{rel_sqrt:.3f} %"
 
-        row = (
+        print(
             f"| {i:^10} | {parameters[i]:^15.3e} | {var:^20.3e} | {rel_sqrt_str:^15} |"
         )
-        print(row)
     if _start:
         print("\n" + "-" * 50)
         print("Optimization in progress...")
