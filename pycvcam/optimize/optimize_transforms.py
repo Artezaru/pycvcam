@@ -375,6 +375,8 @@ def _build_residual_jacobian_functions(
     C_start_eq = numpy.cumsum([0] + C_n_equations[:-1])  # Nc
     C_end_eq = numpy.cumsum(C_n_equations)  # Nc
 
+    C_tc = [TransformComposition([seq_transforms[it] for it in c]) for c in seq_chains]
+
     def compute_func(params: numpy.ndarray) -> Tuple[numpy.ndarray, numpy.ndarray]:
         nonlocal seq_last_params, seq_last_res, seq_last_jac
 
@@ -387,17 +389,16 @@ def _build_residual_jacobian_functions(
 
         # Update the parameters of the transformations
         for it, transform in enumerate(seq_transforms):
-            guess = seq_guesses[it]
-            parameters = guess.copy()
-            mask = seq_masks[it]
-            parameters[mask] = params[T_start_rp[it] : T_end_rp[it]]
-            transform.parameters = parameters
+            p = seq_guesses[it].copy()
+            p[seq_masks[it]] = params[T_start_rp[it] : T_end_rp[it]]
+            if transform.parameters is not None:
+                transform.parameters = p
 
         # Compute the residuals and Jacobians for each chain
         R_list = []
         J_list = []
         for ic, chain in enumerate(seq_chains):
-            tc = TransformComposition([seq_transforms[it] for it in chain])
+            tc = C_tc[ic]
             list_kwargs = [seq_transform_kwargs[it] for it in chain]
             transformed_points, _, jacobian_dp = tc._transform(
                 seq_inputs[ic], dx=False, dp=True, list_kwargs=list_kwargs
@@ -1306,7 +1307,10 @@ def optimize_parameters_gn(
             f"of the transformation are not set."
         )
     elif guess is None and transform.is_set():
-        guess = transform.parameters.copy()
+        if transform.parameters is None:
+            guess = numpy.zeros((0,), dtype=numpy.float64)
+        else:
+            guess = transform.parameters.copy()
     else:
         guess = numpy.asarray(guess, dtype=numpy.float64)
     if guess.ndim != 1 or guess.size != transform.n_params:
@@ -1721,7 +1725,10 @@ def optimize_parameters_trf(
             f"of the transformation are not set."
         )
     elif guess is None and transform.is_set():
-        guess = transform.parameters.copy()
+        if transform.parameters is None:
+            guess = numpy.zeros((0,), dtype=numpy.float64)
+        else:
+            guess = transform.parameters.copy()
     else:
         guess = numpy.asarray(guess, dtype=numpy.float64)
     if guess.ndim != 1 or guess.size != transform.n_params:
@@ -2156,7 +2163,10 @@ def optimize_camera_gn(
             "when the current parameters of the intrinsic transformation are not set."
         )
     elif guess_intrinsic is None and intrinsic.is_set():
-        guess_intrinsic = intrinsic.parameters.copy()
+        if intrinsic.parameters is None:
+            guess_intrinsic = numpy.zeros((0,), dtype=numpy.float64)
+        else:
+            guess_intrinsic = intrinsic.parameters.copy()
     else:
         guess_intrinsic = numpy.asarray(guess_intrinsic, dtype=numpy.float64)
     if guess_intrinsic.ndim != 1 or guess_intrinsic.size != intrinsic.n_params:
@@ -2171,7 +2181,10 @@ def optimize_camera_gn(
             "when the current parameters of the distortion transformation are not set."
         )
     elif guess_distortion is None and distortion.is_set():
-        guess_distortion = distortion.parameters.copy()
+        if distortion.parameters is None:
+            guess_distortion = numpy.zeros((0,), dtype=numpy.float64)
+        else:
+            guess_distortion = distortion.parameters.copy()
     else:
         guess_distortion = numpy.asarray(guess_distortion, dtype=numpy.float64)
     if guess_distortion.ndim != 1 or guess_distortion.size != distortion.n_params:
@@ -2186,7 +2199,10 @@ def optimize_camera_gn(
             "when the current parameters of the extrinsic transformation are not set."
         )
     elif guess_extrinsic is None and extrinsic.is_set():
-        guess_extrinsic = extrinsic.parameters.copy()
+        if extrinsic.parameters is None:
+            guess_extrinsic = numpy.zeros((0,), dtype=numpy.float64)
+        else:
+            guess_extrinsic = extrinsic.parameters.copy()
     else:
         guess_extrinsic = numpy.asarray(guess_extrinsic, dtype=numpy.float64)
     if guess_extrinsic.ndim != 1 or guess_extrinsic.size != extrinsic.n_params:
@@ -2682,7 +2698,10 @@ def optimize_camera_trf(
             "when the current parameters of the intrinsic transformation are not set."
         )
     elif guess_intrinsic is None and intrinsic.is_set():
-        guess_intrinsic = intrinsic.parameters.copy()
+        if intrinsic.parameters is None:
+            guess_intrinsic = numpy.zeros((0,), dtype=numpy.float64)
+        else:
+            guess_intrinsic = intrinsic.parameters.copy()
     else:
         guess_intrinsic = numpy.asarray(guess_intrinsic, dtype=numpy.float64)
     if guess_intrinsic.ndim != 1 or guess_intrinsic.size != intrinsic.n_params:
@@ -2697,7 +2716,10 @@ def optimize_camera_trf(
             "when the current parameters of the distortion transformation are not set."
         )
     elif guess_distortion is None and distortion.is_set():
-        guess_distortion = distortion.parameters.copy()
+        if distortion.parameters is None:
+            guess_distortion = numpy.zeros((0,), dtype=numpy.float64)
+        else:
+            guess_distortion = distortion.parameters.copy()
     else:
         guess_distortion = numpy.asarray(guess_distortion, dtype=numpy.float64)
     if guess_distortion.ndim != 1 or guess_distortion.size != distortion.n_params:
@@ -2712,7 +2734,10 @@ def optimize_camera_trf(
             "when the current parameters of the extrinsic transformation are not set."
         )
     elif guess_extrinsic is None and extrinsic.is_set():
-        guess_extrinsic = extrinsic.parameters.copy()
+        if extrinsic.parameters is None:
+            guess_extrinsic = numpy.zeros((0,), dtype=numpy.float64)
+        else:
+            guess_extrinsic = extrinsic.parameters.copy()
     else:
         guess_extrinsic = numpy.asarray(guess_extrinsic, dtype=numpy.float64)
     if guess_extrinsic.ndim != 1 or guess_extrinsic.size != extrinsic.n_params:
@@ -3295,7 +3320,10 @@ def optimize_chains_gn(
                 f"when the current parameters of the transformation are not set."
             )
         elif g is None and t.is_set():
-            g = t.parameters.copy()
+            if t.parameters is None:
+                g = numpy.zeros((0,), dtype=numpy.float64)
+            else:
+                g = t.parameters.copy()
         else:
             g = numpy.asarray(g, dtype=numpy.float64)
         if g.ndim != 1 or g.size != t.n_params:
@@ -3787,7 +3815,10 @@ def optimize_chains_trf(
                 f"when the current parameters of the transformation are not set."
             )
         elif g is None and t.is_set():
-            g = t.parameters.copy()
+            if t.parameters is None:
+                g = numpy.zeros((0,), dtype=numpy.float64)
+            else:
+                g = t.parameters.copy()
         else:
             g = numpy.asarray(g, dtype=numpy.float64)
         if g.ndim != 1 or g.size != t.n_params:
