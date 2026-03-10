@@ -55,6 +55,7 @@ To save and load transformations, use the following methods:
 .. autosummary::
    :toctree: ../_autosummary/
 
+   Transform.copy
    Transform.to_dict
    Transform.from_dict
    Transform.to_json

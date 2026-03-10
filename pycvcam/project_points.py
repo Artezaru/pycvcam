@@ -43,29 +43,36 @@ def project_points(
     extrinsic_kwargs: Optional[Dict] = None,
 ) -> TransformResult:
     r"""
-    Project 3D ``world_points`` to 2D ``image_points`` using the camera intrinsic, distortion and extrinsic transformations.
+    Project 3D ``world_points`` :math:`\vec{X}_w` to 2D ``image_points`` 
+    :math:`\vec{x}_i` using the camera intrinsic, distortion and extrinsic 
+    transformations.
 
     As a reminder,
 
     .. math::
 
         \begin{align*}
-        \vec{x}_n = \text{Extrinsic}(\vec{X}_w) \\
-        \vec{x}_d = \text{Distortion}(\vec{x}_n) \\
-        \vec{x}_i = \text{Intrinsic}(\vec{x}_d) \\
+        \vec{x}_n &= \text{Extrinsic}(\vec{X}_w) \\
+        \vec{x}_d &= \text{Distortion}(\vec{x}_n) \\
+        \vec{x}_i &= \text{Intrinsic}(\vec{x}_d) \\
         \end{align*}
 
     Where:
 
-    - :math:`\vec{X}_w` are the 3D ``world_points`` in the world coordinate system.
-    - :math:`\vec{x}_n` are the 2D ``normalized_points`` in the normalized coordinate system.
-    - :math:`\vec{x}_d` are the 2D ``distorted_points`` in the normalized coordinate system.
-    - :math:`\vec{x}_i` are the 2D ``image_points`` in the image coordinate system.
+    - :math:`\vec{X}_w` are the 3D ``world_points`` in the world coordinate system :math:`(\vec{E}_x, \vec{E}_y, \vec{E}_z)`.
+    - :math:`\vec{x}_n` are the 2D ``normalized_points`` in the normalized coordinate system :math:`(\vec{I}, \vec{J})`.
+    - :math:`\vec{x}_d` are the 2D ``distorted_points`` in the normalized coordinate system :math:`(\vec{I}, \vec{J})`.
+    - :math:`\vec{x}_i` are the 2D ``image_points`` in the image coordinate system :math:`(\vec{e}_x, \vec{e}_y)`.
 
-    The ``image_points`` can be then converted to pixel coordinates by applying a swap of the axes.
+    .. note::
+    
+        The ``image_points`` can be then converted to pixel coordinates 
+        :math:`(\vec{u}, \vec{v})` by applying a swap of the axes.
 
-    To compute the Jacobians of the image points with respect to the input 3D world points and the projection parameters, set the ``dx`` and ``dp`` parameters to True.
-    The Jacobians are computed using the chain rule of differentiation and are returned in the result object.
+    To compute the Jacobians of the image points with respect to the input 3D world 
+    points and the projection parameters, set the ``dx`` and ``dp`` parameters to True.
+    The Jacobians are computed using the chain rule of differentiation and are returned 
+    in the result object.
 
     To access the Jacobians, you can use the following properties of the result object:
 
@@ -94,26 +101,37 @@ def project_points(
         If None, a no extrinsic transformation is applied (identity transformation).
 
     transpose : bool, optional
-        If True, the input points are assumed to be in the shape (3, ...) instead of (..., 3). Default is False.
-        In this case, the output points will be in the shape (2, ...) and the jacobians will be in the shape (2, ..., 3) and (2, ..., n_params) respectively.
+        If True, the input points are assumed to be in the shape (3, ...) instead of 
+        (..., 3). Default is False.
+        In this case, the output points will be in the shape (2, ...) and the 
+        jacobians will be in the shape (2, ..., 3) and (2, ..., n_params) respectively.
         
     dx : bool, optional
-        If True, compute the Jacobian of the image points with respect to the input 3D world points with shape (..., 2, 3).
+        If True, compute the Jacobian of the image points with respect to the input 
+        3D world points with shape (..., 2, 3).
         If False, the Jacobian is not computed. default is False.
 
     dp : bool, optional
-        If True, compute the Jacobian of the image points with respect to the projection parameters with shape (..., 2, n_params).
-        If True (dintrinsic, ddistortion, dextrinsic are ignored and computed automatically.
+        If True, compute the Jacobian of the image points with respect to the projection 
+        parameters with shape (..., 2, n_params).
+        If True (dintrinsic, ddistortion, dextrinsic are ignored and computed
+        automatically.
         If False, the Jacobian is not computed. Default is False.
         
     dintrinsic : bool, optional
-        If True, compute the Jacobian of the image points with respect to the intrinsic parameters only (other dp components are ignored for efficiency and set to nan in the result).
+        If True, compute the Jacobian of the image points with respect to the intrinsic 
+        parameters only (other dp components are ignored for efficiency and set to
+        nan in the result).
     
     ddistortion : bool, optional
-        If True, compute the Jacobian of the image points with respect to the distortion parameters only (other dp components are ignored for efficiency and set to nan in the result).
+        If True, compute the Jacobian of the image points with respect to the distortion 
+        parameters only (other dp components are ignored for efficiency and set to nan 
+        in the result).
         
     dextrinsic : bool, optional
-        If True, compute the Jacobian of the image points with respect to the extrinsic parameters only (other dp components are ignored for efficiency and set to nan in the result).
+        If True, compute the Jacobian of the image points with respect to the extrinsic
+        parameters only (other dp components are ignored for efficiency and set to nan 
+        in the result).
         
     intrinsic_kwargs : Optional[dict], optional
         Additional keyword arguments to be passed to the intrinsic transformation.
@@ -128,7 +146,8 @@ def project_points(
     Returns
     -------
     :class:`TransformResult`
-        The result of the projection transformation.
+        The result of the projection transformation containing the projected image 
+        points and the Jacobians if requested in the image coordinate system.
         
         
     Examples

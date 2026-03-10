@@ -17,6 +17,7 @@ import numpy
 
 from ..core import Extrinsic
 
+
 class NoExtrinsic(Extrinsic):
     r"""
 
@@ -28,11 +29,20 @@ class NoExtrinsic(Extrinsic):
 
     The ``NoExtrinsic`` model is a special case of the extrinsic transformation where no extrinsic transformations are applied.
 
-    Lets consider ``world_points`` in the global coordinate system :math:`\vec{X}_w = (X_w, Y_w, Z_w)`, the corresponding ``normalized_points`` in the camera normalized coordinate system are given by :math:`\vec{x}_n = (X_w, Y_w)`. 
+    Lets consider ``world_points`` in the global coordinate system :math:`\vec{X}_w = (X_w, Y_w, Z_w)`, the corresponding ``normalized_points`` in the camera normalized coordinate system are given by :math:`\vec{x}_n = (X_w, Y_w)`.
     Simply ignoring the z-coordinate, which is always set to 1 for the normalization plane.
 
     """
-    def __init__(self):
+
+    def __init__(
+        self, parameters: Optional[None] = None, constants: Optional[None] = None
+    ) -> None:
+        if parameters is not None:
+            raise ValueError(
+                "NoExtrinsic model has no parameters, must be set to None."
+            )
+        if constants is not None:
+            raise ValueError("NoExtrinsic model has no constants, must be set to None.")
         super().__init__(parameters=None, constants=None)
 
     # =============================================
@@ -44,11 +54,13 @@ class NoExtrinsic(Extrinsic):
         Always returns None, as there are no parameters for the no extrinsic model.
         """
         return None
-    
+
     @parameters.setter
     def parameters(self, value: None):
         if value is not None:
-            raise ValueError("NoExtrinsic model has no parameters, must be set to None.")
+            raise ValueError(
+                "NoExtrinsic model has no parameters, must be set to None."
+            )
         self._parameters = None
 
     @property
@@ -57,7 +69,7 @@ class NoExtrinsic(Extrinsic):
         Always returns None, as there are no constants for the no extrinsic model.
         """
         return None
-    
+
     @constants.setter
     def constants(self, value: None):
         if value is not None:
@@ -69,15 +81,17 @@ class NoExtrinsic(Extrinsic):
         Always returns True, as the no extrinsic model is always set and does not require any parameters or constants.
         """
         return True
-    
+
     # =============================================
     # Implementing the transform and inverse_transform methods
     # =============================================
-    def _transform(self, world_points: numpy.ndarray, *, dx = False, dp = False) -> Tuple[numpy.ndarray, Optional[numpy.ndarray], Optional[numpy.ndarray]]:
+    def _transform(
+        self, world_points: numpy.ndarray, *, dx=False, dp=False
+    ) -> Tuple[numpy.ndarray, Optional[numpy.ndarray], Optional[numpy.ndarray]]:
         r"""
         Compute the transformation from the ``world_points`` to the ``normalized_points``.
 
-        Lets consider ``world_points`` in the global coordinate system :math:`\vec{X}_w = (X_w, Y_w, Z_w)`, the corresponding ``normalized_points`` in the camera normalized coordinate system are given by :math:`\vec{x}_n = (X_w, Y_w)`. 
+        Lets consider ``world_points`` in the global coordinate system :math:`\vec{X}_w = (X_w, Y_w, Z_w)`, the corresponding ``normalized_points`` in the camera normalized coordinate system are given by :math:`\vec{x}_n = (X_w, Y_w)`.
         Simply ignoring the z-coordinate, which is always set to 1 for the normalization plane.
 
         The jacobians with respect to the extrinsic parameters is an empty array with shape (n_points, 2, 0), as there are no parameters to compute the jacobian for.
@@ -110,19 +124,24 @@ class NoExtrinsic(Extrinsic):
         jacobian_dp : Optional[numpy.ndarray]
             The jacobian of the normalized points with respect to the extrinsic parameters. Shape (n_points, 2, 0) if dp is True, otherwise None.
         """
-        normalized_points = world_points[:, :2].copy() # shape (n_points, 2)
-        jacobian_dx = None # shape (n_points, 2, 2)
-        jacobian_dp = None # shape (n_points, 2, n_params)
+        normalized_points = world_points[:, :2].copy()  # shape (n_points, 2)
+        jacobian_dx = None  # shape (n_points, 2, 2)
+        jacobian_dp = None  # shape (n_points, 2, n_params)
         if dx:
-            jacobian_dx = numpy.zeros((normalized_points.shape[0], 2, 3), dtype=numpy.float64) # shape (n_points, 2, 3)
+            jacobian_dx = numpy.zeros(
+                (normalized_points.shape[0], 2, 3), dtype=numpy.float64
+            )  # shape (n_points, 2, 3)
             jacobian_dx[:, 0, 0] = 1.0
             jacobian_dx[:, 1, 1] = 1.0
         if dp:
-            jacobian_dp = numpy.empty((normalized_points.shape[0], 2, 0), dtype=numpy.float64) # shape (n_points, 2, 0)
+            jacobian_dp = numpy.empty(
+                (normalized_points.shape[0], 2, 0), dtype=numpy.float64
+            )  # shape (n_points, 2, 0)
         return normalized_points, jacobian_dx, jacobian_dp
-    
-    
-    def _inverse_transform(self, normalized_points: numpy.ndarray, *, dx = False, dp = False) -> Tuple[numpy.ndarray, Optional[numpy.ndarray], Optional[numpy.ndarray]]:
+
+    def _inverse_transform(
+        self, normalized_points: numpy.ndarray, *, dx=False, dp=False
+    ) -> Tuple[numpy.ndarray, Optional[numpy.ndarray], Optional[numpy.ndarray]]:
         r"""
         Compute the inverse transformation from the ``normalized_points`` to the ``world_points``.
 
@@ -159,17 +178,23 @@ class NoExtrinsic(Extrinsic):
         jacobian_dp : Optional[numpy.ndarray]
             The jacobian of the world 3D points with respect to the extrinsic parameters. Shape (n_points, 3, 0) if dp is True, otherwise None.
         """
-        world_points = numpy.empty((normalized_points.shape[0], 3), dtype=numpy.float64) # shape (n_points, 3)
-        world_points[:, :2] = normalized_points.copy() # copy x and y coordinates
-        world_points[:, 2] = 1.0 # set z coordinate
-        jacobian_dx = None # shape (n_points, 2, 2)
-        jacobian_dp = None # shape (n_points, 2, n_params)
+        world_points = numpy.empty(
+            (normalized_points.shape[0], 3), dtype=numpy.float64
+        )  # shape (n_points, 3)
+        world_points[:, :2] = normalized_points.copy()  # copy x and y coordinates
+        world_points[:, 2] = 1.0  # set z coordinate
+        jacobian_dx = None  # shape (n_points, 2, 2)
+        jacobian_dp = None  # shape (n_points, 2, n_params)
         if dx:
-            jacobian_dx = numpy.zeros((normalized_points.shape[0], 3, 2), dtype=numpy.float64) # shape (n_points, 3, 2)
+            jacobian_dx = numpy.zeros(
+                (normalized_points.shape[0], 3, 2), dtype=numpy.float64
+            )  # shape (n_points, 3, 2)
             jacobian_dx[:, 0, 0] = 1.0
             jacobian_dx[:, 1, 1] = 1.0
         if dp:
-            jacobian_dp = numpy.empty((normalized_points.shape[0], 2, 0), dtype=numpy.float64) # shape (n_points, 2, 0)
+            jacobian_dp = numpy.empty(
+                (normalized_points.shape[0], 2, 0), dtype=numpy.float64
+            )  # shape (n_points, 2, 0)
         return normalized_points, jacobian_dx, jacobian_dp
 
     # =============================================

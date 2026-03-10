@@ -31,7 +31,7 @@ This example illustrate how to use the ``optimize_parameters_least_squares`` fun
     - :func:`pycvcam.optimize_camera_least_squares` for the function to optimize camera parameters (intrinsic, distortion, and extrinsic).
     - :func:`pycvcam.optimize_chain_parameters_least_squares` for the function to optimize parameters of chains of transformations.
 
-.. GENERATED FROM PYTHON SOURCE LINES 19-29
+.. GENERATED FROM PYTHON SOURCE LINES 19-32
 
 Optimizing Parameters to fit a Distortion model (Image Alignment)
 -------------------------------------------------------------------
@@ -40,19 +40,19 @@ We distort the image by the distortion model and then add noise.
 
 The objective is to optimize the distortion parameters of the distortion model to
 fit the distorted image with noise.
+
 To do this, we will compute the flow between the both images and then optimize the
 distortion parameters to minimize the flow in the normalized image space.
 
+First create the images and compute the real flow between the original and
+distorted images.
 
-.. GENERATED FROM PYTHON SOURCE LINES 29-70
+.. GENERATED FROM PYTHON SOURCE LINES 32-112
 
 .. code-block:: Python
 
 
     import numpy
-
-    numpy.random.seed(36)  # For reproducibility
-    from pycvcam import Cv2Distortion, Cv2Extrinsic, Cv2Intrinsic
     import pycvcam
     import pycvcam.optimize as pycvopt
     import cv2
@@ -61,21 +61,64 @@ distortion parameters to minimize the flow in the normalized image space.
     image = pycvcam.get_lena_image()
     image_height, image_width = image.shape[:2]
     print("Image shape:", image.shape)
-    intrinsic = Cv2Intrinsic.from_matrix(
-        numpy.array(
-            [[100, 0, image_width / 2], [0, 100, image_height / 2], [0, 0, 1]],
-            dtype=numpy.float64,
-        )
-    )
-    distortion = Cv2Distortion(
-        parameters=numpy.array([0.1, 0.04, 0.01, 0.01, 0.01], dtype=numpy.float64)
+
+    pixel_points = numpy.indices((image_height, image_width), dtype=numpy.float64)
+    pixel_points = pixel_points.reshape(2, -1).T  # shape (H*W, 2) WARNING: [H, W -> Y, X]
+    image_points = pixel_points[:, [1, 0]]  # Swap to [X, Y] format
+
+    # Create an intrisic transformation
+    intrinsic = pycvcam.Cv2Intrinsic.from_matrix(
+        [[1000.0, 0.0, image_width / 2], [0.0, 1000.0, image_height / 2], [0.0, 0.0, 1.0]]
     )
 
+    # Create a distortion transformation in the image space and convert it to the normalized image space
+    distortion = pycvcam.ZernikeDistortion(
+        parameters=[
+            0.8541972545746392,
+            -5.468596289790535,
+            -5.974287819021697,
+            14.292956075116104,
+            2.1403205479372627,
+            4.544169430137205,
+            -0.10099732464199339,
+            0.4363509204067417,
+            -0.5106374355681896,
+            -5.770087687650705,
+            -0.39147505788710696,
+            11.699411273002498,
+        ]  # In pixels units, example values for a small distortion
+    )
+    distortion.center = ((image_width - 1) / 2, (image_height - 1) / 2)
+    distortion.radius = numpy.sqrt(
+        (distortion.center[0]) ** 2 + (distortion.center[1]) ** 2
+    )
+    distortion.parameters_x = distortion.parameters_x / intrinsic.fx
+    distortion.parameters_y = distortion.parameters_y / intrinsic.fy
+    distortion.radius_x = distortion.radius_x / intrinsic.fx
+    distortion.radius_y = distortion.radius_y / intrinsic.fy
+    distortion.center_x = (distortion.center_x - intrinsic.cx) / intrinsic.fx
+    distortion.center_y = (distortion.center_y - intrinsic.cy) / intrinsic.fy
+
+    true_distorted_points = pycvcam.distort_points(
+        image_points, intrinsic, distortion, P=intrinsic
+    )
+    true_flow = true_distorted_points - image_points  # shape (H*W, 2)
+    true_flow_magnitude = numpy.linalg.norm(true_flow, axis=1)
+
+    print("True flow magnitude statistics:")
+    print("  Min:", numpy.min(true_flow_magnitude))
+    print("  Max:", numpy.max(true_flow_magnitude))
+    print("  Mean:", numpy.mean(true_flow_magnitude))
+    print("  Median:", numpy.median(true_flow_magnitude))
+    print("  Std:", numpy.std(true_flow_magnitude))
+
+    # Create the distorted image with noise (5% of noise in the GL units)
     distorted_image = pycvcam.distort_image(
         image, intrinsic, distortion, interpolation="spline3"
     )
-    noise_image = numpy.random.normal(0, 0, distorted_image.shape).astype(numpy.float64)
-    distorted_image = distorted_image.astype(numpy.float64) + noise_image
+    noise_GLpc = 5.0
+    noise = numpy.random.normal(0, noise_GLpc / 100, distorted_image.shape)
+    distorted_image = distorted_image * (1 + noise)  # Add multiplicative noise
     distorted_image = numpy.clip(distorted_image, 0, 255).astype(numpy.uint8)
 
     fig = plt.figure(figsize=(10, 5))
@@ -91,7 +134,6 @@ distortion parameters to minimize the flow in the normalized image space.
 
 
 
-
 .. image-sg:: /_gallery/images/sphx_glr_optimize_parameters_001.png
    :alt: Original Image, Distorted Image with Noise
    :srcset: /_gallery/images/sphx_glr_optimize_parameters_001.png
@@ -103,17 +145,23 @@ distortion parameters to minimize the flow in the normalized image space.
  .. code-block:: none
 
     Image shape: (474, 474)
+    True flow magnitude statistics:
+      Min: 0.012265189243667858
+      Max: 24.30234213301494
+      Mean: 6.324732682604791
+      Median: 3.94728868310939
+      Std: 5.5042902818601105
 
     (np.float64(-0.5), np.float64(473.5), np.float64(473.5), np.float64(-0.5))
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 71-73
+.. GENERATED FROM PYTHON SOURCE LINES 113-115
 
-Then compute the optical flow between both images and convert it to the normalized image
-space.
+Then compute the optical flow between both images using the ``compute_optical_flow``
+function, which computes the dense optical flow between two images using the DIS algorithm.
 
-.. GENERATED FROM PYTHON SOURCE LINES 73-106
+.. GENERATED FROM PYTHON SOURCE LINES 115-169
 
 .. code-block:: Python
 
@@ -126,6 +174,81 @@ space.
             "PatchStride": 1,
         },
     )
+    flow_x = flow_x.reshape(-1, 1)  # shape (H*W, 1)
+    flow_y = flow_y.reshape(-1, 1)  # shape (H*W, 1)
+
+    flow = numpy.hstack((flow_x, flow_y))  # shape (H*W, 2)
+
+    # Compare the computed flow with the true flow by visualizing the flow magnitude and
+    # components for both the computed flow and the true flow to ensure consistency.
+
+    fx = flow[:, 0].reshape(image_height, image_width)
+    fy = flow[:, 1].reshape(image_height, image_width)
+    F = numpy.sqrt(fx**2 + fy**2)
+    tfx = true_flow[:, 0].reshape(image_height, image_width)
+    tfy = true_flow[:, 1].reshape(image_height, image_width)
+    tF = numpy.sqrt(tfx**2 + tfy**2)
+    tF_max = numpy.max(tF)
+    tfx_min, tfx_max = numpy.min(tfx), numpy.max(tfx)
+    tfy_min, tfy_max = numpy.min(tfy), numpy.max(tfy)
+
+    fig = plt.figure(figsize=(15, 10))
+    ax1 = fig.add_subplot(2, 3, 1)
+    ax1.imshow(F, cmap="inferno", vmin=0, vmax=tF_max)
+    ax1.set_title("Flow Magnitude")
+    ax1.axis("off")
+    ax2 = fig.add_subplot(2, 3, 2)
+    ax2.imshow(fx, cmap="inferno", vmin=tfx_min, vmax=tfx_max)
+    ax2.set_title("Flow X Component")
+    ax2.axis("off")
+    ax3 = fig.add_subplot(2, 3, 3)
+    ax3.imshow(fy, cmap="inferno", vmin=tfy_min, vmax=tfy_max)
+    ax3.set_title("Flow Y Component")
+    ax3.axis("off")
+    ax4 = fig.add_subplot(2, 3, 4)
+    ax4.imshow(tF, cmap="inferno", vmin=0, vmax=tF_max)
+    ax4.set_title("True Flow Magnitude")
+    ax4.axis("off")
+    ax5 = fig.add_subplot(2, 3, 5)
+    ax5.imshow(tfx, cmap="inferno", vmin=tfx_min, vmax=tfx_max)
+    ax5.set_title("True Flow X Component")
+    ax5.axis("off")
+    ax6 = fig.add_subplot(2, 3, 6)
+    ax6.imshow(tfy, cmap="inferno", vmin=tfy_min, vmax=tfy_max)
+    ax6.set_title("True Flow Y Component")
+    ax6.axis("off")
+
+
+
+
+
+.. image-sg:: /_gallery/images/sphx_glr_optimize_parameters_002.png
+   :alt: Flow Magnitude, Flow X Component, Flow Y Component, True Flow Magnitude, True Flow X Component, True Flow Y Component
+   :srcset: /_gallery/images/sphx_glr_optimize_parameters_002.png
+   :class: sphx-glr-single-img
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+
+    (np.float64(-0.5), np.float64(473.5), np.float64(473.5), np.float64(-0.5))
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 170-175
+
+To finish, we optimize the distortion parameters to minimize the
+flow in the normalized image space.
+
+To avoid the border effects of the distortion and undistortion, we will consider
+only the inner part of the image for the optimization by applying a mask to the points.
+
+.. GENERATED FROM PYTHON SOURCE LINES 175-223
+
+.. code-block:: Python
+
 
     images_mask = numpy.ones_like(image, dtype=bool)
     border_size = 50
@@ -134,40 +257,16 @@ space.
     images_mask[:, 0:border_size] = False
     images_mask[:, -border_size:] = False
 
-    pixel_points = numpy.indices(
-        (image_height, image_width), dtype=numpy.float64
-    )  # shape (2, H, W)
-    pixel_points = pixel_points.reshape(2, -1).T  # shape (H*W, 2) WARNING: [H, W -> Y, X]
-    image_points = pixel_points[:, [1, 0]]  # Swap to [X, Y] format
-
-    flow = numpy.stack((flow_x, flow_y), axis=-1).reshape(-1, 2)  # shape (H*W, 2)
     distorted_points = image_points + flow  # shape (H*W, 2)
-
     normalized_points = intrinsic.inverse_transform(image_points).transformed_points
     distorted_points = intrinsic.inverse_transform(distorted_points).transformed_points
     normalized_points = normalized_points[images_mask.flatten()]
     distorted_points = distorted_points[images_mask.flatten()]
 
-    # pycvcam.display_optical_flow(image, flow_x, flow_y)
+    initial_distortion = distortion.copy()
+    initial_distortion.parameters = numpy.zeros_like(distortion.parameters)
 
-
-
-
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 107-109
-
-To finish, we optimize the distortion parameters to minimize the
-flow in the normalized image space.
-
-.. GENERATED FROM PYTHON SOURCE LINES 109-129
-
-.. code-block:: Python
-
-
-    initial_distortion = Cv2Distortion(parameters=numpy.zeros(5, dtype=numpy.float64))
+    print("\n")
     parameters, result = pycvopt.optimize_parameters_least_squares(
         initial_distortion,
         normalized_points,
@@ -176,15 +275,27 @@ flow in the normalized image space.
         return_result=True,
         verbose_level=3,
     )
+    print("\n")
 
-    error = numpy.linalg.norm(parameters - distortion.parameters)
-    rel_error = error / numpy.linalg.norm(distortion.parameters)
+    optimize_distortion = initial_distortion.copy()
+    optimize_distortion.parameters = parameters
 
-    print("Optimized parameters:", parameters)
+    optimized_flow = (
+        pycvcam.distort_points(image_points, intrinsic, optimize_distortion, P=intrinsic)
+        - image_points
+    )
+
+    flow_error = numpy.linalg.norm(optimized_flow - true_flow, axis=1)  # shape (H*W,)
+    rmse_flow = numpy.sqrt(numpy.mean(flow_error[images_mask.flatten()] ** 2))
+    params_error = numpy.linalg.norm(parameters - distortion.parameters)
+    params_rel_error = params_error / numpy.linalg.norm(distortion.parameters)
+
     print("Optimization success:", result.success)
     print("Optimization message:", result.message)
     print("Optimization cost:", result.cost)
-    print("Error:", error, f"({rel_error:.2%})")
+    print("Flow RMSE:", rmse_flow)
+    print("Parameters Error:", params_error, f"({params_rel_error:.2%})")
+
 
 
 
@@ -194,22 +305,143 @@ flow in the normalized image space.
 
  .. code-block:: none
 
-    |  Iteration   |     Cost     |   Cost red   |  Step norm   |   cond(J)    |   Min cov    |   Max cov    |  Trace cov   |
-    |--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|
-    |        0     |  +4.14e+03   |              |              |  +2.54e+02   |  +2.26e-09   |  +7.04e-07   |  +8.85e-07   |
-    |        1     |  +4.93e+02   |  +3.65e+03   |  +2.85e-01   |  +2.54e+02   |  +2.68e-10   |  +8.38e-08   |  +1.05e-07   |
-    |        2     |  +4.93e+02   |  +0.00e+00   |  +0.00e+00   |  +2.54e+02   |  +2.68e-10   |  +8.38e-08   |  +1.05e-07   |
-    Optimized parameters: [ 2.67722230e-01 -9.68922487e-02  8.46151326e-05  5.34648033e-04
-      8.82706445e-03]
+
+
+
+    ==================================================
+
+    --------------------------------------------------
+    Initial Jacobian (Iter 0) analysis of the least squares problem
+    --------------------------------------------------
+
+    Jacobian shape: 279752 x 12 (equations x parameters)
+    Overdetermined system (more residuals than parameters), the optimization is likely to converge to a unique solution.
+    Density: 50.00%
+    Singular values (max/min): 4.359e+02 / 4.929e+01
+    Condition number: 8.843e+00
+
+    Singular values and their contribution to the variance:
+    |   Index    |  Singular Value λ  |     Var = 1/λ^2      |
+    |     0      |     4.359e+02      |      5.263e-06       |
+    |     1      |     4.359e+02      |      5.263e-06       |
+    |     2      |     1.207e+02      |      6.861e-05       |
+    |     3      |     1.207e+02      |      6.861e-05       |
+    |     4      |     1.207e+02      |      6.861e-05       |
+    |     5      |     1.207e+02      |      6.861e-05       |
+    |     6      |     8.459e+01      |      1.398e-04       |
+    |     7      |     8.459e+01      |      1.398e-04       |
+    |     8      |     7.794e+01      |      1.646e-04       |
+    |     9      |     7.794e+01      |      1.646e-04       |
+    |     10     |     4.929e+01      |      4.115e-04       |
+    |     11     |     4.929e+01      |      4.115e-04       |
+
+    Higher and Smallers singular values directions vectors (V^T rows):
+    | Parameter  |      Vt[0]      |      Vt[9]      |     Vt[10]      |     Vt[11]      | 
+    |     0      |   -0.000e+00    |    0.000e+00    |   -0.000e+00    |   -0.000e+00    | 
+    |     1      |    8.519e-01    |    9.145e-17    |   -5.737e-16    |   -3.896e-23    | 
+    |     2      |    3.123e-19    |    3.271e-17    |    1.068e-18    |   -1.110e-16    | 
+    |     3      |    4.984e-17    |   -4.192e-16    |    1.350e-16    |    0.000e+00    | 
+    |     4      |   -2.094e-19    |    4.552e-17    |    1.487e-18    |   -5.551e-17    | 
+    |     5      |   -2.220e-16    |   -1.223e-14    |   -3.287e-17    |    2.303e-28    | 
+    |     6      |   -1.943e-18    |    2.273e-31    |   -2.246e-30    |    2.359e-16    | 
+    |     7      |   -7.345e-19    |    1.000e+00    |    7.190e-16    |    1.543e-33    | 
+    |     8      |    0.000e+00    |    0.000e+00    |    0.000e+00    |   -3.864e-17    | 
+    |     9      |   -5.236e-01    |    1.474e-16    |   -9.699e-16    |    2.395e-23    | 
+    |     10     |    5.740e-20    |   -4.976e-32    |   -2.136e-32    |   -1.000e+00    | 
+    |     11     |    1.909e-17    |    8.749e-16    |   -1.000e+00    |    3.749e-32    | 
+
+    Estimated variances of the parameters:
+    | Parameter  |     Value P     | Var = σ^2 (J.T J)^-1 |  Ratio √V/|P|   |
+    |     0      |    0.000e+00    |      8.021e-10       |    > 1000 %     |
+    |     1      |    0.000e+00    |      8.021e-10       |    > 1000 %     |
+    |     2      |    0.000e+00    |      1.306e-09       |    > 1000 %     |
+    |     3      |    0.000e+00    |      1.306e-09       |    > 1000 %     |
+    |     4      |    0.000e+00    |      1.306e-09       |    > 1000 %     |
+    |     5      |    0.000e+00    |      1.306e-09       |    > 1000 %     |
+    |     6      |    0.000e+00    |      3.133e-09       |    > 1000 %     |
+    |     7      |    0.000e+00    |      3.133e-09       |    > 1000 %     |
+    |     8      |    0.000e+00    |      1.958e-09       |    > 1000 %     |
+    |     9      |    0.000e+00    |      1.958e-09       |    > 1000 %     |
+    |     10     |    0.000e+00    |      7.833e-09       |    > 1000 %     |
+    |     11     |    0.000e+00    |      7.833e-09       |    > 1000 %     |
+
+    --------------------------------------------------
+    Optimization in progress...
+    --------------------------------------------------
+
+       Iteration     Total nfev        Cost      Cost reduction    Step norm     Optimality   
+           0              1         2.6621e+00                                    2.94e+02    
+           1              2         1.7989e-03      2.66e+00       2.16e-02       4.86e-04    
+           2              9         1.7989e-03      0.00e+00       0.00e+00       4.86e-04    
+    `xtol` termination condition is satisfied.
+    Function evaluations 9, initial cost 2.6621e+00, final cost 1.7989e-03, first-order optimality 4.86e-04.
+
+    --------------------------------------------------
+    Jacobian analysis of the least squares problem (End of optimization)
+    --------------------------------------------------
+
+    Singular values (max/min): 4.496e+02 / 5.301e+01
+    Condition number: 8.482e+00
+
+    Singular values and their contribution to the variance:
+    |   Index    |  Singular Value λ  |     Var = 1/λ^2      |
+    |     0      |     4.496e+02      |      4.946e-06       |
+    |     1      |     4.364e+02      |      5.252e-06       |
+    |     2      |     3.694e+02      |      7.329e-06       |
+    |     3      |     3.304e+02      |      9.161e-06       |
+    |     4      |     1.182e+02      |      7.158e-05       |
+    |     5      |     1.163e+02      |      7.389e-05       |
+    |     6      |     1.041e+02      |      9.230e-05       |
+    |     7      |     9.543e+01      |      1.098e-04       |
+    |     8      |     8.032e+01      |      1.550e-04       |
+    |     9      |     7.841e+01      |      1.627e-04       |
+    |     10     |     5.849e+01      |      2.923e-04       |
+    |     11     |     5.301e+01      |      3.558e-04       |
+
+    Higher and Smallers singular values directions vectors (V^T rows):
+    | Parameter  |      Vt[0]      |      Vt[9]      |     Vt[10]      |     Vt[11]      | 
+    |     0      |    6.553e-01    |    3.181e-04    |   -1.622e-01    |    3.956e-02    | 
+    |     1      |   -6.299e-01    |   -3.109e-01    |   -6.433e-02    |   -2.131e-01    | 
+    |     2      |    5.376e-02    |   -7.304e-04    |   -5.402e-02    |   -2.625e-02    | 
+    |     3      |   -6.592e-02    |    1.333e-01    |   -2.030e-02    |    7.147e-02    | 
+    |     4      |    8.066e-02    |    9.370e-04    |   -6.969e-02    |    1.419e-02    | 
+    |     5      |   -9.235e-02    |   -7.455e-03    |   -2.712e-02    |   -5.894e-02    | 
+    |     6      |    7.716e-02    |   -1.533e-01    |   -2.932e-01    |    4.926e-02    | 
+    |     7      |   -8.831e-02    |    7.770e-01    |   -1.090e-01    |   -2.115e-01    | 
+    |     8      |   -2.715e-01    |    1.293e-04    |   -2.608e-01    |    6.060e-02    | 
+    |     9      |    2.291e-01    |   -5.000e-01    |   -1.038e-01    |   -3.378e-01    | 
+    |     10     |    7.261e-02    |   -2.410e-03    |    8.320e-01    |   -3.394e-01    | 
+    |     11     |   -7.933e-02    |   -9.097e-02    |    3.028e-01    |    8.145e-01    | 
+
+    Estimated variances of the parameters:
+    | Parameter  |     Value P     | Var = σ^2 (J.T J)^-1 |  Ratio √V/|P|   |
+    |     0      |    8.509e-04    |      4.376e-13       |     0.078 %     |
+    |     1      |   -5.468e-03    |      5.328e-13       |     0.013 %     |
+    |     2      |   -5.972e-03    |      9.743e-13       |     0.017 %     |
+    |     3      |    1.428e-02    |      1.035e-12       |     0.007 %     |
+    |     4      |    2.123e-03    |      8.237e-13       |     0.043 %     |
+    |     5      |    4.525e-03    |      8.236e-13       |     0.020 %     |
+    |     6      |   -1.193e-04    |      1.778e-12       |     1.118 %     |
+    |     7      |    4.436e-04    |      1.778e-12       |     0.301 %     |
+    |     8      |   -5.081e-04    |      1.041e-12       |     0.201 %     |
+    |     9      |   -5.766e-03    |      1.274e-12       |     0.020 %     |
+    |     10     |   -3.685e-04    |      3.203e-12       |     0.486 %     |
+    |     11     |    1.169e-02    |      3.534e-12       |     0.016 %     |
+
+    ==================================================
+
+
+
     Optimization success: True
     Optimization message: `xtol` termination condition is satisfied.
-    Optimization cost: 493.14951111279834
-    Error: 0.21693205796830697 (198.86%)
+    Optimization cost: 0.0017988562774133546
+    Flow RMSE: 0.01162087703492285
+    Parameters Error: 4.187391476067244e-05 (0.19%)
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 130-139
+.. GENERATED FROM PYTHON SOURCE LINES 224-233
 
 Optimizing Parameters of a complete Camera Model (PnP problem)
 -----------------------------------------------------------------
@@ -221,7 +453,7 @@ corresponding 2D projections in the image.
 For example, create a point cloud in a rectangle with bounds :math:`[-1, 1]` meters in the :math:`x` and :math:`y` directions and with a :math:`z` component in the range :math:`[4.5, 5.5]` meters.
 Then place a camera near the origin with a small rotation and translation and project the 3D points to 2D image points using a pinhole camera model with Brown-Conrady distortion with a focal length of 1000 pixels and a principal point at (320, 240) pixels.
 
-.. GENERATED FROM PYTHON SOURCE LINES 139-235
+.. GENERATED FROM PYTHON SOURCE LINES 233-328
 
 .. code-block:: Python
 
@@ -237,14 +469,14 @@ Then place a camera near the origin with a small rotation and translation and pr
     # Define the Extrinsic transformation, example rotation vector and translation vector
     rvec = numpy.array([0.01, 0.02, 0.03])  # small rotation
     tvec = numpy.array([0.01, -0.05, 0.04])  # small translation
-    extrinsic = Cv2Extrinsic.from_rt(rvec, tvec)
+    extrinsic = pycvcam.Cv2Extrinsic.from_rt(rvec, tvec)
 
     # Define the Intrinsic transformation, example intrinsic camera matrix
     K = numpy.array([[1000.0, 0.0, 320.0], [0.0, 1000.0, 240.0], [0.0, 0.0, 1.0]])
-    intrinsic = Cv2Intrinsic.from_matrix(K)
+    intrinsic = pycvcam.Cv2Intrinsic.from_matrix(K)
 
     # Define the Distortion transformation, example Brown-Conrady 5 parameters
-    distortion = Cv2Distortion(parameters=[0.1, 0.05, 0.01, 0.01, 0.01])
+    distortion = pycvcam.Cv2Distortion(parameters=[0.1, 0.05, 0.01, 0.01, 0.01])
 
     # Project the 3D points to 2D image points (without Jacobians)
     result = pycvcam.project_points(
@@ -256,15 +488,12 @@ Then place a camera near the origin with a small rotation and translation and pr
 
     image_points = result.image_points  # shape (100, 2)
 
-    # Add noise to the image points
-    noise = numpy.random.normal(0, 0.1, image_points.shape)  # shape (100, 2)
-    noisy_image_points = image_points  # + noise
-
     # Optimize the camera parameters to fit the noisy image points
-    initial_distortion = Cv2Distortion(parameters=numpy.zeros(5, dtype=numpy.float64))
-    initial_extrinsic = Cv2Extrinsic.from_rt(
-        rvec=numpy.zeros(3, dtype=numpy.float64), tvec=numpy.zeros(3, dtype=numpy.float64)
-    )
+    initial_distortion = distortion.copy()
+    initial_distortion.parameters = numpy.zeros_like(distortion.parameters)
+
+    initial_extrinsic = extrinsic.copy()
+    initial_extrinsic.parameters = numpy.zeros_like(extrinsic.parameters)
 
     distortion_bounds = (
         numpy.array([-0.1, -0.1, -0.1, -0.1, -0.1]),  # k1, k2, p1, p2, k3 lower bounds
@@ -275,29 +504,14 @@ Then place a camera near the origin with a small rotation and translation and pr
         numpy.array([0.1, 0.1, 0.1, 0.1, 0.1, 0.1]),  # rvec and tvec upper bounds
     )
 
-    optimized_intrinsic, optimized_distortion, optimized_extrinsic, result = (
+    print("\n")
+    _, optimized_distortio_params, optimized_extrinsic_params, result = (
         pycvopt.optimize_camera_least_squares(
             intrinsic,
             initial_distortion,
             initial_extrinsic,
             world_points,
-            noisy_image_points,
-            mask_intrinsic=[False for _ in range(4)],  # Do not optimize intrinsic
-            bounds_distortion=distortion_bounds,
-            bounds_extrinsic=extrinsic_bounds,
-            auto=True,  # Set ftol, xtol and gtol to 1e-8
-            return_result=True,
-            verbose_level=2,
-        )
-    )
-
-    optimized_intrinsic, optimized_distortion, optimized_extrinsic, result = (
-        pycvopt.optimize_camera_least_squares(
-            intrinsic,
-            initial_distortion,
-            initial_extrinsic,
-            world_points,
-            noisy_image_points,
+            image_points,
             mask_intrinsic=[False for _ in range(4)],  # Do not optimize intrinsic
             bounds_distortion=distortion_bounds,
             bounds_extrinsic=extrinsic_bounds,
@@ -306,25 +520,42 @@ Then place a camera near the origin with a small rotation and translation and pr
             verbose_level=3,
         )
     )
+    print("\n")
 
-    error_distortion = numpy.linalg.norm(optimized_distortion - distortion.parameters)
-    error_extrinsic = numpy.linalg.norm(optimized_extrinsic - extrinsic.parameters)
+    optimized_distortion = initial_distortion.copy()
+    optimized_distortion.parameters = optimized_distortio_params
+    optimized_extrinsic = initial_extrinsic.copy()
+    optimized_extrinsic.parameters = optimized_extrinsic_params
+
+    optimized_image_points = pycvcam.project_points(
+        world_points,
+        intrinsic=intrinsic,
+        distortion=optimized_distortion,
+        extrinsic=optimized_extrinsic,
+    ).image_points
+
+    error_points = numpy.linalg.norm(optimized_image_points - image_points, axis=1)
+    rmse_points = numpy.sqrt(numpy.mean(error_points**2))
+
+    error_distortion = numpy.linalg.norm(
+        optimized_distortion.parameters - distortion.parameters
+    )
+    error_extrinsic = numpy.linalg.norm(
+        optimized_extrinsic.parameters - extrinsic.parameters
+    )
     rel_error_distortion = error_distortion / numpy.linalg.norm(distortion.parameters)
     rel_error_extrinsic = error_extrinsic / numpy.linalg.norm(extrinsic.parameters)
 
-    print("Optimized Distortion Parameters:\n", optimized_distortion)
-    print("Optimized Extrinsic Parameters:\n", optimized_extrinsic)
     print("Optimization success:", result.success)
     print("Optimization message:", result.message)
     print("Optimization cost:", result.cost)
+    print("RMSE Real Points:", rmse_points)
     print("Error Distortion:", error_distortion, f"({rel_error_distortion:.2%})")
     print("Error Extrinsic:", error_extrinsic, f"({rel_error_extrinsic:.2%})")
 
 
 
 
-
-
 .. rst-class:: sphx-glr-script-out
 
  .. code-block:: none
@@ -332,199 +563,153 @@ Then place a camera near the origin with a small rotation and translation and pr
 
 
 
+
+
+
+
+    ==================================================
+
+    --------------------------------------------------
+    Initial Jacobian (Iter 0) analysis of the least squares problem
+    --------------------------------------------------
+
+    6 Extrinsic parameters to optimize - Parameters 0 to 5
+    5 Distortion parameters to optimize - Parameters 6 to 10
+
+
+    Jacobian shape: 200 x 11 (equations x parameters)
+    Overdetermined system (more residuals than parameters), the optimization is likely to converge to a unique solution.
+    Density: 90.91%
+    Singular values (max/min): 1.037e+04 / 1.038e-02
+    Condition number: 9.991e+05
+
+    Singular values and their contribution to the variance:
+    |   Index    |  Singular Value λ  |     Var = 1/λ^2      |
+    |     0      |     1.037e+04      |      9.304e-09       |
+    |     1      |     1.031e+04      |      9.403e-09       |
+    |     2      |     1.600e+03      |      3.905e-07       |
+    |     3      |     4.995e+02      |      4.008e-06       |
+    |     4      |     4.011e+02      |      6.216e-06       |
+    |     5      |     3.231e+02      |      9.580e-06       |
+    |     6      |     1.147e+02      |      7.598e-05       |
+    |     7      |     1.127e+02      |      7.871e-05       |
+    |     8      |     2.554e+01      |      1.533e-03       |
+    |     9      |     5.764e-01      |      3.010e+00       |
+    |     10     |     1.038e-02      |      9.287e+03       |
+
+    Higher and Smallers singular values directions vectors (V^T rows):
+    | Parameter  |      Vt[0]      |      Vt[8]      |      Vt[9]      |     Vt[10]      | 
+    |     0      |    9.223e-01    |    1.727e-03    |   -1.487e-04    |   -1.440e-06    | 
+    |     1      |   -3.299e-01    |   -5.248e-03    |    1.599e-04    |    1.455e-06    | 
+    |     2      |    7.771e-03    |   -4.560e-05    |    1.723e-06    |    1.804e-08    | 
+    |     3      |   -6.506e-02    |    2.735e-02    |   -8.276e-04    |   -8.558e-06    | 
+    |     4      |   -1.819e-01    |    9.910e-03    |   -7.000e-04    |   -6.468e-06    | 
+    |     5      |   -2.108e-03    |   -1.842e-01    |    6.710e-03    |    1.674e-04    | 
+    |     6      |    3.949e-04    |   -9.792e-01    |    8.016e-02    |    3.930e-03    | 
+    |     7      |    2.013e-05    |   -7.991e-02    |   -9.897e-01    |   -1.181e-01    | 
+    |     8      |   -5.220e-02    |   -6.042e-03    |   -2.072e-04    |   -2.525e-06    | 
+    |     9      |   -1.880e-02    |    3.065e-03    |   -2.818e-05    |    5.203e-06    | 
+    |     10     |    1.229e-06    |   -5.598e-03    |   -1.180e-01    |    9.930e-01    | 
+
+    Estimated variances of the parameters:
+    | Parameter  |     Value P     | Var = σ^2 (J.T J)^-1 |  Ratio √V/|P|   |
+    |     0      |    0.000e+00    |      1.535e-03       |    > 1000 %     |
+    |     1      |    0.000e+00    |      1.560e-03       |    > 1000 %     |
+    |     2      |    0.000e+00    |      1.969e-04       |    > 1000 %     |
+    |     3      |    0.000e+00    |      3.861e-02       |    > 1000 %     |
+    |     4      |    0.000e+00    |      3.746e-02       |    > 1000 %     |
+    |     5      |    0.000e+00    |      2.264e-01       |    > 1000 %     |
+    |     6      |    0.000e+00    |      8.136e+01       |    > 1000 %     |
+    |     7      |    0.000e+00    |      6.564e+04       |    > 1000 %     |
+    |     8      |    0.000e+00    |      2.720e-03       |    > 1000 %     |
+    |     9      |    0.000e+00    |      3.055e-03       |    > 1000 %     |
+    |     10     |    0.000e+00    |      4.537e+06       |    > 1000 %     |
+
+    --------------------------------------------------
+    Optimization in progress...
+    --------------------------------------------------
 
        Iteration     Total nfev        Cost      Cost reduction    Step norm     Optimality   
-           0              1         4.5659e+04                                    2.29e+05    
-           1              2         1.0794e+03      4.46e+04       4.48e-02       2.84e+04    
-           2              3         2.0223e+01      1.06e+03       6.88e-02       8.41e+02    
-           3              4         3.9603e+00      1.63e+01       9.57e-02       2.99e+01    
-           4              5         2.1281e-01      3.75e+00       2.59e-02       3.74e+00    
-           5              6         1.0408e-02      2.02e-01       1.03e-02       2.51e-01    
-           6              7         1.6104e-03      8.80e-03       4.42e-03       6.75e-03    
-           7              8         4.0408e-04      1.21e-03       1.82e-03       1.35e-03    
-           8              9         2.7533e-04      1.29e-04       8.03e-03       1.26e-03    
-           9             10         3.2109e-05      2.43e-04       5.80e-02       3.55e-04    
-          10             11         5.0014e-06      2.71e-05       4.23e-02       2.77e-05    
-          11             12         7.3441e-07      4.27e-06       3.20e-02       4.29e-06    
-          12             13         1.4632e-07      5.88e-07       1.10e-02       1.18e-06    
-          13             14         6.6180e-08      8.01e-08       1.02e-02       1.41e-07    
-          14             15         1.4013e-08      5.22e-08       2.37e-02       1.15e-07    
-          15             16         3.2612e-09      1.08e-08       1.03e-02       2.11e-08    
-          16             17         8.0356e-10      2.46e-09       4.76e-03       4.88e-09    
+           0              1         4.6815e+04                                    2.33e+05    
+           1              2         1.1313e+03      4.57e+04       5.05e-02       2.92e+04    
+           2              3         1.9765e+01      1.11e+03       2.15e-02       9.06e+02    
+           3              4         4.2843e+00      1.55e+01       1.01e-01       2.56e+01    
+           4              5         2.6178e-01      4.02e+00       3.01e-02       3.86e+00    
+           5              6         1.4677e-02      2.47e-01       1.13e-02       3.29e-01    
+           6              7         2.2055e-03      1.25e-02       4.57e-03       9.81e-03    
+           7              8         6.7797e-04      1.53e-03       1.73e-03       1.83e-03    
+           8              9         2.3272e-04      4.45e-04       1.94e-01       2.30e-01    
+           9             10         4.1481e-05      1.91e-04       1.96e-02       4.40e-04    
+          10             11         8.2245e-06      3.33e-05       8.33e-03       7.22e-05    
+          11             12         1.7450e-06      6.48e-06       3.98e-03       1.68e-05    
+          12             13         8.2503e-07      9.20e-07       1.73e-03       3.30e-06    
+          13             14         1.7501e-07      6.50e-07       6.01e-02       2.34e-06    
+          14             15         3.7778e-08      1.37e-07       2.72e-02       4.73e-07    
+          15             16         8.7955e-09      2.90e-08       1.19e-02       9.13e-08    
+          16             17         2.1629e-09      6.63e-09       5.51e-03       1.91e-08    
+          17             18         5.3972e-10      1.62e-09       2.70e-03       4.54e-09    
     `gtol` termination condition is satisfied.
-    Function evaluations 17, initial cost 4.5659e+04, final cost 8.0356e-10, first-order optimality 4.88e-09.
-    |  Iteration   |     Cost     |   Cost red   |  Step norm   |   cond(J)    |   Min cov    |   Max cov    |  Trace cov   |
-    |--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|
-    |        0     |  +4.57e+04   |              |              |  +1.07e+06   |  +1.86e-04   |  +5.04e+06   |  +5.12e+06   |
-    |        1     |  +1.08e+03   |  +4.46e+04   |  +4.48e-02   |  +1.07e+06   |  +4.40e-06   |  +1.19e+05   |  +1.21e+05   |
-    |        2     |  +2.02e+01   |  +1.06e+03   |  +6.88e-02   |  +1.29e+06   |  +8.20e-08   |  +3.31e+03   |  +3.36e+03   |
-    |        3     |  +3.96e+00   |  +1.63e+01   |  +9.57e-02   |  +1.28e+06   |  +1.61e-08   |  +6.30e+02   |  +6.39e+02   |
-    |        4     |  +2.13e-01   |  +3.75e+00   |  +2.59e-02   |  +1.28e+06   |  +8.62e-10   |  +3.39e+01   |  +3.43e+01   |
-    |        5     |  +1.04e-02   |  +2.02e-01   |  +1.03e-02   |  +1.28e+06   |  +4.22e-11   |  +1.66e+00   |  +1.68e+00   |
-    |        6     |  +1.61e-03   |  +8.80e-03   |  +4.42e-03   |  +1.28e+06   |  +6.53e-12   |  +2.57e-01   |  +2.61e-01   |
-    |        7     |  +4.04e-04   |  +1.21e-03   |  +1.82e-03   |  +1.28e+06   |  +1.64e-12   |  +6.46e-02   |  +6.55e-02   |
-    |        8     |  +2.75e-04   |  +1.29e-04   |  +8.03e-03   |  +1.28e+06   |  +1.12e-12   |  +4.40e-02   |  +4.46e-02   |
-    |        9     |  +3.21e-05   |  +2.43e-04   |  +5.80e-02   |  +1.28e+06   |  +1.30e-13   |  +5.14e-03   |  +5.21e-03   |
-    |       10     |  +5.00e-06   |  +2.71e-05   |  +4.23e-02   |  +1.28e+06   |  +2.03e-14   |  +8.01e-04   |  +8.11e-04   |
-    |       11     |  +7.34e-07   |  +4.27e-06   |  +3.20e-02   |  +1.28e+06   |  +2.98e-15   |  +1.18e-04   |  +1.19e-04   |
-    |       12     |  +1.46e-07   |  +5.88e-07   |  +1.10e-02   |  +1.28e+06   |  +5.93e-16   |  +2.34e-05   |  +2.37e-05   |
-    |       13     |  +6.62e-08   |  +8.01e-08   |  +1.02e-02   |  +1.28e+06   |  +2.68e-16   |  +1.06e-05   |  +1.07e-05   |
-    |       14     |  +1.40e-08   |  +5.22e-08   |  +2.37e-02   |  +1.28e+06   |  +5.68e-17   |  +2.24e-06   |  +2.27e-06   |
-    |       15     |  +3.26e-09   |  +1.08e-08   |  +1.03e-02   |  +1.28e+06   |  +1.32e-17   |  +5.22e-07   |  +5.29e-07   |
-    |       16     |  +8.04e-10   |  +2.46e-09   |  +4.76e-03   |  +1.28e+06   |  +3.26e-18   |  +1.29e-07   |  +1.30e-07   |
-    Optimized Distortion Parameters:
-     [0.09998003 0.05055725 0.00999999 0.01000001 0.00536268]
-    Optimized Extrinsic Parameters:
-     [ 0.00999999  0.02        0.03        0.01       -0.05000004  0.039999  ]
+    Function evaluations 18, initial cost 4.6815e+04, final cost 5.3972e-10, first-order optimality 4.54e-09.
+
+    --------------------------------------------------
+    Jacobian analysis of the least squares problem (End of optimization)
+    --------------------------------------------------
+
+    Singular values (max/min): 1.033e+04 / 1.125e-02
+    Condition number: 9.190e+05
+
+    Singular values and their contribution to the variance:
+    |   Index    |  Singular Value λ  |     Var = 1/λ^2      |
+    |     0      |     1.033e+04      |      9.362e-09       |
+    |     1      |     1.029e+04      |      9.450e-09       |
+    |     2      |     1.594e+03      |      3.934e-07       |
+    |     3      |     5.242e+02      |      3.639e-06       |
+    |     4      |     4.712e+02      |      4.503e-06       |
+    |     5      |     2.704e+02      |      1.368e-05       |
+    |     6      |     1.140e+02      |      7.695e-05       |
+    |     7      |     1.115e+02      |      8.049e-05       |
+    |     8      |     2.516e+01      |      1.580e-03       |
+    |     9      |     5.990e-01      |      2.787e+00       |
+    |     10     |     1.125e-02      |      7.906e+03       |
+
+    Higher and Smallers singular values directions vectors (V^T rows):
+    | Parameter  |      Vt[0]      |      Vt[8]      |      Vt[9]      |     Vt[10]      | 
+    |     0      |    9.356e-01    |    1.917e-03    |   -2.201e-04    |   -1.376e-06    | 
+    |     1      |   -2.902e-01    |   -4.312e-03    |    1.314e-04    |    1.636e-06    | 
+    |     2      |   -2.695e-03    |   -2.962e-04    |    4.006e-06    |   -2.072e-08    | 
+    |     3      |   -5.446e-02    |    1.905e-02    |   -6.668e-04    |   -9.347e-06    | 
+    |     4      |   -1.852e-01    |    1.397e-02    |   -1.080e-03    |   -6.223e-06    | 
+    |     5      |   -4.103e-03    |   -1.730e-01    |    7.323e-03    |    1.686e-04    | 
+    |     6      |    1.058e-03    |   -9.805e-01    |    8.505e-02    |    3.936e-03    | 
+    |     7      |    5.828e-05    |   -8.485e-02    |   -9.892e-01    |   -1.188e-01    | 
+    |     8      |   -5.438e-02    |   -2.279e-02    |   -1.001e-04    |   -4.704e-06    | 
+    |     9      |   -1.540e-02    |    2.121e-02    |   -2.335e-05    |    7.677e-06    | 
+    |     10     |    3.440e-06    |   -6.239e-03    |   -1.187e-01    |    9.929e-01    | 
+
+    Estimated variances of the parameters:
+    | Parameter  |     Value P     | Var = σ^2 (J.T J)^-1 |  Ratio √V/|P|   |
+    |     0      |    1.000e-02    |      1.844e-17       |     0.000 %     |
+    |     1      |    2.000e-02    |      1.795e-17       |     0.000 %     |
+    |     2      |    3.000e-02    |      2.279e-18       |     0.000 %     |
+    |     3      |    1.000e-02    |      4.413e-16       |     0.000 %     |
+    |     4      |   -5.000e-02    |      4.523e-16       |     0.000 %     |
+    |     5      |    4.000e-02    |      2.475e-15       |     0.000 %     |
+    |     6      |    9.999e-02    |      8.235e-13       |     0.001 %     |
+    |     7      |    5.034e-02    |      6.533e-10       |     0.051 %     |
+    |     8      |    1.000e-02    |      3.445e-17       |     0.000 %     |
+    |     9      |    1.000e-02    |      3.986e-17       |     0.000 %     |
+    |     10     |    7.329e-03    |      4.452e-08       |     2.879 %     |
+
+    ==================================================
+
+
+
     Optimization success: True
     Optimization message: `gtol` termination condition is satisfied.
-    Optimization cost: 8.035590616976464e-10
-    Error Distortion: 0.004670722065141567 (4.13%)
-    Error Extrinsic: 1.0057794706032908e-06 (0.00%)
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 236-259
-
-Optimize a complete camera setup with chains of transformations
------------------------------------------------------------------
-
-Lets assume, we have camera with same intrinsic and distortion
-transformations as before but with two different extrinsic transformations
-(for example, two different poses of the camera).
-
-To optimize the parameters of this camera setup, we can use the
-``optimize_chain_parameters_least_squares`` function, which allows to optimize the
-parameters of a chain of transformations.
-
-Define the first chain of transformations as :
-
-- Extrinsic transformation 1 + Distortion transformation + Intrinsic transformation
-
-Define the second chain of transformations as :
-
-- Extrinsic transformation 2 + Distortion transformation + Intrinsic transformation
-
-.. warning::
-
-  The order of the transformations in the chain is important and should be consistent
-  with the order of the parameters in the optimization function.
-
-.. GENERATED FROM PYTHON SOURCE LINES 259-345
-
-.. code-block:: Python
-
-
-    print("\n\n\n")
-
-    x = numpy.random.uniform(-1.0, 1.0, (100, 1))  # shape (100, 1)
-    y = numpy.random.uniform(-1.0, 1.0, (100, 1))  # shape (100, 1)
-    z = numpy.random.uniform(4.5, 5.5, (100, 1))  # shape (100, 1)
-    world_points = numpy.hstack((x, y, z))  # shape (100, 3)
-
-    K = numpy.array([[1000.0, 0.0, 320.0], [0.0, 1000.0, 240.0], [0.0, 0.0, 1.0]])
-    intrinsic = Cv2Intrinsic.from_matrix(K)
-
-    distortion = Cv2Distortion(parameters=[0.1, 0.05, 0.01, 0.01, 0.01])
-
-    rvec1 = numpy.array([0.01, 0.02, 0.03])  # small rotation
-    tvec1 = numpy.array([0.01, -0.05, 0.04])  # small translation
-    extrinsic1 = Cv2Extrinsic.from_rt(rvec1, tvec1)
-
-    rvec2 = numpy.array([-0.02, 0.01, -0.01])  # small rotation
-    tvec2 = numpy.array([-0.03, 0.02, -0.01])  # small translation
-    extrinsic2 = Cv2Extrinsic.from_rt(rvec2, tvec2)
-
-    transforms = [extrinsic1, extrinsic2, distortion, intrinsic]
-    chains = [
-        [0, 2, 3],  # Chain 1: Extrinsic 1 + Distortion + Intrinsic
-        [1, 2, 3],  # Chain 2: Extrinsic 2 + Distortion + Intrinsic
-    ]
-
-    image_points_chain1 = pycvcam.project_points(
-        world_points,
-        intrinsic=intrinsic,
-        distortion=distortion,
-        extrinsic=extrinsic1,
-    ).image_points
-
-    image_points_chain2 = pycvcam.project_points(
-        world_points,
-        intrinsic=intrinsic,
-        distortion=distortion,
-        extrinsic=extrinsic2,
-    ).image_points
-
-
-    initial_distortion = Cv2Distortion(parameters=numpy.zeros(5, dtype=numpy.float64))
-    initial_extrinsic1 = Cv2Extrinsic.from_rt(
-        rvec=numpy.zeros(3, dtype=numpy.float64), tvec=numpy.zeros(3, dtype=numpy.float64)
-    )
-    initial_extrinsic2 = Cv2Extrinsic.from_rt(
-        rvec=numpy.zeros(3, dtype=numpy.float64), tvec=numpy.zeros(3, dtype=numpy.float64)
-    )
-
-    optimized_transforms, result = pycvopt.optimize_chain_parameters_least_squares(
-        transforms,
-        chains,
-        [world_points, world_points],
-        [image_points_chain1, image_points_chain2],
-        mask=[None, None, None, [False for _ in range(4)]],  # Do not optimize intrinsic
-        bounds=[
-            extrinsic_bounds,  # Extrinsic 1 bounds
-            extrinsic_bounds,  # Extrinsic 2 bounds
-            distortion_bounds,  # Distortion bounds
-            None,  # No bounds for intrinsic
-        ],
-        auto=True,  # Set ftol, xtol and gtol to 1e-8
-        return_result=True,
-    )
-
-    optimized_extrinsic1 = optimized_transforms[0]
-    optimized_extrinsic2 = optimized_transforms[1]
-    optimized_distortion = optimized_transforms[2]
-
-    error_distortion = numpy.linalg.norm(optimized_distortion - distortion.parameters)
-    error_extrinsic1 = numpy.linalg.norm(optimized_extrinsic1 - extrinsic1.parameters)
-    error_extrinsic2 = numpy.linalg.norm(optimized_extrinsic2 - extrinsic2.parameters)
-    rel_error_distortion = error_distortion / numpy.linalg.norm(distortion.parameters)
-    rel_error_extrinsic1 = error_extrinsic1 / numpy.linalg.norm(extrinsic1.parameters)
-    rel_error_extrinsic2 = error_extrinsic2 / numpy.linalg.norm(extrinsic2.parameters)
-
-    print("Optimized Distortion Parameters:\n", optimized_distortion)
-    print("Optimized Extrinsic 1 Parameters:\n", optimized_extrinsic1)
-    print("Optimized Extrinsic 2 Parameters:\n", optimized_extrinsic2)
-    print("Optimization success:", result.success)
-    print("Optimization message:", result.message)
-    print("Optimization cost:", result.cost)
-    print("Error Distortion:", error_distortion, f"({rel_error_distortion:.2%})")
-    print("Error Extrinsic 1:", error_extrinsic1, f"({rel_error_extrinsic1:.2%})")
-    print("Error Extrinsic 2:", error_extrinsic2, f"({rel_error_extrinsic2:.2%})")
-
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-
-
-
-
-    Optimized Distortion Parameters:
-     [ 0.1         0.04987834 -0.00815639  0.02820631  0.00997752]
-    Optimized Extrinsic 1 Parameters:
-     [-0.00148612  0.01017054  0.01212519  0.00254562 -0.03597339  0.02406219]
-    Optimized Extrinsic 2 Parameters:
-     [ 0.00800104  0.02352514  0.01351864 -0.01091058 -0.00590832  0.01031192]
-    Optimization success: True
-    Optimization message: `xtol` termination condition is satisfied.
-    Optimization cost: 109201.87999182506
-    Error Distortion: 0.025712632361914463 (22.73%)
-    Error Extrinsic 1: 0.03247130212183981 (43.39%)
-    Error Extrinsic 2: 0.05448242801537628 (121.83%)
+    Optimization cost: 5.397179430836357e-10
+    RMSE Real Points: 3.2854769610625355e-06
+    Error Distortion: 0.002692958655535187 (2.38%)
+    Error Extrinsic: 6.299427344763492e-07 (0.00%)
 
 
 
@@ -532,7 +717,7 @@ Define the second chain of transformations as :
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.690 seconds)
+   **Total running time of the script:** (0 minutes 7.673 seconds)
 
 
 .. _sphx_glr_download_.._.._docs_source__gallery_optimize_parameters.py:

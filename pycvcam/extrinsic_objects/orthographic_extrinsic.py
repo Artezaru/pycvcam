@@ -71,7 +71,15 @@ class OrthographicExtrinsic(Extrinsic):
 
     __slots__ = ["_rvec", "_tvec"]
 
-    def __init__(self, parameters: Optional[numpy.ndarray] = None) -> None:
+    def __init__(
+        self,
+        parameters: Optional[numpy.ndarray] = None,
+        constants: Optional[None] = None,
+    ) -> None:
+        if constants is not None:
+            raise ValueError(
+                "OrthographicExtrinsic model has no constants, must be set to None."
+            )
         # Initialize the Transform base class
         super().__init__(parameters=parameters, constants=None)
 

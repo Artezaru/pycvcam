@@ -329,6 +329,20 @@ class Transform(ABC):
         """
         return [f"c_{i}" for i in range(self.n_constants)]
 
+    def copy(self) -> Transform:
+        r"""
+        Return a deep copy of the transformation.
+
+        Returns
+        -------
+        Transform
+            A deep copy of the transformation,  with the same parameters and constants.
+
+        """
+        parameters = self.parameters.copy() if self.parameters is not None else None
+        constants = self.constants.copy() if self.constants is not None else None
+        return self.__class__(parameters=parameters, constants=constants)
+
     # =============================================
     # Methods for Transform Class
     # =============================================

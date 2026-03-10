@@ -81,8 +81,13 @@ class FisheyeDistortion(Distortion):
     def __init__(
         self,
         parameters: Optional[numpy.ndarray] = None,
+        constants: Optional[None] = None,
         n_params: Optional[Integral] = None,
     ) -> None:
+        if constants is not None:
+            raise ValueError(
+                "FisheyeDistortion model has no constants, must be set to None."
+            )
         # Initialize the Transform base class
         super().__init__(parameters=parameters, constants=None)
         if n_params is not None:

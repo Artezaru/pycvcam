@@ -1,6 +1,6 @@
 """
 
-.. _sphx_glr__gallery_distort_image.py:
+.. _sphx_glr__gallery_distorting_image.py:
 
 Distorting an image with ``distort_image`` and ``undistort_image``
 ==================================================================
@@ -33,13 +33,7 @@ This example illustrate how to use the ``distort_image`` function to apply a dis
 #   It is recommended to clip the pixel values to [0, 255] and convert the image to ``numpy.uint8`` type before saving or displaying it.
 
 import numpy
-from pycvcam import (
-    distort_image,
-    undistort_image,
-    Cv2Distortion,
-    Cv2Intrinsic,
-    ZernikeDistortion,
-)
+import pycvcam
 import matplotlib.pyplot as plt
 import cv2
 import os
@@ -53,17 +47,17 @@ for j in range(0, image_width, 40):
     cv2.line(src, (j, 0), (j, image_height), (0, 0, 0), 2)
 
 # Create a simple intrinsic transformation
-intrinsic = Cv2Intrinsic.from_matrix(
+intrinsic = pycvcam.Cv2Intrinsic.from_matrix(
     [[1000.0, 0.0, image_width / 2], [0.0, 1000.0, image_height / 2], [0.0, 0.0, 1.0]]
 )
 
 # Create a distortion transformation (Example Zernike distortion)
-distortion = Cv2Distortion(
+distortion = pycvcam.Cv2Distortion(
     parameters=[0.2, 0.25, 0.07, 0.04, 0.008, 0.004, 0.001, 0.0005]
 )
 
 # Distort the image
-distorted_image = distort_image(
+distorted_image = pycvcam.distort_image(
     src,
     intrinsic=intrinsic,
     distortion=distortion,
@@ -75,7 +69,7 @@ distorted_image = numpy.clip(distorted_image, 0, 255).astype(
 )  # Ensure pixel values are valid
 
 # Undistort the image back to the original using the same parameters
-undistorted_image = undistort_image(
+undistorted_image = pycvcam.undistort_image(
     distorted_image,
     intrinsic=intrinsic,
     distortion=distortion,
@@ -110,7 +104,7 @@ plt.show()
 # For example, we create a zernike distortion but with parameters weights defines in pixels units instead of normalized units, and set the Zernike domain to the image space.
 
 # Create a Zernike distortion with parameters defined in pixels units and domain in the image space
-zernike_distortion = ZernikeDistortion(
+zernike_distortion = pycvcam.ZernikeDistortion(
     parameters=[
         0.8541972545746392,
         -5.468596289790535,
@@ -132,13 +126,13 @@ zernike_distortion.radius = numpy.sqrt(
 )
 
 # Distort the image using the Zernike distortion defined in the image space
-distorted_image_pixels = distort_image(
+distorted_image_pixels = pycvcam.distort_image(
     src,
     intrinsic=None,  # No intrinsic transformation, distortion is applied in the image space
     distortion=zernike_distortion,
     method="undistort",
     interpolation="cubic",
-    distortion_kwargs={"eps": 1e-1},  # tolerance for undistort -> 0.1 pixel
+    inverse_distortion_kwargs={"eps": 1e-1},  # tolerance for undistort -> 0.1 pixel
 )
 
 distorted_image_pixels = numpy.clip(distorted_image_pixels, 0, 255).astype(
@@ -150,4 +144,58 @@ plt.figure(figsize=(5, 5))
 plt.imshow(distorted_image_pixels)
 plt.title("Distorted Image with Zernike Distortion in Image Space")
 plt.axis("off")
+plt.show()
+
+
+# %%
+# Interpolation error
+# -----------------------------------------
+#
+# The interpolation error can be studied by applying the distortion and then
+# undistortion to an image and comparing the result with the original image.
+#
+# The computation in done only ofr the inner part of the image to avoid the border
+# effects of the distortion and undistortion.
+
+image = pycvcam.get_lena_image()
+height, width = image.shape[:2]
+zernike_distortion.center = ((width - 1) / 2, (height - 1) / 2)
+zernike_distortion.radius = numpy.sqrt(((width - 1) / 2) ** 2 + ((height - 1) / 2) ** 2)
+
+distorted_image = pycvcam.distort_image(
+    image,
+    intrinsic=intrinsic,
+    distortion=distortion,
+    method="undistort",
+    interpolation="cubic",
+    inverse_distortion_kwargs={"eps": 1e-3},  # tolerance for undistort -> 0.001 pixel
+)
+undistorted_image = pycvcam.undistort_image(
+    distorted_image,
+    intrinsic=intrinsic,
+    distortion=distortion,
+    interpolation="cubic",
+)
+
+error_image = numpy.abs(undistorted_image - image)
+
+
+rmse = numpy.sqrt(numpy.mean(error_image[20:-20, 20:-20] ** 2))
+print(f"RMSE of undistortion: {rmse:.4f} GL")
+
+plt.figure(figsize=(15, 5))
+plt.subplot(1, 3, 1)
+plt.title("Original Image")
+plt.imshow(image, cmap="gray")
+plt.axis("off")
+plt.subplot(1, 3, 2)
+plt.title("Undistorted Image")
+plt.imshow(undistorted_image, cmap="gray")
+plt.axis("off")
+plt.subplot(1, 3, 3)
+plt.title("Absolute Error Image")
+plt.imshow(error_image, cmap="inferno", vmin=0, vmax=255)
+plt.axis("off")
+plt.colorbar()
+plt.tight_layout()
 plt.show()

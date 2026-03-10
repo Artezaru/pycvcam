@@ -86,7 +86,15 @@ class SkewIntrinsic(Intrinsic):
 
     __slots__ = ["_fx", "_fy", "_cx", "_cy", "_s"]
 
-    def __init__(self, parameters: Optional[numpy.ndarray] = None) -> None:
+    def __init__(
+        self,
+        parameters: Optional[numpy.ndarray] = None,
+        constants: Optional[numpy.ndarray] = None,
+    ) -> None:
+        if constants is not None:
+            raise ValueError(
+                "SkewIntrinsic model has no constants, must be set to None."
+            )
         # Initialize the Transform base class
         super().__init__(parameters=parameters, constants=None)
 

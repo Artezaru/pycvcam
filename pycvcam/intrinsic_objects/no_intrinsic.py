@@ -29,11 +29,20 @@ class NoIntrinsic(Intrinsic):
 
     The ``NoIntrinsic`` model is a special case of the intrinsic transformation where no intrinsic transformations are applied.
 
-    Lets consider ``distorted_points`` in the camera normalized coordinate system :math:`\vec{x}_d = (x_d, y_d)`, the corresponding ``image_points`` in the image coordinate system are given by :math:`\vec{x}_i = (x_d, y_d)`. 
+    Lets consider ``distorted_points`` in the camera normalized coordinate system :math:`\vec{x}_d = (x_d, y_d)`, the corresponding ``image_points`` in the image coordinate system are given by :math:`\vec{x}_i = (x_d, y_d)`.
     Simply applying an identity transformation, which means that the image points are equal to the distorted points.
 
     """
-    def __init__(self):
+
+    def __init__(
+        self, parameters: Optional[None] = None, constants: Optional[None] = None
+    ) -> None:
+        if parameters is not None:
+            raise ValueError(
+                "NoIntrinsic model has no parameters, must be set to None."
+            )
+        if constants is not None:
+            raise ValueError("NoIntrinsic model has no constants, must be set to None.")
         super().__init__(parameters=None, constants=None)
 
     # =============================================
@@ -45,11 +54,13 @@ class NoIntrinsic(Intrinsic):
         Always returns None, as there are no parameters for the no intrinsic model.
         """
         return None
-    
+
     @parameters.setter
     def parameters(self, value: None):
         if value is not None:
-            raise ValueError("NoIntrinsic model has no parameters, must be set to None.")
+            raise ValueError(
+                "NoIntrinsic model has no parameters, must be set to None."
+            )
         self._parameters = None
 
     @property
@@ -58,7 +69,7 @@ class NoIntrinsic(Intrinsic):
         Always returns None, as there are no constants for the no intrinsic model.
         """
         return None
-    
+
     @constants.setter
     def constants(self, value: None):
         if value is not None:
@@ -70,15 +81,17 @@ class NoIntrinsic(Intrinsic):
         Always returns True, as the no intrinsic model is always set and does not require any parameters or constants.
         """
         return True
-    
+
     # =============================================
     # Implementing the transform and inverse_transform methods
     # =============================================
-    def _transform(self, distorted_points: numpy.ndarray, *, dx = False, dp = False) -> Tuple[numpy.ndarray, Optional[numpy.ndarray], Optional[numpy.ndarray]]:
+    def _transform(
+        self, distorted_points: numpy.ndarray, *, dx=False, dp=False
+    ) -> Tuple[numpy.ndarray, Optional[numpy.ndarray], Optional[numpy.ndarray]]:
         r"""
         Compute the transformation from the ``distorted_points`` to the ``image_points``.
 
-        Lets consider ``distorted_points`` in the camera normalized coordinate system :math:`\vec{x}_d = (x_d, y_d)`, the corresponding ``image_points`` in the image coordinate system are given by :math:`\vec{x}_i = (x_d, y_d)`. 
+        Lets consider ``distorted_points`` in the camera normalized coordinate system :math:`\vec{x}_d = (x_d, y_d)`, the corresponding ``image_points`` in the image coordinate system are given by :math:`\vec{x}_i = (x_d, y_d)`.
         Simply applying an identity transformation, which means that the image points are equal to the distorted points.
 
         The jacobians with respect to the intrinsic parameters is an empty array with shape (n_points, 2, 0), as there are no parameters to compute the jacobian for.
@@ -111,23 +124,28 @@ class NoIntrinsic(Intrinsic):
         jacobian_dp : Optional[numpy.ndarray]
             The jacobian of the image points with respect to the intrinsic parameters. Shape (n_points, 2, 0) if dp is True, otherwise None.
         """
-        image_points = distorted_points.copy() # shape (n_points, 2)
-        jacobian_dx = None # shape (n_points, 2, 2)
-        jacobian_dp = None # shape (n_points, 2, n_params)
+        image_points = distorted_points.copy()  # shape (n_points, 2)
+        jacobian_dx = None  # shape (n_points, 2, 2)
+        jacobian_dp = None  # shape (n_points, 2, n_params)
         if dx:
-            jacobian_dx = numpy.zeros((image_points.shape[0], 2, 2), dtype=numpy.float64) # shape (n_points, 2, 2)
+            jacobian_dx = numpy.zeros(
+                (image_points.shape[0], 2, 2), dtype=numpy.float64
+            )  # shape (n_points, 2, 2)
             jacobian_dx[:, 0, 0] = 1.0
             jacobian_dx[:, 1, 1] = 1.0
         if dp:
-            jacobian_dp = numpy.empty((image_points.shape[0], 2, 0), dtype=numpy.float64) # shape (n_points, 2, 0)
+            jacobian_dp = numpy.empty(
+                (image_points.shape[0], 2, 0), dtype=numpy.float64
+            )  # shape (n_points, 2, 0)
         return image_points, jacobian_dx, jacobian_dp
-    
-    
-    def _inverse_transform(self, image_points: numpy.ndarray, *, dx = False, dp = False) -> Tuple[numpy.ndarray, Optional[numpy.ndarray], Optional[numpy.ndarray]]:
+
+    def _inverse_transform(
+        self, image_points: numpy.ndarray, *, dx=False, dp=False
+    ) -> Tuple[numpy.ndarray, Optional[numpy.ndarray], Optional[numpy.ndarray]]:
         r"""
         Compute the inverse transformation from the ``image_points`` to the ``distorted_points``.
 
-        Lets consider ``image_points`` in the image coordinate system :math:`\vec{x}_i = (x_i, y_i)`, the corresponding ``distorted_points`` in the camera normalized coordinate system are given by :math:`\vec{x}_d = (x_i, y_i)`. 
+        Lets consider ``image_points`` in the image coordinate system :math:`\vec{x}_i = (x_i, y_i)`, the corresponding ``distorted_points`` in the camera normalized coordinate system are given by :math:`\vec{x}_d = (x_i, y_i)`.
         Simply applying an identity transformation, which means that the image points are equal to the distorted points.
 
         The jacobians with respect to the intrinsic parameters is an empty array with shape (n_points, 2, 0), as there are no parameters to compute the jacobian for.

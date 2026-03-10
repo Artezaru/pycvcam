@@ -39,20 +39,20 @@ __all__.extend(
     ["NoDistortion", "Cv2Distortion", "ZernikeDistortion", "FisheyeDistortion"]
 )
 
-from .undistort_image import undistort_image
-from .undistort_points import undistort_points
+from .distorting_image import undistort_image, distort_image
+from .distorting_points import undistort_points, distort_points
 from .project_points import project_points
 from .compute_rays import compute_rays
-from .distort_image import distort_image
 from .optical_flow import compute_optical_flow, display_optical_flow
 
 __all__.extend(
     [
         "undistort_image",
         "undistort_points",
+        "distort_image",
+        "distort_points",
         "project_points",
         "compute_rays",
-        "distort_image",
         "compute_optical_flow",
         "display_optical_flow",
     ]
