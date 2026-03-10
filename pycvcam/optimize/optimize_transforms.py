@@ -908,15 +908,6 @@ def _solve_optimize_chains_lm_scipy(
         _sparse=_sparse,
     )
 
-    callback, get_history = _build_callback_least_squares(
-        seq_transforms=seq_transforms,
-        seq_masks=seq_masks,
-        seq_guesses=seq_guesses,
-        return_history=return_history,
-        max_iterations=max_iterations,
-        max_time=max_time,
-    )
-
     if verbose_level >= 3:
         _study_jacobian_least_squares(
             f(params_initial),
@@ -938,7 +929,6 @@ def _solve_optimize_chains_lm_scipy(
         verbose=min(verbose_level, 2),
         method="lm",  # Levenberg-Marquardt algorithm
         loss=loss,
-        callback=callback,
     )
 
     if verbose_level >= 3:
@@ -961,11 +951,17 @@ def _solve_optimize_chains_lm_scipy(
     parameters = tuple(parameters)  # len n_transforms, each shape (n_params,)
 
     if return_result and return_history:
-        return parameters, result, get_history()
+        return (
+            parameters,
+            result,
+            [(numpy.full(parameters[i].shape, numpy.nan) for i in range(n_transforms))],
+        )
     elif return_result:
         return parameters, result
     elif return_history:
-        return parameters, get_history()
+        return parameters, [
+            (numpy.full(parameters[i].shape, numpy.nan) for i in range(n_transforms))
+        ]
     else:
         return parameters
 

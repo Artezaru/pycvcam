@@ -189,7 +189,7 @@ initial_distortion = distortion.copy()
 initial_distortion.parameters = numpy.zeros_like(distortion.parameters)
 
 print("\n")
-parameters, result = pycvcam.optimize_parameters_trf(
+parameters, result = pycvcam.optimize_parameters_lm(
     initial_distortion,
     normalized_points,
     distorted_points,
