@@ -39,31 +39,35 @@ def undistort_points(
     P_kwargs: Optional[Dict] = None,
 ) -> numpy.ndarray:
     r"""
-    Undistort 2D ``image_points`` using the camera intrinsic, distortion 
-    transformations to obtain the ``normalized_points`` in the normalized coordinate 
+    Undistort 2D ``image_points`` using the camera intrinsic, distortion
+    transformations to obtain the ``normalized_points`` in the normalized coordinate
     system or ``undistorted_points`` if ``R`` or ``P`` are provided.
-    
+
     As a reminder,
 
     .. math::
 
         \vec{x}_d = \text{Intrinsic}^{-1}(\vec{x}_i) \\
-        \vec{x}_n = \text{Distortion}^{-1}(\vec{x}_d) \\
-        \text{Then optionally:} \\
+        \vec{x}_n = \text{Distortion}^{-1}(\vec{x}_d)
+
+    Then optionally,
+
+    .. math::
+
         \vec{x}_u = P(R(\vec{x}_n)))
 
     Where:
-    
+
     - :math:`\vec{x}_i` are the 2D ``image_points`` in the image coordinate system :math:`(\vec{e}_x, \vec{e}_y)`.
     - :math:`\vec{x}_d` are the 2D ``distorted_points`` in the normalized coordinate system :math:`(\vec{I}, \vec{J})`.
     - :math:`\vec{x}_n` are the 2D ``normalized_points`` in the normalized coordinate system :math:`(\vec{I}, \vec{J})`.
     - :math:`\vec{x}_u` are the 2D ``undistorted_points`` in the space required by the user.
 
     .. note::
-    
-        The behavior of the function can be adapted to the user's needs by providing 
+
+        The behavior of the function can be adapted to the user's needs by providing
         the appropriate transformations.
-    
+
         - Use ``intrinsic = None`` to give directly the distorted points in the normalized coordinate system.
         - Use ``P = intrinsic`` to return the undistorted points in the image coordinate system.
         - Use ``intrinsic = None`` and ``P = None`` if the distortion model is defined in the image coordinate system.
@@ -72,12 +76,12 @@ def undistort_points(
 
         Iterative non-linear optimization is used to find the undistorted points.
 
-    The given points ``image_points`` are assumed to be in the sensor coordinate system 
+    The given points ``image_points`` are assumed to be in the sensor coordinate system
     and expressed in 2D coordinates with shape (..., 2).
 
     .. note::
 
-        The expected ``image_points`` can be extracted from the ``pixel_points`` 
+        The expected ``image_points`` can be extracted from the ``pixel_points``
         by swapping the axes.
 
 
@@ -88,28 +92,28 @@ def undistort_points(
 
     intrinsic : Optional[:class:`Intrinsic`]
         The intrinsic transformation to be applied to the image points.
-        If None, a no intrinsic transformation is applied (i.e., identity 
+        If None, a no intrinsic transformation is applied (i.e., identity
         transformation).
 
     distortion : Optional[:class:`Distortion`]
         The distortion model to be applied to the normalized points.
-        If None, a no distortion transformation is applied (i.e., identity 
+        If None, a no distortion transformation is applied (i.e., identity
         transformation).
 
     R : Optional[:class:`Extrinsic`], optional
-        The rectification extrinsic transformation (rotation and translation) to be 
+        The rectification extrinsic transformation (rotation and translation) to be
         applied to the normalized points.
-        If None, a no extrinsic transformation is applied (i.e., identity 
+        If None, a no extrinsic transformation is applied (i.e., identity
         transformation). Default is None.
 
     P : Optional[:class:`Intrinsic`], optional
         The projection intrinsic transformation to be applied to the normalized points.
-        If None, a no intrinsic transformation is applied (i.e., identity 
-        transformation). This is useful to return the undistorted points in the image 
+        If None, a no intrinsic transformation is applied (i.e., identity
+        transformation). This is useful to return the undistorted points in the image
         coordinate system.
 
     transpose : bool, optional
-        If True, the input points are assumed to be in the shape (2, ...) instead of 
+        If True, the input points are assumed to be in the shape (2, ...) instead of
         (..., 2). Default is False.
         The output points will be in the same shape as the input points.
 
@@ -124,13 +128,13 @@ def undistort_points(
         Default is None.
 
     R_kwargs : Optional[Dict], optional
-        Additional keyword arguments to be passed to the rectification extrinsic 
+        Additional keyword arguments to be passed to the rectification extrinsic
         transformation (``R._transform``). Default is None.
 
     P_kwargs : Optional[Dict], optional
-        Additional keyword arguments to be passed to the projection intrinsic 
+        Additional keyword arguments to be passed to the projection intrinsic
         transformation (``P._transform``). Default is None.
-        
+
 
     Returns
     -------
@@ -138,21 +142,21 @@ def undistort_points(
         The 2D normalized points in the normalized coordinate system with shape
         (..., 2) or the 2D undistorted points in the user coordinate system
         if ``P`` or ``R`` are given.
-        
-        
+
+
     See Also
     --------
     pycvcam.distort_points
-        Similar to this function but applies the transformations in the opposite 
+        Similar to this function but applies the transformations in the opposite
         direction to distort the points instead of undistorting them.
-        
+
     pycvcam.undistort_image
         Undistort an image using the camera intrinsic and distortion transformations.
-        
+
     pycvcam.project_points
         Project 3D points to 2D image points using the camera intrinsic, distortion,
         and extrinsic transformations.
-    
+
 
 
     Example
@@ -185,20 +189,20 @@ def undistort_points(
 
         # Undistort the 2D image points
         normalized_points = undistort_points(
-            image_points, 
-            intrinsic=intrinsic, 
+            image_points,
+            intrinsic=intrinsic,
             distortion=distortion
         )
 
-    To return the undistorted points in the image coordinate system, you can provide 
+    To return the undistorted points in the image coordinate system, you can provide
     a projection P equal to the intrinsic K:
 
     .. code-block:: python
 
         undistorted_points = undistort_points(
-            image_points, 
-            intrinsic=intrinsic, 
-            distortion=distortion, 
+            image_points,
+            intrinsic=intrinsic,
+            distortion=distortion,
             P=intrinsic
         )
 
@@ -332,42 +336,46 @@ def distort_points(
     P_kwargs: Optional[Dict] = None,
 ) -> numpy.ndarray:
     r"""
-    Distort 2D ``image_points`` using the camera intrinsic, distortion 
-    transformations to obtain the ``distorted_points`` in the normalized coordinate 
+    Distort 2D ``image_points`` using the camera intrinsic, distortion
+    transformations to obtain the ``distorted_points`` in the normalized coordinate
     system or ``transformed_points`` if ``R`` or ``P`` are provided.
-    
+
     As a reminder,
 
     .. math::
 
         \vec{x}_n = \text{Intrinsic}^{-1}(\vec{x}_i) \\
-        \vec{x}_d = \text{Distortion}(\vec{x}_n) \\
-        \text{Then optionally:} \\
+        \vec{x}_d = \text{Distortion}(\vec{x}_n)
+
+    Then optionally,
+
+    .. math::
+
         \vec{x}_u = P(R(\vec{x}_d)))
-        
+
     Where:
-    
+
     - :math:`\vec{x}_i` are the 2D ``image_points`` in the image coordinate system :math:`(\vec{e}_x, \vec{e}_y)`.
     - :math:`\vec{x}_d` are the 2D ``distorted_points`` in the normalized coordinate system :math:`(\vec{I}, \vec{J})`.
     - :math:`\vec{x}_n` are the 2D ``normalized_points`` in the normalized coordinate system :math:`(\vec{I}, \vec{J})`.
     - :math:`\vec{x}_u` are the 2D ``transformed_points`` in the space required by the user.
 
     .. note::
-    
-        The behavior of the function can be adapted to the user's needs by providing 
+
+        The behavior of the function can be adapted to the user's needs by providing
         the appropriate transformations.
-    
+
         - Use ``intrinsic = None`` to give directly the normalized points in the normalized coordinate system.
         - Use ``P = intrinsic`` to return the distorted points in the image coordinate system.
         - Use ``intrinsic = None`` and ``P = None`` if the distortion model is defined in the image coordinate system.
 
 
-    The given points ``image_points`` are assumed to be in the sensor coordinate system 
+    The given points ``image_points`` are assumed to be in the sensor coordinate system
     and expressed in 2D coordinates with shape (..., 2).
-    
+
     .. note::
 
-        The expected ``image_points`` can be extracted from the ``pixel_points`` 
+        The expected ``image_points`` can be extracted from the ``pixel_points``
         by swapping the axes.
 
 
@@ -378,28 +386,28 @@ def distort_points(
 
     intrinsic : Optional[:class:`Intrinsic`]
         The intrinsic transformation to be applied to the image points.
-        If None, a no intrinsic transformation is applied (i.e., identity 
+        If None, a no intrinsic transformation is applied (i.e., identity
         transformation).
 
     distortion : Optional[:class:`Distortion`]
         The distortion model to be applied to the normalized points.
-        If None, a no distortion transformation is applied (i.e., identity 
+        If None, a no distortion transformation is applied (i.e., identity
         transformation).
 
     R : Optional[:class:`Extrinsic`], optional
-        The rectification extrinsic transformation (rotation and translation) to be 
+        The rectification extrinsic transformation (rotation and translation) to be
         applied to the distorted points.
-        If None, a no extrinsic transformation is applied (i.e., identity 
+        If None, a no extrinsic transformation is applied (i.e., identity
         transformation). Default is None.
 
     P : Optional[:class:`Intrinsic`], optional
         The projection intrinsic transformation to be applied to the distorted points.
-        If None, a no intrinsic transformation is applied (i.e., identity 
-        transformation). This is useful to return the distorted points in the image 
+        If None, a no intrinsic transformation is applied (i.e., identity
+        transformation). This is useful to return the distorted points in the image
         coordinate system.
 
     transpose : bool, optional
-        If True, the input points are assumed to be in the shape (2, ...) instead of 
+        If True, the input points are assumed to be in the shape (2, ...) instead of
         (..., 2). Default is False.
         The output points will be in the same shape as the input points.
 
@@ -409,18 +417,18 @@ def distort_points(
         Default is None.
 
     distortion_kwargs : Optional[Dict], optional
-        Additional keyword arguments to be passed to the distortion transformation 
-        (``distortion._transform``). 
+        Additional keyword arguments to be passed to the distortion transformation
+        (``distortion._transform``).
         Default is None.
 
     R_kwargs : Optional[Dict], optional
-        Additional keyword arguments to be passed to the rectification extrinsic 
+        Additional keyword arguments to be passed to the rectification extrinsic
         transformation (``R._transform``). Default is None.
 
     P_kwargs : Optional[Dict], optional
-        Additional keyword arguments to be passed to the projection intrinsic 
+        Additional keyword arguments to be passed to the projection intrinsic
         transformation (``P._transform``). Default is None.
-        
+
 
     Returns
     -------
@@ -428,21 +436,21 @@ def distort_points(
         The 2D  distorted points in the normalized coordinate system with shape
         (..., 2) or the 2D transformed points in the user coordinate system
         if ``P`` or ``R`` are given.
-        
-        
+
+
     See Also
     --------
     pycvcam.undistort_points
-        Similar to this function but applies the transformations in the opposite 
+        Similar to this function but applies the transformations in the opposite
         direction to undistort the points instead of distorting them.
-        
+
     pycvcam.distort_image
         Distort an image using the camera intrinsic and distortion transformations.
-        
+
     pycvcam.project_points
         Project 3D points to 2D image points using the camera intrinsic, distortion,
         and extrinsic transformations.
-    
+
 
 
     Example
@@ -475,20 +483,20 @@ def distort_points(
 
         # Undistort the 2D image points
         normalized_points = undistort_points(
-            image_points, 
-            intrinsic=intrinsic, 
+            image_points,
+            intrinsic=intrinsic,
             distortion=distortion
         )
 
-    To return the undistorted points in the image coordinate system, you can provide 
+    To return the undistorted points in the image coordinate system, you can provide
     a projection P equal to the intrinsic K:
 
     .. code-block:: python
 
         undistorted_points = undistort_points(
-            image_points, 
-            intrinsic=intrinsic, 
-            distortion=distortion, 
+            image_points,
+            intrinsic=intrinsic,
+            distortion=distortion,
             P=intrinsic
         )
 
