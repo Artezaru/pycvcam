@@ -51,11 +51,9 @@ def project_points(
 
     .. math::
 
-        \begin{align*}
         \vec{x}_n &= \text{Extrinsic}(\vec{X}_w) \\
         \vec{x}_d &= \text{Distortion}(\vec{x}_n) \\
         \vec{x}_i &= \text{Intrinsic}(\vec{x}_d) \\
-        \end{align*}
 
     Where:
 

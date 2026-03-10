@@ -47,13 +47,11 @@ def undistort_points(
 
     .. math::
 
-        \begin{align*}
         \vec{x}_d = \text{Intrinsic}^{-1}(\vec{x}_i) \\
         \vec{x}_n = \text{Distortion}^{-1}(\vec{x}_d) \\
         \text{Then optionally:} \\
         \vec{x}_u = P(R(\vec{x}_n)))
-        \end{align*}
-        
+
     Where:
     
     - :math:`\vec{x}_i` are the 2D ``image_points`` in the image coordinate system :math:`(\vec{e}_x, \vec{e}_y)`.
@@ -342,12 +340,10 @@ def distort_points(
 
     .. math::
 
-        \begin{align*}
         \vec{x}_n = \text{Intrinsic}^{-1}(\vec{x}_i) \\
         \vec{x}_d = \text{Distortion}(\vec{x}_n) \\
         \text{Then optionally:} \\
         \vec{x}_u = P(R(\vec{x}_d)))
-        \end{align*}
         
     Where:
     
