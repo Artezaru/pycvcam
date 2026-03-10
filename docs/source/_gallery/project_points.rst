@@ -286,7 +286,7 @@ In this case, add a random :math:`z` component to the normalized 2D points to ma
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.128 seconds)
+   **Total running time of the script:** (0 minutes 0.156 seconds)
 
 
 .. _sphx_glr_download_.._.._docs_source__gallery_project_points.py:
