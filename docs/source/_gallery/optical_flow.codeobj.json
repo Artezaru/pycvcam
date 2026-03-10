@@ -1,0 +1,1216 @@
+{
+ "F": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "N_mean": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "int"
+  }
+ ],
+ "_": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "int"
+  }
+ ],
+ "crop_error": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "dis_F": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "dis_flow": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "tuple"
+  }
+ ],
+ "dis_fx": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "dis_fy": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "distorted_image": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "distorted_image.astype": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "builtin_function_or_method"
+  }
+ ],
+ "distorted_points": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "error": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "flow": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "fx": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "fy": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "height": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "int"
+  }
+ ],
+ "image": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "image.astype": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "builtin_function_or_method"
+  }
+ ],
+ "image.shape": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "tuple"
+  }
+ ],
+ "image_points": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "list_cost": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "list"
+  }
+ ],
+ "list_cost.append": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "builtin_function_or_method"
+  }
+ ],
+ "maxf": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "float64"
+  }
+ ],
+ "maxfx": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "float64"
+  }
+ ],
+ "maxfy": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "float64"
+  }
+ ],
+ "minf": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "float64"
+  }
+ ],
+ "minfx": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "float64"
+  }
+ ],
+ "minfy": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "float64"
+  }
+ ],
+ "noise_GLpc": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "noise_level": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "float64"
+  }
+ ],
+ "noise_random": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "noise_rmse": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "list"
+  }
+ ],
+ "noise_rmse.append": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "builtin_function_or_method"
+  }
+ ],
+ "noisy_dis_flow": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "tuple"
+  }
+ ],
+ "noisy_dis_fx": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "noisy_dis_fy": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "noisy_distorted_image": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "numpy.clip": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "_ArrayFunctionDispatcher"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "clip"
+  }
+ ],
+ "numpy.float64": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "float64"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "floating"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "float"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "inexact"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "number"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "generic"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "float64"
+  }
+ ],
+ "numpy.indices": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "indices"
+  }
+ ],
+ "numpy.linalg.norm": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "_ArrayFunctionDispatcher"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy.linalg",
+   "module_short": "numpy.linalg",
+   "name": "norm"
+  }
+ ],
+ "numpy.linspace": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "_ArrayFunctionDispatcher"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "linspace"
+  }
+ ],
+ "numpy.max": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "_ArrayFunctionDispatcher"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "max"
+  }
+ ],
+ "numpy.mean": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "_ArrayFunctionDispatcher"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "mean"
+  }
+ ],
+ "numpy.min": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "_ArrayFunctionDispatcher"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "min"
+  }
+ ],
+ "numpy.random.normal": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "module.normal"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy.random",
+   "module_short": "numpy.random",
+   "name": "normal"
+  }
+ ],
+ "numpy.round": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "_ArrayFunctionDispatcher"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "round"
+  }
+ ],
+ "numpy.sqrt": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ufunc"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "sqrt"
+  }
+ ],
+ "numpy.uint8": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "uint8"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "unsignedinteger"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "integer"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "number"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "generic"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "uint8"
+  }
+ ],
+ "pixel_points": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "plt.colorbar": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "colorbar"
+  }
+ ],
+ "plt.figure": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "figure"
+  }
+ ],
+ "plt.grid": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "grid"
+  }
+ ],
+ "plt.imshow": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "imshow"
+  }
+ ],
+ "plt.plot": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "plot"
+  }
+ ],
+ "plt.show": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "show"
+  }
+ ],
+ "plt.subplot": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "subplot"
+  }
+ ],
+ "plt.tight_layout": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "tight_layout"
+  }
+ ],
+ "plt.title": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "title"
+  }
+ ],
+ "plt.xlabel": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "xlabel"
+  }
+ ],
+ "plt.ylabel": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "ylabel"
+  }
+ ],
+ "pycvcam.ZernikeDistortion": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects.zernike_distortion",
+   "module_short": "pycvcam.distortion_objects.zernike_distortion",
+   "name": "ZernikeDistortion"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects",
+   "module_short": "pycvcam.distortion_objects",
+   "name": "ZernikeDistortion"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "ZernikeDistortion"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.core.distortion",
+   "module_short": "pycvcam.core",
+   "name": "Distortion"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Distortion"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Distortion"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.core.transform",
+   "module_short": "pycvcam.core",
+   "name": "Transform"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Transform"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Transform"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "abc",
+   "module_short": "abc",
+   "name": "ABC"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "ZernikeDistortion"
+  }
+ ],
+ "pycvcam.compute_optical_flow": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "compute_optical_flow"
+  },
+  {
+   "is_class": false,
+   "is_explicit": true,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "compute_optical_flow"
+  }
+ ],
+ "pycvcam.display_optical_flow": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "display_optical_flow"
+  },
+  {
+   "is_class": false,
+   "is_explicit": true,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "display_optical_flow"
+  }
+ ],
+ "pycvcam.distort_image": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "distort_image"
+  }
+ ],
+ "pycvcam.get_lena_image": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "get_lena_image"
+  }
+ ],
+ "rmse": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "float64"
+  }
+ ],
+ "uint8_distorted_image": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "uint8_image": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "uint8_noisy_distorted_image": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "width": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "int"
+  }
+ ],
+ "zernike_distortion": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects.zernike_distortion",
+   "module_short": "pycvcam.distortion_objects.zernike_distortion",
+   "name": "ZernikeDistortion"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects",
+   "module_short": "pycvcam.distortion_objects",
+   "name": "ZernikeDistortion"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "ZernikeDistortion"
+  }
+ ],
+ "zernike_distortion.center": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects.zernike_distortion",
+   "module_short": "pycvcam.distortion_objects.zernike_distortion",
+   "name": "ZernikeDistortion.center"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects",
+   "module_short": "pycvcam.distortion_objects",
+   "name": "ZernikeDistortion.center"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "ZernikeDistortion.center"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.distortion",
+   "module_short": "pycvcam.core.distortion",
+   "name": "Distortion.center"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Distortion.center"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Distortion.center"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.transform",
+   "module_short": "pycvcam.core.transform",
+   "name": "Transform.center"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Transform.center"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Transform.center"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "abc",
+   "module_short": "abc",
+   "name": "ABC.center"
+  }
+ ],
+ "zernike_distortion.distort": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects.zernike_distortion",
+   "module_short": "pycvcam.distortion_objects.zernike_distortion",
+   "name": "ZernikeDistortion.distort"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects",
+   "module_short": "pycvcam.distortion_objects",
+   "name": "ZernikeDistortion.distort"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "ZernikeDistortion.distort"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.distortion",
+   "module_short": "pycvcam.core",
+   "name": "Distortion.distort"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Distortion.distort"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Distortion.distort"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.transform",
+   "module_short": "pycvcam.core.transform",
+   "name": "Transform.distort"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Transform.distort"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Transform.distort"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "abc",
+   "module_short": "abc",
+   "name": "ABC.distort"
+  }
+ ],
+ "zernike_distortion.radius": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects.zernike_distortion",
+   "module_short": "pycvcam.distortion_objects.zernike_distortion",
+   "name": "ZernikeDistortion.radius"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects",
+   "module_short": "pycvcam.distortion_objects",
+   "name": "ZernikeDistortion.radius"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "ZernikeDistortion.radius"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.distortion",
+   "module_short": "pycvcam.core.distortion",
+   "name": "Distortion.radius"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Distortion.radius"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Distortion.radius"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.transform",
+   "module_short": "pycvcam.core.transform",
+   "name": "Transform.radius"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Transform.radius"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Transform.radius"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "abc",
+   "module_short": "abc",
+   "name": "ABC.radius"
+  }
+ ]
+}

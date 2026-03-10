@@ -1,0 +1,1577 @@
+{
+ "ax_distorted": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Axes"
+  }
+ ],
+ "ax_distorted.axis": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.axis"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.axis"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Axes.axis"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._base",
+   "module_short": "matplotlib.axes._base",
+   "name": "_AxesBase.axis"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "_AxesBase.axis"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "_AxesBase.axis"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.artist",
+   "module_short": "matplotlib.artist",
+   "name": "Artist.axis"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Artist.axis"
+  }
+ ],
+ "ax_distorted.imshow": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.imshow"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.imshow"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Axes.imshow"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._base",
+   "module_short": "matplotlib.axes._base",
+   "name": "_AxesBase.imshow"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "_AxesBase.imshow"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "_AxesBase.imshow"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.artist",
+   "module_short": "matplotlib.artist",
+   "name": "Artist.imshow"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Artist.imshow"
+  }
+ ],
+ "ax_distorted.set_title": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.set_title"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.set_title"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Axes.set_title"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._base",
+   "module_short": "matplotlib.axes._base",
+   "name": "_AxesBase.set_title"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "_AxesBase.set_title"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "_AxesBase.set_title"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.artist",
+   "module_short": "matplotlib.artist",
+   "name": "Artist.set_title"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Artist.set_title"
+  }
+ ],
+ "ax_src": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Axes"
+  }
+ ],
+ "ax_src.axis": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.axis"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.axis"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Axes.axis"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._base",
+   "module_short": "matplotlib.axes._base",
+   "name": "_AxesBase.axis"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "_AxesBase.axis"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "_AxesBase.axis"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.artist",
+   "module_short": "matplotlib.artist",
+   "name": "Artist.axis"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Artist.axis"
+  }
+ ],
+ "ax_src.imshow": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.imshow"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.imshow"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Axes.imshow"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._base",
+   "module_short": "matplotlib.axes._base",
+   "name": "_AxesBase.imshow"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "_AxesBase.imshow"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "_AxesBase.imshow"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.artist",
+   "module_short": "matplotlib.artist",
+   "name": "Artist.imshow"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Artist.imshow"
+  }
+ ],
+ "ax_src.set_title": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.set_title"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.set_title"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Axes.set_title"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._base",
+   "module_short": "matplotlib.axes._base",
+   "name": "_AxesBase.set_title"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "_AxesBase.set_title"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "_AxesBase.set_title"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.artist",
+   "module_short": "matplotlib.artist",
+   "name": "Artist.set_title"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Artist.set_title"
+  }
+ ],
+ "ax_undistorted": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Axes"
+  }
+ ],
+ "ax_undistorted.axis": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.axis"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.axis"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Axes.axis"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._base",
+   "module_short": "matplotlib.axes._base",
+   "name": "_AxesBase.axis"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "_AxesBase.axis"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "_AxesBase.axis"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.artist",
+   "module_short": "matplotlib.artist",
+   "name": "Artist.axis"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Artist.axis"
+  }
+ ],
+ "ax_undistorted.imshow": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.imshow"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.imshow"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Axes.imshow"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._base",
+   "module_short": "matplotlib.axes._base",
+   "name": "_AxesBase.imshow"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "_AxesBase.imshow"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "_AxesBase.imshow"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.artist",
+   "module_short": "matplotlib.artist",
+   "name": "Artist.imshow"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Artist.imshow"
+  }
+ ],
+ "ax_undistorted.set_title": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.set_title"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.set_title"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Axes.set_title"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._base",
+   "module_short": "matplotlib.axes._base",
+   "name": "_AxesBase.set_title"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "_AxesBase.set_title"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "_AxesBase.set_title"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.artist",
+   "module_short": "matplotlib.artist",
+   "name": "Artist.set_title"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Artist.set_title"
+  }
+ ],
+ "cv2.line": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "builtin_function_or_method"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cv2",
+   "module_short": "cv2",
+   "name": "line"
+  }
+ ],
+ "distorted_image": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "distorted_image_pixels": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "distortion": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects.cv2_distortion",
+   "module_short": "pycvcam.distortion_objects.cv2_distortion",
+   "name": "Cv2Distortion"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects",
+   "module_short": "pycvcam.distortion_objects",
+   "name": "Cv2Distortion"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Cv2Distortion"
+  }
+ ],
+ "error_image": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "fig": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.figure",
+   "module_short": "matplotlib.figure",
+   "name": "Figure"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Figure"
+  }
+ ],
+ "fig.add_subplot": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.figure",
+   "module_short": "matplotlib.figure",
+   "name": "Figure.add_subplot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Figure.add_subplot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.figure",
+   "module_short": "matplotlib.figure",
+   "name": "FigureBase.add_subplot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "FigureBase.add_subplot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.artist",
+   "module_short": "matplotlib.artist",
+   "name": "Artist.add_subplot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Artist.add_subplot"
+  }
+ ],
+ "height": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "int"
+  }
+ ],
+ "i": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "int"
+  }
+ ],
+ "image": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "image.shape": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "tuple"
+  }
+ ],
+ "image_height": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "int"
+  }
+ ],
+ "image_width": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "int"
+  }
+ ],
+ "intrinsic": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.intrinsic_objects.cv2_intrinsic",
+   "module_short": "pycvcam.intrinsic_objects.cv2_intrinsic",
+   "name": "Cv2Intrinsic"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.intrinsic_objects",
+   "module_short": "pycvcam.intrinsic_objects",
+   "name": "Cv2Intrinsic"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Cv2Intrinsic"
+  }
+ ],
+ "j": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "int"
+  }
+ ],
+ "numpy.abs": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ufunc"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "abs"
+  }
+ ],
+ "numpy.clip": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "_ArrayFunctionDispatcher"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "clip"
+  }
+ ],
+ "numpy.full": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "full"
+  }
+ ],
+ "numpy.mean": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "_ArrayFunctionDispatcher"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "mean"
+  }
+ ],
+ "numpy.sqrt": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ufunc"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "sqrt"
+  }
+ ],
+ "numpy.uint8": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "uint8"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "unsignedinteger"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "integer"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "number"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "generic"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "uint8"
+  }
+ ],
+ "plt.axis": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "axis"
+  }
+ ],
+ "plt.colorbar": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "colorbar"
+  }
+ ],
+ "plt.figure": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "figure"
+  }
+ ],
+ "plt.imshow": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "imshow"
+  }
+ ],
+ "plt.show": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "show"
+  }
+ ],
+ "plt.subplot": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "subplot"
+  }
+ ],
+ "plt.tight_layout": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "tight_layout"
+  }
+ ],
+ "plt.title": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "title"
+  }
+ ],
+ "pycvcam.Cv2Distortion": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects.cv2_distortion",
+   "module_short": "pycvcam.distortion_objects.cv2_distortion",
+   "name": "Cv2Distortion"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects",
+   "module_short": "pycvcam.distortion_objects",
+   "name": "Cv2Distortion"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Cv2Distortion"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.core.distortion",
+   "module_short": "pycvcam.core",
+   "name": "Distortion"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Distortion"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Distortion"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.core.transform",
+   "module_short": "pycvcam.core",
+   "name": "Transform"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Transform"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Transform"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "abc",
+   "module_short": "abc",
+   "name": "ABC"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Cv2Distortion"
+  }
+ ],
+ "pycvcam.Cv2Intrinsic.from_matrix": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.intrinsic_objects.cv2_intrinsic",
+   "module_short": "pycvcam.intrinsic_objects.cv2_intrinsic",
+   "name": "Cv2Intrinsic.from_matrix"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.intrinsic_objects",
+   "module_short": "pycvcam.intrinsic_objects",
+   "name": "Cv2Intrinsic.from_matrix"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Cv2Intrinsic.from_matrix"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.core.intrinsic",
+   "module_short": "pycvcam.core.intrinsic",
+   "name": "Intrinsic.from_matrix"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Intrinsic.from_matrix"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Intrinsic.from_matrix"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.core.transform",
+   "module_short": "pycvcam.core.transform",
+   "name": "Transform.from_matrix"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Transform.from_matrix"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Transform.from_matrix"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "abc",
+   "module_short": "abc",
+   "name": "ABC.from_matrix"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.Cv2Intrinsic",
+   "module_short": "pycvcam.Cv2Intrinsic",
+   "name": "from_matrix"
+  }
+ ],
+ "pycvcam.ZernikeDistortion": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects.zernike_distortion",
+   "module_short": "pycvcam.distortion_objects.zernike_distortion",
+   "name": "ZernikeDistortion"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects",
+   "module_short": "pycvcam.distortion_objects",
+   "name": "ZernikeDistortion"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "ZernikeDistortion"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.core.distortion",
+   "module_short": "pycvcam.core",
+   "name": "Distortion"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Distortion"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Distortion"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.core.transform",
+   "module_short": "pycvcam.core",
+   "name": "Transform"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Transform"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Transform"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "abc",
+   "module_short": "abc",
+   "name": "ABC"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "ZernikeDistortion"
+  }
+ ],
+ "pycvcam.core.Distortion": [
+  {
+   "is_class": false,
+   "is_explicit": true,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Distortion"
+  }
+ ],
+ "pycvcam.core.Intrinsic": [
+  {
+   "is_class": false,
+   "is_explicit": true,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Intrinsic"
+  }
+ ],
+ "pycvcam.distort_image": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "distort_image"
+  },
+  {
+   "is_class": false,
+   "is_explicit": true,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "distort_image"
+  }
+ ],
+ "pycvcam.get_lena_image": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "get_lena_image"
+  }
+ ],
+ "pycvcam.undistort_image": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "undistort_image"
+  },
+  {
+   "is_class": false,
+   "is_explicit": true,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "undistort_image"
+  }
+ ],
+ "rmse": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "float64"
+  }
+ ],
+ "src": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "undistorted_image": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "width": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "int"
+  }
+ ],
+ "zernike_distortion": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects.zernike_distortion",
+   "module_short": "pycvcam.distortion_objects.zernike_distortion",
+   "name": "ZernikeDistortion"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects",
+   "module_short": "pycvcam.distortion_objects",
+   "name": "ZernikeDistortion"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "ZernikeDistortion"
+  }
+ ],
+ "zernike_distortion.center": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects.zernike_distortion",
+   "module_short": "pycvcam.distortion_objects.zernike_distortion",
+   "name": "ZernikeDistortion.center"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects",
+   "module_short": "pycvcam.distortion_objects",
+   "name": "ZernikeDistortion.center"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "ZernikeDistortion.center"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.distortion",
+   "module_short": "pycvcam.core.distortion",
+   "name": "Distortion.center"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Distortion.center"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Distortion.center"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.transform",
+   "module_short": "pycvcam.core.transform",
+   "name": "Transform.center"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Transform.center"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Transform.center"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "abc",
+   "module_short": "abc",
+   "name": "ABC.center"
+  }
+ ],
+ "zernike_distortion.radius": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects.zernike_distortion",
+   "module_short": "pycvcam.distortion_objects.zernike_distortion",
+   "name": "ZernikeDistortion.radius"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects",
+   "module_short": "pycvcam.distortion_objects",
+   "name": "ZernikeDistortion.radius"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "ZernikeDistortion.radius"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.distortion",
+   "module_short": "pycvcam.core.distortion",
+   "name": "Distortion.radius"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Distortion.radius"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Distortion.radius"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.transform",
+   "module_short": "pycvcam.core.transform",
+   "name": "Transform.radius"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Transform.radius"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Transform.radius"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "abc",
+   "module_short": "abc",
+   "name": "ABC.radius"
+  }
+ ]
+}

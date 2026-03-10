@@ -70,10 +70,13 @@ __all__.extend(["read_transform", "write_transform"])
 from .optimize.optimize_transforms import (
     optimize_parameters_gn,
     optimize_parameters_trf,
+    optimize_parameters_lm,
     optimize_chains_gn,
     optimize_chains_trf,
+    optimize_chains_lm,
     optimize_camera_gn,
     optimize_camera_trf,
+    optimize_camera_lm,
 )
 from .optimize.optimize_input_points import optimize_input_points
 
@@ -81,10 +84,13 @@ __all__.extend(
     [
         "optimize_parameters_gn",
         "optimize_parameters_trf",
+        "optimize_parameters_lm",
         "optimize_chains_gn",
         "optimize_chains_trf",
+        "optimize_chains_lm",
         "optimize_camera_gn",
         "optimize_camera_trf",
+        "optimize_camera_lm",
         "optimize_input_points",
     ]
 )
