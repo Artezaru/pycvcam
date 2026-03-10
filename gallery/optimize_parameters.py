@@ -218,29 +218,6 @@ print("Optimization cost:", result.cost)
 print("Flow RMSE:", rmse_flow)
 print("Parameters Error:", params_error, f"({params_rel_error:.2%})")
 
-print("\n")
-print("Initial Distortion Parameters:", initial_distortion.parameters)
-parameters_bis = pycvcam.optimize_parameters_gn(
-    initial_distortion,
-    normalized_points,
-    distorted_points,
-    auto=True,  # Set ftol, xtol and gtol to 1e-8
-    verbose_level=3,
-)
-print("\n")
-
-print("Parameters from Gauss-Newton:", parameters_bis)
-print("Parameters from Trust Region Reflective:", parameters)
-print("Difference between parameters:", parameters_bis - parameters)
-print(
-    "Difference norm between parameters:",
-    numpy.linalg.norm(parameters_bis - parameters),
-)
-
-import sys
-
-sys.exit(0)  # Stop execution to avoid running the next example in the same session
-
 # %%
 # Optimizing Parameters of a complete Camera Model (PnP problem)
 # -----------------------------------------------------------------

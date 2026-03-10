@@ -943,10 +943,9 @@ def _solve_optimize_chains_gauss_newton(
     JTJ = None
     cost = None
     optimality = None
-    last_costs = []
+    last_cost = None
     last_optimality = None
     history = [] if return_history else None
-    oscillation_window = 10  # Number of iterations to check for oscillations
     end = False
 
     if verbose_level >= 2:
@@ -971,14 +970,11 @@ def _solve_optimize_chains_gauss_newton(
 
         if cost is None:
             cost = 0.5 * numpy.dot(R, R)
-        else:
-            cost = cost
-        last_costs.append(cost)
+        last_cost = cost
 
         if optimality is None:
-            last_optimality = numpy.linalg.norm(JTR, ord=numpy.inf)
-        else:
-            last_optimality = optimality
+            optimality = numpy.linalg.norm(JTR, ord=numpy.inf)
+        last_optimality = optimality
 
         R, J, JTR, JTJ, cost, optimality = (
             None,
@@ -991,14 +987,14 @@ def _solve_optimize_chains_gauss_newton(
 
         if verbose_level >= 2 and iteration == 0:
             print(
-                f" {iteration:^10}   {iteration+1:^10}   {last_costs[0]:^10.3e}   {'':^15}   {'':^10}   {last_optimality:^10.3e}"
+                f" {iteration:^10}   {iteration+1:^10}   {last_cost:^10.3e}   {'':^15}   {'':^10}   {last_optimality:^10.3e}"
             )
 
         if verbose_level >= 2 or ftol is not None:
             if R is None or J is None:
                 R, J = f(params), jac(params)
             cost = 0.5 * numpy.dot(R, R)
-            cost_reduction = last_costs[-1] - cost
+            cost_reduction = last_cost - cost
 
         if verbose_level >= 2 or gtol is not None:
             if JTR is None:
@@ -1031,20 +1027,6 @@ def _solve_optimize_chains_gauss_newton(
                 if verbose_level >= 1:
                     print(
                         f"Cost reduction {cost_reduction:.3e} is less than ftol * cost {ftol * cost:.3e}, stopping optimization."
-                    )
-                end = True
-
-        if len(last_costs) > oscillation_window:
-            recent_costs = last_costs[-oscillation_window:]
-            diffs = numpy.diff(recent_costs)
-            signs = numpy.sign(diffs)
-            signs[signs == 0] = numpy.roll(signs, 1)[signs == 0]
-            oscillating = numpy.all(signs[1:] * signs[:-1] < 0)
-
-            if oscillating:
-                if verbose_level >= 1:
-                    print(
-                        f"Cost function value oscillations detected in the last {oscillation_window} iterations, stopping optimization."
                     )
                 end = True
 
