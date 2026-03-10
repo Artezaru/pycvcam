@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pycvcam.optimize.optimize_transforms &#8212; pycvcam 2.1.7 documentation</title>
+    <title>pycvcam.optimize.optimize_transforms &#8212; pycvcam 2.1.8 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=ebebaa27"></script>
+    <script src="../../../_static/documentation_options.js?v=03f109e5"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -116,7 +116,7 @@
   
   
   
-    <p class="title logo__title">pycvcam 2.1.7 documentation</p>
+    <p class="title logo__title">pycvcam 2.1.8 documentation</p>
   
 </a></div>
     
@@ -1229,15 +1229,6 @@
         <span class="n">_sparse</span><span class="o">=</span><span class="n">_sparse</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="n">callback</span><span class="p">,</span> <span class="n">get_history</span> <span class="o">=</span> <span class="n">_build_callback_least_squares</span><span class="p">(</span>
-        <span class="n">seq_transforms</span><span class="o">=</span><span class="n">seq_transforms</span><span class="p">,</span>
-        <span class="n">seq_masks</span><span class="o">=</span><span class="n">seq_masks</span><span class="p">,</span>
-        <span class="n">seq_guesses</span><span class="o">=</span><span class="n">seq_guesses</span><span class="p">,</span>
-        <span class="n">return_history</span><span class="o">=</span><span class="n">return_history</span><span class="p">,</span>
-        <span class="n">max_iterations</span><span class="o">=</span><span class="n">max_iterations</span><span class="p">,</span>
-        <span class="n">max_time</span><span class="o">=</span><span class="n">max_time</span><span class="p">,</span>
-    <span class="p">)</span>
-
     <span class="k">if</span> <span class="n">verbose_level</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
         <span class="n">_study_jacobian_least_squares</span><span class="p">(</span>
             <span class="n">f</span><span class="p">(</span><span class="n">params_initial</span><span class="p">),</span>
@@ -1259,7 +1250,6 @@
         <span class="n">verbose</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">verbose_level</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
         <span class="n">method</span><span class="o">=</span><span class="s2">&quot;lm&quot;</span><span class="p">,</span>  <span class="c1"># Levenberg-Marquardt algorithm</span>
         <span class="n">loss</span><span class="o">=</span><span class="n">loss</span><span class="p">,</span>
-        <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">verbose_level</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
@@ -1282,11 +1272,17 @@
     <span class="n">parameters</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>  <span class="c1"># len n_transforms, each shape (n_params,)</span>
 
     <span class="k">if</span> <span class="n">return_result</span> <span class="ow">and</span> <span class="n">return_history</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">get_history</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">parameters</span><span class="p">,</span>
+            <span class="n">result</span><span class="p">,</span>
+            <span class="p">[(</span><span class="n">numpy</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_transforms</span><span class="p">))],</span>
+        <span class="p">)</span>
     <span class="k">elif</span> <span class="n">return_result</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">result</span>
     <span class="k">elif</span> <span class="n">return_history</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">get_history</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">parameters</span><span class="p">,</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_transforms</span><span class="p">))</span>
+        <span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">parameters</span>
 
