@@ -101,7 +101,7 @@ def _study_jacobian_least_squares(
 
     # Variance contribution of each singular value (1/sigma^2)
     print("\nSingular values and their contribution to the variance:")
-    header = f"| {"Index":^10} | {"Singular Value λ":^18} | {"Var = 1/λ^2":^20} |"
+    header = f"| {'Index':^10} | {'Singular Value λ':^18} | {'Var = 1/λ^2':^20} |"
     print(header)
     for i, sigma in enumerate(S):
         var_contribution = 1 / (sigma**2) if sigma > 1e-12 else numpy.inf
