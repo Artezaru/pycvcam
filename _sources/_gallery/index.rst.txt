@@ -64,7 +64,7 @@
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="This example illustrate how to use the optimize_parameters_least_squares function to optimize the distortion parameters of a camera model, which includes the intrinsic and distortion transformations.">
+    <div class="sphx-glr-thumbcontainer" tooltip="This example illustrate how to use the optimize_parameters_trf function to optimize the distortion parameters of a camera model, which includes the intrinsic and distortion transformations.">
 
 .. only:: html
 

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pycvcam.core.TransformResult &#8212; pycvcam 1.6.1 documentation</title>
+    <title>pycvcam.core.TransformResult &#8212; pycvcam 2.1.0 documentation</title>
   
   
   
@@ -44,7 +44,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=d6a008b6"></script>
+    <script src="../_static/documentation_options.js?v=20623aea"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -120,7 +120,7 @@
   
   
   
-    <p class="title logo__title">pycvcam 1.6.1 documentation</p>
+    <p class="title logo__title">pycvcam 2.1.0 documentation</p>
   
 </a></div>
     
@@ -463,8 +463,19 @@
 <li class="toctree-l1"><a class="reference internal" href="optical_flow.html">Optical Flow Operations</a></li>
 </ul>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="optimize_parameters_least_squares.html">Optimize Parameters with Least Squares</a></li>
-<li class="toctree-l1"><a class="reference internal" href="optimize_input_points.html">optimize_input_points</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="optimize_parameters.html">Optimize parameters of transformations</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.optimize_parameters_gn.html">pycvcam.optimize_parameters_gn</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.optimize_parameters_trf.html">pycvcam.optimize_parameters_trf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.optimize_camera_gn.html">pycvcam.optimize_camera_gn</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.optimize_camera_trf.html">pycvcam.optimize_camera_trf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.optimize_chains_gn.html">pycvcam.optimize_chains_gn</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.optimize_chains_trf.html">pycvcam.optimize_chains_trf</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="optimize_input_points.html">Optimize Input Points</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.optimize_input_points.html">pycvcam.optimize_input_points</a></li>
+</ul>
+</details></li>
 </ul>
 </div>
 </nav></div>
@@ -554,9 +565,9 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>transformed_points</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>ndarray</em></a>)</p></li>
-<li><p><strong>jacobian_dx</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>ndarray</em></a><em> | </em><em>None</em>)</p></li>
-<li><p><strong>jacobian_dp</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>ndarray</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>transformed_points</strong> (<em>ndarray</em>)</p></li>
+<li><p><strong>jacobian_dx</strong> (<em>ndarray</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>jacobian_dp</strong> (<em>ndarray</em><em> | </em><em>None</em>)</p></li>
 <li><p><strong>transpose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>)</p></li>
 </ul>
 </dd>
@@ -568,7 +579,7 @@
 Shape (…, output_dim).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)">numpy.ndarray</a></p>
+<dd class="field-odd"><p>numpy.ndarray</p>
 </dd>
 </dl>
 </dd></dl>
@@ -580,7 +591,7 @@ Shape (…, output_dim).</p>
 Shape (…, output_dim, input_dim).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Optional[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)">numpy.ndarray</a>]</p>
+<dd class="field-odd"><p>Optional[numpy.ndarray]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -592,7 +603,7 @@ Shape (…, output_dim, input_dim).</p>
 Shape (…, output_dim, n_params).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Optional[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)">numpy.ndarray</a>]</p>
+<dd class="field-odd"><p>Optional[numpy.ndarray]</p>
 </dd>
 </dl>
 </dd></dl>

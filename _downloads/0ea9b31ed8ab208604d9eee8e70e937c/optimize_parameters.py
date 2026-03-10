@@ -5,13 +5,12 @@
 Optimizing distortion parameters with least squares
 ======================================================================================================
 
-This example illustrate how to use the ``optimize_parameters_least_squares`` function to optimize the distortion parameters of a camera model, which includes the intrinsic and distortion transformations.
+This example illustrate how to use the ``optimize_parameters_trf`` function to optimize the distortion parameters of a camera model, which includes the intrinsic and distortion transformations.
 
 .. seealso::
 
-    - :func:`pycvcam.optimize_parameters_least_squares` for the function to optimize distortion parameters.
-    - :func:`pycvcam.optimize_camera_least_squares` for the function to optimize camera parameters (intrinsic, distortion, and extrinsic).
-    - :func:`pycvcam.optimize_chain_parameters_least_squares` for the function to optimize parameters of chains of transformations.
+    - :func:`pycvcam.optimize_parameters_trf`: Optimize the parameters of a transformation using Trust Region Reflective optimization.
+    - :func:`pycvcam.optimize_camera_trf`: Optimize the parameters of a complete camera model using Trust Region Reflective optimization.
 
 """
 
@@ -32,7 +31,6 @@ This example illustrate how to use the ``optimize_parameters_least_squares`` fun
 
 import numpy
 import pycvcam
-import pycvcam.optimize as pycvopt
 import cv2
 import matplotlib.pyplot as plt
 
@@ -164,6 +162,7 @@ ax6 = fig.add_subplot(2, 3, 6)
 ax6.imshow(tfy, cmap="inferno", vmin=tfy_min, vmax=tfy_max)
 ax6.set_title("True Flow Y Component")
 ax6.axis("off")
+plt.show()
 
 
 # %%
@@ -190,7 +189,7 @@ initial_distortion = distortion.copy()
 initial_distortion.parameters = numpy.zeros_like(distortion.parameters)
 
 print("\n")
-parameters, result = pycvopt.optimize_parameters_least_squares(
+parameters, result = pycvcam.optimize_parameters_trf(
     initial_distortion,
     normalized_points,
     distorted_points,
@@ -278,25 +277,26 @@ extrinsic_bounds = (  # rvec and tvec bounds
 )
 
 print("\n")
-_, optimized_distortio_params, optimized_extrinsic_params, result = (
-    pycvopt.optimize_camera_least_squares(
-        intrinsic,
-        initial_distortion,
-        initial_extrinsic,
-        world_points,
-        image_points,
-        mask_intrinsic=[False for _ in range(4)],  # Do not optimize intrinsic
-        bounds_distortion=distortion_bounds,
-        bounds_extrinsic=extrinsic_bounds,
-        auto=True,  # Set ftol, xtol and gtol to 1e-8
-        return_result=True,
-        verbose_level=3,
-    )
+params, result = pycvcam.optimize_camera_trf(
+    intrinsic,
+    initial_distortion,
+    initial_extrinsic,
+    world_points,
+    image_points,
+    mask_intrinsic=[False for _ in range(4)],  # Do not optimize intrinsic
+    bounds_distortion=distortion_bounds,
+    bounds_extrinsic=extrinsic_bounds,
+    auto=True,  # Set ftol, xtol and gtol to 1e-8
+    return_result=True,
+    verbose_level=3,
 )
 print("\n")
+optimized_intrinsic_params, optimized_distortion_params, optimized_extrinsic_params = (
+    params
+)
 
 optimized_distortion = initial_distortion.copy()
-optimized_distortion.parameters = optimized_distortio_params
+optimized_distortion.parameters = optimized_distortion_params
 optimized_extrinsic = initial_extrinsic.copy()
 optimized_extrinsic.parameters = optimized_extrinsic_params
 

@@ -23,15 +23,14 @@
 Optimizing distortion parameters with least squares
 ======================================================================================================
 
-This example illustrate how to use the ``optimize_parameters_least_squares`` function to optimize the distortion parameters of a camera model, which includes the intrinsic and distortion transformations.
+This example illustrate how to use the ``optimize_parameters_trf`` function to optimize the distortion parameters of a camera model, which includes the intrinsic and distortion transformations.
 
 .. seealso::
 
-    - :func:`pycvcam.optimize_parameters_least_squares` for the function to optimize distortion parameters.
-    - :func:`pycvcam.optimize_camera_least_squares` for the function to optimize camera parameters (intrinsic, distortion, and extrinsic).
-    - :func:`pycvcam.optimize_chain_parameters_least_squares` for the function to optimize parameters of chains of transformations.
+    - :func:`pycvcam.optimize_parameters_trf`: Optimize the parameters of a transformation using Trust Region Reflective optimization.
+    - :func:`pycvcam.optimize_camera_trf`: Optimize the parameters of a complete camera model using Trust Region Reflective optimization.
 
-.. GENERATED FROM PYTHON SOURCE LINES 19-32
+.. GENERATED FROM PYTHON SOURCE LINES 18-31
 
 Optimizing Parameters to fit a Distortion model (Image Alignment)
 -------------------------------------------------------------------
@@ -47,14 +46,13 @@ distortion parameters to minimize the flow in the normalized image space.
 First create the images and compute the real flow between the original and
 distorted images.
 
-.. GENERATED FROM PYTHON SOURCE LINES 32-112
+.. GENERATED FROM PYTHON SOURCE LINES 31-110
 
 .. code-block:: Python
 
 
     import numpy
     import pycvcam
-    import pycvcam.optimize as pycvopt
     import cv2
     import matplotlib.pyplot as plt
 
@@ -156,12 +154,12 @@ distorted images.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 113-115
+.. GENERATED FROM PYTHON SOURCE LINES 111-113
 
 Then compute the optical flow between both images using the ``compute_optical_flow``
 function, which computes the dense optical flow between two images using the DIS algorithm.
 
-.. GENERATED FROM PYTHON SOURCE LINES 115-169
+.. GENERATED FROM PYTHON SOURCE LINES 113-168
 
 .. code-block:: Python
 
@@ -217,6 +215,7 @@ function, which computes the dense optical flow between two images using the DIS
     ax6.imshow(tfy, cmap="inferno", vmin=tfy_min, vmax=tfy_max)
     ax6.set_title("True Flow Y Component")
     ax6.axis("off")
+    plt.show()
 
 
 
@@ -228,16 +227,10 @@ function, which computes the dense optical flow between two images using the DIS
    :class: sphx-glr-single-img
 
 
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-
-    (np.float64(-0.5), np.float64(473.5), np.float64(473.5), np.float64(-0.5))
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 170-175
+.. GENERATED FROM PYTHON SOURCE LINES 169-174
 
 To finish, we optimize the distortion parameters to minimize the
 flow in the normalized image space.
@@ -245,7 +238,7 @@ flow in the normalized image space.
 To avoid the border effects of the distortion and undistortion, we will consider
 only the inner part of the image for the optimization by applying a mask to the points.
 
-.. GENERATED FROM PYTHON SOURCE LINES 175-223
+.. GENERATED FROM PYTHON SOURCE LINES 174-222
 
 .. code-block:: Python
 
@@ -267,7 +260,7 @@ only the inner part of the image for the optimization by applying a mask to the 
     initial_distortion.parameters = numpy.zeros_like(distortion.parameters)
 
     print("\n")
-    parameters, result = pycvopt.optimize_parameters_least_squares(
+    parameters, result = pycvcam.optimize_parameters_trf(
         initial_distortion,
         normalized_points,
         distorted_points,
@@ -337,96 +330,96 @@ only the inner part of the image for the optimization by applying a mask to the 
 
     Higher and Smallers singular values directions vectors (V^T rows):
     | Parameter  |      Vt[0]      |      Vt[9]      |     Vt[10]      |     Vt[11]      | 
-    |     0      |   -0.000e+00    |    0.000e+00    |   -0.000e+00    |   -0.000e+00    | 
-    |     1      |    8.519e-01    |    9.145e-17    |   -5.737e-16    |   -3.896e-23    | 
-    |     2      |    3.123e-19    |    3.271e-17    |    1.068e-18    |   -1.110e-16    | 
-    |     3      |    4.984e-17    |   -4.192e-16    |    1.350e-16    |    0.000e+00    | 
-    |     4      |   -2.094e-19    |    4.552e-17    |    1.487e-18    |   -5.551e-17    | 
-    |     5      |   -2.220e-16    |   -1.223e-14    |   -3.287e-17    |    2.303e-28    | 
-    |     6      |   -1.943e-18    |    2.273e-31    |   -2.246e-30    |    2.359e-16    | 
-    |     7      |   -7.345e-19    |    1.000e+00    |    7.190e-16    |    1.543e-33    | 
+    |     0      |   -0.000e+00    |    0.000e+00    |   -0.000e+00    |    0.000e+00    | 
+    |     1      |    8.519e-01    |   -9.145e-17    |    5.737e-16    |    3.896e-23    | 
+    |     2      |   -3.123e-19    |    3.271e-17    |    1.068e-18    |   -1.110e-16    | 
+    |     3      |    4.984e-17    |    4.192e-16    |   -1.350e-16    |    0.000e+00    | 
+    |     4      |    2.094e-19    |    4.552e-17    |    1.487e-18    |   -5.551e-17    | 
+    |     5      |   -2.220e-16    |    1.223e-14    |    3.287e-17    |   -2.303e-28    | 
+    |     6      |    1.943e-18    |    2.273e-31    |   -2.246e-30    |    2.359e-16    | 
+    |     7      |   -7.345e-19    |   -1.000e+00    |   -7.190e-16    |   -1.543e-33    | 
     |     8      |    0.000e+00    |    0.000e+00    |    0.000e+00    |   -3.864e-17    | 
-    |     9      |   -5.236e-01    |    1.474e-16    |   -9.699e-16    |    2.395e-23    | 
-    |     10     |    5.740e-20    |   -4.976e-32    |   -2.136e-32    |   -1.000e+00    | 
-    |     11     |    1.909e-17    |    8.749e-16    |   -1.000e+00    |    3.749e-32    | 
+    |     9      |   -5.236e-01    |   -1.474e-16    |    9.699e-16    |   -2.395e-23    | 
+    |     10     |   -5.740e-20    |   -4.976e-32    |   -2.136e-32    |   -1.000e+00    | 
+    |     11     |    1.909e-17    |   -8.749e-16    |    1.000e+00    |   -3.749e-32    | 
 
     Estimated variances of the parameters:
     | Parameter  |     Value P     | Var = σ^2 (J.T J)^-1 |  Ratio √V/|P|   |
-    |     0      |    0.000e+00    |      8.019e-10       |    > 1000 %     |
-    |     1      |    0.000e+00    |      8.019e-10       |    > 1000 %     |
-    |     2      |    0.000e+00    |      1.306e-09       |    > 1000 %     |
-    |     3      |    0.000e+00    |      1.306e-09       |    > 1000 %     |
-    |     4      |    0.000e+00    |      1.306e-09       |    > 1000 %     |
-    |     5      |    0.000e+00    |      1.306e-09       |    > 1000 %     |
-    |     6      |    0.000e+00    |      3.132e-09       |    > 1000 %     |
-    |     7      |    0.000e+00    |      3.132e-09       |    > 1000 %     |
-    |     8      |    0.000e+00    |      1.958e-09       |    > 1000 %     |
-    |     9      |    0.000e+00    |      1.958e-09       |    > 1000 %     |
-    |     10     |    0.000e+00    |      7.831e-09       |    > 1000 %     |
-    |     11     |    0.000e+00    |      7.831e-09       |    > 1000 %     |
+    |     0      |    0.000e+00    |      8.007e-10       |    > 1000 %     |
+    |     1      |    0.000e+00    |      8.007e-10       |    > 1000 %     |
+    |     2      |    0.000e+00    |      1.304e-09       |    > 1000 %     |
+    |     3      |    0.000e+00    |      1.304e-09       |    > 1000 %     |
+    |     4      |    0.000e+00    |      1.304e-09       |    > 1000 %     |
+    |     5      |    0.000e+00    |      1.304e-09       |    > 1000 %     |
+    |     6      |    0.000e+00    |      3.128e-09       |    > 1000 %     |
+    |     7      |    0.000e+00    |      3.128e-09       |    > 1000 %     |
+    |     8      |    0.000e+00    |      1.955e-09       |    > 1000 %     |
+    |     9      |    0.000e+00    |      1.955e-09       |    > 1000 %     |
+    |     10     |    0.000e+00    |      7.819e-09       |    > 1000 %     |
+    |     11     |    0.000e+00    |      7.819e-09       |    > 1000 %     |
 
     --------------------------------------------------
     Optimization in progress...
     --------------------------------------------------
 
        Iteration     Total nfev        Cost      Cost reduction    Step norm     Optimality   
-           0              1         2.6614e+00                                    2.95e+02    
-           1              2         1.8279e-03      2.66e+00       2.16e-02       6.88e-04    
-           2              9         1.8279e-03      0.00e+00       0.00e+00       6.88e-04    
+           0              1         2.6576e+00                                    2.94e+02    
+           1              2         1.8666e-03      2.66e+00       2.16e-02       6.58e-04    
+           2              9         1.8666e-03      0.00e+00       0.00e+00       6.58e-04    
     `xtol` termination condition is satisfied.
-    Function evaluations 9, initial cost 2.6614e+00, final cost 1.8279e-03, first-order optimality 6.88e-04.
+    Function evaluations 9, initial cost 2.6576e+00, final cost 1.8666e-03, first-order optimality 6.58e-04.
 
     --------------------------------------------------
     Jacobian analysis of the least squares problem (End of optimization)
     --------------------------------------------------
 
-    Singular values (max/min): 4.496e+02 / 5.301e+01
-    Condition number: 8.482e+00
+    Singular values (max/min): 4.359e+02 / 4.929e+01
+    Condition number: 8.843e+00
 
     Singular values and their contribution to the variance:
     |   Index    |  Singular Value λ  |     Var = 1/λ^2      |
-    |     0      |     4.496e+02      |      4.946e-06       |
-    |     1      |     4.364e+02      |      5.252e-06       |
-    |     2      |     3.694e+02      |      7.329e-06       |
-    |     3      |     3.304e+02      |      9.161e-06       |
-    |     4      |     1.182e+02      |      7.158e-05       |
-    |     5      |     1.163e+02      |      7.389e-05       |
-    |     6      |     1.041e+02      |      9.230e-05       |
-    |     7      |     9.543e+01      |      1.098e-04       |
-    |     8      |     8.032e+01      |      1.550e-04       |
-    |     9      |     7.841e+01      |      1.627e-04       |
-    |     10     |     5.849e+01      |      2.923e-04       |
-    |     11     |     5.301e+01      |      3.558e-04       |
+    |     0      |     4.359e+02      |      5.263e-06       |
+    |     1      |     4.359e+02      |      5.263e-06       |
+    |     2      |     1.207e+02      |      6.861e-05       |
+    |     3      |     1.207e+02      |      6.861e-05       |
+    |     4      |     1.207e+02      |      6.861e-05       |
+    |     5      |     1.207e+02      |      6.861e-05       |
+    |     6      |     8.459e+01      |      1.398e-04       |
+    |     7      |     8.459e+01      |      1.398e-04       |
+    |     8      |     7.794e+01      |      1.646e-04       |
+    |     9      |     7.794e+01      |      1.646e-04       |
+    |     10     |     4.929e+01      |      4.115e-04       |
+    |     11     |     4.929e+01      |      4.115e-04       |
 
     Higher and Smallers singular values directions vectors (V^T rows):
     | Parameter  |      Vt[0]      |      Vt[9]      |     Vt[10]      |     Vt[11]      | 
-    |     0      |    6.553e-01    |    3.181e-04    |   -1.622e-01    |    3.956e-02    | 
-    |     1      |   -6.299e-01    |   -3.109e-01    |   -6.433e-02    |   -2.131e-01    | 
-    |     2      |    5.376e-02    |   -7.304e-04    |   -5.402e-02    |   -2.625e-02    | 
-    |     3      |   -6.592e-02    |    1.333e-01    |   -2.030e-02    |    7.147e-02    | 
-    |     4      |    8.066e-02    |    9.370e-04    |   -6.969e-02    |    1.419e-02    | 
-    |     5      |   -9.235e-02    |   -7.455e-03    |   -2.712e-02    |   -5.894e-02    | 
-    |     6      |    7.716e-02    |   -1.533e-01    |   -2.932e-01    |    4.926e-02    | 
-    |     7      |   -8.831e-02    |    7.770e-01    |   -1.090e-01    |   -2.115e-01    | 
-    |     8      |   -2.715e-01    |    1.293e-04    |   -2.608e-01    |    6.060e-02    | 
-    |     9      |    2.291e-01    |   -5.000e-01    |   -1.038e-01    |   -3.378e-01    | 
-    |     10     |    7.261e-02    |   -2.410e-03    |    8.320e-01    |   -3.394e-01    | 
-    |     11     |   -7.933e-02    |   -9.097e-02    |    3.028e-01    |    8.145e-01    | 
+    |     0      |   -0.000e+00    |   -0.000e+00    |   -0.000e+00    |    0.000e+00    | 
+    |     1      |    8.519e-01    |   -1.789e-17    |    1.900e-16    |    5.322e-24    | 
+    |     2      |    4.019e-21    |    2.012e-16    |    2.118e-16    |    5.174e-40    | 
+    |     3      |    4.983e-17    |   -1.388e-17    |   -5.858e-17    |    0.000e+00    | 
+    |     4      |    8.450e-22    |   -1.631e-16    |    2.947e-16    |   -1.665e-16    | 
+    |     5      |   -2.096e-40    |   -1.696e-27    |   -3.948e-16    |   -4.096e-29    | 
+    |     6      |   -7.056e-18    |   -1.000e+00    |   -8.308e-31    |    2.394e-16    | 
+    |     7      |   -7.345e-19    |   -1.873e-31    |   -1.025e-15    |   -5.829e-33    | 
+    |     8      |    0.000e+00    |    1.527e-18    |    0.000e+00    |   -3.864e-17    | 
+    |     9      |   -5.236e-01    |    1.100e-17    |    3.456e-16    |   -3.271e-24    | 
+    |     10     |   -3.216e-19    |   -2.671e-16    |   -5.429e-32    |   -1.000e+00    | 
+    |     11     |    1.909e-17    |   -8.407e-31    |    1.000e+00    |   -1.620e-32    | 
 
     Estimated variances of the parameters:
     | Parameter  |     Value P     | Var = σ^2 (J.T J)^-1 |  Ratio √V/|P|   |
-    |     0      |    8.467e-04    |      4.446e-13       |     0.079 %     |
-    |     1      |   -5.469e-03    |      5.413e-13       |     0.013 %     |
-    |     2      |   -5.988e-03    |      9.900e-13       |     0.017 %     |
-    |     3      |    1.426e-02    |      1.051e-12       |     0.007 %     |
-    |     4      |    2.132e-03    |      8.370e-13       |     0.043 %     |
-    |     5      |    4.518e-03    |      8.369e-13       |     0.020 %     |
-    |     6      |   -1.320e-04    |      1.807e-12       |     1.018 %     |
-    |     7      |    4.412e-04    |      1.806e-12       |     0.305 %     |
-    |     8      |   -5.250e-04    |      1.058e-12       |     0.196 %     |
-    |     9      |   -5.766e-03    |      1.295e-12       |     0.020 %     |
-    |     10     |   -3.903e-04    |      3.255e-12       |     0.462 %     |
-    |     11     |    1.172e-02    |      3.591e-12       |     0.016 %     |
+    |     0      |    8.522e-04    |      5.624e-13       |     0.088 %     |
+    |     1      |   -5.469e-03    |      5.624e-13       |     0.014 %     |
+    |     2      |   -5.968e-03    |      9.156e-13       |     0.016 %     |
+    |     3      |    1.426e-02    |      9.156e-13       |     0.007 %     |
+    |     4      |    2.131e-03    |      9.156e-13       |     0.045 %     |
+    |     5      |    4.538e-03    |      9.156e-13       |     0.021 %     |
+    |     6      |   -9.318e-05    |      2.197e-12       |     1.591 %     |
+    |     7      |    4.147e-04    |      2.197e-12       |     0.357 %     |
+    |     8      |   -5.047e-04    |      1.373e-12       |     0.232 %     |
+    |     9      |   -5.778e-03    |      1.373e-12       |     0.020 %     |
+    |     10     |   -3.648e-04    |      5.492e-12       |     0.642 %     |
+    |     11     |    1.170e-02    |      5.492e-12       |     0.020 %     |
 
     ==================================================
 
@@ -434,14 +427,14 @@ only the inner part of the image for the optimization by applying a mask to the 
 
     Optimization success: True
     Optimization message: `xtol` termination condition is satisfied.
-    Optimization cost: 0.00182788119329404
-    Flow RMSE: 0.016177534886348113
-    Parameters Error: 5.847099817463273e-05 (0.27%)
+    Optimization cost: 0.0018665790321604695
+    Flow RMSE: 0.014226723056613743
+    Parameters Error: 4.956260024514429e-05 (0.23%)
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 224-233
+.. GENERATED FROM PYTHON SOURCE LINES 223-232
 
 Optimizing Parameters of a complete Camera Model (PnP problem)
 -----------------------------------------------------------------
@@ -453,7 +446,7 @@ corresponding 2D projections in the image.
 For example, create a point cloud in a rectangle with bounds :math:`[-1, 1]` meters in the :math:`x` and :math:`y` directions and with a :math:`z` component in the range :math:`[4.5, 5.5]` meters.
 Then place a camera near the origin with a small rotation and translation and project the 3D points to 2D image points using a pinhole camera model with Brown-Conrady distortion with a focal length of 1000 pixels and a principal point at (320, 240) pixels.
 
-.. GENERATED FROM PYTHON SOURCE LINES 233-328
+.. GENERATED FROM PYTHON SOURCE LINES 232-328
 
 .. code-block:: Python
 
@@ -505,25 +498,26 @@ Then place a camera near the origin with a small rotation and translation and pr
     )
 
     print("\n")
-    _, optimized_distortio_params, optimized_extrinsic_params, result = (
-        pycvopt.optimize_camera_least_squares(
-            intrinsic,
-            initial_distortion,
-            initial_extrinsic,
-            world_points,
-            image_points,
-            mask_intrinsic=[False for _ in range(4)],  # Do not optimize intrinsic
-            bounds_distortion=distortion_bounds,
-            bounds_extrinsic=extrinsic_bounds,
-            auto=True,  # Set ftol, xtol and gtol to 1e-8
-            return_result=True,
-            verbose_level=3,
-        )
+    params, result = pycvcam.optimize_camera_trf(
+        intrinsic,
+        initial_distortion,
+        initial_extrinsic,
+        world_points,
+        image_points,
+        mask_intrinsic=[False for _ in range(4)],  # Do not optimize intrinsic
+        bounds_distortion=distortion_bounds,
+        bounds_extrinsic=extrinsic_bounds,
+        auto=True,  # Set ftol, xtol and gtol to 1e-8
+        return_result=True,
+        verbose_level=3,
     )
     print("\n")
+    optimized_intrinsic_params, optimized_distortion_params, optimized_extrinsic_params = (
+        params
+    )
 
     optimized_distortion = initial_distortion.copy()
-    optimized_distortion.parameters = optimized_distortio_params
+    optimized_distortion.parameters = optimized_distortion_params
     optimized_extrinsic = initial_extrinsic.copy()
     optimized_extrinsic.parameters = optimized_extrinsic_params
 
@@ -573,132 +567,130 @@ Then place a camera near the origin with a small rotation and translation and pr
     Initial Jacobian (Iter 0) analysis of the least squares problem
     --------------------------------------------------
 
-    6 Extrinsic parameters to optimize - Parameters 0 to 5
-    5 Distortion parameters to optimize - Parameters 6 to 10
-
+    5 Distortion parameters to optimize - Parameters 0 to 4
+    6 Extrinsic parameters to optimize - Parameters 5 to 10
 
     Jacobian shape: 200 x 11 (equations x parameters)
     Overdetermined system (more residuals than parameters), the optimization is likely to converge to a unique solution.
     Density: 90.91%
-    Singular values (max/min): 1.038e+04 / 1.467e-02
-    Condition number: 7.075e+05
+    Singular values (max/min): 1.036e+04 / 6.877e-03
+    Condition number: 1.506e+06
 
     Singular values and their contribution to the variance:
     |   Index    |  Singular Value λ  |     Var = 1/λ^2      |
-    |     0      |     1.038e+04      |      9.281e-09       |
-    |     1      |     1.037e+04      |      9.306e-09       |
-    |     2      |     1.762e+03      |      3.222e-07       |
-    |     3      |     5.268e+02      |      3.603e-06       |
-    |     4      |     5.076e+02      |      3.882e-06       |
-    |     5      |     3.592e+02      |      7.752e-06       |
-    |     6      |     1.134e+02      |      7.782e-05       |
-    |     7      |     1.110e+02      |      8.112e-05       |
-    |     8      |     2.974e+01      |      1.131e-03       |
-    |     9      |     7.669e-01      |      1.700e+00       |
-    |     10     |     1.467e-02      |      4.645e+03       |
+    |     0      |     1.036e+04      |      9.326e-09       |
+    |     1      |     1.034e+04      |      9.345e-09       |
+    |     2      |     1.644e+03      |      3.699e-07       |
+    |     3      |     4.656e+02      |      4.614e-06       |
+    |     4      |     4.310e+02      |      5.382e-06       |
+    |     5      |     3.340e+02      |      8.966e-06       |
+    |     6      |     1.218e+02      |      6.741e-05       |
+    |     7      |     1.202e+02      |      6.926e-05       |
+    |     8      |     2.166e+01      |      2.131e-03       |
+    |     9      |     3.810e-01      |      6.888e+00       |
+    |     10     |     6.877e-03      |      2.114e+04       |
 
     Higher and Smallers singular values directions vectors (V^T rows):
     | Parameter  |      Vt[0]      |      Vt[8]      |      Vt[9]      |     Vt[10]      | 
-    |     0      |    4.811e-01    |    6.292e-03    |   -8.299e-06    |    6.832e-07    | 
-    |     1      |    8.528e-01    |    3.909e-03    |    1.129e-04    |   -1.409e-06    | 
-    |     2      |   -7.108e-03    |    2.144e-04    |   -2.492e-06    |    5.056e-08    | 
-    |     3      |    1.684e-01    |   -1.769e-02    |   -5.457e-04    |    9.279e-06    | 
-    |     4      |   -9.500e-02    |    3.160e-02    |   -9.752e-05    |    6.118e-07    | 
-    |     5      |    7.002e-04    |    2.086e-01    |   -8.687e-03    |    2.709e-04    | 
-    |     6      |   -3.964e-04    |    9.729e-01    |   -9.237e-02    |    5.221e-03    | 
-    |     7      |   -2.190e-05    |    9.193e-02    |    9.866e-01    |   -1.342e-01    | 
-    |     8      |   -3.055e-02    |   -3.241e-03    |    2.904e-04    |    1.240e-05    | 
-    |     9      |    5.417e-02    |   -4.323e-03    |   -1.774e-04    |   -9.003e-06    | 
-    |     10     |   -8.321e-07    |    7.268e-03    |    1.341e-01    |    9.909e-01    | 
+    |     0      |    4.322e-04    |    9.803e-01    |    6.919e-02    |   -3.092e-03    | 
+    |     1      |    2.027e-05    |    6.886e-02    |   -9.923e-01    |    1.030e-01    | 
+    |     2      |    3.692e-02    |   -8.967e-03    |    2.699e-04    |    2.786e-06    | 
+    |     3      |    4.055e-02    |   -1.229e-03    |   -1.804e-04    |    1.234e-08    | 
+    |     4      |    1.093e-06    |    4.060e-03    |   -1.030e-01    |   -9.947e-01    | 
+    |     5      |   -6.616e-01    |   -9.317e-04    |    1.537e-06    |    5.200e-07    | 
+    |     6      |    7.224e-01    |   -1.395e-03    |   -2.580e-06    |    1.838e-07    | 
+    |     7      |    1.593e-02    |   -9.242e-05    |    1.612e-06    |    1.369e-08    | 
+    |     8      |    1.422e-01    |    9.151e-03    |    7.460e-05    |   -1.345e-06    | 
+    |     9      |    1.302e-01    |   -3.231e-03    |   -4.358e-05    |    2.179e-06    | 
+    |     10     |   -2.882e-03    |    1.845e-01    |    4.994e-03    |   -1.217e-04    | 
 
     Estimated variances of the parameters:
     | Parameter  |     Value P     | Var = σ^2 (J.T J)^-1 |  Ratio √V/|P|   |
-    |     0      |    0.000e+00    |      1.521e-03       |    > 1000 %     |
-    |     1      |    0.000e+00    |      1.476e-03       |    > 1000 %     |
-    |     2      |    0.000e+00    |      1.600e-04       |    > 1000 %     |
-    |     3      |    0.000e+00    |      3.712e-02       |    > 1000 %     |
-    |     4      |    0.000e+00    |      3.844e-02       |    > 1000 %     |
-    |     5      |    0.000e+00    |      2.561e-01       |    > 1000 %     |
-    |     6      |    0.000e+00    |      6.927e+01       |    > 1000 %     |
-    |     7      |    0.000e+00    |      4.156e+04       |    > 1000 %     |
-    |     8      |    0.000e+00    |      2.301e-03       |    > 1000 %     |
-    |     9      |    0.000e+00    |      2.076e-03       |    > 1000 %     |
-    |     10     |    0.000e+00    |      2.222e+06       |    > 1000 %     |
+    |     0      |    0.000e+00    |      1.120e+02       |    > 1000 %     |
+    |     1      |    0.000e+00    |      1.092e+05       |    > 1000 %     |
+    |     2      |    0.000e+00    |      2.741e-03       |    > 1000 %     |
+    |     3      |    0.000e+00    |      2.698e-03       |    > 1000 %     |
+    |     4      |    0.000e+00    |      9.883e+06       |    > 1000 %     |
+    |     5      |    0.000e+00    |      1.260e-03       |    > 1000 %     |
+    |     6      |    0.000e+00    |      1.237e-03       |    > 1000 %     |
+    |     7      |    0.000e+00    |      1.777e-04       |    > 1000 %     |
+    |     8      |    0.000e+00    |      3.058e-02       |    > 1000 %     |
+    |     9      |    0.000e+00    |      3.148e-02       |    > 1000 %     |
+    |     10     |    0.000e+00    |      2.675e-01       |    > 1000 %     |
 
     --------------------------------------------------
     Optimization in progress...
     --------------------------------------------------
 
        Iteration     Total nfev        Cost      Cost reduction    Step norm     Optimality   
-           0              1         4.6041e+04                                    2.32e+05    
-           1              2         1.0754e+03      4.50e+04       4.30e-02       2.86e+04    
-           2              3         2.2862e+01      1.05e+03       3.56e-02       8.55e+02    
-           3              4         4.5143e+00      1.83e+01       1.15e-01       4.17e+01    
-           4              5         2.8288e-01      4.23e+00       2.72e-02       4.47e+00    
-           5              6         2.5705e-02      2.57e-01       1.09e-02       2.60e-01    
-           6              7         5.2348e-03      2.05e-02       4.89e-03       1.83e-02    
-           7              8         2.3895e-03      2.85e-03       2.16e-03       3.47e-03    
-           8              9         4.7278e-04      1.92e-03       7.60e-02       9.08e-04    
-           9             10         9.1066e-05      3.82e-04       5.01e-02       2.14e-04    
-          10             11         1.5405e-05      7.57e-05       2.62e-02       5.10e-05    
-          11             12         3.5191e-06      1.19e-05       8.52e-03       1.08e-05    
-          12             13         1.6075e-06      1.91e-06       1.27e-02       2.41e-06    
-          13             14         3.2793e-07      1.28e-06       3.13e-02       2.21e-06    
-          14             15         7.3332e-08      2.55e-07       1.33e-02       4.09e-07    
-          15             16         1.7818e-08      5.55e-08       5.92e-03       8.42e-08    
-          16             17         4.4392e-09      1.34e-08       2.86e-03       1.98e-08    
-          17             18         1.1096e-09      3.33e-09       1.42e-03       5.04e-09    
+           0              1         4.4651e+04                                    2.32e+05    
+           1              2         1.0056e+03      4.36e+04       9.14e-02       2.80e+04    
+           2              3         2.1517e+01      9.84e+02       2.91e-02       9.19e+02    
+           3              4         4.3806e+00      1.71e+01       1.26e-01       5.01e+01    
+           4              5         1.8471e-01      4.20e+00       6.13e-02       3.59e+00    
+           5              6         5.5475e-03      1.79e-01       2.44e-02       2.62e-01    
+           6              7         6.8917e-04      4.86e-03       1.06e-02       3.79e-03    
+           7              8         1.7522e-04      5.14e-04       2.65e-03       5.50e-04    
+           8              9         6.8056e-05      1.07e-04       1.02e-01       1.74e-04    
+           9             10         1.2334e-05      5.57e-05       3.17e-02       2.65e-04    
+          10             11         2.2540e-06      1.01e-05       2.11e-02       4.95e-05    
+          11             12         4.3862e-07      1.82e-06       9.41e-03       1.13e-05    
+          12             13         1.8754e-07      2.51e-07       3.25e-03       1.89e-06    
+          13             14         4.2071e-08      1.45e-07       4.30e-02       7.54e-07    
+          14             15         9.7763e-09      3.23e-08       1.98e-02       1.57e-07    
+          15             16         2.3800e-09      7.40e-09       9.19e-03       3.33e-08    
+          16             17         5.9211e-10      1.79e-09       4.45e-03       7.69e-09    
     `gtol` termination condition is satisfied.
-    Function evaluations 18, initial cost 4.6041e+04, final cost 1.1096e-09, first-order optimality 5.04e-09.
+    Function evaluations 17, initial cost 4.4651e+04, final cost 5.9211e-10, first-order optimality 7.69e-09.
 
     --------------------------------------------------
     Jacobian analysis of the least squares problem (End of optimization)
     --------------------------------------------------
 
-    Singular values (max/min): 1.038e+04 / 3.071e-02
-    Condition number: 3.381e+05
+    Singular values (max/min): 1.037e+04 / 7.204e-03
+    Condition number: 1.440e+06
 
     Singular values and their contribution to the variance:
     |   Index    |  Singular Value λ  |     Var = 1/λ^2      |
-    |     0      |     1.038e+04      |      9.274e-09       |
-    |     1      |     1.035e+04      |      9.333e-09       |
-    |     2      |     1.756e+03      |      3.242e-07       |
-    |     3      |     5.322e+02      |      3.531e-06       |
-    |     4      |     5.153e+02      |      3.766e-06       |
-    |     5      |     3.357e+02      |      8.875e-06       |
-    |     6      |     1.133e+02      |      7.790e-05       |
-    |     7      |     1.108e+02      |      8.150e-05       |
-    |     8      |     2.903e+01      |      1.187e-03       |
-    |     9      |     1.137e+00      |      7.736e-01       |
-    |     10     |     3.071e-02      |      1.060e+03       |
+    |     0      |     1.037e+04      |      9.294e-09       |
+    |     1      |     1.033e+04      |      9.365e-09       |
+    |     2      |     1.640e+03      |      3.719e-07       |
+    |     3      |     4.899e+02      |      4.166e-06       |
+    |     4      |     4.645e+02      |      4.634e-06       |
+    |     5      |     2.856e+02      |      1.226e-05       |
+    |     6      |     1.220e+02      |      6.717e-05       |
+    |     7      |     1.201e+02      |      6.934e-05       |
+    |     8      |     2.105e+01      |      2.257e-03       |
+    |     9      |     4.014e-01      |      6.207e+00       |
+    |     10     |     7.204e-03      |      1.927e+04       |
 
     Higher and Smallers singular values directions vectors (V^T rows):
     | Parameter  |      Vt[0]      |      Vt[8]      |      Vt[9]      |     Vt[10]      | 
-    |     0      |    2.033e-01    |    6.451e-03    |    4.740e-05    |   -8.909e-07    | 
-    |     1      |    9.577e-01    |    4.159e-03    |    2.443e-04    |   -4.562e-06    | 
-    |     2      |   -4.604e-03    |    1.805e-04    |   -2.412e-07    |   -8.665e-08    | 
-    |     3      |    1.896e-01    |   -1.523e-02    |   -1.119e-03    |    2.394e-05    | 
-    |     4      |   -3.723e-02    |    2.830e-02    |    7.642e-05    |   -5.921e-06    | 
-    |     5      |   -5.521e-03    |    1.974e-01    |   -1.053e-02    |    4.267e-04    | 
-    |     6      |    1.480e-03    |    9.741e-01    |   -1.013e-01    |    7.204e-03    | 
-    |     7      |    9.593e-05    |    1.011e-01    |    9.820e-01    |   -1.590e-01    | 
-    |     8      |   -1.319e-02    |    1.609e-02    |    4.684e-04    |    9.966e-06    | 
-    |     9      |    6.198e-02    |   -2.424e-02    |   -4.191e-04    |   -1.619e-06    | 
-    |     10     |    7.051e-06    |    9.079e-03    |    1.589e-01    |    9.873e-01    | 
+    |     0      |    1.695e-03    |    9.814e-01    |    7.036e-02    |   -3.197e-03    | 
+    |     1      |    8.117e-05    |    7.009e-02    |   -9.920e-01    |    1.043e-01    | 
+    |     2      |    4.631e-03    |    1.093e-02    |   -3.327e-05    |    1.592e-07    | 
+    |     3      |    5.793e-02    |   -2.089e-02    |    1.977e-04    |    1.041e-06    | 
+    |     4      |    4.170e-06    |    4.170e-03    |   -1.042e-01    |   -9.945e-01    | 
+    |     5      |   -8.216e-02    |   -8.396e-04    |   -3.660e-05    |    5.422e-07    | 
+    |     6      |    9.760e-01    |   -1.697e-03    |   -9.032e-05    |   -1.152e-07    | 
+    |     7      |    9.357e-03    |   -1.027e-04    |   -3.510e-06    |   -3.184e-09    | 
+    |     8      |    1.918e-01    |    1.445e-02    |    4.431e-04    |   -5.235e-08    | 
+    |     9      |    1.905e-02    |   -6.180e-03    |   -1.654e-04    |    2.669e-06    | 
+    |     10     |   -8.916e-03    |    1.766e-01    |    5.182e-03    |   -1.298e-04    | 
 
     Estimated variances of the parameters:
     | Parameter  |     Value P     | Var = σ^2 (J.T J)^-1 |  Ratio √V/|P|   |
-    |     0      |    1.000e-02    |      3.701e-17       |     0.000 %     |
-    |     1      |    2.000e-02    |      3.622e-17       |     0.000 %     |
-    |     2      |    3.000e-02    |      3.841e-18       |     0.000 %     |
-    |     3      |    1.000e-02    |      9.017e-16       |     0.000 %     |
-    |     4      |   -5.000e-02    |      9.286e-16       |     0.000 %     |
-    |     5      |    4.000e-02    |      3.912e-15       |     0.000 %     |
-    |     6      |    9.999e-02    |      7.526e-13       |     0.001 %     |
-    |     7      |    5.024e-02    |      3.233e-10       |     0.036 %     |
-    |     8      |    1.000e-02    |      5.322e-17       |     0.000 %     |
-    |     9      |    1.000e-02    |      5.718e-17       |     0.000 %     |
-    |     10     |    8.599e-03    |      1.213e-08       |     1.281 %     |
+    |     0      |    9.998e-02    |      1.440e-12       |     0.001 %     |
+    |     1      |    5.049e-02    |      1.351e-09       |     0.073 %     |
+    |     2      |    1.000e-02    |      3.341e-17       |     0.000 %     |
+    |     3      |    1.000e-02    |      4.321e-17       |     0.000 %     |
+    |     4      |    5.606e-03    |      1.194e-07       |     6.164 %     |
+    |     5      |    1.000e-02    |      1.676e-17       |     0.000 %     |
+    |     6      |    2.000e-02    |      1.664e-17       |     0.000 %     |
+    |     7      |    3.000e-02    |      2.388e-18       |     0.000 %     |
+    |     8      |    1.000e-02    |      4.128e-16       |     0.000 %     |
+    |     9      |   -5.000e-02    |      4.197e-16       |     0.000 %     |
+    |     10     |    4.000e-02    |      3.585e-15       |     0.000 %     |
 
     ==================================================
 
@@ -706,10 +698,10 @@ Then place a camera near the origin with a small rotation and translation and pr
 
     Optimization success: True
     Optimization message: `gtol` termination condition is satisfied.
-    Optimization cost: 1.1095721978156127e-09
-    RMSE Real Points: 4.710779548685361e-06
-    Error Distortion: 0.0014214746875787416 (1.26%)
-    Error Extrinsic: 8.036450042003719e-07 (0.00%)
+    Optimization cost: 5.921103189414502e-10
+    RMSE Real Points: 3.441250699793464e-06
+    Error Distortion: 0.004421950155165884 (3.91%)
+    Error Extrinsic: 7.64671359145457e-07 (0.00%)
 
 
 
@@ -717,7 +709,7 @@ Then place a camera near the origin with a small rotation and translation and pr
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 7.849 seconds)
+   **Total running time of the script:** (0 minutes 8.460 seconds)
 
 
 .. _sphx_glr_download_.._.._docs_source__gallery_optimize_parameters.py:
