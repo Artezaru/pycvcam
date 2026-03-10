@@ -538,12 +538,10 @@ transformations to obtain the <code class="docutils literal notranslate"><span c
 system or <code class="docutils literal notranslate"><span class="pre">transformed_points</span></code> if <code class="docutils literal notranslate"><span class="pre">R</span></code> or <code class="docutils literal notranslate"><span class="pre">P</span></code> are provided.</p>
 <p>As a reminder,</p>
 <div class="math notranslate nohighlight">
-\[\begin{split}\begin{align*}
-\vec{x}_n = \text{Intrinsic}^{-1}(\vec{x}_i) \\
+\[\begin{split}\vec{x}_n = \text{Intrinsic}^{-1}(\vec{x}_i) \\
 \vec{x}_d = \text{Distortion}(\vec{x}_n) \\
 \text{Then optionally:} \\
-\vec{x}_u = P(R(\vec{x}_d)))
-\end{align*}\end{split}\]</div>
+\vec{x}_u = P(R(\vec{x}_d)))\end{split}\]</div>
 <p>Where:</p>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(\vec{x}_i\)</span> are the 2D <code class="docutils literal notranslate"><span class="pre">image_points</span></code> in the image coordinate system <span class="math notranslate nohighlight">\((\vec{e}_x, \vec{e}_y)\)</span>.</p></li>
