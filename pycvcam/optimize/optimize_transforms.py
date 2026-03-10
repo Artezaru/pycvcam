@@ -1077,6 +1077,8 @@ def _solve_optimize_chains_gauss_newton(
                 )
             end = True
 
+        iteration += 1
+
     if verbose_level >= 3:
         _study_jacobian_least_squares(
             f(params),
