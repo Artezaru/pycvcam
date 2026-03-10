@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pycvcam.project_points &#8212; pycvcam 1.5.7 documentation</title>
+    <title>pycvcam.project_points &#8212; pycvcam 1.6.1 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=2b2ec289"></script>
+    <script src="../../_static/documentation_options.js?v=d6a008b6"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -116,7 +116,7 @@
   
   
   
-    <p class="title logo__title">pycvcam 1.5.7 documentation</p>
+    <p class="title logo__title">pycvcam 1.6.1 documentation</p>
   
 </a></div>
     
@@ -366,29 +366,36 @@
     <span class="n">extrinsic_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TransformResult</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Project 3D ``world_points`` to 2D ``image_points`` using the camera intrinsic, distortion and extrinsic transformations.</span>
+<span class="sd">    Project 3D ``world_points`` :math:`\vec{X}_w` to 2D ``image_points`` </span>
+<span class="sd">    :math:`\vec{x}_i` using the camera intrinsic, distortion and extrinsic </span>
+<span class="sd">    transformations.</span>
 
 <span class="sd">    As a reminder,</span>
 
 <span class="sd">    .. math::</span>
 
 <span class="sd">        \begin{align*}</span>
-<span class="sd">        \vec{x}_n = \text{Extrinsic}(\vec{X}_w) \\</span>
-<span class="sd">        \vec{x}_d = \text{Distortion}(\vec{x}_n) \\</span>
-<span class="sd">        \vec{x}_i = \text{Intrinsic}(\vec{x}_d) \\</span>
+<span class="sd">        \vec{x}_n &amp;= \text{Extrinsic}(\vec{X}_w) \\</span>
+<span class="sd">        \vec{x}_d &amp;= \text{Distortion}(\vec{x}_n) \\</span>
+<span class="sd">        \vec{x}_i &amp;= \text{Intrinsic}(\vec{x}_d) \\</span>
 <span class="sd">        \end{align*}</span>
 
 <span class="sd">    Where:</span>
 
-<span class="sd">    - :math:`\vec{X}_w` are the 3D ``world_points`` in the world coordinate system.</span>
-<span class="sd">    - :math:`\vec{x}_n` are the 2D ``normalized_points`` in the normalized coordinate system.</span>
-<span class="sd">    - :math:`\vec{x}_d` are the 2D ``distorted_points`` in the normalized coordinate system.</span>
-<span class="sd">    - :math:`\vec{x}_i` are the 2D ``image_points`` in the image coordinate system.</span>
+<span class="sd">    - :math:`\vec{X}_w` are the 3D ``world_points`` in the world coordinate system :math:`(\vec{E}_x, \vec{E}_y, \vec{E}_z)`.</span>
+<span class="sd">    - :math:`\vec{x}_n` are the 2D ``normalized_points`` in the normalized coordinate system :math:`(\vec{I}, \vec{J})`.</span>
+<span class="sd">    - :math:`\vec{x}_d` are the 2D ``distorted_points`` in the normalized coordinate system :math:`(\vec{I}, \vec{J})`.</span>
+<span class="sd">    - :math:`\vec{x}_i` are the 2D ``image_points`` in the image coordinate system :math:`(\vec{e}_x, \vec{e}_y)`.</span>
 
-<span class="sd">    The ``image_points`` can be then converted to pixel coordinates by applying a swap of the axes.</span>
+<span class="sd">    .. note::</span>
+<span class="sd">    </span>
+<span class="sd">        The ``image_points`` can be then converted to pixel coordinates </span>
+<span class="sd">        :math:`(\vec{u}, \vec{v})` by applying a swap of the axes.</span>
 
-<span class="sd">    To compute the Jacobians of the image points with respect to the input 3D world points and the projection parameters, set the ``dx`` and ``dp`` parameters to True.</span>
-<span class="sd">    The Jacobians are computed using the chain rule of differentiation and are returned in the result object.</span>
+<span class="sd">    To compute the Jacobians of the image points with respect to the input 3D world </span>
+<span class="sd">    points and the projection parameters, set the ``dx`` and ``dp`` parameters to True.</span>
+<span class="sd">    The Jacobians are computed using the chain rule of differentiation and are returned </span>
+<span class="sd">    in the result object.</span>
 
 <span class="sd">    To access the Jacobians, you can use the following properties of the result object:</span>
 
@@ -417,26 +424,37 @@
 <span class="sd">        If None, a no extrinsic transformation is applied (identity transformation).</span>
 
 <span class="sd">    transpose : bool, optional</span>
-<span class="sd">        If True, the input points are assumed to be in the shape (3, ...) instead of (..., 3). Default is False.</span>
-<span class="sd">        In this case, the output points will be in the shape (2, ...) and the jacobians will be in the shape (2, ..., 3) and (2, ..., n_params) respectively.</span>
+<span class="sd">        If True, the input points are assumed to be in the shape (3, ...) instead of </span>
+<span class="sd">        (..., 3). Default is False.</span>
+<span class="sd">        In this case, the output points will be in the shape (2, ...) and the </span>
+<span class="sd">        jacobians will be in the shape (2, ..., 3) and (2, ..., n_params) respectively.</span>
 <span class="sd">        </span>
 <span class="sd">    dx : bool, optional</span>
-<span class="sd">        If True, compute the Jacobian of the image points with respect to the input 3D world points with shape (..., 2, 3).</span>
+<span class="sd">        If True, compute the Jacobian of the image points with respect to the input </span>
+<span class="sd">        3D world points with shape (..., 2, 3).</span>
 <span class="sd">        If False, the Jacobian is not computed. default is False.</span>
 
 <span class="sd">    dp : bool, optional</span>
-<span class="sd">        If True, compute the Jacobian of the image points with respect to the projection parameters with shape (..., 2, n_params).</span>
-<span class="sd">        If True (dintrinsic, ddistortion, dextrinsic are ignored and computed automatically.</span>
+<span class="sd">        If True, compute the Jacobian of the image points with respect to the projection </span>
+<span class="sd">        parameters with shape (..., 2, n_params).</span>
+<span class="sd">        If True (dintrinsic, ddistortion, dextrinsic are ignored and computed</span>
+<span class="sd">        automatically.</span>
 <span class="sd">        If False, the Jacobian is not computed. Default is False.</span>
 <span class="sd">        </span>
 <span class="sd">    dintrinsic : bool, optional</span>
-<span class="sd">        If True, compute the Jacobian of the image points with respect to the intrinsic parameters only (other dp components are ignored for efficiency and set to nan in the result).</span>
+<span class="sd">        If True, compute the Jacobian of the image points with respect to the intrinsic </span>
+<span class="sd">        parameters only (other dp components are ignored for efficiency and set to</span>
+<span class="sd">        nan in the result).</span>
 <span class="sd">    </span>
 <span class="sd">    ddistortion : bool, optional</span>
-<span class="sd">        If True, compute the Jacobian of the image points with respect to the distortion parameters only (other dp components are ignored for efficiency and set to nan in the result).</span>
+<span class="sd">        If True, compute the Jacobian of the image points with respect to the distortion </span>
+<span class="sd">        parameters only (other dp components are ignored for efficiency and set to nan </span>
+<span class="sd">        in the result).</span>
 <span class="sd">        </span>
 <span class="sd">    dextrinsic : bool, optional</span>
-<span class="sd">        If True, compute the Jacobian of the image points with respect to the extrinsic parameters only (other dp components are ignored for efficiency and set to nan in the result).</span>
+<span class="sd">        If True, compute the Jacobian of the image points with respect to the extrinsic</span>
+<span class="sd">        parameters only (other dp components are ignored for efficiency and set to nan </span>
+<span class="sd">        in the result).</span>
 <span class="sd">        </span>
 <span class="sd">    intrinsic_kwargs : Optional[dict], optional</span>
 <span class="sd">        Additional keyword arguments to be passed to the intrinsic transformation.</span>
@@ -451,7 +469,8 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    :class:`TransformResult`</span>
-<span class="sd">        The result of the projection transformation.</span>
+<span class="sd">        The result of the projection transformation containing the projected image </span>
+<span class="sd">        points and the Jacobians if requested in the image coordinate system.</span>
 <span class="sd">        </span>
 <span class="sd">        </span>
 <span class="sd">    Examples</span>

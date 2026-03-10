@@ -12,7 +12,7 @@ for various applications.
 Nomenclature and Definitions
 -------------------------------
 
-.. include:: ../../pycvcam/resources/definition.rst
+.. include:: /_static/definition.rst
 
 
 Gallery Examples

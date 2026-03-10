@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pycvcam.extrinsic_objects.no_extrinsic &#8212; pycvcam 1.5.7 documentation</title>
+    <title>pycvcam.extrinsic_objects.no_extrinsic &#8212; pycvcam 1.6.1 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=2b2ec289"></script>
+    <script src="../../../_static/documentation_options.js?v=d6a008b6"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -116,7 +116,7 @@
   
   
   
-    <p class="title logo__title">pycvcam 1.5.7 documentation</p>
+    <p class="title logo__title">pycvcam 1.6.1 documentation</p>
   
 </a></div>
     
@@ -338,6 +338,7 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">..core</span><span class="w"> </span><span class="kn">import</span> <span class="n">Extrinsic</span>
 
+
 <div class="viewcode-block" id="NoExtrinsic">
 <a class="viewcode-back" href="../../../_docs/no_extrinsic.html#pycvcam.NoExtrinsic">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">NoExtrinsic</span><span class="p">(</span><span class="n">Extrinsic</span><span class="p">):</span>
@@ -351,11 +352,20 @@
 
 <span class="sd">    The ``NoExtrinsic`` model is a special case of the extrinsic transformation where no extrinsic transformations are applied.</span>
 
-<span class="sd">    Lets consider ``world_points`` in the global coordinate system :math:`\vec{X}_w = (X_w, Y_w, Z_w)`, the corresponding ``normalized_points`` in the camera normalized coordinate system are given by :math:`\vec{x}_n = (X_w, Y_w)`. </span>
+<span class="sd">    Lets consider ``world_points`` in the global coordinate system :math:`\vec{X}_w = (X_w, Y_w, Z_w)`, the corresponding ``normalized_points`` in the camera normalized coordinate system are given by :math:`\vec{x}_n = (X_w, Y_w)`.</span>
 <span class="sd">    Simply ignoring the z-coordinate, which is always set to 1 for the normalization plane.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">constants</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">parameters</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;NoExtrinsic model has no parameters, must be set to None.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">constants</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;NoExtrinsic model has no constants, must be set to None.&quot;</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">constants</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
     <span class="c1"># =============================================</span>
@@ -367,11 +377,13 @@
 <span class="sd">        Always returns None, as there are no parameters for the no extrinsic model.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="kc">None</span>
-    
+
     <span class="nd">@parameters</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;NoExtrinsic model has no parameters, must be set to None.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;NoExtrinsic model has no parameters, must be set to None.&quot;</span>
+            <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
@@ -380,7 +392,7 @@
 <span class="sd">        Always returns None, as there are no constants for the no extrinsic model.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="kc">None</span>
-    
+
     <span class="nd">@constants</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">constants</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -395,17 +407,19 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
-    
+
     <span class="c1"># =============================================</span>
     <span class="c1"># Implementing the transform and inverse_transform methods</span>
     <span class="c1"># =============================================</span>
 <div class="viewcode-block" id="NoExtrinsic._transform">
 <a class="viewcode-back" href="../../../_docs/no_extrinsic.html#pycvcam.NoExtrinsic._transform">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">world_points</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">dx</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">dp</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_transform</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">world_points</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dp</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the transformation from the ``world_points`` to the ``normalized_points``.</span>
 
-<span class="sd">        Lets consider ``world_points`` in the global coordinate system :math:`\vec{X}_w = (X_w, Y_w, Z_w)`, the corresponding ``normalized_points`` in the camera normalized coordinate system are given by :math:`\vec{x}_n = (X_w, Y_w)`. </span>
+<span class="sd">        Lets consider ``world_points`` in the global coordinate system :math:`\vec{X}_w = (X_w, Y_w, Z_w)`, the corresponding ``normalized_points`` in the camera normalized coordinate system are given by :math:`\vec{x}_n = (X_w, Y_w)`.</span>
 <span class="sd">        Simply ignoring the z-coordinate, which is always set to 1 for the normalization plane.</span>
 
 <span class="sd">        The jacobians with respect to the extrinsic parameters is an empty array with shape (n_points, 2, 0), as there are no parameters to compute the jacobian for.</span>
@@ -438,22 +452,27 @@
 <span class="sd">        jacobian_dp : Optional[numpy.ndarray]</span>
 <span class="sd">            The jacobian of the normalized points with respect to the extrinsic parameters. Shape (n_points, 2, 0) if dp is True, otherwise None.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">normalized_points</span> <span class="o">=</span> <span class="n">world_points</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># shape (n_points, 2)</span>
-        <span class="n">jacobian_dx</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># shape (n_points, 2, 2)</span>
-        <span class="n">jacobian_dp</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># shape (n_points, 2, n_params)</span>
+        <span class="n">normalized_points</span> <span class="o">=</span> <span class="n">world_points</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c1"># shape (n_points, 2)</span>
+        <span class="n">jacobian_dx</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># shape (n_points, 2, 2)</span>
+        <span class="n">jacobian_dp</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># shape (n_points, 2, n_params)</span>
         <span class="k">if</span> <span class="n">dx</span><span class="p">:</span>
-            <span class="n">jacobian_dx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">normalized_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="c1"># shape (n_points, 2, 3)</span>
+            <span class="n">jacobian_dx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">normalized_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span>
+            <span class="p">)</span>  <span class="c1"># shape (n_points, 2, 3)</span>
             <span class="n">jacobian_dx</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
             <span class="n">jacobian_dx</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
         <span class="k">if</span> <span class="n">dp</span><span class="p">:</span>
-            <span class="n">jacobian_dp</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">normalized_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="c1"># shape (n_points, 2, 0)</span>
+            <span class="n">jacobian_dp</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">normalized_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span>
+            <span class="p">)</span>  <span class="c1"># shape (n_points, 2, 0)</span>
         <span class="k">return</span> <span class="n">normalized_points</span><span class="p">,</span> <span class="n">jacobian_dx</span><span class="p">,</span> <span class="n">jacobian_dp</span></div>
 
-    
-    
+
 <div class="viewcode-block" id="NoExtrinsic._inverse_transform">
 <a class="viewcode-back" href="../../../_docs/no_extrinsic.html#pycvcam.NoExtrinsic._inverse_transform">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_inverse_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">normalized_points</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">dx</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">dp</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_inverse_transform</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">normalized_points</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dp</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the inverse transformation from the ``normalized_points`` to the ``world_points``.</span>
 
@@ -490,17 +509,23 @@
 <span class="sd">        jacobian_dp : Optional[numpy.ndarray]</span>
 <span class="sd">            The jacobian of the world 3D points with respect to the extrinsic parameters. Shape (n_points, 3, 0) if dp is True, otherwise None.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">world_points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">normalized_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="c1"># shape (n_points, 3)</span>
-        <span class="n">world_points</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">normalized_points</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># copy x and y coordinates</span>
-        <span class="n">world_points</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="c1"># set z coordinate</span>
-        <span class="n">jacobian_dx</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># shape (n_points, 2, 2)</span>
-        <span class="n">jacobian_dp</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># shape (n_points, 2, n_params)</span>
+        <span class="n">world_points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">normalized_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span>
+        <span class="p">)</span>  <span class="c1"># shape (n_points, 3)</span>
+        <span class="n">world_points</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">normalized_points</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c1"># copy x and y coordinates</span>
+        <span class="n">world_points</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># set z coordinate</span>
+        <span class="n">jacobian_dx</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># shape (n_points, 2, 2)</span>
+        <span class="n">jacobian_dp</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># shape (n_points, 2, n_params)</span>
         <span class="k">if</span> <span class="n">dx</span><span class="p">:</span>
-            <span class="n">jacobian_dx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">normalized_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="c1"># shape (n_points, 3, 2)</span>
+            <span class="n">jacobian_dx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">normalized_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span>
+            <span class="p">)</span>  <span class="c1"># shape (n_points, 3, 2)</span>
             <span class="n">jacobian_dx</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
             <span class="n">jacobian_dx</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
         <span class="k">if</span> <span class="n">dp</span><span class="p">:</span>
-            <span class="n">jacobian_dp</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">normalized_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="c1"># shape (n_points, 2, 0)</span>
+            <span class="n">jacobian_dp</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">normalized_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span>
+            <span class="p">)</span>  <span class="c1"># shape (n_points, 2, 0)</span>
         <span class="k">return</span> <span class="n">normalized_points</span><span class="p">,</span> <span class="n">jacobian_dx</span><span class="p">,</span> <span class="n">jacobian_dp</span></div>
 
 

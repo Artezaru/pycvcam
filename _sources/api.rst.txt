@@ -140,8 +140,8 @@ Process basic transformations with ``pycvcam``
 The package ``pycvcam`` provides a set of transformation processes that can be used to apply the transformations to points or images.
 The implemented processes are the following:
 
-- :doc:`Distort and Undistort Images <_docs/distort_undistort_image>`: A process to distort and undistort an image using a distortion model and an intrinsic model.
-- :doc:`Undistort Points <_docs/undistort_points>`: A process to undistort points using a distortion model and an intrinsic model.
+- :doc:`Distort and Undistort Images <_docs/distorting_images>`: A process to distort and undistort an image using a distortion model and an intrinsic model.
+- :doc:`Distort and Undistort Points <_docs/distorting_points>`: A process to distort and undistort points using a distortion model and an intrinsic model.
 - :doc:`Project Points <_docs/project_points>`: A process to project points from the world coordinate system to the image coordinate system using an extrinsic model, a distortion model, and an intrinsic model.
 - :doc:`Compute Rays <_docs/compute_rays>`: A process to compute rays from the camera center to the world points using an extrinsic model and a distortion model.
 - :doc:`Compute Optical Flow <_docs/optical_flow>`: A process to compute the optical flow between two images using the DIS method of OpenCV.
@@ -150,8 +150,8 @@ The implemented processes are the following:
    :maxdepth: 1
    :hidden:
 
-   ./_docs/distort_undistort_image.rst
-   ./_docs/undistort_points.rst
+   ./_docs/distorting_images.rst
+   ./_docs/distorting_points.rst
    ./_docs/project_points.rst
    ./_docs/compute_rays.rst
    ./_docs/optical_flow.rst

@@ -13,23 +13,6 @@
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="This example illustrate how to use the distort_image function to apply a distortion to an image using a specified camera model, which includes the intrinsic and distortion transformations.">
-
-.. only:: html
-
-  .. image:: /_gallery/images/thumb/sphx_glr_distort_image_thumb.png
-    :alt:
-
-  :doc:`/_gallery/distort_image`
-
-.. raw:: html
-
-      <div class="sphx-glr-thumbnail-title">Distorting an image with distort_image and undistort_image</div>
-    </div>
-
-
-.. raw:: html
-
     <div class="sphx-glr-thumbcontainer" tooltip="This example illustrate how to use the project_points function to project 3D world_points to 2D image_points using a specified camera model, which includes the intrinsic, extrinsic and distortion transformations.">
 
 .. only:: html
@@ -42,6 +25,40 @@
 .. raw:: html
 
       <div class="sphx-glr-thumbnail-title">Projecting 3D points to 2D image points with project_points</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example illustrate how to use the distort_image function to apply a distortion to an image using a specified camera model, which includes the intrinsic and distortion transformations.">
+
+.. only:: html
+
+  .. image:: /_gallery/images/thumb/sphx_glr_distorting_image_thumb.png
+    :alt:
+
+  :doc:`/_gallery/distorting_image`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Distorting an image with distort_image and undistort_image</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example illustrate how to use the compute_optical_flow function to compute the optical flow between two images.">
+
+.. only:: html
+
+  .. image:: /_gallery/images/thumb/sphx_glr_optical_flow_thumb.png
+    :alt:
+
+  :doc:`/_gallery/optical_flow`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Computing optical flow between two images</div>
     </div>
 
 
@@ -72,8 +89,9 @@
 .. toctree::
    :hidden:
 
-   /_gallery/distort_image
    /_gallery/project_points
+   /_gallery/distorting_image
+   /_gallery/optical_flow
    /_gallery/optimize_parameters
 
 

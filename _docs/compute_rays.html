@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pycvcam.compute_rays &#8212; pycvcam 1.5.7 documentation</title>
+    <title>pycvcam.compute_rays &#8212; pycvcam 1.6.1 documentation</title>
   
   
   
@@ -44,7 +44,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=2b2ec289"></script>
+    <script src="../_static/documentation_options.js?v=d6a008b6"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -120,7 +120,7 @@
   
   
   
-    <p class="title logo__title">pycvcam 1.5.7 documentation</p>
+    <p class="title logo__title">pycvcam 1.6.1 documentation</p>
   
 </a></div>
     
@@ -286,6 +286,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.core.Transform.constant_names.html">pycvcam.core.Transform.constant_names</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.core.Transform.transform.html">pycvcam.core.Transform.transform</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.core.Transform.inverse_transform.html">pycvcam.core.Transform.inverse_transform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.core.Transform.copy.html">pycvcam.core.Transform.copy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.core.Transform.to_dict.html">pycvcam.core.Transform.to_dict</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.core.Transform.from_dict.html">pycvcam.core.Transform.from_dict</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.core.Transform.to_json.html">pycvcam.core.Transform.to_json</a></li>
@@ -447,8 +448,16 @@
 <li class="toctree-l1"><a class="reference internal" href="read_transform.html">pycvcam.read_transform</a></li>
 </ul>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="distort_undistort_image.html">Distort and Undistort Images</a></li>
-<li class="toctree-l1"><a class="reference internal" href="undistort_points.html">pycvcam.undistort_points</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="distorting_images.html">Distort and Undistort Images</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.distort_image.html">pycvcam.distort_image</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.undistort_image.html">pycvcam.undistort_image</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="distorting_points.html">Distort and Undistort Points</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.distort_points.html">pycvcam.distort_points</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.undistort_points.html">pycvcam.undistort_points</a></li>
+</ul>
+</details></li>
 <li class="toctree-l1"><a class="reference internal" href="project_points.html">pycvcam.project_points</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">pycvcam.compute_rays</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optical_flow.html">Optical Flow Operations</a></li>
@@ -520,7 +529,7 @@
 <h1>pycvcam.compute_rays<a class="headerlink" href="#pycvcam-compute-rays" title="Link to this heading">#</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="pycvcam.compute_rays">
-<span class="sig-name descname"><span class="pre">compute_rays</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intrinsic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distortion</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extrinsic</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intrinsic_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distortion_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extrinsic_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_skip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pycvcam/compute_rays.html#compute_rays"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.compute_rays" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">compute_rays</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intrinsic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distortion</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extrinsic</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inverse_intrinsic_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inverse_distortion_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ray_extrinsic_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pycvcam/compute_rays.html#compute_rays"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.compute_rays" title="Link to this definition">#</a></dt>
 <dd><p>Compute the rays emitted from the camera to the scene based on the given image points, intrinsic parameters, distortion model, and extrinsic parameters.</p>
 <p>The process to compute the rays is as follows:</p>
 <ol class="arabic simple">
@@ -560,11 +569,15 @@ If None, a no distortion transformation is applied (i.e., identity transformatio
 If None, a no extrinsic transformation is applied (i.e., identity transformation).</p></li>
 <li><p><strong>transpose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, the input image points are transposed before processing, the input shape is expected to be (2, …) instead of (…, 2) and the output shape will be (6, …).
 Default is False.</p></li>
-<li><p><strong>intrinsic_kwargs</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>]</em><em>, </em><em>optional</em>) – Additional keyword arguments to be passed to the intrinsic transformation’s inverse method.</p></li>
-<li><p><strong>distortion_kwargs</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>]</em><em>, </em><em>optional</em>) – Additional keyword arguments to be passed to the distortion transformation’s inverse method.</p></li>
-<li><p><strong>extrinsic_kwargs</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>]</em><em>, </em><em>optional</em>) – Additional keyword arguments to be passed to the extrinsic transformation’s method to compute the rays.</p></li>
-<li><p><strong>_skip</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – [INTERNAL USE], If True, skip the checks for the transformation parameters and assume the points are given in the (n_points, input_dim) float format.
-<cite>transpose</cite> is ignored if this parameter is set to True.</p></li>
+<li><p><strong>inverse_intrinsic_kwargs</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>]</em><em>, </em><em>optional</em>) – Additional keyword arguments to be passed to the intrinsic transformation’s
+inverse method (<code class="docutils literal notranslate"><span class="pre">intrinsic._inverse_transform</span></code>).
+Default is None.</p></li>
+<li><p><strong>inverse_distortion_kwargs</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>]</em><em>, </em><em>optional</em>) – Additional keyword arguments to be passed to the distortion transformation’s
+inverse method (<code class="docutils literal notranslate"><span class="pre">distortion._inverse_transform</span></code>).
+Default is None.</p></li>
+<li><p><strong>ray_extrinsic_kwargs</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>]</em><em>, </em><em>optional</em>) – Additional keyword arguments to be passed to the extrinsic transformation’s
+method to compute the rays (<code class="docutils literal notranslate"><span class="pre">extrinsic._compute_rays</span></code>).
+Default is None.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>

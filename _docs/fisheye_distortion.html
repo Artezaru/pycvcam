@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pycvcam.FisheyeDistortion &#8212; pycvcam 1.5.7 documentation</title>
+    <title>pycvcam.FisheyeDistortion &#8212; pycvcam 1.6.1 documentation</title>
   
   
   
@@ -44,7 +44,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=2b2ec289"></script>
+    <script src="../_static/documentation_options.js?v=d6a008b6"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -120,7 +120,7 @@
   
   
   
-    <p class="title logo__title">pycvcam 1.5.7 documentation</p>
+    <p class="title logo__title">pycvcam 1.6.1 documentation</p>
   
 </a></div>
     
@@ -286,6 +286,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.core.Transform.constant_names.html">pycvcam.core.Transform.constant_names</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.core.Transform.transform.html">pycvcam.core.Transform.transform</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.core.Transform.inverse_transform.html">pycvcam.core.Transform.inverse_transform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.core.Transform.copy.html">pycvcam.core.Transform.copy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.core.Transform.to_dict.html">pycvcam.core.Transform.to_dict</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.core.Transform.from_dict.html">pycvcam.core.Transform.from_dict</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.core.Transform.to_json.html">pycvcam.core.Transform.to_json</a></li>
@@ -447,8 +448,16 @@
 <li class="toctree-l1"><a class="reference internal" href="read_transform.html">pycvcam.read_transform</a></li>
 </ul>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="distort_undistort_image.html">Distort and Undistort Images</a></li>
-<li class="toctree-l1"><a class="reference internal" href="undistort_points.html">pycvcam.undistort_points</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="distorting_images.html">Distort and Undistort Images</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.distort_image.html">pycvcam.distort_image</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.undistort_image.html">pycvcam.undistort_image</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="distorting_points.html">Distort and Undistort Points</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.distort_points.html">pycvcam.distort_points</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.undistort_points.html">pycvcam.undistort_points</a></li>
+</ul>
+</details></li>
 <li class="toctree-l1"><a class="reference internal" href="project_points.html">pycvcam.project_points</a></li>
 <li class="toctree-l1"><a class="reference internal" href="compute_rays.html">pycvcam.compute_rays</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optical_flow.html">Optical Flow Operations</a></li>
@@ -534,7 +543,7 @@
 <h2><a class="toc-backref" href="#table-of-contents" role="doc-backlink">FisheyeDistortion Class</a><a class="headerlink" href="#fisheyedistortion-class" title="Link to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="pycvcam.FisheyeDistortion">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">FisheyeDistortion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pycvcam/distortion_objects/fisheye_distortion.html#FisheyeDistortion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.FisheyeDistortion" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">FisheyeDistortion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constants</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pycvcam/distortion_objects/fisheye_distortion.html#FisheyeDistortion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.FisheyeDistortion" title="Link to this definition">#</a></dt>
 <dd><p>Subclass of the <a class="reference internal" href="distortion.html#pycvcam.core.Distortion" title="pycvcam.core.Distortion"><code class="xref py py-class docutils literal notranslate"><span class="pre">pycvcam.core.Distortion</span></code></a> class that represents the fisheye distortion model.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -572,6 +581,7 @@ y(r, \theta_d)
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>parameters</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em>]</em><em>, </em><em>optional</em>) – The parameters of the distortion transformation. It should be a numpy array of shape (n_params,) containing the distortion coefficients ordered as described above. Default is None, which means no distortion is setted.</p></li>
 <li><p><strong>n_params</strong> (<em>Optional</em><em>[</em><em>Integral</em><em>]</em><em>, </em><em>optional</em>) – The number of parameters for the distortion model. If not specified, it will be inferred from the shape of the <cite>parameters</cite> array.</p></li>
+<li><p><strong>constants</strong> (<em>None</em>)</p></li>
 </ul>
 </dd>
 </dl>

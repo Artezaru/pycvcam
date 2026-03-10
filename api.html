@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>API Reference &#8212; pycvcam 1.5.7 documentation</title>
+    <title>API Reference &#8212; pycvcam 1.6.1 documentation</title>
   
   
   
@@ -44,7 +44,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=2b2ec289"></script>
+    <script src="_static/documentation_options.js?v=d6a008b6"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -119,7 +119,7 @@
   
   
   
-    <p class="title logo__title">pycvcam 1.5.7 documentation</p>
+    <p class="title logo__title">pycvcam 1.6.1 documentation</p>
   
 </a></div>
     
@@ -285,6 +285,7 @@
 <li class="toctree-l2"><a class="reference internal" href="_autosummary/pycvcam.core.Transform.constant_names.html">pycvcam.core.Transform.constant_names</a></li>
 <li class="toctree-l2"><a class="reference internal" href="_autosummary/pycvcam.core.Transform.transform.html">pycvcam.core.Transform.transform</a></li>
 <li class="toctree-l2"><a class="reference internal" href="_autosummary/pycvcam.core.Transform.inverse_transform.html">pycvcam.core.Transform.inverse_transform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/pycvcam.core.Transform.copy.html">pycvcam.core.Transform.copy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="_autosummary/pycvcam.core.Transform.to_dict.html">pycvcam.core.Transform.to_dict</a></li>
 <li class="toctree-l2"><a class="reference internal" href="_autosummary/pycvcam.core.Transform.from_dict.html">pycvcam.core.Transform.from_dict</a></li>
 <li class="toctree-l2"><a class="reference internal" href="_autosummary/pycvcam.core.Transform.to_json.html">pycvcam.core.Transform.to_json</a></li>
@@ -446,8 +447,16 @@
 <li class="toctree-l1"><a class="reference internal" href="_docs/read_transform.html">pycvcam.read_transform</a></li>
 </ul>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="_docs/distort_undistort_image.html">Distort and Undistort Images</a></li>
-<li class="toctree-l1"><a class="reference internal" href="_docs/undistort_points.html">pycvcam.undistort_points</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="_docs/distorting_images.html">Distort and Undistort Images</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/pycvcam.distort_image.html">pycvcam.distort_image</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/pycvcam.undistort_image.html">pycvcam.undistort_image</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="_docs/distorting_points.html">Distort and Undistort Points</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/pycvcam.distort_points.html">pycvcam.distort_points</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/pycvcam.undistort_points.html">pycvcam.undistort_points</a></li>
+</ul>
+</details></li>
 <li class="toctree-l1"><a class="reference internal" href="_docs/project_points.html">pycvcam.project_points</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_docs/compute_rays.html">pycvcam.compute_rays</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_docs/optical_flow.html">Optical Flow Operations</a></li>
@@ -627,8 +636,8 @@ the <code class="docutils literal notranslate"><span class="pre">distorted_point
 <p>The package <code class="docutils literal notranslate"><span class="pre">pycvcam</span></code> provides a set of transformation processes that can be used to apply the transformations to points or images.
 The implemented processes are the following:</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="_docs/distort_undistort_image.html"><span class="doc">Distort and Undistort Images</span></a>: A process to distort and undistort an image using a distortion model and an intrinsic model.</p></li>
-<li><p><a class="reference internal" href="_docs/undistort_points.html"><span class="doc">Undistort Points</span></a>: A process to undistort points using a distortion model and an intrinsic model.</p></li>
+<li><p><a class="reference internal" href="_docs/distorting_images.html"><span class="doc">Distort and Undistort Images</span></a>: A process to distort and undistort an image using a distortion model and an intrinsic model.</p></li>
+<li><p><a class="reference internal" href="_docs/distorting_points.html"><span class="doc">Distort and Undistort Points</span></a>: A process to distort and undistort points using a distortion model and an intrinsic model.</p></li>
 <li><p><a class="reference internal" href="_docs/project_points.html"><span class="doc">Project Points</span></a>: A process to project points from the world coordinate system to the image coordinate system using an extrinsic model, a distortion model, and an intrinsic model.</p></li>
 <li><p><a class="reference internal" href="_docs/compute_rays.html"><span class="doc">Compute Rays</span></a>: A process to compute rays from the camera center to the world points using an extrinsic model and a distortion model.</p></li>
 <li><p><a class="reference internal" href="_docs/optical_flow.html"><span class="doc">Compute Optical Flow</span></a>: A process to compute the optical flow between two images using the DIS method of OpenCV.</p></li>

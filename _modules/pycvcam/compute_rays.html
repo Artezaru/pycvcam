@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pycvcam.compute_rays &#8212; pycvcam 1.5.7 documentation</title>
+    <title>pycvcam.compute_rays &#8212; pycvcam 1.6.1 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=2b2ec289"></script>
+    <script src="../../_static/documentation_options.js?v=d6a008b6"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -116,7 +116,7 @@
   
   
   
-    <p class="title logo__title">pycvcam 1.5.7 documentation</p>
+    <p class="title logo__title">pycvcam 1.6.1 documentation</p>
   
 </a></div>
     
@@ -357,10 +357,9 @@
     <span class="n">extrinsic</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Extrinsic</span><span class="p">],</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">transpose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">intrinsic_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">distortion_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">extrinsic_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">_skip</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">inverse_intrinsic_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">inverse_distortion_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">ray_extrinsic_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Rays</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 
@@ -411,18 +410,20 @@
 <span class="sd">        If True, the input image points are transposed before processing, the input shape is expected to be (2, ...) instead of (..., 2) and the output shape will be (6, ...).</span>
 <span class="sd">        Default is False.</span>
 
-<span class="sd">    intrinsic_kwargs : Optional[Dict], optional</span>
-<span class="sd">        Additional keyword arguments to be passed to the intrinsic transformation&#39;s inverse method.</span>
+<span class="sd">    inverse_intrinsic_kwargs : Optional[Dict], optional</span>
+<span class="sd">        Additional keyword arguments to be passed to the intrinsic transformation&#39;s</span>
+<span class="sd">        inverse method (``intrinsic._inverse_transform``).</span>
+<span class="sd">        Default is None.</span>
 
-<span class="sd">    distortion_kwargs : Optional[Dict], optional</span>
-<span class="sd">        Additional keyword arguments to be passed to the distortion transformation&#39;s inverse method.</span>
+<span class="sd">    inverse_distortion_kwargs : Optional[Dict], optional</span>
+<span class="sd">        Additional keyword arguments to be passed to the distortion transformation&#39;s</span>
+<span class="sd">        inverse method (``distortion._inverse_transform``).</span>
+<span class="sd">        Default is None.</span>
 
-<span class="sd">    extrinsic_kwargs : Optional[Dict], optional</span>
-<span class="sd">        Additional keyword arguments to be passed to the extrinsic transformation&#39;s method to compute the rays.</span>
-
-<span class="sd">    _skip : bool, optional</span>
-<span class="sd">            [INTERNAL USE], If True, skip the checks for the transformation parameters and assume the points are given in the (n_points, input_dim) float format.</span>
-<span class="sd">            `transpose` is ignored if this parameter is set to True.</span>
+<span class="sd">    ray_extrinsic_kwargs : Optional[Dict], optional</span>
+<span class="sd">        Additional keyword arguments to be passed to the extrinsic transformation&#39;s</span>
+<span class="sd">        method to compute the rays (``extrinsic._compute_rays``).</span>
+<span class="sd">        Default is None.</span>
 
 
 <span class="sd">    Returns</span>
@@ -476,12 +477,12 @@
     <span class="k">if</span> <span class="n">extrinsic</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">extrinsic</span> <span class="o">=</span> <span class="n">NoExtrinsic</span><span class="p">()</span>
 
-    <span class="k">if</span> <span class="n">intrinsic_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">intrinsic_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">if</span> <span class="n">distortion_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">distortion_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">if</span> <span class="n">extrinsic_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">extrinsic_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">inverse_intrinsic_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">inverse_intrinsic_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">inverse_distortion_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">inverse_distortion_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">ray_extrinsic_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ray_extrinsic_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="c1"># Check the types of the parameters</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">intrinsic</span><span class="p">,</span> <span class="n">Intrinsic</span><span class="p">):</span>
@@ -503,37 +504,36 @@
             <span class="s2">&quot;The extrinsic object must be ready to transform the points, check is_set() method.&quot;</span>
         <span class="p">)</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">intrinsic_kwargs</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;intrinsic_kwargs must be a dictionary&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">distortion_kwargs</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;distortion_kwargs must be a dictionary&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">extrinsic_kwargs</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;extrinsic_kwargs must be a dictionary&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inverse_intrinsic_kwargs</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;inverse_intrinsic_kwargs must be a dictionary&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inverse_distortion_kwargs</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;inverse_distortion_kwargs must be a dictionary&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ray_extrinsic_kwargs</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;ray_extrinsic_kwargs must be a dictionary&quot;</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">_skip</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">transpose</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;transpose must be a boolean value&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">transpose</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;transpose must be a boolean value&quot;</span><span class="p">)</span>
 
-        <span class="c1"># Create the array of points</span>
-        <span class="n">image_points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">image_points</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="c1"># Create the array of points</span>
+    <span class="n">image_points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">image_points</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
 
-        <span class="c1"># Transpose the points if needed</span>
-        <span class="k">if</span> <span class="n">transpose</span><span class="p">:</span>
-            <span class="n">image_points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">moveaxis</span><span class="p">(</span><span class="n">image_points</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># (2, ...) -&gt; (..., 2)</span>
+    <span class="c1"># Transpose the points if needed</span>
+    <span class="k">if</span> <span class="n">transpose</span><span class="p">:</span>
+        <span class="n">image_points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">moveaxis</span><span class="p">(</span><span class="n">image_points</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># (2, ...) -&gt; (..., 2)</span>
 
-        <span class="c1"># Extract the original shape</span>
-        <span class="n">shape</span> <span class="o">=</span> <span class="n">image_points</span><span class="o">.</span><span class="n">shape</span>  <span class="c1"># (..., 2)</span>
+    <span class="c1"># Extract the original shape</span>
+    <span class="n">shape</span> <span class="o">=</span> <span class="n">image_points</span><span class="o">.</span><span class="n">shape</span>  <span class="c1"># (..., 2)</span>
 
-        <span class="c1"># Flatten the points along the last axis</span>
-        <span class="n">image_points</span> <span class="o">=</span> <span class="n">image_points</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
-            <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="p">)</span>  <span class="c1"># shape (..., 2) -&gt; shape (n_points, 2)</span>
+    <span class="c1"># Flatten the points along the last axis</span>
+    <span class="n">image_points</span> <span class="o">=</span> <span class="n">image_points</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+        <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="p">)</span>  <span class="c1"># shape (..., 2) -&gt; shape (n_points, 2)</span>
 
-        <span class="c1"># Check the shape of the points</span>
-        <span class="k">if</span> <span class="n">image_points</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">image_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;The points must be in the shape (..., 2) or (2, ...) if ``transpose`` is True. Got </span><span class="si">{</span><span class="n">image_points</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> instead and transpose is </span><span class="si">{</span><span class="n">transpose</span><span class="si">}</span><span class="s2">.&quot;</span>
-            <span class="p">)</span>
+    <span class="c1"># Check the shape of the points</span>
+    <span class="k">if</span> <span class="n">image_points</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">image_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;The points must be in the shape (..., 2) or (2, ...) if ``transpose`` is True. Got </span><span class="si">{</span><span class="n">image_points</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> instead and transpose is </span><span class="si">{</span><span class="n">transpose</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
 
     <span class="n">n_points</span> <span class="o">=</span> <span class="n">image_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># n_points</span>
     <span class="n">output_points</span> <span class="o">=</span> <span class="n">image_points</span>
@@ -541,25 +541,24 @@
     <span class="c1"># Realize the transformation:</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">intrinsic</span><span class="p">,</span> <span class="n">NoIntrinsic</span><span class="p">):</span>
         <span class="n">output_points</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">intrinsic</span><span class="o">.</span><span class="n">_inverse_transform</span><span class="p">(</span>
-            <span class="n">output_points</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dp</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">intrinsic_kwargs</span>
+            <span class="n">output_points</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dp</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">inverse_intrinsic_kwargs</span>
         <span class="p">)</span>  <span class="c1"># shape (n_points, 2) -&gt; shape (n_points, 2)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">distortion</span><span class="p">,</span> <span class="n">NoDistortion</span><span class="p">):</span>
         <span class="n">output_points</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">distortion</span><span class="o">.</span><span class="n">_inverse_transform</span><span class="p">(</span>
-            <span class="n">output_points</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dp</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">distortion_kwargs</span>
+            <span class="n">output_points</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dp</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">inverse_distortion_kwargs</span>
         <span class="p">)</span>
 
     <span class="c1"># Always use the extrinsic transformation to compute the rays:</span>
     <span class="n">rays</span> <span class="o">=</span> <span class="n">extrinsic</span><span class="o">.</span><span class="n">_compute_rays</span><span class="p">(</span>
-        <span class="n">output_points</span><span class="p">,</span> <span class="o">**</span><span class="n">extrinsic_kwargs</span>
+        <span class="n">output_points</span><span class="p">,</span> <span class="o">**</span><span class="n">ray_extrinsic_kwargs</span>
     <span class="p">)</span>  <span class="c1"># shape (n_points, 2) -&gt; shape (n_points, 6)</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">_skip</span><span class="p">:</span>
-        <span class="c1"># Reshape the rays  back to the original shape</span>
-        <span class="n">rays</span> <span class="o">=</span> <span class="n">rays</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">*</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="mi">6</span><span class="p">))</span>  <span class="c1"># shape (n_points, 6) -&gt; (..., 6)</span>
+    <span class="c1"># Reshape the rays  back to the original shape</span>
+    <span class="n">rays</span> <span class="o">=</span> <span class="n">rays</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">*</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="mi">6</span><span class="p">))</span>  <span class="c1"># shape (n_points, 6) -&gt; (..., 6)</span>
 
-        <span class="c1"># Transpose the rays back to the original shape if needed</span>
-        <span class="k">if</span> <span class="n">transpose</span><span class="p">:</span>
-            <span class="n">rays</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">moveaxis</span><span class="p">(</span><span class="n">rays</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># (..., 6) -&gt; (6, ...)</span>
+    <span class="c1"># Transpose the rays back to the original shape if needed</span>
+    <span class="k">if</span> <span class="n">transpose</span><span class="p">:</span>
+        <span class="n">rays</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">moveaxis</span><span class="p">(</span><span class="n">rays</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># (..., 6) -&gt; (6, ...)</span>
 
     <span class="k">return</span> <span class="n">Rays</span><span class="p">(</span><span class="n">rays</span><span class="o">=</span><span class="n">rays</span><span class="p">,</span> <span class="n">transpose</span><span class="o">=</span><span class="n">transpose</span><span class="p">)</span></div>
 

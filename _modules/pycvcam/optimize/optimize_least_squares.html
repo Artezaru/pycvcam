@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pycvcam.optimize.optimize_least_squares &#8212; pycvcam 1.5.7 documentation</title>
+    <title>pycvcam.optimize.optimize_least_squares &#8212; pycvcam 1.6.1 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=2b2ec289"></script>
+    <script src="../../../_static/documentation_options.js?v=d6a008b6"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -116,7 +116,7 @@
   
   
   
-    <p class="title logo__title">pycvcam 1.5.7 documentation</p>
+    <p class="title logo__title">pycvcam 1.6.1 documentation</p>
   
 </a></div>
     
@@ -340,6 +340,148 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pycvcam.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">intrinsic</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_study_jacobian_least_squares</span><span class="p">(</span>
+    <span class="n">residual</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">jacobian</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">parameters</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">_pretext</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">_start</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Study the Jacobian matrix of the least squares problem to analyze the observability</span>
+
+<span class="sd">    Print:</span>
+<span class="sd">    - The shape and density of the Jacobian matrix</span>
+<span class="sd">    - The singular values and the condition number of the Jacobian matrix</span>
+<span class="sd">    - The directions of the parameters</span>
+<span class="sd">    - The estimated variances of the parameters based on the covariance matrix approximation</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    residual : numpy.ndarray</span>
+<span class="sd">        The residual vector of the least squares problem with shape (n_points*output_dim,).</span>
+
+<span class="sd">    jacobian : numpy.ndarray</span>
+<span class="sd">        The Jacobian matrix of the least squares problem with shape (n_points*output_dim, n_params).</span>
+
+<span class="sd">    parameters : numpy.ndarray</span>
+<span class="sd">        The current parameters of the transformation with shape (n_params,).</span>
+
+<span class="sd">    _pretext : Optional[str], optional</span>
+<span class="sd">        A pretext to display before the analysis of the Jacobian matrix.</span>
+<span class="sd">        Default is None, which means no pretext is displayed.</span>
+
+<span class="sd">    _start : bool, optional</span>
+<span class="sd">        True = Iter 0 before the optimization, False = Iter N after the optimization.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">_start</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Initial Jacobian (Iter 0) analysis of the least squares problem&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">50</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Jacobian analysis of the least squares problem (End of optimization)&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">50</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">_start</span> <span class="ow">and</span> <span class="n">_pretext</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">_pretext</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">m</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">jacobian</span><span class="o">.</span><span class="n">shape</span>
+    <span class="k">if</span> <span class="n">_start</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Jacobian shape: </span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2"> x </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> (equations x parameters)&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">m</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Warning: Underdetermined system (more parameters than residuals), &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;the optimization may not converge to a unique solution.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">m</span> <span class="o">==</span> <span class="n">n</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Warning: Square system (same number of parameters and residuals), &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;the optimization may be sensitive to noise and may not converge.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">m</span> <span class="o">&gt;</span> <span class="n">n</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Overdetermined system (more residuals than parameters), &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;the optimization is likely to converge to a unique solution.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No parameters to optimize.&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+    <span class="k">if</span> <span class="n">_start</span><span class="p">:</span>
+        <span class="n">density</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">jacobian</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">m</span> <span class="o">*</span> <span class="n">n</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Density: </span><span class="si">{</span><span class="n">density</span><span class="o">*</span><span class="mi">100</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+
+    <span class="c1"># SVD</span>
+    <span class="n">U</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">Vt</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">jacobian</span><span class="p">,</span> <span class="n">full_matrices</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">sigma_max</span> <span class="o">=</span> <span class="n">S</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">sigma_min</span> <span class="o">=</span> <span class="n">S</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">cond_number</span> <span class="o">=</span> <span class="n">sigma_max</span> <span class="o">/</span> <span class="n">sigma_min</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Singular values (max/min): </span><span class="si">{</span><span class="n">sigma_max</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2"> / </span><span class="si">{</span><span class="n">sigma_min</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Condition number: </span><span class="si">{</span><span class="n">cond_number</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Variance contribution of each singular value (1/sigma^2)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Singular values and their contribution to the variance:&quot;</span><span class="p">)</span>
+    <span class="n">header</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;| </span><span class="si">{</span><span class="s1">&#39;Index&#39;</span><span class="si">:</span><span class="s2">^10</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="s1">&#39;Singular Value λ&#39;</span><span class="si">:</span><span class="s2">^18</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="s1">&#39;Var = 1/λ^2&#39;</span><span class="si">:</span><span class="s2">^20</span><span class="si">}</span><span class="s2"> |&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sigma</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">S</span><span class="p">):</span>
+        <span class="n">var_contribution</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">sigma</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="k">if</span> <span class="n">sigma</span> <span class="o">&gt;</span> <span class="mf">1e-12</span> <span class="k">else</span> <span class="n">numpy</span><span class="o">.</span><span class="n">inf</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;| </span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">^10</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="n">sigma</span><span class="si">:</span><span class="s2">^18.3e</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="n">var_contribution</span><span class="si">:</span><span class="s2">^20.3e</span><span class="si">}</span><span class="s2"> |&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Display the directions of the 3 more quasi linearly dependent directions (smallest singular values)</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">null_indices</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">3</span><span class="p">,</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">,</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">null_indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="o">-</span> <span class="mi">3</span><span class="p">,</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">,</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">null_indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">,</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">null_indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Higher and Smallers singular values directions vectors (V^T rows):&quot;</span><span class="p">)</span>
+    <span class="n">header</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;| </span><span class="si">{</span><span class="s1">&#39;Parameter&#39;</span><span class="si">:</span><span class="s2">^10</span><span class="si">}</span><span class="s2"> | &quot;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">null_indices</span><span class="p">:</span>
+        <span class="n">header</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;Vt[&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;]&#39;</span><span class="si">:</span><span class="s2">^15</span><span class="si">}</span><span class="s2"> | &quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;| </span><span class="si">{</span><span class="n">j</span><span class="si">:</span><span class="s2">^10</span><span class="si">}</span><span class="s2"> | &quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">null_indices</span><span class="p">:</span>
+            <span class="n">row</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">Vt</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">]</span><span class="si">:</span><span class="s2">^15.3e</span><span class="si">}</span><span class="s2"> | &quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+    <span class="c1"># Parameters Covariances</span>
+    <span class="n">cost</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">residual</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">sigma2</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">cost</span> <span class="o">/</span> <span class="p">(</span><span class="n">m</span> <span class="o">-</span> <span class="n">n</span><span class="p">)</span> <span class="k">if</span> <span class="n">m</span> <span class="o">&gt;</span> <span class="n">n</span> <span class="k">else</span> <span class="n">numpy</span><span class="o">.</span><span class="n">inf</span>
+    <span class="n">cov</span> <span class="o">=</span> <span class="n">sigma2</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">jacobian</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">jacobian</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Estimated variances of the parameters:&quot;</span><span class="p">)</span>
+    <span class="n">header</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;| </span><span class="si">{</span><span class="s1">&#39;Parameter&#39;</span><span class="si">:</span><span class="s2">^10</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="s1">&#39;Value P&#39;</span><span class="si">:</span><span class="s2">^15</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="s1">&#39;Var = σ^2 (J.T J)^-1&#39;</span><span class="si">:</span><span class="s2">^20</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="s1">&#39;Ratio √V/|P|&#39;</span><span class="si">:</span><span class="s2">^15</span><span class="si">}</span><span class="s2"> |&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">var</span> <span class="o">=</span> <span class="n">cov</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span>
+        <span class="n">rel_sqrt</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">var</span><span class="p">)</span> <span class="o">/</span> <span class="nb">abs</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span> <span class="o">*</span> <span class="mi">100</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mf">1e-12</span>
+            <span class="k">else</span> <span class="n">numpy</span><span class="o">.</span><span class="n">inf</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">rel_sqrt</span> <span class="o">&gt;</span> <span class="mi">1000</span><span class="p">:</span>
+            <span class="n">rel_sqrt_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&gt; 1000 %&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rel_sqrt_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">rel_sqrt</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> %&quot;</span>
+
+        <span class="n">row</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;| </span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">^10</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="n">parameters</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">:</span><span class="s2">^15.3e</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="n">var</span><span class="si">:</span><span class="s2">^20.3e</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="n">rel_sqrt_str</span><span class="si">:</span><span class="s2">^15</span><span class="si">}</span><span class="s2"> |&quot;</span>
+        <span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">_start</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Optimization in progress...&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">50</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_start</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">50</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
 <span class="k">def</span><span class="w"> </span><span class="nf">_build_optimize_parameters_lsq_functions</span><span class="p">(</span>
     <span class="n">object_class</span><span class="p">:</span> <span class="n">Transform</span><span class="p">,</span>
     <span class="n">input_points</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
@@ -350,14 +492,12 @@
     <span class="n">return_history</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
     <span class="n">max_iterations</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
     <span class="n">max_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
-    <span class="n">verbose_level</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">filter_nans</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]:</span>
 
     <span class="n">last_params</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">last_res</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">last_jac</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">last_cost</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">last_callback_params</span> <span class="o">=</span> <span class="n">guess</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
     <span class="n">history</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">count_call</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
@@ -377,12 +517,26 @@
                 <span class="n">input_points</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dp</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">transform_kwargs</span>
             <span class="p">)</span>  <span class="c1"># shape (n_points, output_dim) and (n_points, output_dim, n_parameters)</span>
             <span class="n">R</span> <span class="o">=</span> <span class="n">output_points</span> <span class="o">-</span> <span class="n">transformed_points</span>  <span class="c1"># shape (n_points, output_dim)</span>
+            <span class="n">R</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>  <span class="c1"># shape (n_points * output_dim,)</span>
             <span class="n">jacobian_dp</span> <span class="o">=</span> <span class="o">-</span><span class="n">jacobian_dp</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">mask</span><span class="p">]</span>  <span class="c1"># shape (..., n_params)</span>
-            <span class="n">last_params</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-            <span class="n">last_res</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>  <span class="c1"># shape (n_points * output_dim,)</span>
-            <span class="n">last_jac</span> <span class="o">=</span> <span class="n">jacobian_dp</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+            <span class="n">jacobian_dp</span> <span class="o">=</span> <span class="n">jacobian_dp</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
                 <span class="n">n_points</span> <span class="o">*</span> <span class="n">output_dim</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
-            <span class="p">)</span>  <span class="c1"># shape (n_points * output_dim, n_params)</span>
+            <span class="p">)</span>  <span class="c1"># shape (n_points*output_dim, n_params)</span>
+
+            <span class="k">if</span> <span class="n">filter_nans</span><span class="p">:</span>
+                <span class="n">filter_mask_R</span> <span class="o">=</span> <span class="o">~</span><span class="n">numpy</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">R</span><span class="p">)</span>
+                <span class="n">filter_mask_J</span> <span class="o">=</span> <span class="o">~</span><span class="n">numpy</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">jacobian_dp</span><span class="p">)</span>
+                <span class="n">filter_mask</span> <span class="o">=</span> <span class="n">filter_mask_R</span> <span class="o">|</span> <span class="n">numpy</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">filter_mask_J</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">R</span><span class="p">[</span><span class="n">filter_mask</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="n">jacobian_dp</span><span class="p">[</span><span class="n">filter_mask</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="k">if</span> <span class="n">numpy</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">filter_mask</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s2">&quot;All residuals are NaN or infinite, filtering set 0 matrix, optimization cannot proceed.&quot;</span>
+                    <span class="p">)</span>
+
+            <span class="n">last_params</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">last_res</span> <span class="o">=</span> <span class="n">R</span>
+            <span class="n">last_jac</span> <span class="o">=</span> <span class="n">jacobian_dp</span>
 
         <span class="k">return</span> <span class="n">last_res</span><span class="p">,</span> <span class="n">last_jac</span>
 
@@ -398,86 +552,8 @@
         <span class="n">_</span><span class="p">,</span> <span class="n">jac</span> <span class="o">=</span> <span class="n">compute_func</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">jac</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">compute_p7_p10</span><span class="p">(</span>
-        <span class="n">jacobian</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">cost</span><span class="p">:</span> <span class="nb">float</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-        <span class="n">jacobian</span> <span class="o">=</span> <span class="n">last_jac</span>  <span class="c1"># shape (n_points*output_dim, n_params)</span>
-        <span class="n">_</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">jacobian</span><span class="p">,</span> <span class="n">full_matrices</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">cond</span> <span class="o">=</span> <span class="n">S</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">/</span> <span class="n">S</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="k">if</span> <span class="n">S</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">1e-12</span> <span class="k">else</span> <span class="n">numpy</span><span class="o">.</span><span class="n">inf</span>
-        <span class="n">n</span> <span class="o">=</span> <span class="n">jacobian</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">m</span> <span class="o">=</span> <span class="n">jacobian</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">sigma2</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">cost</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">m</span><span class="p">)</span> <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="n">m</span> <span class="k">else</span> <span class="n">numpy</span><span class="o">.</span><span class="n">inf</span>
-        <span class="n">cov</span> <span class="o">=</span> <span class="n">sigma2</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">jacobian</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">jacobian</span><span class="p">)</span>
-        <span class="n">p7_value</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cond</span><span class="si">:</span><span class="s2">+.2e</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="n">p8_value</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cov</span><span class="o">.</span><span class="n">diagonal</span><span class="p">()</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">:</span><span class="s2">+.2e</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="n">p9_value</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cov</span><span class="o">.</span><span class="n">diagonal</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">:</span><span class="s2">+.2e</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="n">p10_value</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cov</span><span class="o">.</span><span class="n">diagonal</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">:</span><span class="s2">+.2e</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">return</span> <span class="n">p7_value</span><span class="p">,</span> <span class="n">p8_value</span><span class="p">,</span> <span class="n">p9_value</span><span class="p">,</span> <span class="n">p10_value</span>
-
     <span class="k">def</span><span class="w"> </span><span class="nf">callback</span><span class="p">(</span><span class="n">intermediate_result</span><span class="p">:</span> <span class="n">scipy</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">OptimizeResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">nonlocal</span> <span class="n">history</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">count_call</span><span class="p">,</span> <span class="n">last_cost</span><span class="p">,</span> <span class="n">last_callback_params</span>
-
-        <span class="k">if</span> <span class="n">verbose_level</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
-            <span class="c1"># Save the jacobian before recomputing it for the 0th iteration</span>
-            <span class="n">jacobian</span> <span class="o">=</span> <span class="n">last_jac</span>  <span class="c1"># shape (n_points*output_dim, n_params)</span>
-
-            <span class="n">space</span> <span class="o">=</span> <span class="mi">12</span>
-            <span class="n">p_names</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="s2">&quot;Iteration&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Cost&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Cost red&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Step norm&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;cond(J)&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Min cov&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Max cov&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Trace cov&quot;</span><span class="p">,</span>
-            <span class="p">]</span>
-
-            <span class="c1"># First call</span>
-            <span class="k">if</span> <span class="n">count_call</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="c1"># Compute the initial cost and Jacobian for the initial guess</span>
-                <span class="n">cost_0</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">residuals_func</span><span class="p">(</span><span class="n">guess</span><span class="p">[</span><span class="n">mask</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
-                <span class="n">jacobian_0</span> <span class="o">=</span> <span class="n">jacobian_func</span><span class="p">(</span><span class="n">guess</span><span class="p">[</span><span class="n">mask</span><span class="p">])</span>
-                <span class="n">last_cost</span> <span class="o">=</span> <span class="n">cost_0</span>  <span class="c1"># Save for 1th iteration cost reduction computation</span>
-                <span class="n">p7_0</span><span class="p">,</span> <span class="n">p8_0</span><span class="p">,</span> <span class="n">p9_0</span><span class="p">,</span> <span class="n">p10_0</span> <span class="o">=</span> <span class="n">compute_p7_p10</span><span class="p">(</span><span class="n">jacobian_0</span><span class="p">,</span> <span class="n">cost_0</span><span class="p">)</span>
-                <span class="n">p_value</span> <span class="o">=</span> <span class="p">[</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="mi">0</span><span class="si">:</span><span class="s2">4d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cost_0</span><span class="si">:</span><span class="s2">+.2e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;&quot;</span><span class="p">,</span>
-                    <span class="n">p7_0</span><span class="p">,</span>
-                    <span class="n">p8_0</span><span class="p">,</span>
-                    <span class="n">p9_0</span><span class="p">,</span>
-                    <span class="n">p10_0</span><span class="p">,</span>
-                <span class="p">]</span>
-
-                <span class="c1"># Title and first row</span>
-                <span class="n">header</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="s2">&quot;| &quot;</span> <span class="o">+</span> <span class="s2">&quot; | &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s2">^</span><span class="si">{</span><span class="n">space</span><span class="si">}}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">p_names</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; |&quot;</span>
-                <span class="p">)</span>
-                <span class="n">separator</span> <span class="o">=</span> <span class="s2">&quot;|-&quot;</span> <span class="o">+</span> <span class="s2">&quot;-|-&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="n">space</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">p_names</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;-|&quot;</span>
-                <span class="n">row</span> <span class="o">=</span> <span class="s2">&quot;| &quot;</span> <span class="o">+</span> <span class="s2">&quot; | &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">value</span><span class="si">:</span><span class="s2">^</span><span class="si">{</span><span class="n">space</span><span class="si">}}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">p_value</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; |&quot;</span>
-                <span class="nb">print</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="n">separator</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-
-            <span class="n">cost</span> <span class="o">=</span> <span class="n">intermediate_result</span><span class="o">.</span><span class="n">cost</span>
-            <span class="n">p7</span><span class="p">,</span> <span class="n">p8</span><span class="p">,</span> <span class="n">p9</span><span class="p">,</span> <span class="n">p10</span> <span class="o">=</span> <span class="n">compute_p7_p10</span><span class="p">(</span><span class="n">jacobian</span><span class="p">,</span> <span class="n">cost</span><span class="p">)</span>
-
-            <span class="n">p_values</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">intermediate_result</span><span class="o">.</span><span class="n">nit</span><span class="si">:</span><span class="s2">4d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cost</span><span class="si">:</span><span class="s2">+.2e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">last_cost</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">cost</span><span class="si">:</span><span class="s2">+.2e</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">last_cost</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;N/A&quot;</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">intermediate_result</span><span class="o">.</span><span class="n">x</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">last_callback_params</span><span class="p">)</span><span class="si">:</span><span class="s2">+.2e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="n">p7</span><span class="p">,</span>
-                <span class="n">p8</span><span class="p">,</span>
-                <span class="n">p9</span><span class="p">,</span>
-                <span class="n">p10</span><span class="p">,</span>
-            <span class="p">]</span>
-
-            <span class="c1"># Display the quantities in a Table format</span>
-            <span class="n">row</span> <span class="o">=</span> <span class="s2">&quot;| &quot;</span> <span class="o">+</span> <span class="s2">&quot; | &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">value</span><span class="si">:</span><span class="s2">^</span><span class="si">{</span><span class="n">space</span><span class="si">}}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">p_values</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; |&quot;</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+        <span class="k">nonlocal</span> <span class="n">history</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">count_call</span>
 
         <span class="k">if</span> <span class="n">return_history</span><span class="p">:</span>
             <span class="n">parameters</span> <span class="o">=</span> <span class="n">guess</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -492,8 +568,6 @@
             <span class="k">raise</span> <span class="ne">StopIteration</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Maximum time of </span><span class="si">{</span><span class="n">max_time</span><span class="si">}</span><span class="s2"> seconds exceeded&quot;</span><span class="p">)</span>
 
         <span class="n">count_call</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="n">last_cost</span> <span class="o">=</span> <span class="n">intermediate_result</span><span class="o">.</span><span class="n">cost</span>
-        <span class="n">last_callback_params</span> <span class="o">=</span> <span class="n">intermediate_result</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">get_history</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]:</span>
         <span class="k">nonlocal</span> <span class="n">history</span>
@@ -520,9 +594,12 @@
     <span class="n">xtol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">gtol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">auto</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">loss</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">filter_nans</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">verbose_level</span><span class="p">:</span> <span class="n">Integral</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="n">return_result</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">return_history</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">_pretext</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Optimize the ``parameters`` of a :class:`Transform` object such that the transformed</span>
@@ -651,7 +728,7 @@
 
 <span class="sd">    gtol : Optional[Real], optional</span>
 <span class="sd">        Stop criterion by the norm of the gradient.</span>
-<span class="sd">        The optimization process is stopped when ``norm(g_scaled, ord=np.inf) &lt; gtol``</span>
+<span class="sd">        The optimization process is stopped when ``norm(g_scaled, ord=numpy.inf) &lt; gtol``</span>
 <span class="sd">        where g_scaled is the value of the gradient scaled to account for the</span>
 <span class="sd">        presence of the bounds. The default value is None, which means the gtol</span>
 <span class="sd">        criterion is not used for stopping the optimization.</span>
@@ -661,12 +738,29 @@
 <span class="sd">        ``1e-8``. If any of the stopping criteria is already specified, it will</span>
 <span class="sd">        be overridden by the user-specified value.</span>
 
+<span class="sd">    loss : Optional[str], optional</span>
+<span class="sd">        If specified, the optimization will use a robust loss function to reduce the</span>
+<span class="sd">        influence of outliers in the optimization. The available loss functions are</span>
+<span class="sd">        &#39;huber&#39;, &#39;cauchy&#39;, &#39;arctan&#39;, &#39;soft_l1&#39;, and &#39;linear&#39;. Default is None, which</span>
+<span class="sd">        means the standard least squares loss is used (i.e., &#39;linear&#39;).</span>
+
+<span class="sd">    filter_nans : bool, optional</span>
+<span class="sd">        If True, NaN values in the residuals are filtered out before computing the cost</span>
+<span class="sd">        and the Jacobian. This can help improve the robustness of the optimization in</span>
+<span class="sd">        the presence of outliers or invalid data. Default is False.</span>
+
+<span class="sd">        .. warning::</span>
+
+<span class="sd">            The optimization can try to expulse all points as outliers to reduce</span>
+<span class="sd">            the cost to zero, which can lead to a failure of the optimization.</span>
+<span class="sd">            Use with caution.</span>
+
 <span class="sd">    verbose_level : int, optional</span>
 <span class="sd">        Level of algorithm’s verbosity:</span>
 <span class="sd">        - 0 (default) : work silently.</span>
 <span class="sd">        - 1 : display a termination report.</span>
 <span class="sd">        - 2 : display progress during iterations (scipy).</span>
-<span class="sd">        - 3 : display detailed progress during iterations (custom).</span>
+<span class="sd">        - 3 : display initial jacobian analysis and scipy progress during iterations.</span>
 
 <span class="sd">    return_result : bool, optional</span>
 <span class="sd">        If True, the function returns the ``scipy.optimize.OptimizeResult`` object</span>
@@ -852,6 +946,23 @@
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;gtol must be a positive float, got </span><span class="si">{</span><span class="n">gtol</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">gtol</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">gtol</span><span class="p">)</span>
 
+    <span class="k">if</span> <span class="n">loss</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="n">loss</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="s2">&quot;huber&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;cauchy&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;arctan&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;soft_l1&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;linear&quot;</span><span class="p">,</span>
+        <span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;loss must be one of &#39;huber&#39;, &#39;cauchy&#39;, &#39;arctan&#39;, &#39;soft_l1&#39;, or &#39;linear&#39;, got </span><span class="si">{</span><span class="n">loss</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="s2">&quot;linear&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filter_nans</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;filter_nans must be a boolean, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">filter_nans</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">verbose_level</span><span class="p">,</span> <span class="n">Integral</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">verbose_level</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;verbose_level must be an integer between 0 and 3, got </span><span class="si">{</span><span class="n">verbose_level</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -910,7 +1021,7 @@
             <span class="n">return_history</span><span class="p">,</span>
             <span class="n">max_iterations</span><span class="p">,</span>
             <span class="n">max_time</span><span class="p">,</span>
-            <span class="n">verbose_level</span><span class="p">,</span>
+            <span class="n">filter_nans</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="p">)</span>
 
@@ -918,6 +1029,15 @@
     <span class="n">params_initial</span> <span class="o">=</span> <span class="n">guess</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>  <span class="c1"># shape (n_params,)</span>
     <span class="n">params_bounds</span> <span class="o">=</span> <span class="n">bounds</span><span class="p">[:,</span> <span class="n">mask</span><span class="p">]</span>  <span class="c1"># shape (2, n_params)</span>
     <span class="n">params_scale</span> <span class="o">=</span> <span class="n">scale</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>  <span class="c1"># shape (n_params,)</span>
+
+    <span class="k">if</span> <span class="n">verbose_level</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">_study_jacobian_least_squares</span><span class="p">(</span>
+            <span class="n">residuals_func</span><span class="p">(</span><span class="n">params_initial</span><span class="p">),</span>
+            <span class="n">jacobian_func</span><span class="p">(</span><span class="n">params_initial</span><span class="p">),</span>
+            <span class="n">params_initial</span><span class="p">,</span>
+            <span class="n">_pretext</span><span class="p">,</span>
+            <span class="n">_start</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
 
     <span class="c1"># Run the least squares optimization</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">least_squares</span><span class="p">(</span>
@@ -929,10 +1049,20 @@
         <span class="n">ftol</span><span class="o">=</span><span class="n">ftol</span><span class="p">,</span>
         <span class="n">xtol</span><span class="o">=</span><span class="n">xtol</span><span class="p">,</span>
         <span class="n">gtol</span><span class="o">=</span><span class="n">gtol</span><span class="p">,</span>
-        <span class="n">verbose</span><span class="o">=</span><span class="n">verbose_level</span> <span class="k">if</span> <span class="n">verbose_level</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">verbose_level</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
         <span class="n">method</span><span class="o">=</span><span class="s2">&quot;trf&quot;</span><span class="p">,</span>  <span class="c1"># Trust Region Reflective algorithm</span>
+        <span class="n">loss</span><span class="o">=</span><span class="n">loss</span><span class="p">,</span>
         <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">,</span>
     <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">verbose_level</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">_study_jacobian_least_squares</span><span class="p">(</span>
+            <span class="n">residuals_func</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">x</span><span class="p">),</span>
+            <span class="n">jacobian_func</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">x</span><span class="p">),</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
+            <span class="n">_pretext</span><span class="p">,</span>
+            <span class="n">_start</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
 
     <span class="n">parameters</span> <span class="o">=</span> <span class="n">guess</span>
     <span class="n">parameters</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">x</span>
@@ -979,6 +1109,8 @@
     <span class="n">xtol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">gtol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">auto</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">loss</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">filter_nans</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">verbose_level</span><span class="p">:</span> <span class="n">Integral</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="n">return_result</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">return_history</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -1143,7 +1275,7 @@
 
 <span class="sd">    gtol : Optional[Real], optional</span>
 <span class="sd">        Stop criterion by the norm of the gradient.</span>
-<span class="sd">        The optimization process is stopped when ``norm(g_scaled, ord=np.inf) &lt; gtol``</span>
+<span class="sd">        The optimization process is stopped when ``norm(g_scaled, ord=numpy.inf) &lt; gtol``</span>
 <span class="sd">        where g_scaled is the value of the gradient scaled to account for the</span>
 <span class="sd">        presence of the bounds. The default value is None, which means the gtol</span>
 <span class="sd">        criterion is not used for stopping the optimization.</span>
@@ -1153,11 +1285,29 @@
 <span class="sd">        ``1e-8``. If any of the stopping criteria is already specified, it will</span>
 <span class="sd">        be overridden by the user-specified value.</span>
 
+<span class="sd">    loss : Optional[str], optional</span>
+<span class="sd">        If specified, the optimization will use a robust loss function to reduce the</span>
+<span class="sd">        influence of outliers in the optimization. The available loss functions are</span>
+<span class="sd">        &#39;huber&#39;, &#39;cauchy&#39;, &#39;arctan&#39;, &#39;soft_l1&#39;, and &#39;linear&#39;. Default is None, which</span>
+<span class="sd">        means the standard least squares loss is used (i.e., &#39;linear&#39;).</span>
+
+<span class="sd">    filter_nans : bool, optional</span>
+<span class="sd">        If True, NaN values in the residuals are filtered out before computing the cost</span>
+<span class="sd">        and the Jacobian. This can help improve the robustness of the optimization in</span>
+<span class="sd">        the presence of outliers or invalid data. Default is False.</span>
+
+<span class="sd">        .. warning::</span>
+
+<span class="sd">            The optimization can try to expulse all points as outliers to reduce</span>
+<span class="sd">            the cost to zero, which can lead to a failure of the optimization.</span>
+<span class="sd">            Use with caution.</span>
+
 <span class="sd">    verbose_level : int, optional</span>
 <span class="sd">        Level of algorithm’s verbosity:</span>
 <span class="sd">        - 0 (default) : work silently.</span>
 <span class="sd">        - 1 : display a termination report.</span>
 <span class="sd">        - 2 : display progress during iterations.</span>
+<span class="sd">        - 3 : display initial jacobian analysis and progress during iterations.</span>
 
 <span class="sd">    return_result : bool, optional</span>
 <span class="sd">        If True, the function returns the ``scipy.optimize.OptimizeResult`` object</span>
@@ -1449,6 +1599,19 @@
     <span class="c1"># -------------</span>
     <span class="c1"># Optimize the parameters of the composite transformation</span>
     <span class="c1"># -------------</span>
+    <span class="n">_pretext</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">verbose_level</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">_pretext</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">n_pi</span> <span class="o">=</span> <span class="n">mask_intrinsic</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">n_pd</span> <span class="o">=</span> <span class="n">mask_distortion</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">n_pe</span> <span class="o">=</span> <span class="n">mask_extrinsic</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">n_pe</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">_pretext</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n_pe</span><span class="si">}</span><span class="s2"> Extrinsic parameters to optimize - Parameters 0 to </span><span class="si">{</span><span class="n">n_pe</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">n_pd</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">_pretext</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n_pd</span><span class="si">}</span><span class="s2"> Distortion parameters to optimize - Parameters </span><span class="si">{</span><span class="n">n_pe</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">n_pe</span><span class="o">+</span><span class="w"> </span><span class="n">n_pd</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">n_pi</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">_pretext</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n_pi</span><span class="si">}</span><span class="s2"> Intrinsic parameters to optimize - Parameters </span><span class="si">{</span><span class="n">n_pe</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">n_pd</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">n_pe</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">n_pd</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">n_pi</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
+
     <span class="n">parameters</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">history</span> <span class="o">=</span> <span class="n">optimize_parameters_least_squares</span><span class="p">(</span>
         <span class="n">transform</span><span class="p">,</span>
         <span class="n">input_points</span><span class="o">=</span><span class="n">world_points</span><span class="p">,</span>
@@ -1464,9 +1627,12 @@
         <span class="n">xtol</span><span class="o">=</span><span class="n">xtol</span><span class="p">,</span>
         <span class="n">gtol</span><span class="o">=</span><span class="n">gtol</span><span class="p">,</span>
         <span class="n">auto</span><span class="o">=</span><span class="n">auto</span><span class="p">,</span>
+        <span class="n">loss</span><span class="o">=</span><span class="n">loss</span><span class="p">,</span>
+        <span class="n">filter_nans</span><span class="o">=</span><span class="n">filter_nans</span><span class="p">,</span>
         <span class="n">verbose_level</span><span class="o">=</span><span class="n">verbose_level</span><span class="p">,</span>
         <span class="n">return_result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">return_history</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">_pretext</span><span class="o">=</span><span class="n">_pretext</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="n">extrinsic_parameters</span> <span class="o">=</span> <span class="p">(</span>
@@ -1531,6 +1697,10 @@
     <span class="n">mask</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
     <span class="n">guess</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
     <span class="n">transform_kwargs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Dict</span><span class="p">],</span>
+    <span class="n">return_history</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">max_iterations</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+    <span class="n">max_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+    <span class="n">filter_nans</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]:</span>
 
     <span class="n">last_params</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1563,6 +1733,10 @@
     <span class="n">c_jac_start_e</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">cumsum</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">c_n_equations</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>  <span class="c1"># len n_chains</span>
     <span class="n">c_jac_end_e</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">c_n_equations</span><span class="p">)</span>  <span class="c1"># len n_chains</span>
 
+    <span class="n">history</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">count_call</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_func</span><span class="p">(</span>
         <span class="n">params</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
@@ -1586,14 +1760,14 @@
                     <span class="n">output_points</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">transformed_points</span>
                 <span class="p">)</span>  <span class="c1"># shape (n_points, output_dim)</span>
                 <span class="n">R_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">R</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>  <span class="c1"># shape (n_points * output_dim,)</span>
-                <span class="n">jacobian_dp</span> <span class="o">=</span> <span class="n">jacobian_dp</span><span class="p">[</span>
+                <span class="n">jacobian_dp</span> <span class="o">=</span> <span class="o">-</span><span class="n">jacobian_dp</span><span class="p">[</span>
                     <span class="p">:,</span> <span class="p">:,</span> <span class="n">c_mask</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
                 <span class="p">]</span>  <span class="c1"># shape (..., n_reduced_parameters)</span>
                 <span class="n">J_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="n">jacobian_dp</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">c_n_points</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">c_output_dim</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
                 <span class="p">)</span>  <span class="c1"># shape (n_points * output_dim, n_params)</span>
             <span class="c1"># Concatenate the residuals and Jacobians for all chains</span>
-            <span class="n">last_res</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">R_list</span><span class="p">)</span>  <span class="c1"># shape (sum(n_points * output_dim),)</span>
+            <span class="n">R</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">R_list</span><span class="p">)</span>  <span class="c1"># shape (sum(n_points * output_dim),)</span>
             <span class="c1"># Assemble the Jacobian according to the chain structure and the mask</span>
             <span class="n">J_full</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">sparse</span><span class="o">.</span><span class="n">lil_matrix</span><span class="p">(</span>
                 <span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">c_n_equations</span><span class="p">),</span> <span class="nb">sum</span><span class="p">(</span><span class="n">t_n_reduced_parameters</span><span class="p">))</span>
@@ -1609,7 +1783,25 @@
                         <span class="n">c_jac_start_e</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="p">:</span> <span class="n">c_jac_end_e</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
                         <span class="n">t_jac_start_rp</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="p">:</span> <span class="n">t_jac_end_rp</span><span class="p">[</span><span class="n">j</span><span class="p">],</span>
                     <span class="p">]</span> <span class="o">=</span> <span class="n">J_list</span><span class="p">[</span><span class="n">i</span><span class="p">][:,</span> <span class="n">local_start</span><span class="p">:</span><span class="n">local_end</span><span class="p">]</span>
-            <span class="n">last_jac</span> <span class="o">=</span> <span class="n">J_full</span><span class="o">.</span><span class="n">tocsr</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">filter_nans</span><span class="p">:</span>
+                <span class="n">filter_mask_R</span> <span class="o">=</span> <span class="o">~</span><span class="n">numpy</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">R</span><span class="p">)</span>
+                <span class="n">filter_mask_J</span> <span class="o">=</span> <span class="o">~</span><span class="n">numpy</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">J_full</span><span class="o">.</span><span class="n">toarray</span><span class="p">())</span>
+                <span class="n">filter_mask</span> <span class="o">=</span> <span class="n">filter_mask_R</span> <span class="o">|</span> <span class="n">numpy</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">filter_mask_J</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">R</span><span class="p">[</span><span class="n">filter_mask</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="n">J_full</span><span class="p">[</span><span class="n">filter_mask</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="k">if</span> <span class="n">numpy</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">filter_mask</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s2">&quot;All residuals are NaN or infinite, filtering set empty matrix, optimization cannot proceed.&quot;</span>
+                    <span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Warning: Filtered </span><span class="si">{</span><span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">filter_mask</span><span class="p">)</span><span class="si">}</span><span class="s2"> out of </span><span class="si">{</span><span class="n">R</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s2"> equations due to NaN or infinite values in the residuals or Jacobian.&quot;</span>
+                <span class="p">)</span>
+
+            <span class="n">J</span> <span class="o">=</span> <span class="n">J_full</span><span class="o">.</span><span class="n">tocsr</span><span class="p">()</span>  <span class="c1"># Convert to CSR for efficient arithmetic operations</span>
+
+            <span class="n">last_res</span> <span class="o">=</span> <span class="n">R</span>
+            <span class="n">last_jac</span> <span class="o">=</span> <span class="n">J</span>
             <span class="n">last_params</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
             <span class="k">return</span> <span class="n">last_res</span><span class="p">,</span> <span class="n">last_jac</span>
 
@@ -1627,46 +1819,28 @@
         <span class="n">_</span><span class="p">,</span> <span class="n">jac</span> <span class="o">=</span> <span class="n">compute_func</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">jac</span>
 
-    <span class="k">return</span> <span class="n">residuals_func</span><span class="p">,</span> <span class="n">jacobian_func</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">_build_optimize_chain_parameters_lsq_callback</span><span class="p">(</span>
-    <span class="n">return_history</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
-    <span class="n">max_iterations</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
-    <span class="n">max_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
-    <span class="n">mask</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
-    <span class="n">guess</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]]:</span>
-
-    <span class="k">if</span> <span class="n">max_iterations</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">max_time</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">return_history</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
-
-    <span class="n">history</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">count_call</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-
     <span class="k">def</span><span class="w"> </span><span class="nf">callback</span><span class="p">(</span><span class="n">intermediate_result</span><span class="p">:</span> <span class="n">scipy</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">OptimizeResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">nonlocal</span> <span class="n">history</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">count_call</span>
 
-        <span class="n">count_call</span> <span class="o">+=</span> <span class="mi">1</span>
-
         <span class="k">if</span> <span class="n">return_history</span><span class="p">:</span>
-            <span class="n">parameters</span> <span class="o">=</span> <span class="p">[</span><span class="n">g</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">guess</span><span class="p">]</span>  <span class="c1"># n_transform lgth</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">intermediate_result</span><span class="o">.</span><span class="n">x</span><span class="p">)):</span>
-                <span class="n">parameters</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span>
+            <span class="n">parameters</span> <span class="o">=</span> <span class="n">guess</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">parameters</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">intermediate_result</span><span class="o">.</span><span class="n">x</span>
             <span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">parameters</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">intermediate_result</span><span class="p">))</span>
-        <span class="k">if</span> <span class="n">max_iterations</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">count_call</span> <span class="o">&gt;=</span> <span class="n">max_iterations</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">max_iterations</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">count_call</span> <span class="o">&gt;</span> <span class="n">max_iterations</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">StopIteration</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Maximum number of iterations </span><span class="si">{</span><span class="n">max_iterations</span><span class="si">}</span><span class="s2"> exceeded&quot;</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="n">max_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_time</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">StopIteration</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Maximum time of </span><span class="si">{</span><span class="n">max_time</span><span class="si">}</span><span class="s2"> seconds exceeded&quot;</span><span class="p">)</span>
 
+        <span class="n">count_call</span> <span class="o">+=</span> <span class="mi">1</span>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">get_history</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]:</span>
         <span class="k">nonlocal</span> <span class="n">history</span>
         <span class="k">return</span> <span class="n">history</span> <span class="k">if</span> <span class="n">return_history</span> <span class="k">else</span> <span class="kc">None</span>
 
-    <span class="k">return</span> <span class="n">callback</span><span class="p">,</span> <span class="n">get_history</span>
+    <span class="k">return</span> <span class="n">residuals_func</span><span class="p">,</span> <span class="n">jacobian_func</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">get_history</span>
 
 
 <div class="viewcode-block" id="optimize_chain_parameters_least_squares">
@@ -1688,6 +1862,8 @@
     <span class="n">xtol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">gtol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">auto</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">loss</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">filter_nans</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">verbose_level</span><span class="p">:</span> <span class="n">Integral</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="n">return_result</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">return_history</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -1816,7 +1992,7 @@
 
 <span class="sd">    gtol : Optional[Real], optional</span>
 <span class="sd">        Stop criterion by the norm of the gradient. The optimization process is stopped</span>
-<span class="sd">        when ``norm(g_scaled, ord=np.inf) &lt; gtol`` where g_scaled is the value of the</span>
+<span class="sd">        when ``norm(g_scaled, ord=numpy.inf) &lt; gtol`` where g_scaled is the value of the</span>
 <span class="sd">        gradient scaled to account for the presence of the bounds. The default value is</span>
 <span class="sd">        None, which means the gtol criterion is not used for stopping the optimization.</span>
 
@@ -1824,6 +2000,23 @@
 <span class="sd">        If True, the stopping criteria (``ftol``, ``xtol``, and ``gtol``) are all set</span>
 <span class="sd">        to ``1e-8``. If any of the stopping criteria is already specified, it will be</span>
 <span class="sd">        overridden by the user-specified value.</span>
+
+<span class="sd">    loss : Optional[str], optional</span>
+<span class="sd">        The loss function to use for robust optimization. If None, the standard least</span>
+<span class="sd">        squares loss is used. Supported values are &#39;linear&#39;, &#39;soft_l1&#39;, &#39;huber&#39;,</span>
+<span class="sd">        &#39;cauchy&#39;, and &#39;arctan&#39;. Default is None, which means no robust loss is used</span>
+<span class="sd">        (i.e., &#39;linear&#39; loss is used).</span>
+
+<span class="sd">    filter_nans : bool, optional</span>
+<span class="sd">        If True, NaN values in the residuals are filtered out before computing the cost</span>
+<span class="sd">        and the Jacobian. This can help improve the robustness of the optimization in</span>
+<span class="sd">        the presence of outliers or invalid data. Default is False.</span>
+
+<span class="sd">        .. warning::</span>
+
+<span class="sd">            The optimization can try to expulse all points as outliers to reduce</span>
+<span class="sd">            the cost to zero, which can lead to a failure of the optimization.</span>
+<span class="sd">            Use with caution.</span>
 
 <span class="sd">    verbose_level : int, optional</span>
 <span class="sd">        Level of algorithm’s verbosity:</span>
@@ -2130,9 +2323,26 @@
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;gtol must be a positive float, got </span><span class="si">{</span><span class="n">gtol</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">gtol</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">gtol</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">verbose_level</span><span class="p">,</span> <span class="n">Integral</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">verbose_level</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">loss</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="n">loss</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="s2">&quot;linear&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;soft_l1&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;huber&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;cauchy&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;arctan&quot;</span><span class="p">,</span>
+        <span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;loss must be one of &#39;linear&#39;, &#39;soft_l1&#39;, &#39;huber&#39;, &#39;cauchy&#39;, or &#39;arctan&#39;, got </span><span class="si">{</span><span class="n">loss</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="s2">&quot;linear&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filter_nans</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;filter_nans must be a boolean, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">filter_nans</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">verbose_level</span><span class="p">,</span> <span class="n">Integral</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">verbose_level</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;verbose_level must be an integer between 0 and 2, got </span><span class="si">{</span><span class="n">verbose_level</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;verbose_level must be an integer between 0 and 3, got </span><span class="si">{</span><span class="n">verbose_level</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
     <span class="n">verbose_level</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">verbose_level</span><span class="p">)</span>
 
@@ -2177,18 +2387,20 @@
     <span class="c1"># -------------</span>
     <span class="n">object_classes</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">transforms</span><span class="p">)</span>
 
-    <span class="n">residuals_func</span><span class="p">,</span> <span class="n">jacobian_func</span> <span class="o">=</span> <span class="n">_build_optimize_chain_parameters_lsq_functions</span><span class="p">(</span>
-        <span class="n">object_classes</span><span class="p">,</span>
-        <span class="n">chains</span><span class="p">,</span>
-        <span class="n">input_points</span><span class="p">,</span>
-        <span class="n">output_points</span><span class="p">,</span>
-        <span class="n">mask</span><span class="p">,</span>
-        <span class="n">guess</span><span class="p">,</span>
-        <span class="n">transform_kwargs</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="n">callback</span><span class="p">,</span> <span class="n">get_history</span> <span class="o">=</span> <span class="n">_build_optimize_chain_parameters_lsq_callback</span><span class="p">(</span>
-        <span class="n">return_history</span><span class="p">,</span> <span class="n">max_iterations</span><span class="p">,</span> <span class="n">max_time</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">guess</span>
+    <span class="n">residuals_func</span><span class="p">,</span> <span class="n">jacobian_func</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">get_history</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">_build_optimize_chain_parameters_lsq_functions</span><span class="p">(</span>
+            <span class="n">object_classes</span><span class="p">,</span>
+            <span class="n">chains</span><span class="p">,</span>
+            <span class="n">input_points</span><span class="p">,</span>
+            <span class="n">output_points</span><span class="p">,</span>
+            <span class="n">mask</span><span class="p">,</span>
+            <span class="n">guess</span><span class="p">,</span>
+            <span class="n">transform_kwargs</span><span class="p">,</span>
+            <span class="n">return_history</span><span class="p">,</span>
+            <span class="n">max_iterations</span><span class="p">,</span>
+            <span class="n">max_time</span><span class="p">,</span>
+            <span class="n">filter_nans</span><span class="p">,</span>
+        <span class="p">)</span>
     <span class="p">)</span>
 
     <span class="c1"># Crop the problem to the optimized parameters</span>
@@ -2202,6 +2414,29 @@
         <span class="p">[</span><span class="n">scale</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">mask</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_transforms</span><span class="p">)]</span>
     <span class="p">)</span>  <span class="c1"># shape (sum(n_reduced_parameters),)</span>
 
+    <span class="k">if</span> <span class="n">verbose_level</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">_pretext</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">n_p</span> <span class="o">=</span> <span class="p">[</span><span class="n">mask</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_transforms</span><span class="p">)]</span>
+        <span class="n">count_p</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">n_p</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">_end</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n_transforms</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">_end</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">_pretext</span> <span class="o">+=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Transformation </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> parameters to optimize - Parameters </span><span class="si">{</span><span class="n">count_p</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">count_p</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="o">+</span> <span class="n">_end</span>
+                <span class="p">)</span>
+                <span class="n">count_p</span> <span class="o">+=</span> <span class="n">n</span>
+
+        <span class="n">_study_jacobian_least_squares</span><span class="p">(</span>
+            <span class="n">residuals_func</span><span class="p">(</span><span class="n">params_initial</span><span class="p">),</span>
+            <span class="n">jacobian_func</span><span class="p">(</span><span class="n">params_initial</span><span class="p">)</span><span class="o">.</span><span class="n">toarray</span><span class="p">(),</span>
+            <span class="n">params_initial</span><span class="p">,</span>
+            <span class="n">_pretext</span><span class="p">,</span>
+            <span class="n">_start</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+
     <span class="c1"># Run the least squares optimization</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">least_squares</span><span class="p">(</span>
         <span class="n">fun</span><span class="o">=</span><span class="n">residuals_func</span><span class="p">,</span>
@@ -2212,10 +2447,20 @@
         <span class="n">ftol</span><span class="o">=</span><span class="n">ftol</span><span class="p">,</span>
         <span class="n">xtol</span><span class="o">=</span><span class="n">xtol</span><span class="p">,</span>
         <span class="n">gtol</span><span class="o">=</span><span class="n">gtol</span><span class="p">,</span>
-        <span class="n">verbose</span><span class="o">=</span><span class="n">verbose_level</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">verbose_level</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
         <span class="n">method</span><span class="o">=</span><span class="s2">&quot;trf&quot;</span><span class="p">,</span>  <span class="c1"># Trust Region Reflective algorithm</span>
+        <span class="n">loss</span><span class="o">=</span><span class="n">loss</span><span class="p">,</span>
         <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">,</span>
     <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">verbose_level</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">_study_jacobian_least_squares</span><span class="p">(</span>
+            <span class="n">residuals_func</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">x</span><span class="p">),</span>
+            <span class="n">jacobian_func</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">toarray</span><span class="p">(),</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
+            <span class="n">_pretext</span><span class="p">,</span>
+            <span class="n">_start</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
 
     <span class="n">parameters</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
