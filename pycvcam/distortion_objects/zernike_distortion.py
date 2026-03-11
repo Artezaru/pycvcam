@@ -18,7 +18,7 @@ from numbers import Number, Integral
 import pyzernike
 
 from ..core import Distortion
-from ..optimize.optimize_input_points import optimize_input_points
+from ..optimize.optimize_input_points import optimize_input_points_gn
 
 
 class ZernikeDistortion(Distortion):
@@ -1007,7 +1007,7 @@ class ZernikeDistortion(Distortion):
 
         .. seealso::
 
-            - :func:`pycvcam.optimize.optimize_input_points` for the implementation of the iterative algorithm to find the inverse distortion points.
+            - :func:`pycvcam.optimize_input_points_gn` for the implementation of the iterative algorithm to find the inverse distortion points.
 
         The initial guess is setted to :math:`\vec{x}_{n} = \vec{x}_{d} - U(\vec{x}_{d})``, where :math:`U(\vec{x}_{d})` is the distortion field applied to the distorted points.
 
@@ -1048,12 +1048,15 @@ class ZernikeDistortion(Distortion):
                 "\n[WARNING]: Undistortion with dx=True or dp=True. The jacobians cannot be computed with this method. They are always None.\n"
             )
 
-        normalized_points = optimize_input_points(
+        # check if ftol, xtol, gtol, eps in kwargs and set auto=True if none of them is present
+        if not any(key in kwargs for key in ["ftol", "xtol", "gtol", "eps"]):
+            kwargs["auto"] = True
+
+        normalized_points = optimize_input_points_gn(
             self,
             distorted_points,
             guess=2 * distorted_points
             - self._transform(distorted_points, dx=False, dp=False)[0],
-            _skip=True,  # Skip the checks on the input points
             **kwargs,
         )
 

@@ -3875,7 +3875,7 @@
    "name": "optimize_camera_trf"
   }
  ],
- "pycvcam.optimize_parameters_trf": [
+ "pycvcam.optimize_parameters_lm": [
   {
    "is_class": false,
    "is_explicit": false,
@@ -3888,8 +3888,10 @@
    "is_explicit": false,
    "module": "pycvcam",
    "module_short": "pycvcam",
-   "name": "optimize_parameters_trf"
-  },
+   "name": "optimize_parameters_lm"
+  }
+ ],
+ "pycvcam.optimize_parameters_trf": [
   {
    "is_class": false,
    "is_explicit": true,

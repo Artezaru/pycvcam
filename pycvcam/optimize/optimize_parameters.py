@@ -291,10 +291,38 @@ def _build_residual_jacobian_functions(
     and the output points for each chain, while respecting the structure of the chains
     and the masks for the parameters.
 
-    The Jacobian function computes the Jacobian matrix of the residuals with respect to the
-    parameters, while respecting the structure of the chains and the masks for the parameters.
-    The Jacobian matrix is assembled according to the chain structure and the mask,
-    and can be treated as a sparse matrix if _sparse is True.
+    Lets :math:`(T_0, T_1, ..., T_{N_T-1})` be a tuple of :math:`N_T`
+    :class:`Transform` objects, and :math:`(C_0, C_1, ..., C_{N_C-1})` be a
+    tuple of :math:`N_C` chains of transformations.
+
+    A chain :math:`C_i` is defined as a tuple of indices corresponding to the
+    transformations in the chain. For example:
+
+    .. code-block:: console
+
+        C_0 = (1, 4, 8) -----> C_0(X) = T_8 ∘ T_4 ∘ T_1(X)
+
+    For each chain :math:`C_i`, we have a set of input points :math:`X_i` and output
+    points :math:`Y_i` we can build a residual function :math:`R_i` and a
+    Jacobian function :math:`J_i` as follows:
+
+    .. math::
+
+        R_i(p) = Y_i - C_i(X_i; p)
+
+    .. math::
+
+        J_i(p) = -\frac{\partial C_i(X_i; p)}{\partial p} = \frac{\partial R_i(p)}{\partial p}
+
+    where :math:`p` is the vector of parameters of the transformations in the chain,
+    which is a subset of the parameters of all the transformations in
+    :math:`(T_0, T_1, ..., T_{N_T-1})` defined by the masks.
+
+    Then we can build the full residual function :math:`R` and Jacobian function
+    :math:`J` for the least squares optimization by assembling the residuals and
+    Jacobians of each chain, while respecting the structure of the chains and the
+    masks for the parameters.
+
 
     Parameters
     ----------
@@ -506,19 +534,9 @@ def _solve_optimize_chains_trf_scipy(
 ) -> Tuple[numpy.ndarray]:
     r"""
     Optimize the parameters of a set of transformations organized in chains using
-    the least squares optimization method from Scipy.
+    the least squares optimization method from Scipy with the Trust Region Reflective
+    algorithm.
 
-    Trust Region Reflective algorithm is used, which allows to handle bounds and
-    scaling of the parameters, and provides a robust optimization process for
-    non-linear problems.
-    The optimization is performed by minimizing the residuals between the
-    transformed input points and the output points for each chain,
-    while respecting the structure of the chains and the masks for the parameters.
-
-    This function is used internally by the `optimize_parameters_least_squares` and
-    `optimize_chain_parameters_least_squares` functions to perform the optimization of
-    the parameters of the transformations in a single step, allowing to optimize
-    multiple transformations and chains simultaneously.
 
     Parameters
     ----------
@@ -745,7 +763,6 @@ def _solve_optimize_chains_lm_scipy(
     seq_guesses: Sequence[numpy.ndarray],
     seq_transform_kwargs: Sequence[Dict],
     max_iterations: Optional[int],
-    max_time: Optional[int],
     ftol: Optional[Real],
     xtol: Optional[Real],
     gtol: Optional[Real],
@@ -753,25 +770,20 @@ def _solve_optimize_chains_lm_scipy(
     filter_nans: bool,
     verbose_level: int,
     return_result: bool,
-    return_history: bool,
     _pretext: Optional[str] = None,
-    _sparse: bool = False,
 ) -> Tuple[numpy.ndarray]:
     r"""
     Optimize the parameters of a set of transformations organized in chains using
-    the least squares optimization method from Scipy.
+    the least squares optimization method from Scipy with the Levenberg-Marquardt algorithm.
 
-    Levenberg-Marquardt algorithm is used, which is a popular optimization algorithm
-    for non-linear least squares problems without bounds.
+    .. note::
 
-    The optimization is performed by minimizing the residuals between the
-    transformed input points and the output points for each chain,
-    while respecting the structure of the chains and the masks for the parameters.
+        The Levenberg-Marquardt algorithm does not support callback functions, so the
+        ``max_iterations`` directly refers to the maximum calls to the residuals function.
 
-    This function is used internally by the `optimize_parameters_least_squares` and
-    `optimize_chain_parameters_least_squares` functions to perform the optimization of
-    the parameters of the transformations in a single step, allowing to optimize
-    multiple transformations and chains simultaneously.
+        Furthermore, no history of the optimization process can be returned, as there
+        is no callback function to store the intermediate results at each iteration.
+
 
     Parameters
     ----------
@@ -813,10 +825,6 @@ def _solve_optimize_chains_lm_scipy(
         The maximum number of iterations for the optimization process. If None, there is
         no limit on the number of iterations.
 
-    max_time : Optional[int]
-        The maximum time in seconds for the optimization process. If None, there is no
-        time limit for the optimization.
-
     ftol : Optional[Real]
         The tolerance for the cost function value to declare convergence. The optimization
         will stop when the cost function value changes less than ftol between iterations.
@@ -851,21 +859,11 @@ def _solve_optimize_chains_lm_scipy(
         cost function value, number of iterations, and convergence status. If False, only the
         optimized parameters will be returned.
 
-    return_history : bool
-        If True, the function will return a history of the optimization process, which
-        is a list of tuples containing the parameters and intermediate results at each
-        iteration. If False, no history will be returned.
-
     _pretext : Optional[str], optional
         A pretext to display before the optimization process starts. This can be used to provide
         context or information about the optimization process that is about to begin.
         Default is None, which means no pretext is displayed.
 
-    _sparse : bool, optional
-        If True, the Jacobian matrix will be treated as a sparse matrix for the optimization process.
-        This can be beneficial for large problems where the Jacobian is sparse, as it can reduce
-        memory usage and improve computational efficiency. Default is False, which means the Jacobian
-        will be treated as a dense matrix.
 
     Returns
     -------
@@ -878,10 +876,6 @@ def _solve_optimize_chains_lm_scipy(
         If return_result is True, the full result object from scipy.optimize.least_squares is also returned,
         which includes information about the optimization process, such as the optimized parameters,
         cost function value, number of iterations, and convergence status.
-
-    Sequence[Tuple[numpy.ndarray]] (optional)
-        If return_history is True, a history of the optimization process is also returned, which is
-        a list of tuples containing the parameters and intermediate results at each iteration.
 
     """
     n_transforms = len(seq_transforms)
@@ -905,7 +899,7 @@ def _solve_optimize_chains_lm_scipy(
         seq_guesses,
         seq_transform_kwargs,
         filter_nans,
-        _sparse=_sparse,
+        _sparse=False,
     )
 
     if verbose_level >= 3:
@@ -915,13 +909,14 @@ def _solve_optimize_chains_lm_scipy(
             params_initial,
             _pretext,
             _start=True,
-            _sparse=_sparse,
+            _sparse=False,
         )
 
     # Run the least squares optimization
     result = scipy.optimize.least_squares(
         fun=f,
         x0=params_initial,
+        max_nfev=max_iterations,
         jac=jac,
         ftol=ftol,
         xtol=xtol,
@@ -938,7 +933,7 @@ def _solve_optimize_chains_lm_scipy(
             result.x,
             _pretext,
             _start=False,
-            _sparse=_sparse,
+            _sparse=False,
         )
 
     parameters = []
@@ -950,18 +945,8 @@ def _solve_optimize_chains_lm_scipy(
         index += numpy.sum(seq_masks[i])
     parameters = tuple(parameters)  # len n_transforms, each shape (n_params,)
 
-    if return_result and return_history:
-        return (
-            parameters,
-            result,
-            [(numpy.full(parameters[i].shape, numpy.nan) for i in range(n_transforms))],
-        )
-    elif return_result:
+    if return_result:
         return parameters, result
-    elif return_history:
-        return parameters, [
-            (numpy.full(parameters[i].shape, numpy.nan) for i in range(n_transforms))
-        ]
     else:
         return parameters
 
@@ -1026,6 +1011,17 @@ def _solve_optimize_chains_gauss_newton(
     Where :math:`J = \nabla_{\lambda} T (\vec{X}_I, \lambda_0)` is the Jacobian matrix
     of the transformation with respect to the parameters, and
     :math:`R = \vec{X}_O - T(\vec{X}_I, \lambda_0)` is the residual vector.
+
+    Then the parameters are updated as follows:
+
+    .. math::
+
+        \lambda = \lambda_0 + \delta \lambda
+
+    .. math::
+
+        \delta \lambda = (J^{T} J)^{-1} J^{T} R
+
 
     Parameters
     ----------
@@ -1221,14 +1217,14 @@ def _solve_optimize_chains_gauss_newton(
             )
 
         if verbose_level >= 2 or ftol is not None:
-            if R is None or J is None:
-                R, J = f(params), jac(params)
+            R, J = f(params), jac(params)
             cost = 0.5 * numpy.dot(R, R)
             cost_reduction = last_cost - cost
 
         if verbose_level >= 2 or gtol is not None:
-            if JTR is None:
-                JTR = -J.T @ R  # Warning (-) sign for the gradient
+            if R is None or J is None:
+                R, J = f(params), jac(params)
+            JTR = -J.T @ R  # Warning (-) sign for the gradient
             optimality = numpy.linalg.norm(JTR, ord=numpy.inf)
 
         if verbose_level >= 2 or xtol is not None:
@@ -1276,7 +1272,7 @@ def _solve_optimize_chains_gauss_newton(
                     )
                 end = True
 
-        if max_iterations is not None and iteration >= max_iterations:
+        if max_iterations is not None and iteration >= max_iterations - 1:
             if verbose_level >= 1:
                 print(
                     f"Maximum number of iterations {max_iterations} reached, stopping optimization."
@@ -1732,32 +1728,14 @@ def optimize_parameters_trf(
 
         R(\lambda) = \vec{X}_O - T(\vec{X}_I, \lambda)
 
-    The optimization problem is then defined as:
+    And the jacobian matrix as:
 
     .. math::
 
-        \min_{\lambda} \|R(\lambda)\|^2
+        J(\lambda) = \frac{\partial R(\lambda)}{\partial \lambda} = -\frac{\partial T(\vec{X}_I, \lambda)}{\partial \lambda}
 
-    We have the following system of equations for the Jacobian matrix:
-
-    .. math::
-
-        \min_{\lambda} \|R(\lambda)\|^2 \approx \min_{\Delta \lambda} \|R(\lambda_i) - J(\lambda_i) \Delta \lambda\|^2
-
-    .. math::
-
-        J^T(\lambda_i) J(\lambda_i) \Delta \lambda = J^T(\lambda_i) R(\lambda_i)
-
-    where :math:`J(\lambda) = \frac{\partial T(\vec{X}_I, \lambda)}{\partial \lambda}`
-    is the Jacobian matrix of the transformation with respect to the parameters.
-
-    .. note::
-
-        This method can be used to optimize the parameters of any transformation that
-        implements the `_transform` method.
-
-    For more information about the optimization method, please refer to the
-    ``scipy.optimize.least_squares`` documentation.
+    Then the optimization problem is solve by minimizing the loss function using
+    the Trust Region Reflective algorithm of scipy.optimize.least_squares.
 
     .. important::
 
@@ -2191,7 +2169,6 @@ def optimize_parameters_lm(
     mask: Optional[ArrayLike] = None,
     transform_kwargs: Optional[Dict] = None,
     max_iterations: Optional[Integral] = None,
-    max_time: Optional[Real] = None,
     ftol: Optional[Real] = None,
     xtol: Optional[Real] = None,
     gtol: Optional[Real] = None,
@@ -2200,7 +2177,6 @@ def optimize_parameters_lm(
     filter_nans: bool = False,
     verbose_level: Integral = 0,
     return_result: bool = False,
-    return_history: bool = False,
     inplace: bool = False,
 ) -> numpy.ndarray:
     r"""
@@ -2226,32 +2202,14 @@ def optimize_parameters_lm(
 
         R(\lambda) = \vec{X}_O - T(\vec{X}_I, \lambda)
 
-    The optimization problem is then defined as:
+    And the jacobian matrix as:
 
     .. math::
 
-        \min_{\lambda} \|R(\lambda)\|^2
+        J(\lambda) = \frac{\partial R(\lambda)}{\partial \lambda} = -\frac{\partial T(\vec{X}_I, \lambda)}{\partial \lambda}
 
-    We have the following system of equations for the Jacobian matrix:
-
-    .. math::
-
-        \min_{\lambda} \|R(\lambda)\|^2 \approx \min_{\Delta \lambda} \|R(\lambda_i) - J(\lambda_i) \Delta \lambda\|^2
-
-    .. math::
-
-        J^T(\lambda_i) J(\lambda_i) \Delta \lambda = J^T(\lambda_i) R(\lambda_i)
-
-    where :math:`J(\lambda) = \frac{\partial T(\vec{X}_I, \lambda)}{\partial \lambda}`
-    is the Jacobian matrix of the transformation with respect to the parameters.
-
-    .. note::
-
-        This method can be used to optimize the parameters of any transformation that
-        implements the `_transform` method.
-
-    For more information about the optimization method, please refer to the
-    ``scipy.optimize.least_squares`` documentation.
+    Then the optimization problem is solve by minimizing the loss function using
+    the Levenberg-Marquardt algorithm of scipy.optimize.least_squares.
 
     .. important::
 
@@ -2298,11 +2256,6 @@ def optimize_parameters_lm(
         The optimization process is stopped when the number of iterations
         exceeds ``max_iterations``. Default is None, which means no limit on the
         number of iterations.
-
-    max_time : Optional[Real], optional
-        Stop criterion by the computation time of the optimization. The optimization
-        process is stopped when the time since the start of the optimization exceeds
-        ``max_time`` seconds. Default is None, which means no limit on the time.
 
     ftol : Optional[Real], optional
         Stop criterion by the change of the cost function.
@@ -2359,10 +2312,6 @@ def optimize_parameters_lm(
         If ``n_params`` is 0, or all parameters are masked, the result output will be
         None.
 
-    return_history : bool, optional
-        If True, the function returns a history of the parameters during the
-        optimization process. Default is False.
-
     inplace : bool, optional
         If True, the optimization is performed in-place, modifying the parameters of the
         input transformation. If False (default), a copy of the transformation is created
@@ -2386,10 +2335,6 @@ def optimize_parameters_lm(
 
             Only contains the parameters that were optimized (i.e., the parameters
             corresponding to True values in the `mask`).
-
-    history : List[numpy.ndarray], optional
-        A history of the optimization process including the parameters with shape
-        (n_params,). Returned only if `return_history` is True.
 
 
     See Also
@@ -2492,11 +2437,6 @@ def optimize_parameters_lm(
             )
         max_iterations = int(max_iterations)
 
-    if max_time is not None:
-        if not isinstance(max_time, Real) or max_time <= 0:
-            raise TypeError(f"max_time must be a positive float, got {max_time}")
-        max_time = float(max_time)
-
     if not isinstance(auto, bool):
         raise TypeError(f"auto must be a boolean, got {type(auto)}")
     if auto:
@@ -2543,9 +2483,6 @@ def optimize_parameters_lm(
     if not isinstance(return_result, bool):
         raise TypeError(f"return_result must be a boolean, got {type(return_result)}")
 
-    if not isinstance(return_history, bool):
-        raise TypeError(f"return_history must be a boolean, got {type(return_history)}")
-
     if ftol is None and xtol is None and gtol is None:
         raise ValueError(
             "At least one of ftol, xtol, or gtol must be specified for stopping criteria."
@@ -2560,11 +2497,7 @@ def optimize_parameters_lm(
                 "The transformation has no parameters to optimize, returning the current parameters."
             )
         out = guess.copy()
-        if return_history and return_result:
-            return out, None, [out]
-        elif return_history and not return_result:
-            return out, [out]
-        elif not return_history and return_result:
+        if return_result:
             return out, None
         else:
             return out
@@ -2575,11 +2508,7 @@ def optimize_parameters_lm(
                 "No parameters to optimize (all parameters are fixed), returning the current parameters."
             )
         out = guess.copy()
-        if return_history and return_result:
-            return out, None, [out]
-        elif return_history and not return_result:
-            return out, [out]
-        elif not return_history and return_result:
+        if return_result:
             return out, None
         else:
             return out
@@ -2604,7 +2533,6 @@ def optimize_parameters_lm(
         seq_guesses=seq_guesses,
         seq_transform_kwargs=seq_transform_kwargs,
         max_iterations=max_iterations,
-        max_time=max_time,
         ftol=ftol,
         xtol=xtol,
         gtol=gtol,
@@ -2612,18 +2540,10 @@ def optimize_parameters_lm(
         filter_nans=filter_nans,
         verbose_level=verbose_level,
         return_result=return_result,
-        return_history=return_history,
         _pretext=None,
-        _sparse=False,
     )
 
-    if return_history and return_result:
-        p, r, h = out
-        return p[0], r, [h_i[0] for h_i in h]
-    elif return_history and not return_result:
-        p, h = out
-        return p[0], [h_i[0] for h_i in h]
-    elif not return_history and return_result:
+    if return_result:
         p, r = out
         return p[0], r
     else:
@@ -3769,7 +3689,6 @@ def optimize_camera_lm(
     distortion_kwargs: Optional[Dict] = None,
     extrinsic_kwargs: Optional[Dict] = None,
     max_iterations: Optional[Integral] = None,
-    max_time: Optional[Real] = None,
     ftol: Optional[Real] = None,
     xtol: Optional[Real] = None,
     gtol: Optional[Real] = None,
@@ -3778,7 +3697,6 @@ def optimize_camera_lm(
     filter_nans: bool = False,
     verbose_level: Integral = 0,
     return_result: bool = False,
-    return_history: bool = False,
     inplace: bool = False,
 ) -> Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]:
     """
@@ -3868,11 +3786,6 @@ def optimize_camera_lm(
         exceeds ``max_iterations``. Default is None, which means no limit on the
         number of iterations.
 
-    max_time : Optional[Real], optional
-        Stop criterion by the computation time of the optimization. The optimization
-        process is stopped when the time since the start of the optimization exceeds
-        ``max_time`` seconds. Default is None, which means no limit on the time.
-
     ftol : Optional[Real], optional
         Stop criterion by the change of the cost function.
         The optimization process is stopped when ``dF < ftol * F``.
@@ -3928,10 +3841,6 @@ def optimize_camera_lm(
         If all transformations are None, or all parameters of the transformations are
         masked, the result output will be None.
 
-    return_history : bool, optional
-        If True, the function returns a history of the parameters during
-        the optimization process. Default is False.
-
     inplace : bool, optional
         If True, the optimization is performed in-place, modifying the parameters of the
         input transformations. If False (default), copies of the transformations are created
@@ -3960,12 +3869,6 @@ def optimize_camera_lm(
             Only contains the parameters that were optimized (i.e., the parameters
             corresponding to True values in the `mask_intrinsic`, `mask_distortion`, and
             `mask_extrinsic`), and not the full parameter vectors of the transformations.
-
-    history : List[Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]], optional
-        A history of the optimization process including the parameters of the intrinsic,
-        distortion, and extrinsic transformations with shapes (n_intrinsic_params,),
-        (n_distortion_params,), and (n_extrinsic_params,) respectively. Returned only if
-        `return_history` is True.
 
 
     See Also
@@ -4130,11 +4033,6 @@ def optimize_camera_lm(
             )
         max_iterations = int(max_iterations)
 
-    if max_time is not None:
-        if not isinstance(max_time, Real) or max_time <= 0:
-            raise TypeError(f"max_time must be a positive float, got {max_time}")
-        max_time = float(max_time)
-
     if not isinstance(auto, bool):
         raise TypeError(f"auto must be a boolean, got {type(auto)}")
     if auto:
@@ -4181,9 +4079,6 @@ def optimize_camera_lm(
     if not isinstance(return_result, bool):
         raise TypeError(f"return_result must be a boolean, got {type(return_result)}")
 
-    if not isinstance(return_history, bool):
-        raise TypeError(f"return_history must be a boolean, got {type(return_history)}")
-
     if ftol is None and xtol is None and gtol is None:
         raise ValueError(
             "At least one of ftol, xtol, or gtol must be specified for stopping criteria."
@@ -4201,11 +4096,7 @@ def optimize_camera_lm(
         d_out = guess_distortion.copy() if not skip_distortion else None
         e_out = guess_extrinsic.copy() if not skip_extrinsic else None
         out = (i_out, d_out, e_out)
-        if return_history and return_result:
-            return out, None, [out]
-        elif return_history and not return_result:
-            return out, [out]
-        elif not return_history and return_result:
+        if return_result:
             return out, None
         else:
             return out
@@ -4219,11 +4110,7 @@ def optimize_camera_lm(
         d_out = guess_distortion.copy() if not skip_distortion else None
         e_out = guess_extrinsic.copy() if not skip_extrinsic else None
         out = (i_out, d_out, e_out)
-        if return_history and return_result:
-            return out, None, [out]
-        elif return_history and not return_result:
-            return out, [out]
-        elif not return_history and return_result:
+        if return_result:
             return out, None
         else:
             return out
@@ -4261,7 +4148,6 @@ def optimize_camera_lm(
         seq_guesses=seq_guesses,
         seq_transform_kwargs=seq_transform_kwargs,
         max_iterations=max_iterations,
-        max_time=max_time,
         ftol=ftol,
         xtol=xtol,
         gtol=gtol,
@@ -4269,9 +4155,7 @@ def optimize_camera_lm(
         filter_nans=filter_nans,
         verbose_level=verbose_level,
         return_result=return_result,
-        return_history=return_history,
         _pretext=_pretext,
-        _sparse=False,
     )
 
     return out
@@ -4310,7 +4194,7 @@ def optimize_chains_gn(
 
     .. code-block:: console
 
-        C_0 = (1, 4, 8) -----> C_0(X) = T_1 ∘ T_4 ∘ T_8(X)
+        C_0 = (1, 4, 8) -----> C_0(X) = T_8 ∘ T_4 ∘ T_1(X)
 
     The optimization process is then defined as:
 
@@ -4787,7 +4671,7 @@ def optimize_chains_trf(
 
     .. code-block:: console
 
-        C_0 = (1, 4, 8) -----> C_0(X) = T_1 ∘ T_4 ∘ T_8(X)
+        C_0 = (1, 4, 8) -----> C_0(X) = T_8 ∘ T_4 ∘ T_1(X)
 
     The optimization process is then defined as:
 
@@ -5342,7 +5226,6 @@ def optimize_chains_lm(
     seq_masks: Optional[Sequence[ArrayLike]] = None,
     seq_transform_kwargs: Optional[Sequence[Dict]] = None,
     max_iterations: Optional[Integral] = None,
-    max_time: Optional[Real] = None,
     ftol: Optional[Real] = None,
     xtol: Optional[Real] = None,
     gtol: Optional[Real] = None,
@@ -5351,7 +5234,6 @@ def optimize_chains_lm(
     filter_nans: bool = False,
     verbose_level: Integral = 0,
     return_result: bool = False,
-    return_history: bool = False,
     inplace: bool = False,
 ) -> Tuple[numpy.ndarray, ...]:
     r"""
@@ -5368,7 +5250,7 @@ def optimize_chains_lm(
 
     .. code-block:: console
 
-        C_0 = (1, 4, 8) -----> C_0(X) = T_1 ∘ T_4 ∘ T_8(X)
+        C_0 = (1, 4, 8) -----> C_0(X) = T_8 ∘ T_4 ∘ T_1(X)
 
     The optimization process is then defined as:
 
@@ -5443,11 +5325,6 @@ def optimize_chains_lm(
         when the number of iterations exceeds ``max_iterations``. Default is None, which
         means no limit on the number of iterations.
 
-    max_time : Optional[Real], optional
-        Stop criterion by the computation time of the optimization. The optimization
-        process is stopped when the time since the start of the optimization exceeds
-        ``max_time`` seconds. Default is None, which means no limit on the time.
-
     ftol : Optional[Real], optional
         Stop criterion by the change of the cost function. The optimization process is
         stopped when ``dF < ftol * F``. The default value is None, which means the ftol
@@ -5498,10 +5375,6 @@ def optimize_chains_lm(
         including the optimized parameters, the cost, the number of iterations, and
         other information about the optimization process. Default is False.
 
-    return_history : bool, optional
-        If True, the function returns a history of the parameters during the optimization
-        process. Default is False.
-
     inplace : bool, optional
         If True, the optimization is performed in-place, modifying the parameters of the
         input transformations. If False (default), copies of the transformations are created
@@ -5522,10 +5395,6 @@ def optimize_chains_lm(
         If return_result is True, the full result object from scipy.optimize.least_squares is also returned,
         which includes information about the optimization process, such as the optimized parameters,
         cost function value, number of iterations, and convergence status.
-
-    history : List[Tuple[numpy.ndarray, ...]], optional
-        A history of the optimization process including the parameters of each
-        transformation with shape (n_params,). Returned only if `return_history` is True.
 
 
     See Also
@@ -5723,11 +5592,6 @@ def optimize_chains_lm(
             )
         max_iterations = int(max_iterations)
 
-    if max_time is not None:
-        if not isinstance(max_time, Real) or max_time <= 0:
-            raise TypeError(f"max_time must be a positive float, got {max_time}")
-        max_time = float(max_time)
-
     if not isinstance(auto, bool):
         raise TypeError(f"auto must be a boolean, got {type(auto)}")
     if auto:
@@ -5774,9 +5638,6 @@ def optimize_chains_lm(
     if not isinstance(return_result, bool):
         raise TypeError(f"return_result must be a boolean, got {type(return_result)}")
 
-    if not isinstance(return_history, bool):
-        raise TypeError(f"return_history must be a boolean, got {type(return_history)}")
-
     if ftol is None and xtol is None and gtol is None:
         raise ValueError(
             "At least one of ftol, xtol, or gtol must be specified for stopping criteria."
@@ -5787,15 +5648,15 @@ def optimize_chains_lm(
     # -------------
     if all(t.n_params == 0 for t in seq_transforms):
         out = tuple(seq_guesses[i].copy() for i in range(n_transforms))
-        if return_history:
-            return out, [out]
+        if return_result:
+            return out, None
         else:
             return out
 
     if all(not any(m) for m in seq_masks):
         out = tuple(seq_guesses[i].copy() for i in range(n_transforms))
-        if return_history:
-            return out, [out]
+        if return_result:
+            return out, None
         else:
             return out
 
@@ -5827,7 +5688,6 @@ def optimize_chains_lm(
         seq_guesses=seq_guesses,
         seq_transform_kwargs=seq_transform_kwargs,
         max_iterations=max_iterations,
-        max_time=max_time,
         ftol=ftol,
         xtol=xtol,
         gtol=gtol,
@@ -5835,9 +5695,7 @@ def optimize_chains_lm(
         filter_nans=filter_nans,
         verbose_level=verbose_level,
         return_result=return_result,
-        return_history=return_history,
         _pretext=_pretext,
-        _sparse=False,
     )
 
     return out

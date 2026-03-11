@@ -67,7 +67,7 @@ from .write_transform import write_transform
 
 __all__.extend(["read_transform", "write_transform"])
 
-from .optimize.optimize_transforms import (
+from .optimize.optimize_parameters import (
     optimize_parameters_gn,
     optimize_parameters_trf,
     optimize_parameters_lm,
@@ -78,7 +78,12 @@ from .optimize.optimize_transforms import (
     optimize_camera_trf,
     optimize_camera_lm,
 )
-from .optimize.optimize_input_points import optimize_input_points
+from .optimize.optimize_input_points import (
+    optimize_input_points,
+    optimize_input_points_gn,
+    optimize_chains_input_points_gn,
+)
+from .optimize.optimize_rays import optimize_rays_intersect
 
 __all__.extend(
     [
@@ -92,5 +97,8 @@ __all__.extend(
         "optimize_camera_trf",
         "optimize_camera_lm",
         "optimize_input_points",
+        "optimize_input_points_gn",
+        "optimize_chains_input_points_gn",
+        "optimize_rays_intersect",
     ]
 )

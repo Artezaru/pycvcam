@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:31.903** total execution time for 4 files **from _gallery**:
+**00:09.746** total execution time for 5 files **from _gallery**:
 
 .. container::
 
@@ -32,15 +32,18 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
-   * - :ref:`sphx_glr__gallery_optimize_parameters.py` (``optimize_parameters.py``)
-     - 00:14.539
-     - 0.0
    * - :ref:`sphx_glr__gallery_optical_flow.py` (``optical_flow.py``)
-     - 00:09.346
+     - 00:06.016
+     - 0.0
+   * - :ref:`sphx_glr__gallery_optimize_parameters.py` (``optimize_parameters.py``)
+     - 00:02.322
      - 0.0
    * - :ref:`sphx_glr__gallery_distorting_image.py` (``distorting_image.py``)
-     - 00:07.400
+     - 00:01.224
      - 0.0
    * - :ref:`sphx_glr__gallery_project_points.py` (``project_points.py``)
-     - 00:00.617
+     - 00:00.165
+     - 0.0
+   * - :ref:`sphx_glr__gallery_optimize_world_points.py` (``optimize_world_points.py``)
+     - 00:00.018
      - 0.0

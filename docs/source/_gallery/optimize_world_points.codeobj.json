@@ -1,0 +1,1958 @@
+{
+ "camera_1_frame": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "py3dframe.frame",
+   "module_short": "py3dframe",
+   "name": "Frame"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "py3dframe",
+   "module_short": "py3dframe",
+   "name": "Frame"
+  }
+ ],
+ "camera_1_position": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "camera_1_x_axis": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "camera_1_y_axis": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "camera_1_z_axis": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "camera_2_frame": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "py3dframe.frame",
+   "module_short": "py3dframe",
+   "name": "Frame"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "py3dframe",
+   "module_short": "py3dframe",
+   "name": "Frame"
+  }
+ ],
+ "camera_2_position": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "camera_2_x_axis": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "camera_2_y_axis": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "camera_2_z_axis": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "camera_target": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "chains": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "list"
+  }
+ ],
+ "conv": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "distortion": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects.zernike_distortion",
+   "module_short": "pycvcam.distortion_objects.zernike_distortion",
+   "name": "ZernikeDistortion"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects",
+   "module_short": "pycvcam.distortion_objects",
+   "name": "ZernikeDistortion"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "ZernikeDistortion"
+  }
+ ],
+ "distortion.center": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects.zernike_distortion",
+   "module_short": "pycvcam.distortion_objects.zernike_distortion",
+   "name": "ZernikeDistortion.center"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects",
+   "module_short": "pycvcam.distortion_objects",
+   "name": "ZernikeDistortion.center"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "ZernikeDistortion.center"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.distortion",
+   "module_short": "pycvcam.core.distortion",
+   "name": "Distortion.center"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Distortion.center"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Distortion.center"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.transform",
+   "module_short": "pycvcam.core.transform",
+   "name": "Transform.center"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Transform.center"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Transform.center"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "abc",
+   "module_short": "abc",
+   "name": "ABC.center"
+  }
+ ],
+ "distortion.center_x": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects.zernike_distortion",
+   "module_short": "pycvcam.distortion_objects.zernike_distortion",
+   "name": "ZernikeDistortion.center_x"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects",
+   "module_short": "pycvcam.distortion_objects",
+   "name": "ZernikeDistortion.center_x"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "ZernikeDistortion.center_x"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.distortion",
+   "module_short": "pycvcam.core.distortion",
+   "name": "Distortion.center_x"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Distortion.center_x"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Distortion.center_x"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.transform",
+   "module_short": "pycvcam.core.transform",
+   "name": "Transform.center_x"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Transform.center_x"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Transform.center_x"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "abc",
+   "module_short": "abc",
+   "name": "ABC.center_x"
+  }
+ ],
+ "distortion.center_y": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects.zernike_distortion",
+   "module_short": "pycvcam.distortion_objects.zernike_distortion",
+   "name": "ZernikeDistortion.center_y"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects",
+   "module_short": "pycvcam.distortion_objects",
+   "name": "ZernikeDistortion.center_y"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "ZernikeDistortion.center_y"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.distortion",
+   "module_short": "pycvcam.core.distortion",
+   "name": "Distortion.center_y"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Distortion.center_y"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Distortion.center_y"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.transform",
+   "module_short": "pycvcam.core.transform",
+   "name": "Transform.center_y"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Transform.center_y"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Transform.center_y"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "abc",
+   "module_short": "abc",
+   "name": "ABC.center_y"
+  }
+ ],
+ "distortion.parameters_x": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects.zernike_distortion",
+   "module_short": "pycvcam.distortion_objects.zernike_distortion",
+   "name": "ZernikeDistortion.parameters_x"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects",
+   "module_short": "pycvcam.distortion_objects",
+   "name": "ZernikeDistortion.parameters_x"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "ZernikeDistortion.parameters_x"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.distortion",
+   "module_short": "pycvcam.core.distortion",
+   "name": "Distortion.parameters_x"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Distortion.parameters_x"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Distortion.parameters_x"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.transform",
+   "module_short": "pycvcam.core.transform",
+   "name": "Transform.parameters_x"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Transform.parameters_x"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Transform.parameters_x"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "abc",
+   "module_short": "abc",
+   "name": "ABC.parameters_x"
+  }
+ ],
+ "distortion.parameters_y": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects.zernike_distortion",
+   "module_short": "pycvcam.distortion_objects.zernike_distortion",
+   "name": "ZernikeDistortion.parameters_y"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects",
+   "module_short": "pycvcam.distortion_objects",
+   "name": "ZernikeDistortion.parameters_y"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "ZernikeDistortion.parameters_y"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.distortion",
+   "module_short": "pycvcam.core.distortion",
+   "name": "Distortion.parameters_y"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Distortion.parameters_y"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Distortion.parameters_y"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.transform",
+   "module_short": "pycvcam.core.transform",
+   "name": "Transform.parameters_y"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Transform.parameters_y"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Transform.parameters_y"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "abc",
+   "module_short": "abc",
+   "name": "ABC.parameters_y"
+  }
+ ],
+ "distortion.radius": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects.zernike_distortion",
+   "module_short": "pycvcam.distortion_objects.zernike_distortion",
+   "name": "ZernikeDistortion.radius"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects",
+   "module_short": "pycvcam.distortion_objects",
+   "name": "ZernikeDistortion.radius"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "ZernikeDistortion.radius"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.distortion",
+   "module_short": "pycvcam.core.distortion",
+   "name": "Distortion.radius"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Distortion.radius"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Distortion.radius"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.transform",
+   "module_short": "pycvcam.core.transform",
+   "name": "Transform.radius"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Transform.radius"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Transform.radius"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "abc",
+   "module_short": "abc",
+   "name": "ABC.radius"
+  }
+ ],
+ "distortion.radius_x": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects.zernike_distortion",
+   "module_short": "pycvcam.distortion_objects.zernike_distortion",
+   "name": "ZernikeDistortion.radius_x"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects",
+   "module_short": "pycvcam.distortion_objects",
+   "name": "ZernikeDistortion.radius_x"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "ZernikeDistortion.radius_x"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.distortion",
+   "module_short": "pycvcam.core.distortion",
+   "name": "Distortion.radius_x"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Distortion.radius_x"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Distortion.radius_x"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.transform",
+   "module_short": "pycvcam.core.transform",
+   "name": "Transform.radius_x"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Transform.radius_x"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Transform.radius_x"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "abc",
+   "module_short": "abc",
+   "name": "ABC.radius_x"
+  }
+ ],
+ "distortion.radius_y": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects.zernike_distortion",
+   "module_short": "pycvcam.distortion_objects.zernike_distortion",
+   "name": "ZernikeDistortion.radius_y"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects",
+   "module_short": "pycvcam.distortion_objects",
+   "name": "ZernikeDistortion.radius_y"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "ZernikeDistortion.radius_y"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.distortion",
+   "module_short": "pycvcam.core.distortion",
+   "name": "Distortion.radius_y"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Distortion.radius_y"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Distortion.radius_y"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.transform",
+   "module_short": "pycvcam.core.transform",
+   "name": "Transform.radius_y"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Transform.radius_y"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Transform.radius_y"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "abc",
+   "module_short": "abc",
+   "name": "ABC.radius_y"
+  }
+ ],
+ "error": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "error_noised": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "error_rays": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "error_rays_noised": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "extrinsic_1": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.extrinsic_objects.cv2_extrinsic",
+   "module_short": "pycvcam.extrinsic_objects.cv2_extrinsic",
+   "name": "Cv2Extrinsic"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.extrinsic_objects",
+   "module_short": "pycvcam.extrinsic_objects",
+   "name": "Cv2Extrinsic"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Cv2Extrinsic"
+  }
+ ],
+ "extrinsic_2": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.extrinsic_objects.cv2_extrinsic",
+   "module_short": "pycvcam.extrinsic_objects.cv2_extrinsic",
+   "name": "Cv2Extrinsic"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.extrinsic_objects",
+   "module_short": "pycvcam.extrinsic_objects",
+   "name": "Cv2Extrinsic"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Cv2Extrinsic"
+  }
+ ],
+ "image_height": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "int"
+  }
+ ],
+ "image_points_1": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "image_points_1.max": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "builtin_function_or_method"
+  }
+ ],
+ "image_points_1.min": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "builtin_function_or_method"
+  }
+ ],
+ "image_points_1.shape": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "tuple"
+  }
+ ],
+ "image_points_2": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "image_points_2.max": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "builtin_function_or_method"
+  }
+ ],
+ "image_points_2.min": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "builtin_function_or_method"
+  }
+ ],
+ "image_points_2.shape": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "tuple"
+  }
+ ],
+ "image_width": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "int"
+  }
+ ],
+ "intrinsic": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.intrinsic_objects.cv2_intrinsic",
+   "module_short": "pycvcam.intrinsic_objects.cv2_intrinsic",
+   "name": "Cv2Intrinsic"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.intrinsic_objects",
+   "module_short": "pycvcam.intrinsic_objects",
+   "name": "Cv2Intrinsic"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Cv2Intrinsic"
+  }
+ ],
+ "intrinsic.cx": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.intrinsic_objects.cv2_intrinsic",
+   "module_short": "pycvcam.intrinsic_objects.cv2_intrinsic",
+   "name": "Cv2Intrinsic.cx"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.intrinsic_objects",
+   "module_short": "pycvcam.intrinsic_objects",
+   "name": "Cv2Intrinsic.cx"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Cv2Intrinsic.cx"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.intrinsic",
+   "module_short": "pycvcam.core.intrinsic",
+   "name": "Intrinsic.cx"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Intrinsic.cx"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Intrinsic.cx"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.transform",
+   "module_short": "pycvcam.core.transform",
+   "name": "Transform.cx"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Transform.cx"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Transform.cx"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "abc",
+   "module_short": "abc",
+   "name": "ABC.cx"
+  }
+ ],
+ "intrinsic.cy": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.intrinsic_objects.cv2_intrinsic",
+   "module_short": "pycvcam.intrinsic_objects.cv2_intrinsic",
+   "name": "Cv2Intrinsic.cy"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.intrinsic_objects",
+   "module_short": "pycvcam.intrinsic_objects",
+   "name": "Cv2Intrinsic.cy"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Cv2Intrinsic.cy"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.intrinsic",
+   "module_short": "pycvcam.core.intrinsic",
+   "name": "Intrinsic.cy"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Intrinsic.cy"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Intrinsic.cy"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.transform",
+   "module_short": "pycvcam.core.transform",
+   "name": "Transform.cy"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Transform.cy"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Transform.cy"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "abc",
+   "module_short": "abc",
+   "name": "ABC.cy"
+  }
+ ],
+ "intrinsic.fx": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.intrinsic_objects.cv2_intrinsic",
+   "module_short": "pycvcam.intrinsic_objects.cv2_intrinsic",
+   "name": "Cv2Intrinsic.fx"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.intrinsic_objects",
+   "module_short": "pycvcam.intrinsic_objects",
+   "name": "Cv2Intrinsic.fx"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Cv2Intrinsic.fx"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.intrinsic",
+   "module_short": "pycvcam.core.intrinsic",
+   "name": "Intrinsic.fx"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Intrinsic.fx"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Intrinsic.fx"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.transform",
+   "module_short": "pycvcam.core.transform",
+   "name": "Transform.fx"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Transform.fx"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Transform.fx"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "abc",
+   "module_short": "abc",
+   "name": "ABC.fx"
+  }
+ ],
+ "intrinsic.fy": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.intrinsic_objects.cv2_intrinsic",
+   "module_short": "pycvcam.intrinsic_objects.cv2_intrinsic",
+   "name": "Cv2Intrinsic.fy"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.intrinsic_objects",
+   "module_short": "pycvcam.intrinsic_objects",
+   "name": "Cv2Intrinsic.fy"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Cv2Intrinsic.fy"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.intrinsic",
+   "module_short": "pycvcam.core.intrinsic",
+   "name": "Intrinsic.fy"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Intrinsic.fy"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Intrinsic.fy"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.transform",
+   "module_short": "pycvcam.core.transform",
+   "name": "Transform.fy"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Transform.fy"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Transform.fy"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "abc",
+   "module_short": "abc",
+   "name": "ABC.fy"
+  }
+ ],
+ "noised_image_points_1": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "noised_image_points_2": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "numpy.all": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "_ArrayFunctionDispatcher"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "all"
+  }
+ ],
+ "numpy.array": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "builtin_function_or_method"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "array"
+  }
+ ],
+ "numpy.cross": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "_ArrayFunctionDispatcher"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "cross"
+  }
+ ],
+ "numpy.linalg.norm": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "_ArrayFunctionDispatcher"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy.linalg",
+   "module_short": "numpy.linalg",
+   "name": "norm"
+  }
+ ],
+ "numpy.mean": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "_ArrayFunctionDispatcher"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "mean"
+  }
+ ],
+ "numpy.random.normal": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "module.normal"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy.random",
+   "module_short": "numpy.random",
+   "name": "normal"
+  }
+ ],
+ "numpy.random.uniform": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "module.uniform"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy.random",
+   "module_short": "numpy.random",
+   "name": "uniform"
+  }
+ ],
+ "numpy.sqrt": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ufunc"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "sqrt"
+  }
+ ],
+ "numpy.stack": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "_ArrayFunctionDispatcher"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "stack"
+  }
+ ],
+ "optimized_world_points": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "optimized_world_points_noised": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "optimized_world_points_rays": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "optimized_world_points_rays_noised": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "outputs": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "list"
+  }
+ ],
+ "py3dframe.Frame.from_axes": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "py3dframe.frame",
+   "module_short": "py3dframe",
+   "name": "Frame.from_axes"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "py3dframe",
+   "module_short": "py3dframe",
+   "name": "Frame.from_axes"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "py3dframe.Frame",
+   "module_short": "py3dframe.Frame",
+   "name": "from_axes"
+  }
+ ],
+ "pycvcam.Cv2Extrinsic.from_frame": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.extrinsic_objects.cv2_extrinsic",
+   "module_short": "pycvcam.extrinsic_objects.cv2_extrinsic",
+   "name": "Cv2Extrinsic.from_frame"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.extrinsic_objects",
+   "module_short": "pycvcam.extrinsic_objects",
+   "name": "Cv2Extrinsic.from_frame"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Cv2Extrinsic.from_frame"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.core.extrinsic",
+   "module_short": "pycvcam.core.extrinsic",
+   "name": "Extrinsic.from_frame"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Extrinsic.from_frame"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Extrinsic.from_frame"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.core.transform",
+   "module_short": "pycvcam.core.transform",
+   "name": "Transform.from_frame"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Transform.from_frame"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Transform.from_frame"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "abc",
+   "module_short": "abc",
+   "name": "ABC.from_frame"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.Cv2Extrinsic",
+   "module_short": "pycvcam.Cv2Extrinsic",
+   "name": "from_frame"
+  }
+ ],
+ "pycvcam.Cv2Intrinsic.from_matrix": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.intrinsic_objects.cv2_intrinsic",
+   "module_short": "pycvcam.intrinsic_objects.cv2_intrinsic",
+   "name": "Cv2Intrinsic.from_matrix"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.intrinsic_objects",
+   "module_short": "pycvcam.intrinsic_objects",
+   "name": "Cv2Intrinsic.from_matrix"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Cv2Intrinsic.from_matrix"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.core.intrinsic",
+   "module_short": "pycvcam.core.intrinsic",
+   "name": "Intrinsic.from_matrix"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Intrinsic.from_matrix"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Intrinsic.from_matrix"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.core.transform",
+   "module_short": "pycvcam.core.transform",
+   "name": "Transform.from_matrix"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Transform.from_matrix"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Transform.from_matrix"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "abc",
+   "module_short": "abc",
+   "name": "ABC.from_matrix"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.Cv2Intrinsic",
+   "module_short": "pycvcam.Cv2Intrinsic",
+   "name": "from_matrix"
+  }
+ ],
+ "pycvcam.ZernikeDistortion": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects.zernike_distortion",
+   "module_short": "pycvcam.distortion_objects.zernike_distortion",
+   "name": "ZernikeDistortion"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.distortion_objects",
+   "module_short": "pycvcam.distortion_objects",
+   "name": "ZernikeDistortion"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "ZernikeDistortion"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.core.distortion",
+   "module_short": "pycvcam.core",
+   "name": "Distortion"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Distortion"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Distortion"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.core.transform",
+   "module_short": "pycvcam.core",
+   "name": "Transform"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Transform"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Transform"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "abc",
+   "module_short": "abc",
+   "name": "ABC"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "ZernikeDistortion"
+  }
+ ],
+ "pycvcam.compute_optical_flow": [
+  {
+   "is_class": false,
+   "is_explicit": true,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "compute_optical_flow"
+  }
+ ],
+ "pycvcam.compute_rays": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "compute_rays"
+  }
+ ],
+ "pycvcam.optimize_chains_input_points_gn": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "optimize_chains_input_points_gn"
+  },
+  {
+   "is_class": false,
+   "is_explicit": true,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "optimize_chains_input_points_gn"
+  }
+ ],
+ "pycvcam.optimize_rays_intersect": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "optimize_rays_intersect"
+  },
+  {
+   "is_class": false,
+   "is_explicit": true,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "optimize_rays_intersect"
+  }
+ ],
+ "pycvcam.project_points": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "project_points"
+  },
+  {
+   "is_class": false,
+   "is_explicit": true,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "project_points"
+  }
+ ],
+ "rays_1": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.rays",
+   "module_short": "pycvcam.core",
+   "name": "Rays"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Rays"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Rays"
+  }
+ ],
+ "rays_2": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.rays",
+   "module_short": "pycvcam.core",
+   "name": "Rays"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Rays"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Rays"
+  }
+ ],
+ "rays_noise_1": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.rays",
+   "module_short": "pycvcam.core",
+   "name": "Rays"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Rays"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Rays"
+  }
+ ],
+ "rays_noise_2": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core.rays",
+   "module_short": "pycvcam.core",
+   "name": "Rays"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam.core",
+   "module_short": "pycvcam.core",
+   "name": "Rays"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pycvcam",
+   "module_short": "pycvcam",
+   "name": "Rays"
+  }
+ ],
+ "rms_error": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "float64"
+  }
+ ],
+ "rms_error_noised": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "float64"
+  }
+ ],
+ "rms_error_rays": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "float64"
+  }
+ ],
+ "rms_error_rays_noised": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "float64"
+  }
+ ],
+ "transforms": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "list"
+  }
+ ],
+ "world_points": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "world_points.shape": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "tuple"
+  }
+ ],
+ "world_x": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "world_y": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "world_z": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ]
+}
