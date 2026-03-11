@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pycvcam.optimize.optimize_input_points &#8212; pycvcam 2.1.8 documentation</title>
+    <title>pycvcam.optimize.optimize_input_points &#8212; pycvcam 2.1.9 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=03f109e5"></script>
+    <script src="../../../_static/documentation_options.js?v=a7898dfc"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -116,7 +116,7 @@
   
   
   
-    <p class="title logo__title">pycvcam 2.1.8 documentation</p>
+    <p class="title logo__title">pycvcam 2.1.9 documentation</p>
   
 </a></div>
     
@@ -319,25 +319,871 @@
                 <article class="bd-article">
                   
   <h1>Source code for pycvcam.optimize.optimize_input_points</h1><div class="highlight"><pre>
-<span></span><span class="c1"># Copyright 2025 Artezaru</span>
-<span class="c1">#</span>
-<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
-<span class="c1"># you may not use this file except in compliance with the License.</span>
-<span class="c1"># You may obtain a copy of the License at</span>
-<span class="c1">#</span>
-<span class="c1"># http://www.apache.org/licenses/LICENSE-2.0</span>
-<span class="c1">#</span>
-<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
-<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
-<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
-<span class="c1"># See the License for the specific language governing permissions and</span>
-<span class="c1"># limitations under the License.</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numbers</span><span class="w"> </span><span class="kn">import</span> <span class="n">Real</span><span class="p">,</span> <span class="n">Integral</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpy.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArrayLike</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">scipy</span>
-
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..core.transform</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..core.transform_composition</span><span class="w"> </span><span class="kn">import</span> <span class="n">TransformComposition</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_solve_optimize_chains_gauss_newton</span><span class="p">(</span>
+    <span class="n">seq_transforms</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Transform</span><span class="p">],</span>
+    <span class="n">seq_chains</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span>
+    <span class="n">seq_outputs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">guess</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">seq_transform_kwargs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Dict</span><span class="p">],</span>
+    <span class="n">max_iterations</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+    <span class="n">max_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+    <span class="n">ftol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">],</span>
+    <span class="n">xtol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">],</span>
+    <span class="n">gtol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">],</span>
+    <span class="n">eps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">],</span>
+    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Optimize the input points based of the result of chains of transformations using</span>
+<span class="sd">    the Gauss-Newton optimization method.</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">        This method does not implement bounds or scaling of the input_points,</span>
+<span class="sd">        and does not provide a robust optimization process for handling</span>
+<span class="sd">        non-linear problems, which can lead to divergence or convergence to local minima.</span>
+
+<span class="sd">    Lets :math:`(T_0, T_1, ..., T_{N_T-1})` be a tuple of :math:`N_T`</span>
+<span class="sd">    :class:`Transform` objects, and :math:`(C_0, C_1, ..., C_{N_C-1})` be a</span>
+<span class="sd">    tuple of :math:`N_C` chains of transformations.</span>
+
+<span class="sd">    A chain :math:`C_i` is defined as a tuple of indices corresponding to the</span>
+<span class="sd">    transformations in the chain. For example:</span>
+
+<span class="sd">    .. code-block:: console</span>
+
+<span class="sd">        C_0 = (1, 4, 8) -----&gt; C_0(X) = T_8 ∘ T_4 ∘ T_1(X)</span>
+
+<span class="sd">    We search :math:`X_i` such that the transformed points :math:`C_i(X_i; p)` match the</span>
+<span class="sd">    output points :math:`Y_i` for each chain :math:`C_i`, where :math:`p` is the vector</span>
+<span class="sd">    of parameters of the transformations in the chain.</span>
+
+<span class="sd">    The residual function for each chain :math:`C_i` is defined as:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        R_i(X_i) = Y_i - C_i(X_i; p)</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        J_i(X_i) = -\frac{\partial C_i(X_i; p)}{\partial X_i} = \frac{\partial R_i(X_i)}{\partial X_i}</span>
+
+<span class="sd">    Then we can build the full residual function :math:`R` and Jacobian function</span>
+<span class="sd">    :math:`J` for the least squares optimization by assembling the residuals and</span>
+<span class="sd">    Jacobians of each chain, while respecting the structure of the chains.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    seq_transforms : Sequence[Transform]</span>
+<span class="sd">        A sequence of transformations involved in the chains.</span>
+
+<span class="sd">    seq_chains : Sequence[Sequence[int]]</span>
+<span class="sd">        A sequence of chains, where each chain is a sequence of indices corresponding to</span>
+<span class="sd">        the transformations in `seq_transforms`.</span>
+
+<span class="sd">    seq_outputs : Sequence[numpy.ndarray]</span>
+<span class="sd">        A sequence of output points corresponding to each chain, where each element has</span>
+<span class="sd">        shape (n_points, output_dim).</span>
+
+<span class="sd">    guess : numpy.ndarray</span>
+<span class="sd">        The initial guess for the input points of the transformations with shape</span>
+<span class="sd">        (n_points, input_dim).</span>
+
+<span class="sd">    seq_transform_kwargs : Sequence[Dict]</span>
+<span class="sd">        A sequence of dictionaries containing additional keyword arguments for each</span>
+<span class="sd">        transformation in `seq_transforms`. Each dictionary should have the same keys as</span>
+<span class="sd">        the parameters of the corresponding transformation, and the values should be the</span>
+<span class="sd">        values of those parameters to be used during the optimization.</span>
+
+<span class="sd">    max_iterations : Optional[int]</span>
+<span class="sd">        The maximum number of iterations for the optimization.</span>
+<span class="sd">        Default is None, which means no limit on the number of iterations.</span>
+
+<span class="sd">    max_time : Optional[int]</span>
+<span class="sd">        The maximum time in seconds for the optimization.</span>
+<span class="sd">        Default is None, which means no limit on the time.</span>
+
+<span class="sd">    ftol : Optional[Real], optional</span>
+<span class="sd">        Stop criterion by the change of the cost function.</span>
+<span class="sd">        The optimization process is stopped when ``dF &lt; ftol * F``.</span>
+<span class="sd">        The default value is None, which means the ftol criterion is not used for</span>
+<span class="sd">        stopping the optimization.</span>
+
+<span class="sd">    xtol : Optional[Real], optional</span>
+<span class="sd">        Stop criterion by the change of the parameters.</span>
+<span class="sd">        The optimization process is stopped when ``norm(dx) &lt; xtol * (xtol + norm(x))``.</span>
+<span class="sd">        The default value is None, which means the xtol criterion is not used for</span>
+<span class="sd">        stopping the optimization.</span>
+
+<span class="sd">    gtol : Optional[Real], optional</span>
+<span class="sd">        Stop criterion by the norm of the gradient.</span>
+<span class="sd">        The optimization process is stopped when ``norm(g_scaled, ord=numpy.inf) &lt; gtol``</span>
+<span class="sd">        where g_scaled is the value of the gradient scaled to account for the</span>
+<span class="sd">        presence of the bounds. The default value is None, which means the gtol</span>
+<span class="sd">        criterion is not used for stopping the optimization.</span>
+
+<span class="sd">    eps : Optional[Real], optional</span>
+<span class="sd">        The convergence threshold for the optimization. The optimization process is</span>
+<span class="sd">        stopped when the change in the cost function is less than eps.</span>
+<span class="sd">        Default is None, which means no convergence threshold is used.</span>
+
+<span class="sd">    verbose : bool</span>
+<span class="sd">        If True, print the optimization progress and diagnostics. Default is False.</span>
+
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        The optimized input points of the transformations with shape (n_points, input_dim).</span>
+
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        The convergence status of each point, where</span>
+
+<span class="sd">        - 0 means not converged,</span>
+<span class="sd">        - 1 means converged by ftol criterion,</span>
+<span class="sd">        - 2 means converged by xtol criterion,</span>
+<span class="sd">        - 3 means converged by gtol criterion,</span>
+<span class="sd">        - 4 means converged by eps criterion,</span>
+<span class="sd">        - 5 means diverged by NaN values,</span>
+<span class="sd">        - 6 means maximum number of iterations reached,</span>
+<span class="sd">        - 7 means maximum time reached.</span>
+<span class="sd">        - inf means warning not evaluated yet.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n_points</span> <span class="o">=</span> <span class="n">guess</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">input_dim</span> <span class="o">=</span> <span class="n">guess</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">c_output_dims</span> <span class="o">=</span> <span class="p">[</span><span class="n">seq_outputs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">seq_chains</span><span class="p">))]</span>
+    <span class="n">c_tc</span> <span class="o">=</span> <span class="p">[</span><span class="n">TransformComposition</span><span class="p">([</span><span class="n">seq_transforms</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">c</span><span class="p">])</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">seq_chains</span><span class="p">]</span>
+    <span class="n">c_kwargs</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">seq_transform_kwargs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">seq_chains</span><span class="p">]</span>
+    <span class="n">c_start_idx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">cumsum</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">c_output_dims</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>  <span class="c1"># shape (N_C,)</span>
+    <span class="n">c_end_idx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">c_output_dims</span><span class="p">)</span>  <span class="c1"># shape (N_C,)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_R_and_J</span><span class="p">(</span>
+        <span class="n">current_inputs</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">current_inputs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">sum</span><span class="p">(</span><span class="n">c_output_dims</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span>
+        <span class="p">)</span>
+        <span class="n">J</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">current_inputs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">sum</span><span class="p">(</span><span class="n">c_output_dims</span><span class="p">),</span> <span class="n">input_dim</span><span class="p">),</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">ic</span><span class="p">,</span> <span class="n">tc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">c_tc</span><span class="p">):</span>
+            <span class="n">list_kwargs</span> <span class="o">=</span> <span class="n">c_kwargs</span><span class="p">[</span><span class="n">ic</span><span class="p">]</span>
+            <span class="n">out</span><span class="p">,</span> <span class="n">jac</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">tc</span><span class="o">.</span><span class="n">_transform</span><span class="p">(</span>
+                <span class="n">current_inputs</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dp</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">list_kwargs</span><span class="o">=</span><span class="n">list_kwargs</span>
+            <span class="p">)</span>  <span class="c1"># shape (Nopt, c_output_dim), (Nopt, c_output_dim, input_dim), None</span>
+
+            <span class="k">if</span> <span class="n">J</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Jacobian with respect to the input points is not available for chain </span><span class="si">{</span><span class="n">ic</span><span class="si">}</span><span class="s2">. Please implement the _transform method to return the Jacobian with respect to the input points.&quot;</span>
+                <span class="p">)</span>
+
+            <span class="n">R</span><span class="p">[:,</span> <span class="n">c_start_idx</span><span class="p">[</span><span class="n">ic</span><span class="p">]</span> <span class="p">:</span> <span class="n">c_end_idx</span><span class="p">[</span><span class="n">ic</span><span class="p">]]</span> <span class="o">=</span> <span class="n">seq_outputs</span><span class="p">[</span><span class="n">ic</span><span class="p">][</span><span class="n">active_idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">out</span>
+            <span class="n">J</span><span class="p">[:,</span> <span class="n">c_start_idx</span><span class="p">[</span><span class="n">ic</span><span class="p">]</span> <span class="p">:</span> <span class="n">c_end_idx</span><span class="p">[</span><span class="n">ic</span><span class="p">],</span> <span class="p">:]</span> <span class="o">=</span> <span class="o">-</span><span class="n">jac</span>
+
+        <span class="k">return</span> <span class="n">R</span><span class="p">,</span> <span class="n">J</span>
+
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">iteration</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">input_points</span> <span class="o">=</span> <span class="n">guess</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">input_conv</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">n_points</span><span class="p">,),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">active_idx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_points</span><span class="p">)</span>
+    <span class="n">still_active</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">n_points</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="n">cost</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">optimality</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">last_cost</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">last_optimality</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">J</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">JTR</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">JTJ</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="s1">&#39;Iteration&#39;</span><span class="si">:</span><span class="s2">^10</span><span class="si">}</span><span class="s2">   </span><span class="si">{</span><span class="s1">&#39;Total nfev&#39;</span><span class="si">:</span><span class="s2">^10</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="s1">&#39;N points&#39;</span><span class="si">:</span><span class="s2">^10</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="s1">&#39;Cost /point&#39;</span><span class="si">:</span><span class="s2">^15</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="s1">&#39;Step norm /points&#39;</span><span class="si">:</span><span class="s2">^15</span><span class="si">}</span><span class="s2">   </span><span class="si">{</span><span class="s1">&#39;Optimality /points&#39;</span><span class="si">:</span><span class="s2">^15</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">end</span><span class="p">:</span>
+        <span class="n">current_inputs</span> <span class="o">=</span> <span class="n">input_points</span><span class="p">[</span><span class="n">active_idx</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1"># shape (Nopt, dim)</span>
+        <span class="n">current_conv</span> <span class="o">=</span> <span class="n">input_conv</span><span class="p">[</span><span class="n">active_idx</span><span class="p">]</span>  <span class="c1"># shape (Nopt,)</span>
+
+        <span class="k">if</span> <span class="n">R</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">J</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">R</span><span class="p">,</span> <span class="n">J</span> <span class="o">=</span> <span class="n">_build_R_and_J</span><span class="p">(</span><span class="n">current_inputs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">R</span> <span class="o">=</span> <span class="n">R</span><span class="p">[</span><span class="n">still_active</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="n">J</span> <span class="o">=</span> <span class="n">J</span><span class="p">[</span><span class="n">still_active</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
+
+        <span class="k">if</span> <span class="n">JTR</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">JTR</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="o">-</span><span class="n">J</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">@</span> <span class="n">R</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+            <span class="p">)</span>  <span class="c1"># shape (Nopt, input_dim, 1) | warning (-) sign for the gradient</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">JTR</span> <span class="o">=</span> <span class="n">JTR</span><span class="p">[</span><span class="n">still_active</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
+
+        <span class="k">if</span> <span class="n">JTJ</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">JTJ</span> <span class="o">=</span> <span class="n">J</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">@</span> <span class="n">J</span>  <span class="c1"># shape (Nopt, input_dim, input_dim)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">JTJ</span> <span class="o">=</span> <span class="n">JTJ</span><span class="p">[</span><span class="n">still_active</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
+
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">JTJ</span><span class="p">,</span> <span class="n">JTR</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># shape (Nopt, input_dim)</span>
+        <span class="n">input_points</span><span class="p">[</span><span class="n">active_idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="n">delta</span>
+
+        <span class="k">if</span> <span class="n">cost</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cost</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">&quot;ij,ij-&gt;i&quot;</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span>  <span class="c1"># shape (Nopt,)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cost</span> <span class="o">=</span> <span class="n">cost</span><span class="p">[</span><span class="n">still_active</span><span class="p">]</span>  <span class="c1"># shape (Nopt,)</span>
+        <span class="n">last_cost</span> <span class="o">=</span> <span class="n">cost</span>
+
+        <span class="k">if</span> <span class="n">optimality</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">optimality</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span>
+                <span class="n">JTR</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="nb">ord</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">inf</span>
+            <span class="p">)</span>  <span class="c1"># shape (Nopt,)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">optimality</span> <span class="o">=</span> <span class="n">optimality</span><span class="p">[</span><span class="n">still_active</span><span class="p">]</span>  <span class="c1"># shape (Nopt,)</span>
+        <span class="n">last_optimality</span> <span class="o">=</span> <span class="n">optimality</span>
+
+        <span class="n">R</span><span class="p">,</span> <span class="n">J</span><span class="p">,</span> <span class="n">JTR</span><span class="p">,</span> <span class="n">JTJ</span><span class="p">,</span> <span class="n">cost</span><span class="p">,</span> <span class="n">optimality</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="kc">None</span><span class="p">,</span>
+            <span class="kc">None</span><span class="p">,</span>
+            <span class="kc">None</span><span class="p">,</span>
+            <span class="kc">None</span><span class="p">,</span>
+            <span class="kc">None</span><span class="p">,</span>
+            <span class="kc">None</span><span class="p">,</span>
+        <span class="p">)</span>  <span class="c1"># Invalidate cached values</span>
+
+        <span class="k">if</span> <span class="n">verbose</span> <span class="ow">and</span> <span class="n">iteration</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">cost_per_point</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">last_cost</span><span class="p">)</span> <span class="o">/</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">last_cost</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+            <span class="n">optimality_per_point</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">last_optimality</span><span class="p">)</span> <span class="o">/</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+                <span class="n">last_optimality</span><span class="o">.</span><span class="n">size</span>
+            <span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">iteration</span><span class="si">:</span><span class="s2">^10</span><span class="si">}</span><span class="s2">   </span><span class="si">{</span><span class="n">iteration</span><span class="o">+</span><span class="mi">1</span><span class="si">:</span><span class="s2">^10</span><span class="si">}</span><span class="s2">   </span><span class="si">{</span><span class="n">active_idx</span><span class="o">.</span><span class="n">size</span><span class="si">:</span><span class="s2">^10</span><span class="si">}</span><span class="s2">   </span><span class="si">{</span><span class="n">cost_per_point</span><span class="si">:</span><span class="s2">^15.3e</span><span class="si">}</span><span class="s2">   </span><span class="si">{</span><span class="s1">&#39;&#39;</span><span class="si">:</span><span class="s2">^15</span><span class="si">}</span><span class="s2">   </span><span class="si">{</span><span class="n">optimality_per_point</span><span class="si">:</span><span class="s2">^15.3e</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span> <span class="ow">or</span> <span class="n">ftol</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">eps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">R</span><span class="p">,</span> <span class="n">J</span> <span class="o">=</span> <span class="n">_build_R_and_J</span><span class="p">(</span><span class="n">input_points</span><span class="p">[</span><span class="n">active_idx</span><span class="p">,</span> <span class="p">:])</span>
+            <span class="n">cost</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">&quot;ij,ij-&gt;i&quot;</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span>  <span class="c1"># shape (Nopt,)</span>
+            <span class="n">cost_reduction</span> <span class="o">=</span> <span class="n">last_cost</span> <span class="o">-</span> <span class="n">cost</span>  <span class="c1"># shape (Nopt,)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span> <span class="ow">or</span> <span class="n">gtol</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">R</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">J</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">R</span><span class="p">,</span> <span class="n">J</span> <span class="o">=</span> <span class="n">_build_R_and_J</span><span class="p">(</span><span class="n">input_points</span><span class="p">[</span><span class="n">active_idx</span><span class="p">,</span> <span class="p">:])</span>
+            <span class="n">JTR</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="o">-</span><span class="n">J</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">@</span> <span class="n">R</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+            <span class="p">)</span>  <span class="c1"># Warning (-) sign for the gradient</span>
+            <span class="n">optimality</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">JTR</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="nb">ord</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span> <span class="ow">or</span> <span class="n">xtol</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">step_norm</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">delta</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># shape (Nopt,)</span>
+            <span class="n">norm</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span>
+                <span class="n">input_points</span><span class="p">[</span><span class="n">active_idx</span><span class="p">,</span> <span class="p">:],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+            <span class="p">)</span>  <span class="c1"># shape (Nopt,)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">cost_per_point</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">cost</span><span class="p">)</span> <span class="o">/</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">cost</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+            <span class="n">optimality_per_point</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">optimality</span><span class="p">)</span> <span class="o">/</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+                <span class="n">optimality</span><span class="o">.</span><span class="n">size</span>
+            <span class="p">)</span>
+            <span class="n">step_norm_per_point</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">step_norm</span><span class="p">)</span> <span class="o">/</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+                <span class="n">step_norm</span><span class="o">.</span><span class="n">size</span>
+            <span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">iteration</span><span class="o">+</span><span class="mi">1</span><span class="si">:</span><span class="s2">^10</span><span class="si">}</span><span class="s2">   </span><span class="si">{</span><span class="n">iteration</span><span class="o">+</span><span class="mi">1</span><span class="si">:</span><span class="s2">^10</span><span class="si">}</span><span class="s2">   </span><span class="si">{</span><span class="n">active_idx</span><span class="o">.</span><span class="n">size</span><span class="si">:</span><span class="s2">^10</span><span class="si">}</span><span class="s2">   </span><span class="si">{</span><span class="n">cost_per_point</span><span class="si">:</span><span class="s2">^15.3e</span><span class="si">}</span><span class="s2">   </span><span class="si">{</span><span class="n">step_norm_per_point</span><span class="si">:</span><span class="s2">^15.3e</span><span class="si">}</span><span class="s2">   </span><span class="si">{</span><span class="n">optimality_per_point</span><span class="si">:</span><span class="s2">^15.3e</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ftol</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ftol_criterion</span> <span class="o">=</span> <span class="p">(</span><span class="n">cost_reduction</span> <span class="o">&lt;</span> <span class="n">ftol</span> <span class="o">*</span> <span class="n">cost</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">cost_reduction</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">xtol</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">xtol_criterion</span> <span class="o">=</span> <span class="n">step_norm</span> <span class="o">&lt;</span> <span class="n">xtol</span> <span class="o">*</span> <span class="p">(</span><span class="n">xtol</span> <span class="o">+</span> <span class="n">norm</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">gtol</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">gtol_criterion</span> <span class="o">=</span> <span class="n">optimality</span> <span class="o">&lt;</span> <span class="n">gtol</span>
+
+        <span class="k">if</span> <span class="n">eps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">eps_criterion</span> <span class="o">=</span> <span class="n">cost</span> <span class="o">&lt;</span> <span class="n">eps</span>
+
+        <span class="n">nan_criterion</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">delta</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">still_active</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">active_idx</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ftol</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">still_active</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">ftol_criterion</span>
+            <span class="n">current_conv</span><span class="p">[</span><span class="n">ftol_criterion</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span>
+                <span class="n">current_conv</span><span class="p">[</span><span class="n">ftol_criterion</span><span class="p">],</span> <span class="mi">1</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">xtol</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">still_active</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">xtol_criterion</span>
+            <span class="n">current_conv</span><span class="p">[</span><span class="n">xtol_criterion</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span>
+                <span class="n">current_conv</span><span class="p">[</span><span class="n">xtol_criterion</span><span class="p">],</span> <span class="mi">2</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">gtol</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">still_active</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">gtol_criterion</span>
+            <span class="n">current_conv</span><span class="p">[</span><span class="n">gtol_criterion</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span>
+                <span class="n">current_conv</span><span class="p">[</span><span class="n">gtol_criterion</span><span class="p">],</span> <span class="mi">3</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">eps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">still_active</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">eps_criterion</span>
+            <span class="n">current_conv</span><span class="p">[</span><span class="n">eps_criterion</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">current_conv</span><span class="p">[</span><span class="n">eps_criterion</span><span class="p">],</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="n">still_active</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">nan_criterion</span>
+        <span class="n">current_conv</span><span class="p">[</span><span class="n">nan_criterion</span><span class="p">]</span> <span class="o">=</span> <span class="mi">5</span>
+
+        <span class="k">if</span> <span class="n">max_iterations</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">iteration</span> <span class="o">&gt;=</span> <span class="n">max_iterations</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">current_conv</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">current_conv</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Maximum number of iterations </span><span class="si">{</span><span class="n">max_iterations</span><span class="si">}</span><span class="s2"> reached, stopping optimization.&quot;</span>
+                <span class="p">)</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="n">max_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">max_time</span><span class="p">:</span>
+            <span class="n">current_conv</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">current_conv</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Maximum time </span><span class="si">{</span><span class="n">max_time</span><span class="si">}</span><span class="s2"> seconds reached, stopping optimization.&quot;</span>
+                <span class="p">)</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">input_conv</span><span class="p">[</span><span class="n">active_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_conv</span>
+        <span class="n">active_idx</span> <span class="o">=</span> <span class="n">active_idx</span><span class="p">[</span><span class="n">still_active</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">active_idx</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;All points have converged, stopping optimization at iteration </span><span class="si">{</span><span class="n">iteration</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">iteration</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">input_points</span><span class="p">,</span> <span class="n">input_conv</span>
+
+
+<div class="viewcode-block" id="optimize_chains_input_points_gn">
+<a class="viewcode-back" href="../../../_autosummary/pycvcam.optimize_chains_input_points_gn.html#pycvcam.optimize_chains_input_points_gn">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">optimize_chains_input_points_gn</span><span class="p">(</span>
+    <span class="n">seq_transforms</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Transform</span><span class="p">],</span>
+    <span class="n">seq_chains</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">Integral</span><span class="p">]],</span>
+    <span class="n">seq_outputs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">],</span>
+    <span class="n">guess</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">transpose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">seq_transform_kwargs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">max_iterations</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">max_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">ftol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">xtol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">gtol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">auto</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">eps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">return_convergence</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Optimize the input points based of the result of chains of transformations using</span>
+<span class="sd">    the Gauss-Newton optimization method.</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">        This method does not implement bounds or scaling of the input_points,</span>
+<span class="sd">        and does not provide a robust optimization process for handling</span>
+<span class="sd">        non-linear problems, which can lead to divergence or convergence to local minima.</span>
+
+<span class="sd">    .. warning::</span>
+
+<span class="sd">        This method can only be used if the dimensions check input_dim &lt;= sum(output_dim).</span>
+
+
+<span class="sd">    Lets :math:`(T_0, T_1, ..., T_{N_T-1})` be a tuple of :math:`N_T`</span>
+<span class="sd">    :class:`Transform` objects, and :math:`(C_0, C_1, ..., C_{N_C-1})` be a</span>
+<span class="sd">    tuple of :math:`N_C` chains of transformations.</span>
+
+<span class="sd">    A chain :math:`C_i` is defined as a tuple of indices corresponding to the</span>
+<span class="sd">    transformations in the chain. For example:</span>
+
+<span class="sd">    .. code-block:: console</span>
+
+<span class="sd">        C_0 = (1, 4, 8) -----&gt; C_0(X) = T_8 ∘ T_4 ∘ T_1(X)</span>
+
+<span class="sd">    We search :math:`X_i` such that the transformed points :math:`C_i(X_i; p)` match the</span>
+<span class="sd">    output points :math:`Y_i` for each chain :math:`C_i`, where :math:`p` is the vector</span>
+<span class="sd">    of parameters of the transformations in the chain.</span>
+
+<span class="sd">    The residual function for each chain :math:`C_i` is defined as:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        R_i(X_i) = Y_i - C_i(X_i; p)</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        J_i(X_i) = -\frac{\partial C_i(X_i; p)}{\partial X_i} = \frac{\partial R_i(X_i)}{\partial X_i}</span>
+
+
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    seq_transforms : Sequence[Transform]</span>
+<span class="sd">        A sequence of transformations involved in the chains.</span>
+
+<span class="sd">    seq_chains : Sequence[Sequence[Integral]]</span>
+<span class="sd">        A sequence of chains, where each chain is a sequence of indices corresponding to</span>
+<span class="sd">        the transformations in `seq_transforms`.</span>
+
+<span class="sd">    seq_outputs : Sequence[numpy.ndarray]</span>
+<span class="sd">        A sequence of output points corresponding to each chain, where each element has</span>
+<span class="sd">        shape (n_points, output_dim).</span>
+
+<span class="sd">    guess : numpy.ndarray</span>
+<span class="sd">        The initial guess for the input points of the transformations with shape</span>
+<span class="sd">        (n_points, input_dim).</span>
+
+<span class="sd">    transpose : bool, optional</span>
+<span class="sd">        If True, the output points are transposed to shape (output_dim, n_points)</span>
+<span class="sd">        before optimization, and the optimized input points are transposed back to</span>
+<span class="sd">        shape (input_dim, n_points) before returning. Default is False.</span>
+
+<span class="sd">    seq_transform_kwargs : Sequence[Dict]</span>
+<span class="sd">        A sequence of dictionaries containing additional keyword arguments for each</span>
+<span class="sd">        transformation in `seq_transforms`. Each dictionary should have the same keys as</span>
+<span class="sd">        the parameters of the corresponding transformation, and the values should be the</span>
+<span class="sd">        values of those parameters to be used during the optimization.</span>
+
+<span class="sd">    max_iterations : Optional[int]</span>
+<span class="sd">        The maximum number of iterations for the optimization.</span>
+<span class="sd">        Default is None, which means no limit on the number of iterations.</span>
+
+<span class="sd">    max_time : Optional[int]</span>
+<span class="sd">        The maximum time in seconds for the optimization.</span>
+<span class="sd">        Default is None, which means no limit on the time.</span>
+
+<span class="sd">    ftol : Optional[Real], optional</span>
+<span class="sd">        Stop criterion by the change of the cost function.</span>
+<span class="sd">        The optimization process is stopped when ``dF &lt; ftol * F``.</span>
+<span class="sd">        The default value is None, which means the ftol criterion is not used for</span>
+<span class="sd">        stopping the optimization.</span>
+
+<span class="sd">    xtol : Optional[Real], optional</span>
+<span class="sd">        Stop criterion by the change of the parameters.</span>
+<span class="sd">        The optimization process is stopped when ``norm(dx) &lt; xtol * (xtol + norm(x))``.</span>
+<span class="sd">        The default value is None, which means the xtol criterion is not used for</span>
+<span class="sd">        stopping the optimization.</span>
+
+<span class="sd">    gtol : Optional[Real], optional</span>
+<span class="sd">        Stop criterion by the norm of the gradient.</span>
+<span class="sd">        The optimization process is stopped when ``norm(g_scaled, ord=numpy.inf) &lt; gtol``</span>
+<span class="sd">        where g_scaled is the value of the gradient scaled to account for the</span>
+<span class="sd">        presence of the bounds. The default value is None, which means the gtol</span>
+<span class="sd">        criterion is not used for stopping the optimization.</span>
+
+<span class="sd">    auto : bool, optional</span>
+<span class="sd">        If True, the stopping criteria (``ftol``, ``xtol``, and ``gtol``) are all set to</span>
+<span class="sd">        ``1e-8``. If any of the stopping criteria is already specified, it will</span>
+<span class="sd">        be overridden by the user-specified value. Default is False.</span>
+
+<span class="sd">    eps : Optional[Real], optional</span>
+<span class="sd">        The convergence threshold for the optimization. The optimization process is</span>
+<span class="sd">        stopped when the change in the cost function is less than eps.</span>
+<span class="sd">        Default is None, which means no convergence threshold is used.</span>
+
+<span class="sd">    verbose : bool</span>
+<span class="sd">        If True, print the optimization progress and diagnostics. Default is False.</span>
+
+<span class="sd">    return_convergence : bool</span>
+<span class="sd">        If True, the function returns a tuple of (optimized_input_points, convergence_status), where</span>
+<span class="sd">        convergence_status is a numpy array of shape (n_points,) indicating the convergence status of each point.</span>
+
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        The optimized input points of the transformation with shape (..., dim).</span>
+
+<span class="sd">    numpy.ndarray, optional</span>
+<span class="sd">        The convergence status of each point, where:</span>
+
+<span class="sd">        - 0 means not converged,</span>
+<span class="sd">        - 1 means converged by ftol criterion,</span>
+<span class="sd">        - 2 means converged by xtol criterion,</span>
+<span class="sd">        - 3 means converged by gtol criterion,</span>
+<span class="sd">        - 4 means converged by eps criterion,</span>
+<span class="sd">        - 5 means diverged by NaN values,</span>
+<span class="sd">        - 6 means maximum number of iterations reached,</span>
+<span class="sd">        - 7 means maximum time reached.</span>
+<span class="sd">        - inf means warning not evaluated yet.</span>
+
+
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    optimize_input_points_gn :</span>
+<span class="sd">        Optimize the input points of a single transformation using the Gauss-Newton optimization method.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># -------------</span>
+    <span class="c1"># Input Formats Check</span>
+    <span class="c1"># -------------</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seq_transforms</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;seq_transforms must be a sequence of Transform objects, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">seq_transforms</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Transform</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">seq_transforms</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;All elements of seq_transforms must be instances of Transform, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="p">[</span><span class="nb">type</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">seq_transforms</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="n">n_transforms</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq_transforms</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seq_chains</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;seq_chains must be a sequence of sequences of integers, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">seq_chains</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">seq_chains</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;All elements of seq_chains must be sequences of integers, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="p">[</span><span class="nb">type</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">seq_chains</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span>
+        <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">Integral</span><span class="p">)</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq_transforms</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">c</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">seq_chains</span>
+    <span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;All elements of seq_chains must be sequences of valid indices corresponding &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;to the transformations in seq_transforms. Got seq_chains </span><span class="si">{</span><span class="n">seq_chains</span><span class="si">}</span><span class="s2"> and number of &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;transformations </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">seq_transforms</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">seq_chains</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;All seq_chains must be non-empty. Got seq_chains </span><span class="si">{</span><span class="n">seq_chains</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">c</span><span class="p">))</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">seq_chains</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;All seq_chains must not contain duplicate indices. Got seq_chains </span><span class="si">{</span><span class="n">seq_chains</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">n_chains</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq_chains</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seq_outputs</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;seq_outputs must be a sequence of arrays, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">seq_outputs</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq_outputs</span><span class="p">)</span> <span class="o">==</span> <span class="n">n_chains</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;seq_outputs must have the same length as seq_chains, got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">seq_outputs</span><span class="p">)</span><span class="si">}</span><span class="s2"> &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;and </span><span class="si">{</span><span class="n">n_chains</span><span class="si">}</span><span class="s2"> respectively.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">seq_outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">seq_outputs</span><span class="p">]</span>
+
+    <span class="n">guess</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">guess</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">([</span><span class="n">seq_outputs</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">seq_outputs</span> <span class="ow">in</span> <span class="n">seq_outputs</span><span class="p">]):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;All elements of seq_outputs must be at least 2D arrays with shape (..., dim), got </span><span class="si">{</span><span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">shape</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">seq_outputs</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">guess</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;guess must be at least a 2D array with shape (..., dim), got </span><span class="si">{</span><span class="n">guess</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">transpose</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;transpose must be a boolean, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">transpose</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">transpose</span><span class="p">:</span>
+        <span class="n">seq_outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">moveaxis</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">seq_outputs</span><span class="p">]</span>
+        <span class="n">guess</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">moveaxis</span><span class="p">(</span><span class="n">guess</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">seq_outputs_dim</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">seq_outputs</span><span class="p">]</span>
+    <span class="n">shape</span> <span class="o">=</span> <span class="n">guess</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">seq_outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">seq_outputs_dim</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">seq_outputs</span><span class="p">)]</span>
+    <span class="n">guess</span> <span class="o">=</span> <span class="n">guess</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">guess</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">seq_outputs</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;All elements of seq_outputs must have the same number of points as guess. Got </span><span class="si">{</span><span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">seq_outputs</span><span class="p">]</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">guess</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> respectively.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">seq_transforms</span><span class="p">[</span><span class="n">c</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">output_dim</span>
+        <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">seq_outputs</span><span class="p">,</span> <span class="n">seq_chains</span><span class="p">)</span>
+    <span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;All elements of seq_outputs must have the same output dimension as the output dimension of the last transformation in the corresponding chain. Got </span><span class="si">{</span><span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">seq_outputs</span><span class="p">]</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="p">[</span><span class="n">seq_transforms</span><span class="p">[</span><span class="n">c</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">output_dim</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">seq_chains</span><span class="p">]</span><span class="si">}</span><span class="s2"> respectively.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">guess</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">seq_transforms</span><span class="p">[</span><span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">input_dim</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">seq_chains</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;guess must have the same input dimension as the input dimension of the first transformation in each chain. Got </span><span class="si">{</span><span class="n">guess</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="p">[</span><span class="n">seq_transforms</span><span class="p">[</span><span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">input_dim</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">seq_chains</span><span class="p">]</span><span class="si">}</span><span class="s2"> respectively.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">seq_transform_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">seq_transform_kwargs</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_transforms</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seq_transform_kwargs</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;seq_transform_kwargs must be a sequence of dictionaries or None, got &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">seq_transform_kwargs</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq_transform_kwargs</span><span class="p">)</span> <span class="o">==</span> <span class="n">n_transforms</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;seq_transform_kwargs must have the same length as transforms, got &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">seq_transform_kwargs</span><span class="p">)</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">n_transforms</span><span class="si">}</span><span class="s2"> respectively.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">tk</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">seq_transform_kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">tk</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">tk</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tk</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;seq_transform_kwargs for transformation </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> must be a dictionary or None, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">tk</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="n">seq_transform_kwargs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">tk</span>
+
+    <span class="k">if</span> <span class="n">max_iterations</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">max_iterations</span><span class="p">,</span> <span class="n">Integral</span><span class="p">)</span> <span class="ow">or</span> <span class="n">max_iterations</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;max_iterations must be a positive integer, got </span><span class="si">{</span><span class="n">max_iterations</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="n">max_iterations</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">max_iterations</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">max_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">max_time</span><span class="p">,</span> <span class="n">Real</span><span class="p">)</span> <span class="ow">or</span> <span class="n">max_time</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;max_time must be a positive float, got </span><span class="si">{</span><span class="n">max_time</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">max_time</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">max_time</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">auto</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;auto must be a boolean, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">auto</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">auto</span><span class="p">:</span>
+        <span class="n">ftol</span><span class="p">,</span> <span class="n">xtol</span><span class="p">,</span> <span class="n">gtol</span> <span class="o">=</span> <span class="mf">1e-8</span><span class="p">,</span> <span class="mf">1e-8</span><span class="p">,</span> <span class="mf">1e-8</span>
+
+    <span class="k">if</span> <span class="n">ftol</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ftol</span><span class="p">,</span> <span class="n">Real</span><span class="p">)</span> <span class="ow">or</span> <span class="n">ftol</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ftol must be a positive float, got </span><span class="si">{</span><span class="n">ftol</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">ftol</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ftol</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">xtol</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">xtol</span><span class="p">,</span> <span class="n">Real</span><span class="p">)</span> <span class="ow">or</span> <span class="n">xtol</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;xtol must be a positive float, got </span><span class="si">{</span><span class="n">xtol</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">xtol</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">xtol</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">gtol</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gtol</span><span class="p">,</span> <span class="n">Real</span><span class="p">)</span> <span class="ow">or</span> <span class="n">gtol</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;gtol must be a positive float, got </span><span class="si">{</span><span class="n">gtol</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">gtol</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">gtol</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">eps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">eps</span><span class="p">,</span> <span class="n">Real</span><span class="p">)</span> <span class="ow">or</span> <span class="n">eps</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;eps must be a positive float, got </span><span class="si">{</span><span class="n">eps</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">eps</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">eps</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;verbose must be a boolean, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">verbose</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">verbose</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">verbose</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">ftol</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">xtol</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">gtol</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">eps</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;At least one of ftol, xtol, gtol, or eps must be specified for stopping criteria.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">return_convergence</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;return_convergence must be a boolean, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">return_convergence</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">guess</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="nb">sum</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">seq_outputs</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;The input dimension of the transformations must be less than the sum of the output dimensions of the chains. Got </span><span class="si">{</span><span class="n">guess</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="nb">sum</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">seq_outputs</span><span class="p">)</span><span class="si">}</span><span class="s2"> respectively.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">out</span><span class="p">,</span> <span class="n">conv</span> <span class="o">=</span> <span class="n">_solve_optimize_chains_gauss_newton</span><span class="p">(</span>
+        <span class="n">seq_transforms</span><span class="o">=</span><span class="n">seq_transforms</span><span class="p">,</span>
+        <span class="n">seq_chains</span><span class="o">=</span><span class="n">seq_chains</span><span class="p">,</span>
+        <span class="n">seq_outputs</span><span class="o">=</span><span class="n">seq_outputs</span><span class="p">,</span>
+        <span class="n">guess</span><span class="o">=</span><span class="n">guess</span><span class="p">,</span>
+        <span class="n">seq_transform_kwargs</span><span class="o">=</span><span class="n">seq_transform_kwargs</span><span class="p">,</span>
+        <span class="n">max_iterations</span><span class="o">=</span><span class="n">max_iterations</span><span class="p">,</span>
+        <span class="n">max_time</span><span class="o">=</span><span class="n">max_time</span><span class="p">,</span>
+        <span class="n">ftol</span><span class="o">=</span><span class="n">ftol</span><span class="p">,</span>
+        <span class="n">xtol</span><span class="o">=</span><span class="n">xtol</span><span class="p">,</span>
+        <span class="n">gtol</span><span class="o">=</span><span class="n">gtol</span><span class="p">,</span>
+        <span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">transpose</span><span class="p">:</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">moveaxis</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">return_convergence</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">out</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">shape</span><span class="p">),</span> <span class="n">conv</span>
+    <span class="k">return</span> <span class="n">out</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="optimize_input_points_gn">
+<a class="viewcode-back" href="../../../_autosummary/pycvcam.optimize_input_points_gn.html#pycvcam.optimize_input_points_gn">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">optimize_input_points_gn</span><span class="p">(</span>
+    <span class="n">transform</span><span class="p">:</span> <span class="n">Transform</span><span class="p">,</span>
+    <span class="n">output_points</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">guess</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">transpose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">max_iterations</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Integral</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">max_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">ftol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">xtol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">gtol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">auto</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">eps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">return_convergence</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Optimize the input points of the transformation using the given output points.</span>
+
+<span class="sd">    Estimate the optimized input points of the transformation such that the transformed input points match the output points.</span>
+
+<span class="sd">    .. warning::</span>
+
+<span class="sd">        This method can only be used if the dimensions check input_dim &lt;= output_dim.</span>
+
+<span class="sd">    Lets consider a set of output points :math:`X_O` with shape (..., dim) and a set of input points :math:`\vec{X}_I` with shape (..., input_dim).</span>
+<span class="sd">    We search :math:`\vec{X}_I = \vec{X}_{I_0} + \delta \vec{X}_I` such that:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \vec{X}_O = \text{Transform}(\vec{X}_I, \lambda) = T(\vec{X}_{I_0} + \delta \vec{X}_I, \lambda)</span>
+
+<span class="sd">    We have:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \nabla_{X} T (\vec{X}_{I_0}, \lambda) \delta \vec{X}_I = \vec{X}_O - T(\vec{X}_{I_0}, \lambda)</span>
+
+<span class="sd">    The corrections are computed using the following equations :</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        J \delta \vec{X}_I = R</span>
+
+<span class="sd">    Where :math:`J = \nabla_{X} T (\vec{X}_{I_0}, \lambda)` is the Jacobian matrix of the transformation with respect to the input points, and :math:`R = \vec{X}_O - T(\vec{X}_{I_0}, \lambda)` is the residual vector.</span>
+<span class="sd">    :math:`\vec{X}_{I_0}` is the initial guess for the input points.</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">        The ``auto`` parameter sets the stopping criteria (``ftol``, ``xtol``, and ``gtol``) to ``1e-8``. If any of the stopping criteria is already specified, it will be overridden by the user-specified value.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    transform : Transform</span>
+<span class="sd">        The transformation object used for optimization.</span>
+
+<span class="sd">    output_points : ArrayLike</span>
+<span class="sd">        The output points to be matched. Shape (..., dim) (or (dim, ...) if `transpose` is True).</span>
+<span class="sd">        tional[ArrayLike], optional</span>
+
+<span class="sd">    guess : ArrayLike</span>
+<span class="sd">        The initial guess for the input points of the transformation with shape (..., dim).</span>
+
+<span class="sd">    transpose : bool, optional</span>
+<span class="sd">        If True, the output points are transposed to shape (dim, ...) before optimization,</span>
+<span class="sd">        and the optimized input points are transposed back to shape (input_dim, ...) before returning. Default is False.</span>
+
+<span class="sd">    max_iterations : Optional[int]</span>
+<span class="sd">        The maximum number of iterations for the optimization.</span>
+<span class="sd">        Default is None, which means no limit on the number of iterations.</span>
+
+<span class="sd">    max_time : Optional[int]</span>
+<span class="sd">        The maximum time in seconds for the optimization.</span>
+<span class="sd">        Default is None, which means no limit on the time.</span>
+
+<span class="sd">    ftol : Optional[Real], optional</span>
+<span class="sd">        Stop criterion by the change of the cost function.</span>
+<span class="sd">        The optimization process is stopped when ``dF &lt; ftol * F``.</span>
+<span class="sd">        The default value is None, which means the ftol criterion is not used for</span>
+<span class="sd">        stopping the optimization.</span>
+
+<span class="sd">    xtol : Optional[Real], optional</span>
+<span class="sd">        Stop criterion by the change of the parameters.</span>
+<span class="sd">        The optimization process is stopped when ``norm(dx) &lt; xtol * (xtol + norm(x))``.</span>
+<span class="sd">        The default value is None, which means the xtol criterion is not used for</span>
+<span class="sd">        stopping the optimization.</span>
+
+<span class="sd">    gtol : Optional[Real], optional</span>
+<span class="sd">        Stop criterion by the norm of the gradient.</span>
+<span class="sd">        The optimization process is stopped when ``norm(g_scaled, ord=numpy.inf) &lt; gtol``</span>
+<span class="sd">        where g_scaled is the value of the gradient scaled to account for the</span>
+<span class="sd">        presence of the bounds. The default value is None, which means the gtol</span>
+<span class="sd">        criterion is not used for stopping the optimization.</span>
+
+<span class="sd">    auto : bool, optional</span>
+<span class="sd">        If True, the stopping criteria (``ftol``, ``xtol``, and ``gtol``) are all set to</span>
+<span class="sd">        ``1e-8``. If any of the stopping criteria is already specified, it will</span>
+<span class="sd">        be overridden by the user-specified value. Default is False.</span>
+
+<span class="sd">    eps : Optional[Real], optional</span>
+<span class="sd">        The convergence threshold for the optimization. The optimization process is</span>
+<span class="sd">        stopped when the change in the cost function is less than eps.</span>
+<span class="sd">        Default is None, which means no convergence threshold is used.</span>
+
+<span class="sd">    verbose : bool</span>
+<span class="sd">        If True, print the optimization progress and diagnostics. Default is False.</span>
+
+<span class="sd">    return_convergence : bool</span>
+<span class="sd">        If True, the function returns a tuple of (optimized_input_points, convergence_status), where</span>
+<span class="sd">        convergence_status is a numpy array of shape (n_points,) indicating the convergence status of each</span>
+<span class="sd">        point.</span>
+
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        The optimized input points of the transformation with shape (..., dim).</span>
+
+<span class="sd">    numpy.ndarray, optional</span>
+<span class="sd">        The convergence status of each point, where:</span>
+
+<span class="sd">        - 0 means not converged,</span>
+<span class="sd">        - 1 means converged by ftol criterion,</span>
+<span class="sd">        - 2 means converged by xtol criterion,</span>
+<span class="sd">        - 3 means converged by gtol criterion,</span>
+<span class="sd">        - 4 means converged by eps criterion,</span>
+<span class="sd">        - 5 means diverged by NaN values,</span>
+<span class="sd">        - 6 means maximum number of iterations reached,</span>
+<span class="sd">        - 7 means maximum time reached,</span>
+<span class="sd">        - inf means warning not evaluated yet.</span>
+
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    optimize_chains_input_points_gn :</span>
+<span class="sd">        Optimize the input points based of the result of chains of transformations using the Gauss-Newton optimization method.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">optimize_chains_input_points_gn</span><span class="p">(</span>
+        <span class="n">seq_transforms</span><span class="o">=</span><span class="p">[</span><span class="n">transform</span><span class="p">],</span>
+        <span class="n">seq_chains</span><span class="o">=</span><span class="p">[(</span><span class="mi">0</span><span class="p">,)],</span>
+        <span class="n">seq_outputs</span><span class="o">=</span><span class="p">[</span><span class="n">output_points</span><span class="p">],</span>
+        <span class="n">guess</span><span class="o">=</span><span class="n">guess</span><span class="p">,</span>
+        <span class="n">transpose</span><span class="o">=</span><span class="n">transpose</span><span class="p">,</span>
+        <span class="n">max_iterations</span><span class="o">=</span><span class="n">max_iterations</span><span class="p">,</span>
+        <span class="n">max_time</span><span class="o">=</span><span class="n">max_time</span><span class="p">,</span>
+        <span class="n">ftol</span><span class="o">=</span><span class="n">ftol</span><span class="p">,</span>
+        <span class="n">xtol</span><span class="o">=</span><span class="n">xtol</span><span class="p">,</span>
+        <span class="n">gtol</span><span class="o">=</span><span class="n">gtol</span><span class="p">,</span>
+        <span class="n">auto</span><span class="o">=</span><span class="n">auto</span><span class="p">,</span>
+        <span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+        <span class="n">return_convergence</span><span class="o">=</span><span class="n">return_convergence</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
 
 <div class="viewcode-block" id="optimize_input_points">
 <a class="viewcode-back" href="../../../_autosummary/pycvcam.optimize_input_points.html#pycvcam.optimize_input_points">[docs]</a>
@@ -350,10 +1196,16 @@
     <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
     <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-8</span><span class="p">,</span>
     <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">_skip</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">_skip</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Optimize the input points of the transformation using the given output points.</span>
+
+<span class="sd">    .. deprecated:: 2.1.8</span>
+
+<span class="sd">        Consider using the :func:`optimize_input_points_gn` function instead,</span>
+<span class="sd">        which provides a more robust optimization process for handling non-linear problems,</span>
+<span class="sd">        and allows for more flexible stopping criteria.</span>
 
 <span class="sd">    Estimate the optimized input points of the transformation such that the transformed input points match the output points.</span>
 
@@ -458,10 +1310,14 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">transform</span><span class="p">,</span> <span class="n">Transform</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;transform must be an instance of Transform, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">transform</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;transform must be an instance of Transform, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">transform</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
     <span class="k">if</span> <span class="n">transform</span><span class="o">.</span><span class="n">input_dim</span> <span class="o">!=</span> <span class="n">transform</span><span class="o">.</span><span class="n">output_dim</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Input dimension (</span><span class="si">{</span><span class="n">transform</span><span class="o">.</span><span class="n">input_dim</span><span class="si">}</span><span class="s2">) must be equal to output dimension (</span><span class="si">{</span><span class="n">transform</span><span class="o">.</span><span class="n">output_dim</span><span class="si">}</span><span class="s2">) for this method to work.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Input dimension (</span><span class="si">{</span><span class="n">transform</span><span class="o">.</span><span class="n">input_dim</span><span class="si">}</span><span class="s2">) must be equal to output dimension (</span><span class="si">{</span><span class="n">transform</span><span class="o">.</span><span class="n">output_dim</span><span class="si">}</span><span class="s2">) for this method to work.&quot;</span>
+        <span class="p">)</span>
     <span class="n">dim</span> <span class="o">=</span> <span class="n">transform</span><span class="o">.</span><span class="n">input_dim</span>  <span class="c1"># Since input_dim == output_dim</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">_skip</span><span class="p">:</span>
@@ -469,7 +1325,9 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">transpose</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;transpose must be a boolean, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">transpose</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">max_iter</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">max_iter</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;max_iter must be an integer greater than 0, got </span><span class="si">{</span><span class="n">max_iter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;max_iter must be an integer greater than 0, got </span><span class="si">{</span><span class="n">max_iter</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">eps</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">or</span> <span class="n">eps</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;eps must be a positive float, got </span><span class="si">{</span><span class="n">eps</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
@@ -477,7 +1335,9 @@
 
         <span class="c1"># Check if the transformation is set</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">transform</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Transformation parameters are not set. Please set the parameters before optimizing.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Transformation parameters are not set. Please set the parameters before optimizing.&quot;</span>
+            <span class="p">)</span>
 
         <span class="c1"># Convert output points to float</span>
         <span class="n">output_points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">output_points</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
@@ -487,91 +1347,118 @@
             <span class="n">guess</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">guess</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Use the output points as the initial guess</span>
-            <span class="n">guess</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">output_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dim</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="n">guess</span> <span class="o">=</span> <span class="n">output_points</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c1"># shape (..., dim)</span>
 
         <span class="c1"># Check the shape of the output points</span>
         <span class="k">if</span> <span class="n">output_points</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Output points must have at least 2 dimensions, got </span><span class="si">{</span><span class="n">output_points</span><span class="o">.</span><span class="n">ndim</span><span class="si">}</span><span class="s2"> dimensions.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Output points must have at least 2 dimensions, got </span><span class="si">{</span><span class="n">output_points</span><span class="o">.</span><span class="n">ndim</span><span class="si">}</span><span class="s2"> dimensions.&quot;</span>
+            <span class="p">)</span>
         <span class="k">if</span> <span class="n">guess</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Guess must have at least 2 dimensions, got </span><span class="si">{</span><span class="n">guess</span><span class="o">.</span><span class="n">ndim</span><span class="si">}</span><span class="s2"> dimensions.&quot;</span><span class="p">)</span>
-        
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Guess must have at least 2 dimensions, got </span><span class="si">{</span><span class="n">guess</span><span class="o">.</span><span class="n">ndim</span><span class="si">}</span><span class="s2"> dimensions.&quot;</span>
+            <span class="p">)</span>
+
         <span class="c1"># Transpose the output points if requested</span>
         <span class="k">if</span> <span class="n">transpose</span><span class="p">:</span>
-            <span class="n">output_points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">moveaxis</span><span class="p">(</span><span class="n">output_points</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># (dim, ...) -&gt; (..., dim)</span>
-            <span class="n">guess</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">moveaxis</span><span class="p">(</span><span class="n">guess</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># (dim, ...) -&gt; (..., dim)</span>
+            <span class="n">output_points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">moveaxis</span><span class="p">(</span>
+                <span class="n">output_points</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="p">)</span>  <span class="c1"># (dim, ...) -&gt; (..., dim)</span>
+            <span class="n">guess</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">moveaxis</span><span class="p">(</span><span class="n">guess</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># (dim, ...) -&gt; (..., dim)</span>
 
         <span class="c1"># Flatten the output points to 2D for processing</span>
         <span class="n">shape</span> <span class="o">=</span> <span class="n">output_points</span><span class="o">.</span><span class="n">shape</span>  <span class="c1"># (..., dim)</span>
         <span class="n">output_points</span> <span class="o">=</span> <span class="n">output_points</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span>  <span class="c1"># (..., dim) -&gt; (n_points, dim)</span>
         <span class="n">guess</span> <span class="o">=</span> <span class="n">guess</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span>  <span class="c1"># (..., dim) -&gt; (n_points, dim)</span>
-        
+
         <span class="c1"># Check the number of points</span>
         <span class="k">if</span> <span class="n">output_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">guess</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Output points and guess must have the same number of points, got </span><span class="si">{</span><span class="n">output_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">guess</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> points respectively.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Output points and guess must have the same number of points, got </span><span class="si">{</span><span class="n">output_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">guess</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> points respectively.&quot;</span>
+            <span class="p">)</span>
         <span class="k">if</span> <span class="n">output_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Output points and guess must have at least one point.&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">output_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">dim</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Output points must have </span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2"> dimensions, got </span><span class="si">{</span><span class="n">output_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> dimensions.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Output points must have </span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2"> dimensions, got </span><span class="si">{</span><span class="n">output_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> dimensions.&quot;</span>
+            <span class="p">)</span>
         <span class="k">if</span> <span class="n">guess</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">dim</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Guess must have </span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2"> dimensions, got </span><span class="si">{</span><span class="n">guess</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> dimensions.&quot;</span><span class="p">)</span>
-        
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Guess must have </span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2"> dimensions, got </span><span class="si">{</span><span class="n">guess</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> dimensions.&quot;</span>
+            <span class="p">)</span>
+
     <span class="c1"># Initialize the guess for the input points</span>
     <span class="n">n_points</span> <span class="o">=</span> <span class="n">output_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">delta_itk</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">guess</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="c1"># shape (n_points, dim) (Delta for the next iteration)</span>
-    <span class="n">Nopt</span> <span class="o">=</span> <span class="n">n_points</span> <span class="c1"># Number of points in computation</span>
 
     <span class="c1"># Prepare the output array:</span>
     <span class="n">input_points</span> <span class="o">=</span> <span class="n">guess</span>
-
-    <span class="c1"># Create the mask for the points in computation</span>
-    <span class="n">mask</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">output_points</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">input_points</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>  <span class="c1"># shape (n_points,)</span>
+    <span class="n">active_idx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_points</span><span class="p">)</span>  <span class="c1"># shape (n_points,)</span>
 
     <span class="c1"># Run the iterative algorithm</span>
     <span class="k">for</span> <span class="n">it</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_iter</span><span class="p">):</span>
+        <span class="c1"># Check if there are any points left in computation</span>
+        <span class="k">if</span> <span class="n">active_idx</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;All points are invalid. Stopping optimization at iteration </span><span class="si">{</span><span class="n">it</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+            <span class="k">break</span>
+
+        <span class="n">current_inputs</span> <span class="o">=</span> <span class="n">input_points</span><span class="p">[</span><span class="n">active_idx</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1"># shape (Nopt, dim)</span>
+
         <span class="c1"># Compute the transformation of the input points and the Jacobian with respect to the input points</span>
-        <span class="n">output_points_itk</span><span class="p">,</span> <span class="n">jacobian_dx</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">transform</span><span class="o">.</span><span class="n">_transform</span><span class="p">(</span><span class="n">input_points</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="p">:],</span> <span class="n">dx</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dp</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="c1"># shape (Nopt, dim), (Nopt, dim, dim), None</span>
+        <span class="n">out</span><span class="p">,</span> <span class="n">J</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">transform</span><span class="o">.</span><span class="n">_transform</span><span class="p">(</span>
+            <span class="n">current_inputs</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dp</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>  <span class="c1"># shape (Nopt, dim), (Nopt, dim, dim), None</span>
 
         <span class="c1"># Check if the jacobian_dx is None</span>
-        <span class="k">if</span> <span class="n">jacobian_dx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Jacobian with respect to the input points is not available. Please implement the _transform method to return the Jacobian with respect to the input points.&quot;</span><span class="p">)</span>
-        
-        <span class="c1"># Check the convergence of the optimization</span>
-        <span class="n">diff</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">output_points_itk</span> <span class="o">-</span> <span class="n">output_points</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="p">:],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># shape (Nopt,)</span>
-        <span class="n">eps_mask</span> <span class="o">=</span> <span class="n">diff</span> <span class="o">&gt;</span> <span class="n">eps</span> <span class="c1"># shape (Nopt,)</span>
-        <span class="n">mask</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">mask</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span> <span class="n">eps_mask</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">J</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Jacobian with respect to the input points is not available. Please implement the _transform method to return the Jacobian with respect to the input points.&quot;</span>
+            <span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">output_points</span><span class="p">[</span><span class="n">active_idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">out</span>  <span class="c1"># shape (Nopt, dim)</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># shape (Nopt,)</span>
+        <span class="n">still_active</span> <span class="o">=</span> <span class="n">diff</span> <span class="o">&gt;</span> <span class="n">eps</span>  <span class="c1"># shape (Nopt,)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">still_active</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Optimization converged in </span><span class="si">{</span><span class="n">it</span><span class="si">}</span><span class="s2"> iterations.&quot;</span><span class="p">)</span>
             <span class="k">break</span>
 
-        <span class="n">Nopt</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>  <span class="c1"># Update the number of points in computation</span>
-
-        <span class="n">output_points_itk</span> <span class="o">=</span> <span class="n">output_points_itk</span><span class="p">[</span><span class="n">eps_mask</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1"># shape (NewNopt, dim)</span>
-        <span class="n">jacobian_dx</span> <span class="o">=</span> <span class="n">jacobian_dx</span><span class="p">[</span><span class="n">eps_mask</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>  <span class="c1"># shape (NewNopt, dim, dim)</span>
-
-        <span class="c1"># Construct the residual vector R and the Jacobian J</span>
-        <span class="n">R</span> <span class="o">=</span> <span class="n">output_points</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">output_points_itk</span> <span class="c1"># shape (Nopt, dim)</span>
-        <span class="n">J</span> <span class="o">=</span> <span class="n">jacobian_dx</span> <span class="c1"># shape (Nopt, dim, dim)</span>
+        <span class="n">new_active_idx</span> <span class="o">=</span> <span class="n">active_idx</span><span class="p">[</span><span class="n">still_active</span><span class="p">]</span>  <span class="c1"># shape (NewNopt,)</span>
 
         <span class="c1"># Solve the linear system to find the delta</span>
-        <span class="n">delta_itk</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">scipy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">J</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">R</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Nopt</span><span class="p">)],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="c1"># shape (Nopt, dim)</span>
+        <span class="c1"># delta_itk = numpy.array(</span>
+        <span class="c1">#     [scipy.linalg.solve(J[i], R[i]) for i in range(Nopt)], dtype=numpy.float64</span>
+        <span class="c1"># )  # shape (Nopt, dim)</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">J</span><span class="p">[</span><span class="n">still_active</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span> <span class="n">R</span><span class="p">[</span><span class="n">still_active</span><span class="p">,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">])[</span>
+            <span class="o">...</span><span class="p">,</span> <span class="mi">0</span>
+        <span class="p">]</span>  <span class="c1"># shape (Nopt, dim)</span>
 
         <span class="c1"># Update the input points</span>
-        <span class="n">input_points</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">input_points</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+</span> <span class="n">delta_itk</span>
+        <span class="n">input_points</span><span class="p">[</span><span class="n">new_active_idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="n">delta</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span><span class="si">}</span><span class="s2"> valid points out of </span><span class="si">{</span><span class="n">n_points</span><span class="si">}</span><span class="s2">. Max delta: </span><span class="si">{</span><span class="n">numpy</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">delta_itk</span><span class="p">))</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">it</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">new_active_idx</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s2"> valid points out of </span><span class="si">{</span><span class="n">n_points</span><span class="si">}</span><span class="s2">. Mean residual: </span><span class="si">{</span><span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">diff</span><span class="p">[</span><span class="n">still_active</span><span class="p">])</span><span class="si">}</span><span class="s2">, Max residual: </span><span class="si">{</span><span class="n">numpy</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">diff</span><span class="p">[</span><span class="n">still_active</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Update the mask and active indices for the next iteration</span>
+        <span class="n">active_idx</span> <span class="o">=</span> <span class="n">new_active_idx</span>
 
     <span class="c1"># Return the optimized input points</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">_skip</span><span class="p">:</span>
-        <span class="n">input_points</span> <span class="o">=</span> <span class="n">input_points</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">dim</span><span class="p">)</span>  <span class="c1"># (n_points, dim) -&gt; (..., dim)</span>
+        <span class="n">input_points</span> <span class="o">=</span> <span class="n">input_points</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+            <span class="o">*</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">dim</span>
+        <span class="p">)</span>  <span class="c1"># (n_points, dim) -&gt; (..., dim)</span>
 
         <span class="k">if</span> <span class="n">transpose</span><span class="p">:</span>
-            <span class="n">input_points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">moveaxis</span><span class="p">(</span><span class="n">input_points</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="c1"># (..., dim) -&gt; (dim, ...)</span>
+            <span class="n">input_points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">moveaxis</span><span class="p">(</span>
+                <span class="n">input_points</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span>
+            <span class="p">)</span>  <span class="c1"># (..., dim) -&gt; (dim, ...)</span>
 
     <span class="k">return</span> <span class="n">input_points</span></div>
-
 
 </pre></div>
 

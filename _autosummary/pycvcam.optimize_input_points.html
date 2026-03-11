@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pycvcam.optimize_input_points &#8212; pycvcam 2.1.8 documentation</title>
+    <title>pycvcam.optimize_input_points &#8212; pycvcam 2.1.9 documentation</title>
   
   
   
@@ -44,7 +44,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=03f109e5"></script>
+    <script src="../_static/documentation_options.js?v=a7898dfc"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -54,8 +54,8 @@
     <script>DOCUMENTATION_OPTIONS.pagename = '_autosummary/pycvcam.optimize_input_points';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Usage" href="../usage.html" />
-    <link rel="prev" title="Optimize Input Points" href="../_docs/optimize_input_points.html" />
+    <link rel="next" title="pycvcam.optimize_chains_input_points_gn" href="pycvcam.optimize_chains_input_points_gn.html" />
+    <link rel="prev" title="pycvcam.optimize_input_points_gn" href="pycvcam.optimize_input_points_gn.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -120,7 +120,7 @@
   
   
   
-    <p class="title logo__title">pycvcam 2.1.8 documentation</p>
+    <p class="title logo__title">pycvcam 2.1.9 documentation</p>
   
 </a></div>
     
@@ -475,8 +475,14 @@
 <li class="toctree-l2"><a class="reference internal" href="pycvcam.optimize_chains_lm.html">pycvcam.optimize_chains_lm</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="../_docs/optimize_input_points.html">Optimize Input Points</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../_docs/optimize_input_points.html">Optimize input points of transformations</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.optimize_input_points_gn.html">pycvcam.optimize_input_points_gn</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">pycvcam.optimize_input_points</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.optimize_chains_input_points_gn.html">pycvcam.optimize_chains_input_points_gn</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../_docs/optimize_rays_intersection.html">Optimize rays intersection</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.optimize_rays_intersect.html">pycvcam.optimize_rays_intersect</a></li>
 </ul>
 </details></li>
 </ul>
@@ -523,7 +529,7 @@
     <li class="breadcrumb-item"><a href="../api.html" class="nav-link">API Reference</a></li>
     
     
-    <li class="breadcrumb-item"><a href="../_docs/optimize_input_points.html" class="nav-link">Optimize Input Points</a></li>
+    <li class="breadcrumb-item"><a href="../_docs/optimize_input_points.html" class="nav-link">Optimize input points of transformations</a></li>
     
     <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pycvcam.optimize_input_points</span></li>
   </ul>
@@ -548,6 +554,11 @@
 <dt class="sig sig-object py" id="pycvcam.optimize_input_points">
 <span class="sig-name descname"><span class="pre">optimize_input_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guess</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_skip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pycvcam/optimize/optimize_input_points.html#optimize_input_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.optimize_input_points" title="Link to this definition">#</a></dt>
 <dd><p>Optimize the input points of the transformation using the given output points.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 2.1.8: </span>Consider using the <a class="reference internal" href="pycvcam.optimize_input_points_gn.html#pycvcam.optimize_input_points_gn" title="pycvcam.optimize_input_points_gn"><code class="xref py py-func docutils literal notranslate"><span class="pre">optimize_input_points_gn()</span></code></a> function instead,
+which provides a more robust optimization process for handling non-linear problems,
+and allows for more flexible stopping criteria.</p>
+</div>
 <p>Estimate the optimized input points of the transformation such that the transformed input points match the output points.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -635,20 +646,20 @@ The guess must be given in the (n_points, dim) float format.
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../_docs/optimize_input_points.html"
+       href="pycvcam.optimize_input_points_gn.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Optimize Input Points</p>
+        <p class="prev-next-title">pycvcam.optimize_input_points_gn</p>
       </div>
     </a>
     <a class="right-next"
-       href="../usage.html"
+       href="pycvcam.optimize_chains_input_points_gn.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Usage</p>
+        <p class="prev-next-title">pycvcam.optimize_chains_input_points_gn</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

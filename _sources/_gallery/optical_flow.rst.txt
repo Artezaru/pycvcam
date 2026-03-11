@@ -320,7 +320,7 @@ the effect of the borders on the error computation.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 9.346 seconds)
+   **Total running time of the script:** (0 minutes 6.016 seconds)
 
 
 .. _sphx_glr_download_.._.._docs_source__gallery_optical_flow.py:

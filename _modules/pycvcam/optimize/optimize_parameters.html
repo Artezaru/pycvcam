@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pycvcam.optimize.optimize_transforms &#8212; pycvcam 2.1.8 documentation</title>
+    <title>pycvcam.optimize.optimize_parameters &#8212; pycvcam 2.1.9 documentation</title>
   
   
   
@@ -43,13 +43,13 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=03f109e5"></script>
+    <script src="../../../_static/documentation_options.js?v=a7898dfc"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pycvcam/optimize/optimize_transforms';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pycvcam/optimize/optimize_parameters';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -116,7 +116,7 @@
   
   
   
-    <p class="title logo__title">pycvcam 2.1.8 documentation</p>
+    <p class="title logo__title">pycvcam 2.1.9 documentation</p>
   
 </a></div>
     
@@ -301,7 +301,7 @@
     
     <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pycvcam.optimize.optimize_transforms</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pycvcam.optimize.optimize_parameters</span></li>
   </ul>
 </nav>
 </div>
@@ -318,7 +318,7 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <h1>Source code for pycvcam.optimize.optimize_transforms</h1><div class="highlight"><pre>
+  <h1>Source code for pycvcam.optimize.optimize_parameters</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Sequence</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">numpy.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArrayLike</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">numbers</span><span class="w"> </span><span class="kn">import</span> <span class="n">Real</span><span class="p">,</span> <span class="n">Integral</span>
@@ -612,10 +612,38 @@
 <span class="sd">    and the output points for each chain, while respecting the structure of the chains</span>
 <span class="sd">    and the masks for the parameters.</span>
 
-<span class="sd">    The Jacobian function computes the Jacobian matrix of the residuals with respect to the</span>
-<span class="sd">    parameters, while respecting the structure of the chains and the masks for the parameters.</span>
-<span class="sd">    The Jacobian matrix is assembled according to the chain structure and the mask,</span>
-<span class="sd">    and can be treated as a sparse matrix if _sparse is True.</span>
+<span class="sd">    Lets :math:`(T_0, T_1, ..., T_{N_T-1})` be a tuple of :math:`N_T`</span>
+<span class="sd">    :class:`Transform` objects, and :math:`(C_0, C_1, ..., C_{N_C-1})` be a</span>
+<span class="sd">    tuple of :math:`N_C` chains of transformations.</span>
+
+<span class="sd">    A chain :math:`C_i` is defined as a tuple of indices corresponding to the</span>
+<span class="sd">    transformations in the chain. For example:</span>
+
+<span class="sd">    .. code-block:: console</span>
+
+<span class="sd">        C_0 = (1, 4, 8) -----&gt; C_0(X) = T_8 ∘ T_4 ∘ T_1(X)</span>
+
+<span class="sd">    For each chain :math:`C_i`, we have a set of input points :math:`X_i` and output</span>
+<span class="sd">    points :math:`Y_i` we can build a residual function :math:`R_i` and a</span>
+<span class="sd">    Jacobian function :math:`J_i` as follows:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        R_i(p) = Y_i - C_i(X_i; p)</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        J_i(p) = -\frac{\partial C_i(X_i; p)}{\partial p} = \frac{\partial R_i(p)}{\partial p}</span>
+
+<span class="sd">    where :math:`p` is the vector of parameters of the transformations in the chain,</span>
+<span class="sd">    which is a subset of the parameters of all the transformations in</span>
+<span class="sd">    :math:`(T_0, T_1, ..., T_{N_T-1})` defined by the masks.</span>
+
+<span class="sd">    Then we can build the full residual function :math:`R` and Jacobian function</span>
+<span class="sd">    :math:`J` for the least squares optimization by assembling the residuals and</span>
+<span class="sd">    Jacobians of each chain, while respecting the structure of the chains and the</span>
+<span class="sd">    masks for the parameters.</span>
+
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -827,19 +855,9 @@
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Optimize the parameters of a set of transformations organized in chains using</span>
-<span class="sd">    the least squares optimization method from Scipy.</span>
+<span class="sd">    the least squares optimization method from Scipy with the Trust Region Reflective</span>
+<span class="sd">    algorithm.</span>
 
-<span class="sd">    Trust Region Reflective algorithm is used, which allows to handle bounds and</span>
-<span class="sd">    scaling of the parameters, and provides a robust optimization process for</span>
-<span class="sd">    non-linear problems.</span>
-<span class="sd">    The optimization is performed by minimizing the residuals between the</span>
-<span class="sd">    transformed input points and the output points for each chain,</span>
-<span class="sd">    while respecting the structure of the chains and the masks for the parameters.</span>
-
-<span class="sd">    This function is used internally by the `optimize_parameters_least_squares` and</span>
-<span class="sd">    `optimize_chain_parameters_least_squares` functions to perform the optimization of</span>
-<span class="sd">    the parameters of the transformations in a single step, allowing to optimize</span>
-<span class="sd">    multiple transformations and chains simultaneously.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1066,7 +1084,6 @@
     <span class="n">seq_guesses</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
     <span class="n">seq_transform_kwargs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Dict</span><span class="p">],</span>
     <span class="n">max_iterations</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
-    <span class="n">max_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
     <span class="n">ftol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">],</span>
     <span class="n">xtol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">],</span>
     <span class="n">gtol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">],</span>
@@ -1074,25 +1091,20 @@
     <span class="n">filter_nans</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
     <span class="n">verbose_level</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">return_result</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
-    <span class="n">return_history</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
     <span class="n">_pretext</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">_sparse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Optimize the parameters of a set of transformations organized in chains using</span>
-<span class="sd">    the least squares optimization method from Scipy.</span>
+<span class="sd">    the least squares optimization method from Scipy with the Levenberg-Marquardt algorithm.</span>
 
-<span class="sd">    Levenberg-Marquardt algorithm is used, which is a popular optimization algorithm</span>
-<span class="sd">    for non-linear least squares problems without bounds.</span>
+<span class="sd">    .. note::</span>
 
-<span class="sd">    The optimization is performed by minimizing the residuals between the</span>
-<span class="sd">    transformed input points and the output points for each chain,</span>
-<span class="sd">    while respecting the structure of the chains and the masks for the parameters.</span>
+<span class="sd">        The Levenberg-Marquardt algorithm does not support callback functions, so the</span>
+<span class="sd">        ``max_iterations`` directly refers to the maximum calls to the residuals function.</span>
 
-<span class="sd">    This function is used internally by the `optimize_parameters_least_squares` and</span>
-<span class="sd">    `optimize_chain_parameters_least_squares` functions to perform the optimization of</span>
-<span class="sd">    the parameters of the transformations in a single step, allowing to optimize</span>
-<span class="sd">    multiple transformations and chains simultaneously.</span>
+<span class="sd">        Furthermore, no history of the optimization process can be returned, as there</span>
+<span class="sd">        is no callback function to store the intermediate results at each iteration.</span>
+
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1134,10 +1146,6 @@
 <span class="sd">        The maximum number of iterations for the optimization process. If None, there is</span>
 <span class="sd">        no limit on the number of iterations.</span>
 
-<span class="sd">    max_time : Optional[int]</span>
-<span class="sd">        The maximum time in seconds for the optimization process. If None, there is no</span>
-<span class="sd">        time limit for the optimization.</span>
-
 <span class="sd">    ftol : Optional[Real]</span>
 <span class="sd">        The tolerance for the cost function value to declare convergence. The optimization</span>
 <span class="sd">        will stop when the cost function value changes less than ftol between iterations.</span>
@@ -1172,21 +1180,11 @@
 <span class="sd">        cost function value, number of iterations, and convergence status. If False, only the</span>
 <span class="sd">        optimized parameters will be returned.</span>
 
-<span class="sd">    return_history : bool</span>
-<span class="sd">        If True, the function will return a history of the optimization process, which</span>
-<span class="sd">        is a list of tuples containing the parameters and intermediate results at each</span>
-<span class="sd">        iteration. If False, no history will be returned.</span>
-
 <span class="sd">    _pretext : Optional[str], optional</span>
 <span class="sd">        A pretext to display before the optimization process starts. This can be used to provide</span>
 <span class="sd">        context or information about the optimization process that is about to begin.</span>
 <span class="sd">        Default is None, which means no pretext is displayed.</span>
 
-<span class="sd">    _sparse : bool, optional</span>
-<span class="sd">        If True, the Jacobian matrix will be treated as a sparse matrix for the optimization process.</span>
-<span class="sd">        This can be beneficial for large problems where the Jacobian is sparse, as it can reduce</span>
-<span class="sd">        memory usage and improve computational efficiency. Default is False, which means the Jacobian</span>
-<span class="sd">        will be treated as a dense matrix.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -1199,10 +1197,6 @@
 <span class="sd">        If return_result is True, the full result object from scipy.optimize.least_squares is also returned,</span>
 <span class="sd">        which includes information about the optimization process, such as the optimized parameters,</span>
 <span class="sd">        cost function value, number of iterations, and convergence status.</span>
-
-<span class="sd">    Sequence[Tuple[numpy.ndarray]] (optional)</span>
-<span class="sd">        If return_history is True, a history of the optimization process is also returned, which is</span>
-<span class="sd">        a list of tuples containing the parameters and intermediate results at each iteration.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">n_transforms</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq_transforms</span><span class="p">)</span>
@@ -1226,7 +1220,7 @@
         <span class="n">seq_guesses</span><span class="p">,</span>
         <span class="n">seq_transform_kwargs</span><span class="p">,</span>
         <span class="n">filter_nans</span><span class="p">,</span>
-        <span class="n">_sparse</span><span class="o">=</span><span class="n">_sparse</span><span class="p">,</span>
+        <span class="n">_sparse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">verbose_level</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
@@ -1236,13 +1230,14 @@
             <span class="n">params_initial</span><span class="p">,</span>
             <span class="n">_pretext</span><span class="p">,</span>
             <span class="n">_start</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">_sparse</span><span class="o">=</span><span class="n">_sparse</span><span class="p">,</span>
+            <span class="n">_sparse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="c1"># Run the least squares optimization</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">least_squares</span><span class="p">(</span>
         <span class="n">fun</span><span class="o">=</span><span class="n">f</span><span class="p">,</span>
         <span class="n">x0</span><span class="o">=</span><span class="n">params_initial</span><span class="p">,</span>
+        <span class="n">max_nfev</span><span class="o">=</span><span class="n">max_iterations</span><span class="p">,</span>
         <span class="n">jac</span><span class="o">=</span><span class="n">jac</span><span class="p">,</span>
         <span class="n">ftol</span><span class="o">=</span><span class="n">ftol</span><span class="p">,</span>
         <span class="n">xtol</span><span class="o">=</span><span class="n">xtol</span><span class="p">,</span>
@@ -1259,7 +1254,7 @@
             <span class="n">result</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
             <span class="n">_pretext</span><span class="p">,</span>
             <span class="n">_start</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">_sparse</span><span class="o">=</span><span class="n">_sparse</span><span class="p">,</span>
+            <span class="n">_sparse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="n">parameters</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1271,18 +1266,8 @@
         <span class="n">index</span> <span class="o">+=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">seq_masks</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
     <span class="n">parameters</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>  <span class="c1"># len n_transforms, each shape (n_params,)</span>
 
-    <span class="k">if</span> <span class="n">return_result</span> <span class="ow">and</span> <span class="n">return_history</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="n">parameters</span><span class="p">,</span>
-            <span class="n">result</span><span class="p">,</span>
-            <span class="p">[(</span><span class="n">numpy</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_transforms</span><span class="p">))],</span>
-        <span class="p">)</span>
-    <span class="k">elif</span> <span class="n">return_result</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">return_result</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">result</span>
-    <span class="k">elif</span> <span class="n">return_history</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">parameters</span><span class="p">,</span> <span class="p">[</span>
-            <span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_transforms</span><span class="p">))</span>
-        <span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">parameters</span>
 
@@ -1347,6 +1332,17 @@
 <span class="sd">    Where :math:`J = \nabla_{\lambda} T (\vec{X}_I, \lambda_0)` is the Jacobian matrix</span>
 <span class="sd">    of the transformation with respect to the parameters, and</span>
 <span class="sd">    :math:`R = \vec{X}_O - T(\vec{X}_I, \lambda_0)` is the residual vector.</span>
+
+<span class="sd">    Then the parameters are updated as follows:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \lambda = \lambda_0 + \delta \lambda</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \delta \lambda = (J^{T} J)^{-1} J^{T} R</span>
+
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1542,14 +1538,14 @@
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">verbose_level</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">ftol</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">R</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">J</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">R</span><span class="p">,</span> <span class="n">J</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">params</span><span class="p">),</span> <span class="n">jac</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+            <span class="n">R</span><span class="p">,</span> <span class="n">J</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">params</span><span class="p">),</span> <span class="n">jac</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
             <span class="n">cost</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span>
             <span class="n">cost_reduction</span> <span class="o">=</span> <span class="n">last_cost</span> <span class="o">-</span> <span class="n">cost</span>
 
         <span class="k">if</span> <span class="n">verbose_level</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">gtol</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">JTR</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">JTR</span> <span class="o">=</span> <span class="o">-</span><span class="n">J</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">R</span>  <span class="c1"># Warning (-) sign for the gradient</span>
+            <span class="k">if</span> <span class="n">R</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">J</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">R</span><span class="p">,</span> <span class="n">J</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">params</span><span class="p">),</span> <span class="n">jac</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+            <span class="n">JTR</span> <span class="o">=</span> <span class="o">-</span><span class="n">J</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">R</span>  <span class="c1"># Warning (-) sign for the gradient</span>
             <span class="n">optimality</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">JTR</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">verbose_level</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">xtol</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -1597,7 +1593,7 @@
                     <span class="p">)</span>
                 <span class="n">end</span> <span class="o">=</span> <span class="kc">True</span>
 
-        <span class="k">if</span> <span class="n">max_iterations</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">iteration</span> <span class="o">&gt;=</span> <span class="n">max_iterations</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">max_iterations</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">iteration</span> <span class="o">&gt;=</span> <span class="n">max_iterations</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">verbose_level</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;Maximum number of iterations </span><span class="si">{</span><span class="n">max_iterations</span><span class="si">}</span><span class="s2"> reached, stopping optimization.&quot;</span>
@@ -2058,32 +2054,14 @@
 
 <span class="sd">        R(\lambda) = \vec{X}_O - T(\vec{X}_I, \lambda)</span>
 
-<span class="sd">    The optimization problem is then defined as:</span>
+<span class="sd">    And the jacobian matrix as:</span>
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        \min_{\lambda} \|R(\lambda)\|^2</span>
+<span class="sd">        J(\lambda) = \frac{\partial R(\lambda)}{\partial \lambda} = -\frac{\partial T(\vec{X}_I, \lambda)}{\partial \lambda}</span>
 
-<span class="sd">    We have the following system of equations for the Jacobian matrix:</span>
-
-<span class="sd">    .. math::</span>
-
-<span class="sd">        \min_{\lambda} \|R(\lambda)\|^2 \approx \min_{\Delta \lambda} \|R(\lambda_i) - J(\lambda_i) \Delta \lambda\|^2</span>
-
-<span class="sd">    .. math::</span>
-
-<span class="sd">        J^T(\lambda_i) J(\lambda_i) \Delta \lambda = J^T(\lambda_i) R(\lambda_i)</span>
-
-<span class="sd">    where :math:`J(\lambda) = \frac{\partial T(\vec{X}_I, \lambda)}{\partial \lambda}`</span>
-<span class="sd">    is the Jacobian matrix of the transformation with respect to the parameters.</span>
-
-<span class="sd">    .. note::</span>
-
-<span class="sd">        This method can be used to optimize the parameters of any transformation that</span>
-<span class="sd">        implements the `_transform` method.</span>
-
-<span class="sd">    For more information about the optimization method, please refer to the</span>
-<span class="sd">    ``scipy.optimize.least_squares`` documentation.</span>
+<span class="sd">    Then the optimization problem is solve by minimizing the loss function using</span>
+<span class="sd">    the Trust Region Reflective algorithm of scipy.optimize.least_squares.</span>
 
 <span class="sd">    .. important::</span>
 
@@ -2520,7 +2498,6 @@
     <span class="n">mask</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">transform_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">max_iterations</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Integral</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">max_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">ftol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">xtol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">gtol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2529,7 +2506,6 @@
     <span class="n">filter_nans</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">verbose_level</span><span class="p">:</span> <span class="n">Integral</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="n">return_result</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">return_history</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">inplace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -2555,32 +2531,14 @@
 
 <span class="sd">        R(\lambda) = \vec{X}_O - T(\vec{X}_I, \lambda)</span>
 
-<span class="sd">    The optimization problem is then defined as:</span>
+<span class="sd">    And the jacobian matrix as:</span>
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        \min_{\lambda} \|R(\lambda)\|^2</span>
+<span class="sd">        J(\lambda) = \frac{\partial R(\lambda)}{\partial \lambda} = -\frac{\partial T(\vec{X}_I, \lambda)}{\partial \lambda}</span>
 
-<span class="sd">    We have the following system of equations for the Jacobian matrix:</span>
-
-<span class="sd">    .. math::</span>
-
-<span class="sd">        \min_{\lambda} \|R(\lambda)\|^2 \approx \min_{\Delta \lambda} \|R(\lambda_i) - J(\lambda_i) \Delta \lambda\|^2</span>
-
-<span class="sd">    .. math::</span>
-
-<span class="sd">        J^T(\lambda_i) J(\lambda_i) \Delta \lambda = J^T(\lambda_i) R(\lambda_i)</span>
-
-<span class="sd">    where :math:`J(\lambda) = \frac{\partial T(\vec{X}_I, \lambda)}{\partial \lambda}`</span>
-<span class="sd">    is the Jacobian matrix of the transformation with respect to the parameters.</span>
-
-<span class="sd">    .. note::</span>
-
-<span class="sd">        This method can be used to optimize the parameters of any transformation that</span>
-<span class="sd">        implements the `_transform` method.</span>
-
-<span class="sd">    For more information about the optimization method, please refer to the</span>
-<span class="sd">    ``scipy.optimize.least_squares`` documentation.</span>
+<span class="sd">    Then the optimization problem is solve by minimizing the loss function using</span>
+<span class="sd">    the Levenberg-Marquardt algorithm of scipy.optimize.least_squares.</span>
 
 <span class="sd">    .. important::</span>
 
@@ -2627,11 +2585,6 @@
 <span class="sd">        The optimization process is stopped when the number of iterations</span>
 <span class="sd">        exceeds ``max_iterations``. Default is None, which means no limit on the</span>
 <span class="sd">        number of iterations.</span>
-
-<span class="sd">    max_time : Optional[Real], optional</span>
-<span class="sd">        Stop criterion by the computation time of the optimization. The optimization</span>
-<span class="sd">        process is stopped when the time since the start of the optimization exceeds</span>
-<span class="sd">        ``max_time`` seconds. Default is None, which means no limit on the time.</span>
 
 <span class="sd">    ftol : Optional[Real], optional</span>
 <span class="sd">        Stop criterion by the change of the cost function.</span>
@@ -2688,10 +2641,6 @@
 <span class="sd">        If ``n_params`` is 0, or all parameters are masked, the result output will be</span>
 <span class="sd">        None.</span>
 
-<span class="sd">    return_history : bool, optional</span>
-<span class="sd">        If True, the function returns a history of the parameters during the</span>
-<span class="sd">        optimization process. Default is False.</span>
-
 <span class="sd">    inplace : bool, optional</span>
 <span class="sd">        If True, the optimization is performed in-place, modifying the parameters of the</span>
 <span class="sd">        input transformation. If False (default), a copy of the transformation is created</span>
@@ -2715,10 +2664,6 @@
 
 <span class="sd">            Only contains the parameters that were optimized (i.e., the parameters</span>
 <span class="sd">            corresponding to True values in the `mask`).</span>
-
-<span class="sd">    history : List[numpy.ndarray], optional</span>
-<span class="sd">        A history of the optimization process including the parameters with shape</span>
-<span class="sd">        (n_params,). Returned only if `return_history` is True.</span>
 
 
 <span class="sd">    See Also</span>
@@ -2821,11 +2766,6 @@
             <span class="p">)</span>
         <span class="n">max_iterations</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">max_iterations</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">max_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">max_time</span><span class="p">,</span> <span class="n">Real</span><span class="p">)</span> <span class="ow">or</span> <span class="n">max_time</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;max_time must be a positive float, got </span><span class="si">{</span><span class="n">max_time</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">max_time</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">max_time</span><span class="p">)</span>
-
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">auto</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;auto must be a boolean, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">auto</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">auto</span><span class="p">:</span>
@@ -2872,9 +2812,6 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">return_result</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;return_result must be a boolean, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">return_result</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">return_history</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;return_history must be a boolean, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">return_history</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
     <span class="k">if</span> <span class="n">ftol</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">xtol</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">gtol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="s2">&quot;At least one of ftol, xtol, or gtol must be specified for stopping criteria.&quot;</span>
@@ -2889,11 +2826,7 @@
                 <span class="s2">&quot;The transformation has no parameters to optimize, returning the current parameters.&quot;</span>
             <span class="p">)</span>
         <span class="n">out</span> <span class="o">=</span> <span class="n">guess</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">return_history</span> <span class="ow">and</span> <span class="n">return_result</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">[</span><span class="n">out</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="n">return_history</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">return_result</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="p">[</span><span class="n">out</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="ow">not</span> <span class="n">return_history</span> <span class="ow">and</span> <span class="n">return_result</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">return_result</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">out</span>
@@ -2904,11 +2837,7 @@
                 <span class="s2">&quot;No parameters to optimize (all parameters are fixed), returning the current parameters.&quot;</span>
             <span class="p">)</span>
         <span class="n">out</span> <span class="o">=</span> <span class="n">guess</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">return_history</span> <span class="ow">and</span> <span class="n">return_result</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">[</span><span class="n">out</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="n">return_history</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">return_result</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="p">[</span><span class="n">out</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="ow">not</span> <span class="n">return_history</span> <span class="ow">and</span> <span class="n">return_result</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">return_result</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">out</span>
@@ -2933,7 +2862,6 @@
         <span class="n">seq_guesses</span><span class="o">=</span><span class="n">seq_guesses</span><span class="p">,</span>
         <span class="n">seq_transform_kwargs</span><span class="o">=</span><span class="n">seq_transform_kwargs</span><span class="p">,</span>
         <span class="n">max_iterations</span><span class="o">=</span><span class="n">max_iterations</span><span class="p">,</span>
-        <span class="n">max_time</span><span class="o">=</span><span class="n">max_time</span><span class="p">,</span>
         <span class="n">ftol</span><span class="o">=</span><span class="n">ftol</span><span class="p">,</span>
         <span class="n">xtol</span><span class="o">=</span><span class="n">xtol</span><span class="p">,</span>
         <span class="n">gtol</span><span class="o">=</span><span class="n">gtol</span><span class="p">,</span>
@@ -2941,18 +2869,10 @@
         <span class="n">filter_nans</span><span class="o">=</span><span class="n">filter_nans</span><span class="p">,</span>
         <span class="n">verbose_level</span><span class="o">=</span><span class="n">verbose_level</span><span class="p">,</span>
         <span class="n">return_result</span><span class="o">=</span><span class="n">return_result</span><span class="p">,</span>
-        <span class="n">return_history</span><span class="o">=</span><span class="n">return_history</span><span class="p">,</span>
         <span class="n">_pretext</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">_sparse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">return_history</span> <span class="ow">and</span> <span class="n">return_result</span><span class="p">:</span>
-        <span class="n">p</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">out</span>
-        <span class="k">return</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">r</span><span class="p">,</span> <span class="p">[</span><span class="n">h_i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">h_i</span> <span class="ow">in</span> <span class="n">h</span><span class="p">]</span>
-    <span class="k">elif</span> <span class="n">return_history</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">return_result</span><span class="p">:</span>
-        <span class="n">p</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">out</span>
-        <span class="k">return</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="n">h_i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">h_i</span> <span class="ow">in</span> <span class="n">h</span><span class="p">]</span>
-    <span class="k">elif</span> <span class="ow">not</span> <span class="n">return_history</span> <span class="ow">and</span> <span class="n">return_result</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">return_result</span><span class="p">:</span>
         <span class="n">p</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="n">out</span>
         <span class="k">return</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">r</span>
     <span class="k">else</span><span class="p">:</span>
@@ -4107,7 +4027,6 @@
     <span class="n">distortion_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">extrinsic_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">max_iterations</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Integral</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">max_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">ftol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">xtol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">gtol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -4116,7 +4035,6 @@
     <span class="n">filter_nans</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">verbose_level</span><span class="p">:</span> <span class="n">Integral</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="n">return_result</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">return_history</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">inplace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -4206,11 +4124,6 @@
 <span class="sd">        exceeds ``max_iterations``. Default is None, which means no limit on the</span>
 <span class="sd">        number of iterations.</span>
 
-<span class="sd">    max_time : Optional[Real], optional</span>
-<span class="sd">        Stop criterion by the computation time of the optimization. The optimization</span>
-<span class="sd">        process is stopped when the time since the start of the optimization exceeds</span>
-<span class="sd">        ``max_time`` seconds. Default is None, which means no limit on the time.</span>
-
 <span class="sd">    ftol : Optional[Real], optional</span>
 <span class="sd">        Stop criterion by the change of the cost function.</span>
 <span class="sd">        The optimization process is stopped when ``dF &lt; ftol * F``.</span>
@@ -4266,10 +4179,6 @@
 <span class="sd">        If all transformations are None, or all parameters of the transformations are</span>
 <span class="sd">        masked, the result output will be None.</span>
 
-<span class="sd">    return_history : bool, optional</span>
-<span class="sd">        If True, the function returns a history of the parameters during</span>
-<span class="sd">        the optimization process. Default is False.</span>
-
 <span class="sd">    inplace : bool, optional</span>
 <span class="sd">        If True, the optimization is performed in-place, modifying the parameters of the</span>
 <span class="sd">        input transformations. If False (default), copies of the transformations are created</span>
@@ -4298,12 +4207,6 @@
 <span class="sd">            Only contains the parameters that were optimized (i.e., the parameters</span>
 <span class="sd">            corresponding to True values in the `mask_intrinsic`, `mask_distortion`, and</span>
 <span class="sd">            `mask_extrinsic`), and not the full parameter vectors of the transformations.</span>
-
-<span class="sd">    history : List[Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]], optional</span>
-<span class="sd">        A history of the optimization process including the parameters of the intrinsic,</span>
-<span class="sd">        distortion, and extrinsic transformations with shapes (n_intrinsic_params,),</span>
-<span class="sd">        (n_distortion_params,), and (n_extrinsic_params,) respectively. Returned only if</span>
-<span class="sd">        `return_history` is True.</span>
 
 
 <span class="sd">    See Also</span>
@@ -4468,11 +4371,6 @@
             <span class="p">)</span>
         <span class="n">max_iterations</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">max_iterations</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">max_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">max_time</span><span class="p">,</span> <span class="n">Real</span><span class="p">)</span> <span class="ow">or</span> <span class="n">max_time</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;max_time must be a positive float, got </span><span class="si">{</span><span class="n">max_time</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">max_time</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">max_time</span><span class="p">)</span>
-
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">auto</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;auto must be a boolean, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">auto</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">auto</span><span class="p">:</span>
@@ -4519,9 +4417,6 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">return_result</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;return_result must be a boolean, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">return_result</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">return_history</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;return_history must be a boolean, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">return_history</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
     <span class="k">if</span> <span class="n">ftol</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">xtol</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">gtol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="s2">&quot;At least one of ftol, xtol, or gtol must be specified for stopping criteria.&quot;</span>
@@ -4539,11 +4434,7 @@
         <span class="n">d_out</span> <span class="o">=</span> <span class="n">guess_distortion</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">skip_distortion</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="n">e_out</span> <span class="o">=</span> <span class="n">guess_extrinsic</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">skip_extrinsic</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="n">out</span> <span class="o">=</span> <span class="p">(</span><span class="n">i_out</span><span class="p">,</span> <span class="n">d_out</span><span class="p">,</span> <span class="n">e_out</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">return_history</span> <span class="ow">and</span> <span class="n">return_result</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">[</span><span class="n">out</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="n">return_history</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">return_result</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="p">[</span><span class="n">out</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="ow">not</span> <span class="n">return_history</span> <span class="ow">and</span> <span class="n">return_result</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">return_result</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">out</span>
@@ -4557,11 +4448,7 @@
         <span class="n">d_out</span> <span class="o">=</span> <span class="n">guess_distortion</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">skip_distortion</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="n">e_out</span> <span class="o">=</span> <span class="n">guess_extrinsic</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">skip_extrinsic</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="n">out</span> <span class="o">=</span> <span class="p">(</span><span class="n">i_out</span><span class="p">,</span> <span class="n">d_out</span><span class="p">,</span> <span class="n">e_out</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">return_history</span> <span class="ow">and</span> <span class="n">return_result</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">[</span><span class="n">out</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="n">return_history</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">return_result</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="p">[</span><span class="n">out</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="ow">not</span> <span class="n">return_history</span> <span class="ow">and</span> <span class="n">return_result</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">return_result</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">out</span>
@@ -4599,7 +4486,6 @@
         <span class="n">seq_guesses</span><span class="o">=</span><span class="n">seq_guesses</span><span class="p">,</span>
         <span class="n">seq_transform_kwargs</span><span class="o">=</span><span class="n">seq_transform_kwargs</span><span class="p">,</span>
         <span class="n">max_iterations</span><span class="o">=</span><span class="n">max_iterations</span><span class="p">,</span>
-        <span class="n">max_time</span><span class="o">=</span><span class="n">max_time</span><span class="p">,</span>
         <span class="n">ftol</span><span class="o">=</span><span class="n">ftol</span><span class="p">,</span>
         <span class="n">xtol</span><span class="o">=</span><span class="n">xtol</span><span class="p">,</span>
         <span class="n">gtol</span><span class="o">=</span><span class="n">gtol</span><span class="p">,</span>
@@ -4607,9 +4493,7 @@
         <span class="n">filter_nans</span><span class="o">=</span><span class="n">filter_nans</span><span class="p">,</span>
         <span class="n">verbose_level</span><span class="o">=</span><span class="n">verbose_level</span><span class="p">,</span>
         <span class="n">return_result</span><span class="o">=</span><span class="n">return_result</span><span class="p">,</span>
-        <span class="n">return_history</span><span class="o">=</span><span class="n">return_history</span><span class="p">,</span>
         <span class="n">_pretext</span><span class="o">=</span><span class="n">_pretext</span><span class="p">,</span>
-        <span class="n">_sparse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">out</span></div>
@@ -4651,7 +4535,7 @@
 
 <span class="sd">    .. code-block:: console</span>
 
-<span class="sd">        C_0 = (1, 4, 8) -----&gt; C_0(X) = T_1 ∘ T_4 ∘ T_8(X)</span>
+<span class="sd">        C_0 = (1, 4, 8) -----&gt; C_0(X) = T_8 ∘ T_4 ∘ T_1(X)</span>
 
 <span class="sd">    The optimization process is then defined as:</span>
 
@@ -5131,7 +5015,7 @@
 
 <span class="sd">    .. code-block:: console</span>
 
-<span class="sd">        C_0 = (1, 4, 8) -----&gt; C_0(X) = T_1 ∘ T_4 ∘ T_8(X)</span>
+<span class="sd">        C_0 = (1, 4, 8) -----&gt; C_0(X) = T_8 ∘ T_4 ∘ T_1(X)</span>
 
 <span class="sd">    The optimization process is then defined as:</span>
 
@@ -5689,7 +5573,6 @@
     <span class="n">seq_masks</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">seq_transform_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">Dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">max_iterations</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Integral</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">max_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">ftol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">xtol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">gtol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Real</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -5698,7 +5581,6 @@
     <span class="n">filter_nans</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">verbose_level</span><span class="p">:</span> <span class="n">Integral</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="n">return_result</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">return_history</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">inplace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -5715,7 +5597,7 @@
 
 <span class="sd">    .. code-block:: console</span>
 
-<span class="sd">        C_0 = (1, 4, 8) -----&gt; C_0(X) = T_1 ∘ T_4 ∘ T_8(X)</span>
+<span class="sd">        C_0 = (1, 4, 8) -----&gt; C_0(X) = T_8 ∘ T_4 ∘ T_1(X)</span>
 
 <span class="sd">    The optimization process is then defined as:</span>
 
@@ -5790,11 +5672,6 @@
 <span class="sd">        when the number of iterations exceeds ``max_iterations``. Default is None, which</span>
 <span class="sd">        means no limit on the number of iterations.</span>
 
-<span class="sd">    max_time : Optional[Real], optional</span>
-<span class="sd">        Stop criterion by the computation time of the optimization. The optimization</span>
-<span class="sd">        process is stopped when the time since the start of the optimization exceeds</span>
-<span class="sd">        ``max_time`` seconds. Default is None, which means no limit on the time.</span>
-
 <span class="sd">    ftol : Optional[Real], optional</span>
 <span class="sd">        Stop criterion by the change of the cost function. The optimization process is</span>
 <span class="sd">        stopped when ``dF &lt; ftol * F``. The default value is None, which means the ftol</span>
@@ -5845,10 +5722,6 @@
 <span class="sd">        including the optimized parameters, the cost, the number of iterations, and</span>
 <span class="sd">        other information about the optimization process. Default is False.</span>
 
-<span class="sd">    return_history : bool, optional</span>
-<span class="sd">        If True, the function returns a history of the parameters during the optimization</span>
-<span class="sd">        process. Default is False.</span>
-
 <span class="sd">    inplace : bool, optional</span>
 <span class="sd">        If True, the optimization is performed in-place, modifying the parameters of the</span>
 <span class="sd">        input transformations. If False (default), copies of the transformations are created</span>
@@ -5869,10 +5742,6 @@
 <span class="sd">        If return_result is True, the full result object from scipy.optimize.least_squares is also returned,</span>
 <span class="sd">        which includes information about the optimization process, such as the optimized parameters,</span>
 <span class="sd">        cost function value, number of iterations, and convergence status.</span>
-
-<span class="sd">    history : List[Tuple[numpy.ndarray, ...]], optional</span>
-<span class="sd">        A history of the optimization process including the parameters of each</span>
-<span class="sd">        transformation with shape (n_params,). Returned only if `return_history` is True.</span>
 
 
 <span class="sd">    See Also</span>
@@ -6070,11 +5939,6 @@
             <span class="p">)</span>
         <span class="n">max_iterations</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">max_iterations</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">max_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">max_time</span><span class="p">,</span> <span class="n">Real</span><span class="p">)</span> <span class="ow">or</span> <span class="n">max_time</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;max_time must be a positive float, got </span><span class="si">{</span><span class="n">max_time</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">max_time</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">max_time</span><span class="p">)</span>
-
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">auto</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;auto must be a boolean, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">auto</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">auto</span><span class="p">:</span>
@@ -6121,9 +5985,6 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">return_result</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;return_result must be a boolean, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">return_result</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">return_history</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;return_history must be a boolean, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">return_history</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
     <span class="k">if</span> <span class="n">ftol</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">xtol</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">gtol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="s2">&quot;At least one of ftol, xtol, or gtol must be specified for stopping criteria.&quot;</span>
@@ -6134,15 +5995,15 @@
     <span class="c1"># -------------</span>
     <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">n_params</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">seq_transforms</span><span class="p">):</span>
         <span class="n">out</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">seq_guesses</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_transforms</span><span class="p">))</span>
-        <span class="k">if</span> <span class="n">return_history</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="p">[</span><span class="n">out</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">return_result</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">out</span>
 
     <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">seq_masks</span><span class="p">):</span>
         <span class="n">out</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">seq_guesses</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_transforms</span><span class="p">))</span>
-        <span class="k">if</span> <span class="n">return_history</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="p">[</span><span class="n">out</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">return_result</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">out</span>
 
@@ -6174,7 +6035,6 @@
         <span class="n">seq_guesses</span><span class="o">=</span><span class="n">seq_guesses</span><span class="p">,</span>
         <span class="n">seq_transform_kwargs</span><span class="o">=</span><span class="n">seq_transform_kwargs</span><span class="p">,</span>
         <span class="n">max_iterations</span><span class="o">=</span><span class="n">max_iterations</span><span class="p">,</span>
-        <span class="n">max_time</span><span class="o">=</span><span class="n">max_time</span><span class="p">,</span>
         <span class="n">ftol</span><span class="o">=</span><span class="n">ftol</span><span class="p">,</span>
         <span class="n">xtol</span><span class="o">=</span><span class="n">xtol</span><span class="p">,</span>
         <span class="n">gtol</span><span class="o">=</span><span class="n">gtol</span><span class="p">,</span>
@@ -6182,9 +6042,7 @@
         <span class="n">filter_nans</span><span class="o">=</span><span class="n">filter_nans</span><span class="p">,</span>
         <span class="n">verbose_level</span><span class="o">=</span><span class="n">verbose_level</span><span class="p">,</span>
         <span class="n">return_result</span><span class="o">=</span><span class="n">return_result</span><span class="p">,</span>
-        <span class="n">return_history</span><span class="o">=</span><span class="n">return_history</span><span class="p">,</span>
         <span class="n">_pretext</span><span class="o">=</span><span class="n">_pretext</span><span class="p">,</span>
-        <span class="n">_sparse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">out</span></div>

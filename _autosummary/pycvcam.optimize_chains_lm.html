@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pycvcam.optimize_chains_lm &#8212; pycvcam 2.1.8 documentation</title>
+    <title>pycvcam.optimize_chains_lm &#8212; pycvcam 2.1.9 documentation</title>
   
   
   
@@ -44,7 +44,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=03f109e5"></script>
+    <script src="../_static/documentation_options.js?v=a7898dfc"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -54,7 +54,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = '_autosummary/pycvcam.optimize_chains_lm';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Optimize Input Points" href="../_docs/optimize_input_points.html" />
+    <link rel="next" title="Optimize input points of transformations" href="../_docs/optimize_input_points.html" />
     <link rel="prev" title="pycvcam.optimize_chains_trf" href="pycvcam.optimize_chains_trf.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -120,7 +120,7 @@
   
   
   
-    <p class="title logo__title">pycvcam 2.1.8 documentation</p>
+    <p class="title logo__title">pycvcam 2.1.9 documentation</p>
   
 </a></div>
     
@@ -475,8 +475,14 @@
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">pycvcam.optimize_chains_lm</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../_docs/optimize_input_points.html">Optimize Input Points</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../_docs/optimize_input_points.html">Optimize input points of transformations</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.optimize_input_points_gn.html">pycvcam.optimize_input_points_gn</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pycvcam.optimize_input_points.html">pycvcam.optimize_input_points</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.optimize_chains_input_points_gn.html">pycvcam.optimize_chains_input_points_gn</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../_docs/optimize_rays_intersection.html">Optimize rays intersection</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.optimize_rays_intersect.html">pycvcam.optimize_rays_intersect</a></li>
 </ul>
 </details></li>
 </ul>
@@ -546,7 +552,7 @@
 <h1>pycvcam.optimize_chains_lm<a class="headerlink" href="#pycvcam-optimize-chains-lm" title="Link to this heading">#</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="pycvcam.optimize_chains_lm">
-<span class="sig-name descname"><span class="pre">optimize_chains_lm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq_transforms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seq_chains</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seq_inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seq_outputs</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">seq_guesses</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seq_masks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seq_transform_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iterations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ftol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_nans</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_result</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_history</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pycvcam/optimize/optimize_transforms.html#optimize_chains_lm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.optimize_chains_lm" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">optimize_chains_lm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq_transforms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seq_chains</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seq_inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seq_outputs</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">seq_guesses</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seq_masks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seq_transform_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iterations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ftol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_nans</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_result</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pycvcam/optimize/optimize_parameters.html#optimize_chains_lm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.optimize_chains_lm" title="Link to this definition">#</a></dt>
 <dd><p>Optimize several <code class="xref py py-class docutils literal notranslate"><span class="pre">Transform</span></code> objects according multiple chains of
 transformations using the <code class="docutils literal notranslate"><span class="pre">scipy.optimize.least_squares</span></code> method.
 The computation is done with Levenberg-Marquardt algorithm.</p>
@@ -555,7 +561,7 @@ The computation is done with Levenberg-Marquardt algorithm.</p>
 tuple of <span class="math notranslate nohighlight">\(N_C\)</span> chains of transformations.</p>
 <p>A chain <span class="math notranslate nohighlight">\(C_i\)</span> is defined as a tuple of indices corresponding to the
 transformations in the chain. For example:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">C_0 = (1, 4, 8) -----&gt; C_0(X) = T_1 ∘ T_4 ∘ T_8(X)</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">C_0 = (1, 4, 8) -----&gt; C_0(X) = T_8 ∘ T_4 ∘ T_1(X)</span>
 </pre></div>
 </div>
 <p>The optimization process is then defined as:</p>
@@ -610,9 +616,6 @@ the transformation <code class="docutils literal notranslate"><span class="pre">
 <li><p><strong>max_iterations</strong> (<em>Optional</em><em>[</em><em>Integral</em><em>]</em><em>, </em><em>optional</em>) – Stop criterion by the number of iterations. The optimization process is stopped
 when the number of iterations exceeds <code class="docutils literal notranslate"><span class="pre">max_iterations</span></code>. Default is None, which
 means no limit on the number of iterations.</p></li>
-<li><p><strong>max_time</strong> (<em>Optional</em><em>[</em><em>Real</em><em>]</em><em>, </em><em>optional</em>) – Stop criterion by the computation time of the optimization. The optimization
-process is stopped when the time since the start of the optimization exceeds
-<code class="docutils literal notranslate"><span class="pre">max_time</span></code> seconds. Default is None, which means no limit on the time.</p></li>
 <li><p><strong>ftol</strong> (<em>Optional</em><em>[</em><em>Real</em><em>]</em><em>, </em><em>optional</em>) – Stop criterion by the change of the cost function. The optimization process is
 stopped when <code class="docutils literal notranslate"><span class="pre">dF</span> <span class="pre">&lt;</span> <span class="pre">ftol</span> <span class="pre">*</span> <span class="pre">F</span></code>. The default value is None, which means the ftol
 criterion is not used for stopping the optimization.</p></li>
@@ -648,8 +651,6 @@ Use with caution.</p>
 <li><p><strong>return_result</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, the function returns a dictionary containing the optimization result
 including the optimized parameters, the cost, the number of iterations, and
 other information about the optimization process. Default is False.</p></li>
-<li><p><strong>return_history</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, the function returns a history of the parameters during the optimization
-process. Default is False.</p></li>
 <li><p><strong>inplace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, the optimization is performed in-place, modifying the parameters of the
 input transformations. If False (default), copies of the transformations are created
 and modified internally to perform the optimization, leaving the input transformations
@@ -666,8 +667,6 @@ equal to their initial values.</p></li>
 <li><p><strong>result</strong> (<em>scipy.optimize.OptimizeResult, optional</em>) – If return_result is True, the full result object from scipy.optimize.least_squares is also returned,
 which includes information about the optimization process, such as the optimized parameters,
 cost function value, number of iterations, and convergence status.</p></li>
-<li><p><strong>history</strong> (<em>List[Tuple[numpy.ndarray, …]], optional</em>) – A history of the optimization process including the parameters of each
-transformation with shape (n_params,). Returned only if <cite>return_history</cite> is True.</p></li>
 </ul>
 </p>
 </dd>
@@ -714,7 +713,7 @@ transformation with shape (n_params,). Returned only if <cite>return_history</ci
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Optimize Input Points</p>
+        <p class="prev-next-title">Optimize input points of transformations</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

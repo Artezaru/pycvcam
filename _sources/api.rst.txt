@@ -167,6 +167,7 @@ The package provides a set of optimisation processes that can be used to estimat
 
 - :doc:`Optimize Parameters <_docs/optimize_parameters>`: A process to optimize the parameters of the transformation using Gaussian-Newton gradient or Trust Region Reflective optimization.
 - :doc:`Optimize Input Points <_docs/optimize_input_points>`: A process to optimize the input points of a transformation using Gaussian-Newton gradient descent optimization.
+- :doc:`Optimize Rays Intersection <_docs/optimize_rays_intersection>`: A process to optimize the intersection point of multiple rays using a least squares optimization.
 
 .. toctree::
    :maxdepth: 1
@@ -174,6 +175,7 @@ The package provides a set of optimisation processes that can be used to estimat
 
    ./_docs/optimize_parameters.rst
    ./_docs/optimize_input_points.rst
+   ./_docs/optimize_rays_intersection.rst
    
 
 

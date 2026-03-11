@@ -64,6 +64,23 @@
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="This example illustrates how to estimate the world points from two images with the projected points or with a computed flow between the two images.">
+
+.. only:: html
+
+  .. image:: /_gallery/images/thumb/sphx_glr_optimize_world_points_thumb.png
+    :alt:
+
+  :doc:`/_gallery/optimize_world_points`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Optimizing world points from two images projections</div>
+    </div>
+
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="This example illustrate how to use the optimize_parameters_trf function to optimize the distortion parameters of a camera model, which includes the intrinsic and distortion transformations.">
 
 .. only:: html
@@ -92,6 +109,7 @@
    /_gallery/project_points
    /_gallery/distorting_image
    /_gallery/optical_flow
+   /_gallery/optimize_world_points
    /_gallery/optimize_parameters
 
 

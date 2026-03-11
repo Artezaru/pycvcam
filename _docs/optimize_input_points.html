@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Optimize Input Points &#8212; pycvcam 2.1.8 documentation</title>
+    <title>Optimize input points of transformations &#8212; pycvcam 2.1.9 documentation</title>
   
   
   
@@ -44,16 +44,17 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=03f109e5"></script>
+    <script src="../_static/documentation_options.js?v=a7898dfc"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
     <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_docs/optimize_input_points';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="pycvcam.optimize_input_points" href="../_autosummary/pycvcam.optimize_input_points.html" />
+    <link rel="next" title="pycvcam.optimize_input_points_gn" href="../_autosummary/pycvcam.optimize_input_points_gn.html" />
     <link rel="prev" title="pycvcam.optimize_chains_lm" href="../_autosummary/pycvcam.optimize_chains_lm.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -119,7 +120,7 @@
   
   
   
-    <p class="title logo__title">pycvcam 2.1.8 documentation</p>
+    <p class="title logo__title">pycvcam 2.1.9 documentation</p>
   
 </a></div>
     
@@ -474,8 +475,14 @@
 <li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.optimize_chains_lm.html">pycvcam.optimize_chains_lm</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">Optimize Input Points</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">Optimize input points of transformations</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.optimize_input_points_gn.html">pycvcam.optimize_input_points_gn</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.optimize_input_points.html">pycvcam.optimize_input_points</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.optimize_chains_input_points_gn.html">pycvcam.optimize_chains_input_points_gn</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="optimize_rays_intersection.html">Optimize rays intersection</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.optimize_rays_intersect.html">pycvcam.optimize_rays_intersect</a></li>
 </ul>
 </details></li>
 </ul>
@@ -521,7 +528,7 @@
     
     <li class="breadcrumb-item"><a href="../api.html" class="nav-link">API Reference</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Optimize Input Points</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Optimize input points of transformations</span></li>
   </ul>
 </nav>
 </div>
@@ -538,16 +545,53 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="optimize-input-points">
-<h1>Optimize Input Points<a class="headerlink" href="#optimize-input-points" title="Link to this heading">#</a></h1>
+  <section id="optimize-input-points-of-transformations">
+<h1>Optimize input points of transformations<a class="headerlink" href="#optimize-input-points-of-transformations" title="Link to this heading">#</a></h1>
+<nav class="contents local" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#optimize-the-input-points-of-a-unique-transformation" id="id1">Optimize the input points of a unique transformation</a></p></li>
+<li><p><a class="reference internal" href="#optimize-the-input-points-of-chains-of-transformations" id="id2">Optimize the input points of chains of transformations</a></p></li>
+</ul>
+</nav>
+<p>For each optimization process, the following functions are available:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">gn</span></code>: Gauss-Newton optimization solving directly <span class="math notranslate nohighlight">\(\mathbf{J}^T \mathbf{J} \Delta = -\mathbf{J}^T \mathbf{r}\)</span> without damping, scaling or boundary constraints.</p></li>
+</ul>
+<section id="optimize-the-input-points-of-a-unique-transformation">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Optimize the input points of a unique transformation</a><a class="headerlink" href="#optimize-the-input-points-of-a-unique-transformation" title="Link to this heading">#</a></h2>
+<p>Lets consider a <code class="xref py py-class docutils literal notranslate"><span class="pre">pycvcam.Transform</span></code> object and a set of input and output points.
+The following functions optimize the input points of the transformation to minimize the
+reprojection error between the input and output points.</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../_autosummary/pycvcam.optimize_input_points.html#pycvcam.optimize_input_points" title="pycvcam.optimize_input_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optimize_input_points</span></code></a>(transform, output_points)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../_autosummary/pycvcam.optimize_input_points_gn.html#pycvcam.optimize_input_points_gn" title="pycvcam.optimize_input_points_gn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optimize_input_points_gn</span></code></a>(transform, ...[, ...])</p></td>
+<td><p>Optimize the input points of the transformation using the given output points.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../_autosummary/pycvcam.optimize_input_points.html#pycvcam.optimize_input_points" title="pycvcam.optimize_input_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optimize_input_points</span></code></a>(transform, output_points)</p></td>
 <td><p>Optimize the input points of the transformation using the given output points.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
+</section>
+<section id="optimize-the-input-points-of-chains-of-transformations">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Optimize the input points of chains of transformations</a><a class="headerlink" href="#optimize-the-input-points-of-chains-of-transformations" title="Link to this heading">#</a></h2>
+<p>Lets <span class="math notranslate nohighlight">\((T_0, T_1, ..., T_{N_T-1})\)</span> be a tuple of <span class="math notranslate nohighlight">\(N_T\)</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">Transform</span></code> objects, and <span class="math notranslate nohighlight">\((C_0, C_1, ..., C_{N_C-1})\)</span> be a tuple of <span class="math notranslate nohighlight">\(N_C\)</span> chains of transformations.</p>
+<p>A chain <span class="math notranslate nohighlight">\(C_i\)</span> is defined as a tuple of indices corresponding to thetransformations in the chain. For example:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">C_0 = (1, 4, 8) -----&gt; C_0(X) = T_8 ∘ T_4 ∘ T_1(X)</span>
+</pre></div>
+</div>
+<p>The objective is to optimize the input points based on the output points of all the chains.</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../_autosummary/pycvcam.optimize_chains_input_points_gn.html#pycvcam.optimize_chains_input_points_gn" title="pycvcam.optimize_chains_input_points_gn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optimize_chains_input_points_gn</span></code></a>(...[, ...])</p></td>
+<td><p>Optimize the input points based of the result of chains of transformations using the Gauss-Newton optimization method.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 </section>
 
 
@@ -570,11 +614,11 @@
       </div>
     </a>
     <a class="right-next"
-       href="../_autosummary/pycvcam.optimize_input_points.html"
+       href="../_autosummary/pycvcam.optimize_input_points_gn.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">pycvcam.optimize_input_points</p>
+        <p class="prev-next-title">pycvcam.optimize_input_points_gn</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -588,6 +632,19 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optimize-the-input-points-of-a-unique-transformation">Optimize the input points of a unique transformation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optimize-the-input-points-of-chains-of-transformations">Optimize the input points of chains of transformations</a></li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">
