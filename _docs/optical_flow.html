@@ -50,11 +50,10 @@
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
     <script src="../_static/design-tabs.js?v=f930bc37"></script>
-    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_docs/optical_flow';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Optimize parameters of transformations" href="optimize_parameters.html" />
+    <link rel="next" title="pycvcam.compute_optical_flow" href="../_autosummary/pycvcam.compute_optical_flow.html" />
     <link rel="prev" title="pycvcam.compute_rays" href="compute_rays.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -460,7 +459,12 @@
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="project_points.html">pycvcam.project_points</a></li>
 <li class="toctree-l1"><a class="reference internal" href="compute_rays.html">pycvcam.compute_rays</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Optical Flow Operations</a></li>
+<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">Optical Flow Operations</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.compute_optical_flow.html">pycvcam.compute_optical_flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.display_optical_flow.html">pycvcam.display_optical_flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.display_optical_flow_quiver.html">pycvcam.display_optical_flow_quiver</a></li>
+</ul>
+</details></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="optimize_parameters.html">Optimize parameters of transformations</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -550,217 +554,37 @@
 <nav class="contents local" id="table-of-contents">
 <p class="topic-title">Table of Contents</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="#compute-optical-flow" id="id3">Compute Optical Flow</a></p></li>
-<li><p><a class="reference internal" href="#display-optical-flow" id="id4">Display Optical Flow</a></p></li>
-<li><p><a class="reference internal" href="#examples" id="id5">Examples</a></p></li>
+<li><p><a class="reference internal" href="#compute-optical-flow" id="id1">Compute Optical Flow</a></p></li>
+<li><p><a class="reference internal" href="#display-optical-flow" id="id2">Display Optical Flow</a></p></li>
+<li><p><a class="reference internal" href="#examples" id="id3">Examples</a></p></li>
 </ul>
 </nav>
 <p>The package includes functions to compute the optical flow between two images based on <code class="docutils literal notranslate"><span class="pre">OpenCV</span></code> <code class="docutils literal notranslate"><span class="pre">DIS</span></code> (Dense Inverse Search) algorithm. The optical flow can be computed for a specific channel of the images and for a specific region of interest.
 The computed optical flow can be visualized using quiver plots or color-coded flow maps.</p>
 <section id="compute-optical-flow">
 <h2><a class="toc-backref" href="#table-of-contents" role="doc-backlink">Compute Optical Flow</a><a class="headerlink" href="#compute-optical-flow" title="Link to this heading">#</a></h2>
-<dl class="py function">
-<dt class="sig sig-object py" id="pycvcam.compute_optical_flow">
-<span class="sig-name descname"><span class="pre">compute_optical_flow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">estimate_flow_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">estimate_flow_y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">region</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disflow_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pycvcam/optical_flow.html#compute_optical_flow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.compute_optical_flow" title="Link to this definition">#</a></dt>
-<dd><p>Compute the optical flow between two images using the DIS method of <code class="docutils literal notranslate"><span class="pre">OpenCV</span></code>.</p>
-<p>The optical flow is computed between two images using the Dense Inverse Search (DIS)
-algorithm implemented in OpenCV. The function allows selecting a specific channel
-from multi-channel images and provides options to customize the DIS algorithm
-through a parameters dictionary.</p>
-<p>Lets consider two images <span class="math notranslate nohighlight">\(I_1\)</span> and <span class="math notranslate nohighlight">\(I_2\)</span> of shape <span class="math notranslate nohighlight">\((H, W)\)</span>. The
-optical flow is represented as two 2D arrays <span class="math notranslate nohighlight">\(F_x\)</span> and <span class="math notranslate nohighlight">\(F_y\)</span>, each of
-shape <span class="math notranslate nohighlight">\((H, W)\)</span>, where <span class="math notranslate nohighlight">\(F_x[i, j]\)</span> and <span class="math notranslate nohighlight">\(F_y[i, j]\)</span> denote the
-horizontal and vertical displacements (in pixels) of the pixel located at
-<span class="math notranslate nohighlight">\((i, j)\)</span> in the first image to its corresponding position in the second image.</p>
-<div class="math notranslate nohighlight">
-\[I_2(i + F_y[i, j], j + F_x[i, j]) \approx I_1(i, j)\]</div>
-<p>With image array indices <span class="math notranslate nohighlight">\(i\)</span> and <span class="math notranslate nohighlight">\(j\)</span> representing the row (vertical)
-and column (horizontal) indices, respectively.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<ul class="simple">
-<li><p>The method convert the images data to <cite>uint8</cite> before processing, as required by OpenCV’s DIS optical flow implementation.</p></li>
-<li><p>The method convert the estimated flow to <cite>float32</cite>, as required by OpenCV’s DIS optical flow implementation.</p></li>
-</ul>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../_autosummary/pycvcam.compute_optical_flow.html#pycvcam.compute_optical_flow" title="pycvcam.compute_optical_flow"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_optical_flow</span></code></a>(image1, image2[, ...])</p></td>
+<td><p>Compute the optical flow between two images using the DIS method of <code class="docutils literal notranslate"><span class="pre">OpenCV</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">disflow_params</span></code> dictionary can contain the following keys:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;FinestScale&quot;</span></code>: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> (default: <code class="docutils literal notranslate"><span class="pre">0</span></code>) - The finest scale to use in the image pyramid.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;VariationalRefinementAlpha&quot;</span></code>: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a> (default: <code class="docutils literal notranslate"><span class="pre">1</span></code>) - Weight for the smoothness term in the variational refinement.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;VariationalRefinementDelta&quot;</span></code>: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a> (default: <code class="docutils literal notranslate"><span class="pre">1</span></code>) - Weight for the data term in the variational refinement.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;VariationalRefinementGamma&quot;</span></code>: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a> (default: <code class="docutils literal notranslate"><span class="pre">1</span></code>) - Weight for the gradient constancy term in the variational refinement.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;VariationalRefinementEpsilon&quot;</span></code>: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a> (default: <code class="docutils literal notranslate"><span class="pre">0.02</span></code>) – Small constant to avoid division by zero in the variational refinement.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;VariationalRefinementIterations&quot;</span></code>: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> (default: <code class="docutils literal notranslate"><span class="pre">10</span></code>) - Number of iterations for the variational refinement.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;UseMeanNormalization&quot;</span></code>: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a> (default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) - Whether to use mean normalization.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;GradientDescentIterations&quot;</span></code>: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> (default: <code class="docutils literal notranslate"><span class="pre">500</span></code>) - Number of gradient descent iterations.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;UseSpatialPropagation&quot;</span></code>: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a> (default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) - Whether to use spatial propagation.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;PatchSize&quot;</span></code>: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> (default: <code class="docutils literal notranslate"><span class="pre">50</span></code>) - Size of the patches.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;PatchStride&quot;</span></code>: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> (default: <code class="docutils literal notranslate"><span class="pre">10</span></code>) - Stride between patches.</p></li>
-</ul>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p><code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> components of the optical flow are defined in image coordinates
-and not in array indices. This means that the x-component corresponds to
-the horizontal displacement (columns) and the y-component corresponds to the
-vertical displacement (rows).</p>
-<p>The optical flow is compute with <a class="reference external" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.uint8" title="(in NumPy v2.4)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.uint8</span></code></a> images, so the input images
-will be scaled to fit into the range of <a class="reference external" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.uint8" title="(in NumPy v2.4)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.uint8</span></code></a> if they are of a
-different unsigned integer type. The output flow will be in pixels and can be
-positive or negative depending on the direction of motion.</p>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>image1</strong> (<em>ArrayLike</em>) – The first image with shape <span class="math notranslate nohighlight">\((H, W)\)</span> or <span class="math notranslate nohighlight">\((H, W, C)\)</span> where
-<span class="math notranslate nohighlight">\(C\)</span> is the number of channels.
-The image must be unsigned integer type.</p></li>
-<li><p><strong>image2</strong> (<em>ArrayLike</em>) – The second image with shape <span class="math notranslate nohighlight">\((H, W)\)</span> or <span class="math notranslate nohighlight">\((H, W, C)\)</span> where
-<span class="math notranslate nohighlight">\(C\)</span> is the number of channels.
-The image must be unsigned integer type.</p></li>
-<li><p><strong>channel</strong> (<em>Integral</em><em>, </em><em>optional</em>) – The channel of the images to use for optical flow computation. Default is 0.</p></li>
-<li><p><strong>estimate_flow_x</strong> (<em>Optional</em><em>[</em><em>ArrayLike</em><em>]</em><em>, </em><em>optional</em>) – An initial estimate for the x-component of the optical flow with shape
-<span class="math notranslate nohighlight">\((H, W)\)</span>. Default is None.</p></li>
-<li><p><strong>estimate_flow_y</strong> (<em>Optional</em><em>[</em><em>ArrayLike</em><em>]</em><em>, </em><em>optional</em>) – An initial estimate for the y-component of the optical flow with shape
-<span class="math notranslate nohighlight">\((H, W)\)</span>. Default is None.</p></li>
-<li><p><strong>region</strong> (<em>Optional</em><em>[</em><em>Tuple</em><em>[</em><em>Integral</em><em>, </em><em>Integral</em><em>, </em><em>Integral</em><em>, </em><em>Integral</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – A tuple specifying the region of interest in the format (x, y, width, height).
-If None, the entire image is computed. Default is None.</p></li>
-<li><p><strong>disflow_params</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>Any</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – Parameters for the DIS optical flow algorithm. See above for details.
-Default is None.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>flow_x</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>) – The x-component of the optical flow (horizontal displacement) in pixels with
-shape <span class="math notranslate nohighlight">\((H, W)\)</span>.
-The pixels outside the specified region (if any) will be set to <a class="reference external" href="https://numpy.org/doc/stable/reference/constants.html#numpy.nan" title="(in NumPy v2.4)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.nan</span></code></a>.</p></li>
-<li><p><strong>flow_y</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>) – The y-component of the optical flow (vertical displacement) in pixels with
-shape <span class="math notranslate nohighlight">\((H, W)\)</span>.
-The pixels outside the specified region (if any) will be set to <a class="reference external" href="https://numpy.org/doc/stable/reference/constants.html#numpy.nan" title="(in NumPy v2.4)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.nan</span></code></a>.</p></li>
-</ul>
-</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><em>Tuple</em></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>ndarray</em></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>ndarray</em></a>]</p>
-</dd>
-</dl>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<dl class="simple">
-<dt><a class="reference internal" href="#pycvcam.display_optical_flow" title="pycvcam.display_optical_flow"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pycvcam.display_optical_flow</span></code></a></dt><dd><p>Display the optical flow overlaid on the given image using Matplotlib.</p>
-</dd>
-</dl>
-</div>
-<p class="rubric">Examples</p>
-<p>Create two example images and compute the optical flow between them.</p>
-<figure class="align-center" id="id1">
-<a class="reference internal image-reference" href="../_images/lena_texture.png"><img alt="../_images/lena_texture.png" src="../_images/lena_texture.png" style="width: 50%;" />
-</a>
-<figcaption>
-<p><span class="caption-text">Lena image used for the example.</span><a class="headerlink" href="#id1" title="Link to this image">#</a></p>
-</figcaption>
-</figure>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
-<span class="linenos"> 2</span><span class="kn">from</span><span class="w"> </span><span class="nn">pycvcam</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_optical_flow</span>
-<span class="linenos"> 3</span><span class="kn">from</span><span class="w"> </span><span class="nn">pycvcam</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_lena_image</span>
-<span class="linenos"> 4</span>
-<span class="linenos"> 5</span><span class="c1"># Create two example images</span>
-<span class="linenos"> 6</span><span class="n">image1</span> <span class="o">=</span> <span class="n">get_lena_image</span><span class="p">()</span> <span class="c1"># numpy array of shape (474, 474)</span>
-<span class="linenos"> 7</span>
-<span class="linenos"> 8</span><span class="c1"># Shift the image to create a second image</span>
-<span class="linenos"> 9</span><span class="n">image2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">image1</span><span class="p">,</span> <span class="n">shift</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># Shift right by 5 pixels</span>
-<span class="linenos">10</span><span class="n">image2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">image2</span><span class="p">,</span> <span class="n">shift</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># Shift down by 3 pixels</span>
-<span class="linenos">11</span>
-<span class="linenos">12</span><span class="c1"># Compute optical flow</span>
-<span class="linenos">13</span><span class="n">flow_x</span><span class="p">,</span> <span class="n">flow_y</span> <span class="o">=</span> <span class="n">compute_optical_flow</span><span class="p">(</span><span class="n">image1</span><span class="p">,</span> <span class="n">image2</span><span class="p">)</span>
-<span class="linenos">14</span>
-<span class="linenos">15</span><span class="c1"># Check if all flow values in the center of the image are approximately (5, 3)</span>
-<span class="linenos">16</span><span class="n">valid_x</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">flow_x</span><span class="p">[</span><span class="mi">100</span><span class="p">:</span><span class="mi">300</span><span class="p">,</span> <span class="mi">100</span><span class="p">:</span><span class="mi">300</span><span class="p">],</span> <span class="mi">5</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
-<span class="linenos">17</span><span class="n">valid_y</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">flow_y</span><span class="p">[</span><span class="mi">100</span><span class="p">:</span><span class="mi">300</span><span class="p">,</span> <span class="mi">100</span><span class="p">:</span><span class="mi">300</span><span class="p">],</span> <span class="mi">3</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
-<span class="linenos">18</span><span class="n">valid</span> <span class="o">=</span> <span class="n">valid_x</span> <span class="o">&amp;</span> <span class="n">valid_y</span>
-<span class="linenos">19</span><span class="k">assert</span> <span class="n">valid</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="s2">&quot;Flow values in the center of the image should be approximately (5, 3)&quot;</span>
-</pre></div>
-</div>
-</dd></dl>
-
 </section>
 <section id="display-optical-flow">
 <h2><a class="toc-backref" href="#table-of-contents" role="doc-backlink">Display Optical Flow</a><a class="headerlink" href="#display-optical-flow" title="Link to this heading">#</a></h2>
-<dl class="py function">
-<dt class="sig sig-object py" id="pycvcam.display_optical_flow">
-<span class="sig-name descname"><span class="pre">display_optical_flow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flow_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flow_y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">region</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">display_region</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'inferno'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'bwr'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pycvcam/optical_flow.html#display_optical_flow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pycvcam.display_optical_flow" title="Link to this definition">#</a></dt>
-<dd><p>Display the optical flow overlaid on the given image using Matplotlib.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>image</strong> (<em>ArrayLike</em>) – The background image with shape <span class="math notranslate nohighlight">\((H, W)\)</span> or <span class="math notranslate nohighlight">\((H, W, C)\)</span>.</p></li>
-<li><p><strong>flow_x</strong> (<em>ArrayLike</em>) – The x-component of the optical flow (horizontal displacement) in pixels with
-shape <span class="math notranslate nohighlight">\((H, W)\)</span>.</p></li>
-<li><p><strong>flow_y</strong> (<em>ArrayLike</em>) – The y-component of the optical flow (vertical displacement) in pixels with
-shape <span class="math notranslate nohighlight">\((H, W)\)</span>.</p></li>
-<li><p><strong>region</strong> (<em>Optional</em><em>[</em><em>Tuple</em><em>[</em><em>Integral</em><em>, </em><em>Integral</em><em>, </em><em>Integral</em><em>, </em><em>Integral</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – A tuple specifying the region of interest in the format (x, y, width, height).
-If None, the entire image is displayed. Default is None.</p></li>
-<li><p><strong>display_region</strong> (<em>Optional</em><em>[</em><em>Tuple</em><em>[</em><em>Integral</em><em>, </em><em>Integral</em><em>, </em><em>Integral</em><em>, </em><em>Integral</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – A tuple specifying the region of the flow to display in the format
-(x, y, width, height).
-If None, the entire flow is displayed. Default is None.</p></li>
-<li><p><strong>alpha</strong> (<em>Real</em><em>, </em><em>optional</em>) – The alpha blending value for overlaying the optical flow on the image.
-Default is 0.5.</p></li>
-<li><p><strong>channel</strong> (<em>Integral</em><em>, </em><em>optional</em>) – The channel of the image to display if it is multi-channel. Default is 0.</p></li>
-<li><p><strong>norm_cmap</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, optional) – The colormap for the flow magnitude. Default is ‘inferno’.</p></li>
-<li><p><strong>comp_cmap</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, optional) – The colormap for the flow components. Default is ‘bwr’.</p></li>
-<li><p><strong>norm_vmin</strong> (<em>Optional</em><em>[</em><em>Real</em><em>]</em><em>, </em><em>optional</em>) – Minimum value for flow magnitude colormap normalization. Default is None.</p></li>
-<li><p><strong>norm_vmax</strong> (<em>Optional</em><em>[</em><em>Real</em><em>]</em><em>, </em><em>optional</em>) – Maximum value for flow magnitude colormap normalization. Default is None.</p></li>
-<li><p><strong>comp_vmin</strong> (<em>Optional</em><em>[</em><em>Real</em><em>]</em><em>, </em><em>optional</em>) – Minimum value for flow component colormap normalization. Default is None.</p></li>
-<li><p><strong>comp_vmax</strong> (<em>Optional</em><em>[</em><em>Real</em><em>]</em><em>, </em><em>optional</em>) – Maximum value for flow component colormap normalization. Default is None.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Displays the optical flow overlay on the image.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>None</p>
-</dd>
-</dl>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<dl class="simple">
-<dt><a class="reference internal" href="#pycvcam.compute_optical_flow" title="pycvcam.compute_optical_flow"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pycvcam.compute_optical_flow</span></code></a></dt><dd><p>Compute the optical flow between two images using the DIS method of OpenCV.</p>
-</dd>
-</dl>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../_autosummary/pycvcam.display_optical_flow.html#pycvcam.display_optical_flow" title="pycvcam.display_optical_flow"><code class="xref py py-obj docutils literal notranslate"><span class="pre">display_optical_flow</span></code></a>(image, flow_x, flow_y)</p></td>
+<td><p>Display the optical flow overlaid on the given image using Matplotlib.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../_autosummary/pycvcam.display_optical_flow_quiver.html#pycvcam.display_optical_flow_quiver" title="pycvcam.display_optical_flow_quiver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">display_optical_flow_quiver</span></code></a>(image1, image2, ...)</p></td>
+<td><p>Display the optical flow as a quiver plot overlaid on the given images using Matplotlib.</p></td>
+</tr>
+</tbody>
+</table>
 </div>
-<p class="rubric">Examples</p>
-<p>Create two example images and compute the optical flow between them.</p>
-<figure class="align-center" id="id2">
-<a class="reference internal image-reference" href="../_images/lena_texture.png"><img alt="../_images/lena_texture.png" src="../_images/lena_texture.png" style="width: 50%;" />
-</a>
-<figcaption>
-<p><span class="caption-text">Lena image used for the example.</span><a class="headerlink" href="#id2" title="Link to this image">#</a></p>
-</figcaption>
-</figure>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
-<span class="linenos"> 2</span><span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
-<span class="linenos"> 3</span><span class="kn">from</span><span class="w"> </span><span class="nn">pycvcam</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_optical_flow</span><span class="p">,</span> <span class="n">display_optical_flow</span>
-<span class="linenos"> 4</span><span class="kn">from</span><span class="w"> </span><span class="nn">pycvcam</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_lena_image</span>
-<span class="linenos"> 5</span>
-<span class="linenos"> 6</span><span class="c1"># Create two example images</span>
-<span class="linenos"> 7</span><span class="n">image1</span> <span class="o">=</span> <span class="n">get_lena_image</span><span class="p">()</span> <span class="c1"># numpy array of shape (474, 474)</span>
-<span class="linenos"> 8</span>
-<span class="linenos"> 9</span><span class="c1"># cv2 distortion to create a second image</span>
-<span class="linenos">10</span><span class="n">image2</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">undistort</span><span class="p">(</span><span class="n">image1</span><span class="p">,</span> <span class="n">cameraMatrix</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-<span class="linenos">11</span>    <span class="p">[[</span><span class="mi">300</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">237</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">237</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
-<span class="linenos">12</span><span class="p">),</span> <span class="n">distCoeffs</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>
-<span class="linenos">13</span>
-<span class="linenos">14</span><span class="c1"># Compute optical flow</span>
-<span class="linenos">15</span><span class="n">flow_x</span><span class="p">,</span> <span class="n">flow_y</span> <span class="o">=</span> <span class="n">compute_optical_flow</span><span class="p">(</span><span class="n">image1</span><span class="p">,</span> <span class="n">image2</span><span class="p">)</span>
-<span class="linenos">16</span>
-<span class="linenos">17</span><span class="c1"># Select a region of interest (optional)</span>
-<span class="linenos">18</span><span class="n">display_region</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">image1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="n">image1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">20</span><span class="p">)</span> <span class="c1"># (x, y, width, height)</span>
-<span class="linenos">19</span>
-<span class="linenos">20</span><span class="c1"># Display the optical flow</span>
-<span class="linenos">21</span><span class="n">display_optical_flow</span><span class="p">(</span><span class="n">image1</span><span class="p">,</span> <span class="n">flow_x</span><span class="p">,</span> <span class="n">flow_y</span><span class="p">,</span> <span class="n">display_region</span><span class="o">=</span><span class="n">display_region</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#table-of-contents" role="doc-backlink">Examples</a><a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
@@ -788,11 +612,11 @@ Default is 0.5.</p></li>
       </div>
     </a>
     <a class="right-next"
-       href="optimize_parameters.html"
+       href="../_autosummary/pycvcam.compute_optical_flow.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Optimize parameters of transformations</p>
+        <p class="prev-next-title">pycvcam.compute_optical_flow</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -815,14 +639,8 @@ Default is 0.5.</p></li>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#compute-optical-flow">Compute Optical Flow</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.compute_optical_flow"><code class="docutils literal notranslate"><span class="pre">compute_optical_flow()</span></code></a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#display-optical-flow">Display Optical Flow</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pycvcam.display_optical_flow"><code class="docutils literal notranslate"><span class="pre">display_optical_flow()</span></code></a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#compute-optical-flow">Compute Optical Flow</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#display-optical-flow">Display Optical Flow</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
 </ul>
   </nav></div>

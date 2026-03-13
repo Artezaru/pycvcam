@@ -459,7 +459,12 @@
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="project_points.html">pycvcam.project_points</a></li>
 <li class="toctree-l1"><a class="reference internal" href="compute_rays.html">pycvcam.compute_rays</a></li>
-<li class="toctree-l1"><a class="reference internal" href="optical_flow.html">Optical Flow Operations</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="optical_flow.html">Optical Flow Operations</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.compute_optical_flow.html">pycvcam.compute_optical_flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.display_optical_flow.html">pycvcam.display_optical_flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_autosummary/pycvcam.display_optical_flow_quiver.html">pycvcam.display_optical_flow_quiver</a></li>
+</ul>
+</details></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="optimize_parameters.html">Optimize parameters of transformations</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -586,8 +591,8 @@ This is the abstract class that defines the interface for distortion transformat
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>parameters</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em>]</em>)</p></li>
-<li><p><strong>constants</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em>]</em>)</p></li>
+<li><p><strong>parameters</strong> (<em>Optional</em><em>[</em><em>ArrayLike</em><em>]</em>)</p></li>
+<li><p><strong>constants</strong> (<em>Optional</em><em>[</em><em>ArrayLike</em><em>]</em>)</p></li>
 </ul>
 </dd>
 </dl>

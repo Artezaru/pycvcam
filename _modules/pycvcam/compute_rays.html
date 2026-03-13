@@ -334,6 +334,7 @@
 <span class="c1"># limitations under the License.</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpy.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArrayLike</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">scipy</span>
@@ -351,7 +352,7 @@
 <div class="viewcode-block" id="compute_rays">
 <a class="viewcode-back" href="../../_docs/compute_rays.html#pycvcam.compute_rays">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">compute_rays</span><span class="p">(</span>
-    <span class="n">image_points</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">image_points</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">intrinsic</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Intrinsic</span><span class="p">],</span>
     <span class="n">distortion</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Distortion</span><span class="p">],</span>
     <span class="n">extrinsic</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Extrinsic</span><span class="p">],</span>
@@ -391,7 +392,7 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    image_points : numpy.ndarray</span>
+<span class="sd">    image_points : ArrayLike</span>
 <span class="sd">        The 2D image points in the camera normalized coordinate system. Shape (..., 2)</span>
 
 <span class="sd">    intrinsic : Optional[Intrinsic]</span>

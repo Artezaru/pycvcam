@@ -329,7 +329,7 @@
 
 
 <div class="viewcode-block" id="compute_optical_flow">
-<a class="viewcode-back" href="../../_docs/optical_flow.html#pycvcam.compute_optical_flow">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/pycvcam.compute_optical_flow.html#pycvcam.compute_optical_flow">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">compute_optical_flow</span><span class="p">(</span>
     <span class="n">image1</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">image2</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
@@ -612,7 +612,7 @@
 
 
 <div class="viewcode-block" id="display_optical_flow">
-<a class="viewcode-back" href="../../_docs/optical_flow.html#pycvcam.display_optical_flow">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/pycvcam.display_optical_flow.html#pycvcam.display_optical_flow">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">display_optical_flow</span><span class="p">(</span>
     <span class="n">image</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">flow_x</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
@@ -646,11 +646,12 @@
 
 <span class="sd">    region: Optional[Tuple[Integral, Integral, Integral, Integral]], optional</span>
 <span class="sd">        A tuple specifying the region of interest in the format (x, y, width, height).</span>
+<span class="sd">        Crop the image to this region before displaying.</span>
 <span class="sd">        If None, the entire image is displayed. Default is None.</span>
 
 <span class="sd">    display_region: Optional[Tuple[Integral, Integral, Integral, Integral]], optional</span>
 <span class="sd">        A tuple specifying the region of the flow to display in the format</span>
-<span class="sd">        (x, y, width, height).</span>
+<span class="sd">        (x, y, width, height). Crop the flow to this region before displaying.</span>
 <span class="sd">        If None, the entire flow is displayed. Default is None.</span>
 
 <span class="sd">    alpha: Real, optional</span>
@@ -679,16 +680,14 @@
 <span class="sd">        Maximum value for flow component colormap normalization. Default is None.</span>
 
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    None</span>
-<span class="sd">        Displays the optical flow overlay on the image.</span>
-
-
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
 <span class="sd">    pycvcam.compute_optical_flow</span>
 <span class="sd">        Compute the optical flow between two images using the DIS method of OpenCV.</span>
+
+<span class="sd">    pycvcam.display_optical_flow_quiver</span>
+<span class="sd">        Display the optical flow as a quiver plot overlaid on the given</span>
+<span class="sd">        images using Matplotlib.</span>
 
 
 <span class="sd">    Examples</span>
@@ -726,11 +725,16 @@
 <span class="sd">        # Display the optical flow</span>
 <span class="sd">        display_optical_flow(image1, flow_x, flow_y, display_region=display_region)</span>
 
+<span class="sd">    .. figure:: /_static/optical_flow/display_optical_flow.png</span>
+<span class="sd">        :align: center</span>
+
+<span class="sd">        Example of optical flow visualization using display_optical_flow.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Input validation</span>
     <span class="n">image</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
-    <span class="n">flow_x</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">flow_x</span><span class="p">)</span>
-    <span class="n">flow_y</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">flow_y</span><span class="p">)</span>
+    <span class="n">flow_x</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">flow_x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">flow_y</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">flow_y</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="n">flow_x</span><span class="o">.</span><span class="n">shape</span> <span class="ow">or</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="n">flow_y</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Image and flow components must have compatible shapes.&quot;</span><span class="p">)</span>
@@ -739,11 +743,16 @@
     <span class="k">if</span> <span class="n">image</span><span class="o">.</span><span class="n">ndim</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input image must be 2D or 3D array.&quot;</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">channel</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">channel</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Channel must be an integer.&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">image</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="p">(</span><span class="n">channel</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">channel</span> <span class="o">&gt;=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Channel index out of bounds.&quot;</span><span class="p">)</span>
+    <span class="n">img_range</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">max</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="o">/</span> <span class="n">img_range</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">flow_x</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">flow_y</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Flow components must have the same shape as the input image.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">channel</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Channel must be an integer.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">image</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="p">(</span><span class="n">channel</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">channel</span> <span class="o">&gt;=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Channel index out of bounds.&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">region</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">region</span>
@@ -824,6 +833,246 @@
     <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Flow Y Component $F_y$ (pixels)&quot;</span><span class="p">)</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">fyplot</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
 
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="display_optical_flow_quiver">
+<a class="viewcode-back" href="../../_autosummary/pycvcam.display_optical_flow_quiver.html#pycvcam.display_optical_flow_quiver">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">display_optical_flow_quiver</span><span class="p">(</span>
+    <span class="n">image1</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">image2</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">flow_x</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">flow_y</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">region</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Integral</span><span class="p">,</span> <span class="n">Integral</span><span class="p">,</span> <span class="n">Integral</span><span class="p">,</span> <span class="n">Integral</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">display_region</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Integral</span><span class="p">,</span> <span class="n">Integral</span><span class="p">,</span> <span class="n">Integral</span><span class="p">,</span> <span class="n">Integral</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">step</span><span class="p">:</span> <span class="n">Integral</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="p">:</span> <span class="n">Real</span> <span class="o">=</span> <span class="mf">0.8</span><span class="p">,</span>
+    <span class="n">color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;black&quot;</span><span class="p">,</span>
+    <span class="n">width</span><span class="p">:</span> <span class="n">Real</span> <span class="o">=</span> <span class="mf">0.002</span><span class="p">,</span>
+    <span class="n">channel</span><span class="p">:</span> <span class="n">Integral</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Display the optical flow as a quiver plot overlaid on the given images using Matplotlib.</span>
+
+<span class="sd">    The inuput image is displayed in background blued and the output image is displayed</span>
+<span class="sd">    in background reddish. The optical flow is displayed as arrows (quiver) overlaid</span>
+<span class="sd">    on the images, where the direction of the arrows represents the direction of motion</span>
+<span class="sd">    and the length of the arrows represents the magnitude of motion.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image1: ArrayLike</span>
+<span class="sd">        The first image with shape :math:`(H, W)` or :math:`(H, W, C)`.</span>
+
+<span class="sd">    image2: ArrayLike</span>
+<span class="sd">        The second image with shape :math:`(H, W)` or :math:`(H, W, C)`.</span>
+
+<span class="sd">    flow_x: ArrayLike</span>
+<span class="sd">        The x-component of the optical flow (horizontal displacement) in pixels with</span>
+<span class="sd">        shape :math:`(H, W)`.</span>
+
+<span class="sd">    flow_y: ArrayLike</span>
+<span class="sd">        The y-component of the optical flow (vertical displacement) in pixels with</span>
+<span class="sd">        shape :math:`(H, W)`.</span>
+
+<span class="sd">    region: Optional[Tuple[Integral, Integral, Integral, Integral]], optional</span>
+<span class="sd">        A tuple specifying the region of interest in the format (x, y, width, height).</span>
+<span class="sd">        Crop the image to this region before displaying.</span>
+<span class="sd">        If None, the entire image is displayed. Default is None.</span>
+
+<span class="sd">    display_region: Optional[Tuple[Integral, Integral, Integral, Integral]], optional</span>
+<span class="sd">        A tuple specifying the region of the flow to display in the format</span>
+<span class="sd">        (x, y, width, height). Crop the flow to this region before displaying.</span>
+<span class="sd">        If None, the entire flow is displayed. Default is None.</span>
+
+<span class="sd">    step: Integral, optional</span>
+<span class="sd">        The step size for sampling the flow vectors to display. Default is 10.</span>
+
+<span class="sd">    alpha: Real, optional</span>
+<span class="sd">        The alpha blending value for overlaying the optical flow on the images.</span>
+<span class="sd">        Default is 0.8.</span>
+
+<span class="sd">    color: str, optional</span>
+<span class="sd">        The color of the quiver arrows. Default is &#39;black&#39;.</span>
+
+<span class="sd">    width: Real, optional</span>
+<span class="sd">        The width of the quiver arrows. Default is 0.002.</span>
+
+<span class="sd">    channel: Integral, optional</span>
+<span class="sd">        The channel of the images to display if they are multi-channel. Default is 0.</span>
+
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    pycvcam.compute_optical_flow</span>
+<span class="sd">        Compute the optical flow between two images using the DIS method of OpenCV.</span>
+
+<span class="sd">    pycvcam.display_optical_flow</span>
+<span class="sd">        Display the optical flow overlaid on the given image using Matplotlib.</span>
+
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Create two example images and compute the optical flow between them.</span>
+
+<span class="sd">    .. figure:: /_static/textures/lena_texture.png</span>
+
+<span class="sd">        :align: center</span>
+<span class="sd">        :width: 50%</span>
+
+<span class="sd">        Lena image used for the example.</span>
+
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import numpy</span>
+<span class="sd">        import cv2</span>
+<span class="sd">        from pycvcam import compute_optical_flow, display_optical_flow_quiver</span>
+<span class="sd">        from pycvcam import get_lena_image</span>
+
+<span class="sd">        # Create two example images</span>
+<span class="sd">        image1 = get_lena_image() # numpy array of shape (474, 474)</span>
+
+<span class="sd">        # cv2 distortion to create a second image</span>
+<span class="sd">        image2 = cv2.undistort(image1, cameraMatrix=numpy.array(</span>
+<span class="sd">            [[300, 0, 237], [0, 300, 237], [0, 0, 1]]</span>
+<span class="sd">        ), distCoeffs=numpy.array([-0.2, 0.1, 0, 0]))</span>
+
+<span class="sd">        # Compute optical flow</span>
+<span class="sd">        flow_x, flow_y = compute_optical_flow(image1, image2)</span>
+
+<span class="sd">        # Select a region of interest (optional)</span>
+<span class="sd">        display_region = (10, 10, image1.shape[1]-20, image1.shape[0]-20) # (x, y, width, height)</span>
+
+<span class="sd">        # Display the optical flow as quiver plot</span>
+<span class="sd">        display_optical_flow_quiver(image1, image2, flow_x, flow_y, display_region=display_region)</span>
+
+<span class="sd">    .. figure:: /_static/optical_flow/display_optical_flow_quiver.png</span>
+<span class="sd">        :align: center</span>
+
+<span class="sd">        Example of optical flow quiver plot visualization using display_optical_flow_quiver.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Input validation</span>
+    <span class="n">image1</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">image1</span><span class="p">)</span>
+    <span class="n">image2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">image2</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">image1</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">image2</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input images must have the same shape.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">image1</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">unsignedinteger</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Input images must be of unsigned integer type.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">image2</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">unsignedinteger</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Input images must be of unsigned integer type.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">image1</span><span class="o">.</span><span class="n">ndim</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input images must be 2D or 3D arrays.&quot;</span><span class="p">)</span>
+
+    <span class="n">img1_range</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">image1</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">max</span>
+    <span class="n">img2_range</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">image2</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">max</span>
+    <span class="n">image1</span> <span class="o">=</span> <span class="n">image1</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="o">/</span> <span class="n">img1_range</span>
+    <span class="n">image2</span> <span class="o">=</span> <span class="n">image2</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="o">/</span> <span class="n">img2_range</span>
+
+    <span class="n">shape</span> <span class="o">=</span> <span class="n">image1</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+
+    <span class="n">flow_x</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">flow_x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">flow_y</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">flow_y</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">flow_x</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">shape</span> <span class="ow">or</span> <span class="n">flow_y</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">shape</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Flow components must have compatible shapes with the input images.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">channel</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Channel must be an integer.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">image1</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="p">(</span><span class="n">channel</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">channel</span> <span class="o">&gt;=</span> <span class="n">image1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Channel index out of bounds.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">region</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">region</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Region coordinates and size must be integers.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">x</span> <span class="o">+</span> <span class="n">w</span> <span class="o">&gt;</span> <span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">or</span> <span class="n">y</span> <span class="o">+</span> <span class="n">h</span> <span class="o">&gt;</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Region is out of image bounds.&quot;</span><span class="p">)</span>
+        <span class="n">w_slice</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span> <span class="o">+</span> <span class="n">w</span><span class="p">)</span>
+        <span class="n">h_slice</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y</span> <span class="o">+</span> <span class="n">h</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">w_slice</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">h_slice</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">display_region</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fx</span><span class="p">,</span> <span class="n">fy</span><span class="p">,</span> <span class="n">fw</span><span class="p">,</span> <span class="n">fh</span> <span class="o">=</span> <span class="n">display_region</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">fx</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fy</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fw</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fh</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Flow region coordinates and size must be integers.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">fx</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">fy</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">fx</span> <span class="o">+</span> <span class="n">fw</span> <span class="o">&gt;</span> <span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">or</span> <span class="n">fy</span> <span class="o">+</span> <span class="n">fh</span> <span class="o">&gt;</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Flow region is out of image bounds.&quot;</span><span class="p">)</span>
+        <span class="n">fw_slice</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">fx</span><span class="p">,</span> <span class="n">w_slice</span><span class="o">.</span><span class="n">start</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">fx</span> <span class="o">+</span> <span class="n">fw</span><span class="p">,</span> <span class="n">w_slice</span><span class="o">.</span><span class="n">stop</span><span class="p">))</span>
+        <span class="n">fh_slice</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">fy</span><span class="p">,</span> <span class="n">h_slice</span><span class="o">.</span><span class="n">start</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">fy</span> <span class="o">+</span> <span class="n">fh</span><span class="p">,</span> <span class="n">h_slice</span><span class="o">.</span><span class="n">stop</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fw_slice</span> <span class="o">=</span> <span class="n">w_slice</span>
+        <span class="n">fh_slice</span> <span class="o">=</span> <span class="n">h_slice</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">step</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Step must be a positive integer.&quot;</span><span class="p">)</span>
+
+    <span class="n">fw_slice</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="n">fw_slice</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">fw_slice</span><span class="o">.</span><span class="n">stop</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span>
+    <span class="n">fh_slice</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="n">fh_slice</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">fh_slice</span><span class="o">.</span><span class="n">stop</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">Real</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">alpha</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Alpha must be a real number between 0 and 1.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Color must be a string.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">Real</span><span class="p">)</span> <span class="ow">or</span> <span class="n">width</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Width must be a positive real number.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Extract the useful channel</span>
+    <span class="k">if</span> <span class="n">image1</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">img1_channel</span> <span class="o">=</span> <span class="n">image1</span><span class="p">[</span><span class="n">h_slice</span><span class="p">,</span> <span class="n">w_slice</span><span class="p">,</span> <span class="n">channel</span><span class="p">]</span>
+        <span class="n">img2_channel</span> <span class="o">=</span> <span class="n">image2</span><span class="p">[</span><span class="n">h_slice</span><span class="p">,</span> <span class="n">w_slice</span><span class="p">,</span> <span class="n">channel</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">img1_channel</span> <span class="o">=</span> <span class="n">image1</span><span class="p">[</span><span class="n">h_slice</span><span class="p">,</span> <span class="n">w_slice</span><span class="p">]</span>
+        <span class="n">img2_channel</span> <span class="o">=</span> <span class="n">image2</span><span class="p">[</span><span class="n">h_slice</span><span class="p">,</span> <span class="n">w_slice</span><span class="p">]</span>
+    <span class="n">crop_shape</span> <span class="o">=</span> <span class="n">img1_channel</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="n">img_rgb</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">crop_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">crop_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">img_rgb</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">img2_channel</span>
+    <span class="n">img_rgb</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">img1_channel</span>
+
+    <span class="c1"># Set the flow to nan outside the specified flow region</span>
+    <span class="n">flow_x_display</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">flow_x</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+    <span class="n">flow_y_display</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">flow_y</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+    <span class="n">flow_x_display</span><span class="p">[</span><span class="n">fh_slice</span><span class="p">,</span> <span class="n">fw_slice</span><span class="p">]</span> <span class="o">=</span> <span class="n">flow_x</span><span class="p">[</span><span class="n">fh_slice</span><span class="p">,</span> <span class="n">fw_slice</span><span class="p">]</span>
+    <span class="n">flow_y_display</span><span class="p">[</span><span class="n">fh_slice</span><span class="p">,</span> <span class="n">fw_slice</span><span class="p">]</span> <span class="o">=</span> <span class="n">flow_y</span><span class="p">[</span><span class="n">fh_slice</span><span class="p">,</span> <span class="n">fw_slice</span><span class="p">]</span>
+
+    <span class="c1"># Extract the flow in the specified region</span>
+    <span class="n">flow_x_region</span> <span class="o">=</span> <span class="n">flow_x_display</span><span class="p">[</span><span class="n">h_slice</span><span class="p">,</span> <span class="n">w_slice</span><span class="p">]</span>
+    <span class="n">flow_y_region</span> <span class="o">=</span> <span class="n">flow_y_display</span><span class="p">[</span><span class="n">h_slice</span><span class="p">,</span> <span class="n">w_slice</span><span class="p">]</span>
+
+    <span class="c1"># Plotting</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img_rgb</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">quiver</span><span class="p">(</span>
+        <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">flow_x_region</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+        <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">flow_x_region</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="n">flow_x_region</span><span class="p">,</span>
+        <span class="n">flow_y_region</span><span class="p">,</span>
+        <span class="n">angles</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">,</span>
+        <span class="n">scale_units</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">,</span>
+        <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
+        <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Optical Flow F (quiver)&quot;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 

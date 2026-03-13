@@ -460,7 +460,12 @@
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="../_docs/project_points.html">pycvcam.project_points</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../_docs/compute_rays.html">pycvcam.compute_rays</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../_docs/optical_flow.html">Optical Flow Operations</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../_docs/optical_flow.html">Optical Flow Operations</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.compute_optical_flow.html">pycvcam.compute_optical_flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.display_optical_flow.html">pycvcam.display_optical_flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pycvcam.display_optical_flow_quiver.html">pycvcam.display_optical_flow_quiver</a></li>
+</ul>
+</details></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../_docs/optimize_parameters.html">Optimize parameters of transformations</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -594,7 +599,7 @@ by swapping the axes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>image_points</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a>) – The 2D image points in the image coordinate system. Shape (…, 2)</p></li>
+<li><p><strong>image_points</strong> (<em>ArrayLike</em>) – The 2D image points in the image coordinate system. Shape (…, 2)</p></li>
 <li><p><strong>intrinsic</strong> (Optional[<code class="xref py py-class docutils literal notranslate"><span class="pre">Intrinsic</span></code>]) – The intrinsic transformation to be applied to the image points.
 If None, a no intrinsic transformation is applied (i.e., identity
 transformation).</p></li>
