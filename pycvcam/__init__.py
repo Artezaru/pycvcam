@@ -43,7 +43,11 @@ from .distorting_image import undistort_image, distort_image
 from .distorting_points import undistort_points, distort_points
 from .project_points import project_points
 from .compute_rays import compute_rays
-from .optical_flow import compute_optical_flow, display_optical_flow
+from .optical_flow import (
+    compute_optical_flow,
+    display_optical_flow,
+    display_optical_flow_quiver,
+)
 
 __all__.extend(
     [
@@ -55,6 +59,7 @@ __all__.extend(
         "compute_rays",
         "compute_optical_flow",
         "display_optical_flow",
+        "display_optical_flow_quiver",
     ]
 )
 

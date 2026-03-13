@@ -320,11 +320,12 @@ def display_optical_flow(
 
     region: Optional[Tuple[Integral, Integral, Integral, Integral]], optional
         A tuple specifying the region of interest in the format (x, y, width, height).
+        Crop the image to this region before displaying.
         If None, the entire image is displayed. Default is None.
 
     display_region: Optional[Tuple[Integral, Integral, Integral, Integral]], optional
         A tuple specifying the region of the flow to display in the format
-        (x, y, width, height).
+        (x, y, width, height). Crop the flow to this region before displaying.
         If None, the entire flow is displayed. Default is None.
 
     alpha: Real, optional
@@ -353,16 +354,14 @@ def display_optical_flow(
         Maximum value for flow component colormap normalization. Default is None.
 
 
-    Returns
-    -------
-    None
-        Displays the optical flow overlay on the image.
-
-
     See Also
     --------
     pycvcam.compute_optical_flow
         Compute the optical flow between two images using the DIS method of OpenCV.
+
+    pycvcam.display_optical_flow_quiver
+        Display the optical flow as a quiver plot overlaid on the given
+        images using Matplotlib.
 
 
     Examples
@@ -400,11 +399,16 @@ def display_optical_flow(
         # Display the optical flow
         display_optical_flow(image1, flow_x, flow_y, display_region=display_region)
 
+    .. figure:: /_static/optical_flow/display_optical_flow.png
+        :align: center
+
+        Example of optical flow visualization using display_optical_flow.
+
     """
     # Input validation
     image = numpy.asarray(image)
-    flow_x = numpy.asarray(flow_x)
-    flow_y = numpy.asarray(flow_y)
+    flow_x = numpy.asarray(flow_x, dtype=numpy.float64)
+    flow_y = numpy.asarray(flow_y, dtype=numpy.float64)
 
     if image.shape[:2] != flow_x.shape or image.shape[:2] != flow_y.shape:
         raise ValueError("Image and flow components must have compatible shapes.")
@@ -413,11 +417,16 @@ def display_optical_flow(
     if image.ndim not in [2, 3]:
         raise ValueError("Input image must be 2D or 3D array.")
 
-    if channel is not None:
-        if not isinstance(channel, int):
-            raise TypeError("Channel must be an integer.")
-        if image.ndim == 3 and (channel < 0 or channel >= image.shape[2]):
-            raise ValueError("Channel index out of bounds.")
+    img_range = numpy.iinfo(image.dtype).max
+    image = image.astype(numpy.float64) / img_range
+
+    if not flow_x.shape == image.shape[:2] or not flow_y.shape == image.shape[:2]:
+        raise ValueError("Flow components must have the same shape as the input image.")
+
+    if not isinstance(channel, int):
+        raise TypeError("Channel must be an integer.")
+    if image.ndim == 3 and (channel < 0 or channel >= image.shape[2]):
+        raise ValueError("Channel index out of bounds.")
 
     if region is not None:
         x, y, w, h = region
@@ -498,5 +507,242 @@ def display_optical_flow(
     ax.set_title(r"Flow Y Component $F_y$ (pixels)")
     fig.colorbar(fyplot, ax=ax)
 
+    plt.tight_layout()
+    plt.show()
+
+
+def display_optical_flow_quiver(
+    image1: ArrayLike,
+    image2: ArrayLike,
+    flow_x: ArrayLike,
+    flow_y: ArrayLike,
+    region: Optional[Tuple[Integral, Integral, Integral, Integral]] = None,
+    display_region: Optional[Tuple[Integral, Integral, Integral, Integral]] = None,
+    step: Integral = 10,
+    alpha: Real = 0.8,
+    color: str = "black",
+    width: Real = 0.002,
+    channel: Integral = 0,
+) -> None:
+    r"""
+    Display the optical flow as a quiver plot overlaid on the given images using Matplotlib.
+
+    The inuput image is displayed in background blued and the output image is displayed
+    in background reddish. The optical flow is displayed as arrows (quiver) overlaid
+    on the images, where the direction of the arrows represents the direction of motion
+    and the length of the arrows represents the magnitude of motion.
+
+    Parameters
+    ----------
+    image1: ArrayLike
+        The first image with shape :math:`(H, W)` or :math:`(H, W, C)`.
+
+    image2: ArrayLike
+        The second image with shape :math:`(H, W)` or :math:`(H, W, C)`.
+
+    flow_x: ArrayLike
+        The x-component of the optical flow (horizontal displacement) in pixels with
+        shape :math:`(H, W)`.
+
+    flow_y: ArrayLike
+        The y-component of the optical flow (vertical displacement) in pixels with
+        shape :math:`(H, W)`.
+
+    region: Optional[Tuple[Integral, Integral, Integral, Integral]], optional
+        A tuple specifying the region of interest in the format (x, y, width, height).
+        Crop the image to this region before displaying.
+        If None, the entire image is displayed. Default is None.
+
+    display_region: Optional[Tuple[Integral, Integral, Integral, Integral]], optional
+        A tuple specifying the region of the flow to display in the format
+        (x, y, width, height). Crop the flow to this region before displaying.
+        If None, the entire flow is displayed. Default is None.
+
+    step: Integral, optional
+        The step size for sampling the flow vectors to display. Default is 10.
+
+    alpha: Real, optional
+        The alpha blending value for overlaying the optical flow on the images.
+        Default is 0.8.
+
+    color: str, optional
+        The color of the quiver arrows. Default is 'black'.
+
+    width: Real, optional
+        The width of the quiver arrows. Default is 0.002.
+
+    channel: Integral, optional
+        The channel of the images to display if they are multi-channel. Default is 0.
+
+
+    See Also
+    --------
+    pycvcam.compute_optical_flow
+        Compute the optical flow between two images using the DIS method of OpenCV.
+
+    pycvcam.display_optical_flow
+        Display the optical flow overlaid on the given image using Matplotlib.
+
+
+    Examples
+    --------
+    Create two example images and compute the optical flow between them.
+
+    .. figure:: /_static/textures/lena_texture.png
+
+        :align: center
+        :width: 50%
+
+        Lena image used for the example.
+
+
+    .. code-block:: python
+
+        import numpy
+        import cv2
+        from pycvcam import compute_optical_flow, display_optical_flow_quiver
+        from pycvcam import get_lena_image
+
+        # Create two example images
+        image1 = get_lena_image() # numpy array of shape (474, 474)
+
+        # cv2 distortion to create a second image
+        image2 = cv2.undistort(image1, cameraMatrix=numpy.array(
+            [[300, 0, 237], [0, 300, 237], [0, 0, 1]]
+        ), distCoeffs=numpy.array([-0.2, 0.1, 0, 0]))
+
+        # Compute optical flow
+        flow_x, flow_y = compute_optical_flow(image1, image2)
+
+        # Select a region of interest (optional)
+        display_region = (10, 10, image1.shape[1]-20, image1.shape[0]-20) # (x, y, width, height)
+
+        # Display the optical flow as quiver plot
+        display_optical_flow_quiver(image1, image2, flow_x, flow_y, display_region=display_region)
+
+    .. figure:: /_static/optical_flow/display_optical_flow_quiver.png
+        :align: center
+
+        Example of optical flow quiver plot visualization using display_optical_flow_quiver.
+
+    """
+    # Input validation
+    image1 = numpy.asarray(image1)
+    image2 = numpy.asarray(image2)
+
+    if image1.shape != image2.shape:
+        raise ValueError("Input images must have the same shape.")
+    if not numpy.issubdtype(image1.dtype, numpy.unsignedinteger):
+        raise TypeError("Input images must be of unsigned integer type.")
+    if not numpy.issubdtype(image2.dtype, numpy.unsignedinteger):
+        raise TypeError("Input images must be of unsigned integer type.")
+    if image1.ndim not in [2, 3]:
+        raise ValueError("Input images must be 2D or 3D arrays.")
+
+    img1_range = numpy.iinfo(image1.dtype).max
+    img2_range = numpy.iinfo(image2.dtype).max
+    image1 = image1.astype(numpy.float64) / img1_range
+    image2 = image2.astype(numpy.float64) / img2_range
+
+    shape = image1.shape[:2]
+
+    flow_x = numpy.asarray(flow_x, dtype=numpy.float64)
+    flow_y = numpy.asarray(flow_y, dtype=numpy.float64)
+    if flow_x.shape != shape or flow_y.shape != shape:
+        raise ValueError(
+            "Flow components must have compatible shapes with the input images."
+        )
+
+    if not isinstance(channel, int):
+        raise TypeError("Channel must be an integer.")
+    if image1.ndim == 3 and (channel < 0 or channel >= image1.shape[2]):
+        raise ValueError("Channel index out of bounds.")
+
+    if region is not None:
+        x, y, w, h = region
+        if not (
+            isinstance(x, int)
+            and isinstance(y, int)
+            and isinstance(w, int)
+            and isinstance(h, int)
+        ):
+            raise TypeError("Region coordinates and size must be integers.")
+        if x < 0 or y < 0 or x + w > shape[1] or y + h > shape[0]:
+            raise ValueError("Region is out of image bounds.")
+        w_slice = slice(x, x + w)
+        h_slice = slice(y, y + h)
+    else:
+        w_slice = slice(0, shape[1])
+        h_slice = slice(0, shape[0])
+
+    if display_region is not None:
+        fx, fy, fw, fh = display_region
+        if not (
+            isinstance(fx, int)
+            and isinstance(fy, int)
+            and isinstance(fw, int)
+            and isinstance(fh, int)
+        ):
+            raise TypeError("Flow region coordinates and size must be integers.")
+        if fx < 0 or fy < 0 or fx + fw > shape[1] or fy + fh > shape[0]:
+            raise ValueError("Flow region is out of image bounds.")
+        fw_slice = slice(max(fx, w_slice.start), min(fx + fw, w_slice.stop))
+        fh_slice = slice(max(fy, h_slice.start), min(fy + fh, h_slice.stop))
+    else:
+        fw_slice = w_slice
+        fh_slice = h_slice
+
+    if not isinstance(step, int) or step <= 0:
+        raise ValueError("Step must be a positive integer.")
+
+    fw_slice = slice(fw_slice.start, fw_slice.stop, step)
+    fh_slice = slice(fh_slice.start, fh_slice.stop, step)
+
+    if not isinstance(alpha, Real) or not (0 <= alpha <= 1):
+        raise ValueError("Alpha must be a real number between 0 and 1.")
+    if not isinstance(color, str):
+        raise TypeError("Color must be a string.")
+    if not isinstance(width, Real) or width <= 0:
+        raise ValueError("Width must be a positive real number.")
+
+    # Extract the useful channel
+    if image1.ndim == 3:
+        img1_channel = image1[h_slice, w_slice, channel]
+        img2_channel = image2[h_slice, w_slice, channel]
+    else:
+        img1_channel = image1[h_slice, w_slice]
+        img2_channel = image2[h_slice, w_slice]
+    crop_shape = img1_channel.shape
+
+    img_rgb = numpy.zeros((crop_shape[0], crop_shape[1], 3), dtype=numpy.float64)
+    img_rgb[..., 0] = img2_channel
+    img_rgb[..., 2] = img1_channel
+
+    # Set the flow to nan outside the specified flow region
+    flow_x_display = numpy.full_like(flow_x, numpy.nan)
+    flow_y_display = numpy.full_like(flow_y, numpy.nan)
+    flow_x_display[fh_slice, fw_slice] = flow_x[fh_slice, fw_slice]
+    flow_y_display[fh_slice, fw_slice] = flow_y[fh_slice, fw_slice]
+
+    # Extract the flow in the specified region
+    flow_x_region = flow_x_display[h_slice, w_slice]
+    flow_y_region = flow_y_display[h_slice, w_slice]
+
+    # Plotting
+    fig = plt.figure(figsize=(8, 8))
+    ax = fig.add_subplot(1, 1, 1)
+    ax.imshow(img_rgb, alpha=alpha)
+    ax.quiver(
+        numpy.arange(flow_x_region.shape[1]),
+        numpy.arange(flow_x_region.shape[0]),
+        flow_x_region,
+        flow_y_region,
+        angles="xy",
+        scale_units="xy",
+        scale=1,
+        color=color,
+        width=width,
+    )
+    ax.set_title("Optical Flow F (quiver)")
     plt.tight_layout()
     plt.show()

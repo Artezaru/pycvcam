@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from typing import Optional, Tuple, List
+from numpy.typing import ArrayLike
 import numpy
 from numbers import Number, Integral
 import cv2
@@ -107,7 +108,7 @@ class Cv2Distortion(Distortion):
 
     Parameters
     ----------
-    parameters : Optional[numpy.ndarray], optional
+    parameters : Optional[ArrayLike], optional
         The parameters of the distortion transformation. It should be a numpy array of shape (n_params,) containing the distortion coefficients ordered as described above. Default is None, which means no distortion is setted.
 
     n_params : Optional[Integral], optional
@@ -154,7 +155,7 @@ class Cv2Distortion(Distortion):
 
         Parameters
         ----------
-        parameters : numpy.ndarray, optional
+        parameters : ArrayLike, optional
             The parameters of the distortion model. If None, no distortion is applied. The default is None.
 
         Raises
@@ -166,7 +167,7 @@ class Cv2Distortion(Distortion):
         return self._parameters
 
     @parameters.setter
-    def parameters(self, parameters: Optional[numpy.ndarray]) -> None:
+    def parameters(self, parameters: Optional[ArrayLike]) -> None:
         if parameters is not None:
             parameters = numpy.asarray(parameters, dtype=numpy.float64)
             if parameters.ndim != 1:

@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from typing import Optional, Dict
+from numpy.typing import ArrayLike
 import numpy
 
 
@@ -26,7 +27,7 @@ from .extrinsic_objects.no_extrinsic import NoExtrinsic
 
 
 def undistort_points(
-    image_points: numpy.ndarray,
+    image_points: ArrayLike,
     intrinsic: Optional[Intrinsic],
     distortion: Optional[Distortion],
     R: Optional[Extrinsic] = None,
@@ -87,7 +88,7 @@ def undistort_points(
 
     Parameters
     ----------
-    image_points : numpy.ndarray
+    image_points : ArrayLike
         The 2D image points in the image coordinate system. Shape (..., 2)
 
     intrinsic : Optional[:class:`Intrinsic`]
@@ -323,7 +324,7 @@ def undistort_points(
 
 
 def distort_points(
-    image_points: numpy.ndarray,
+    image_points: ArrayLike,
     intrinsic: Optional[Intrinsic],
     distortion: Optional[Distortion],
     R: Optional[Extrinsic] = None,
@@ -381,7 +382,7 @@ def distort_points(
 
     Parameters
     ----------
-    image_points : numpy.ndarray
+    image_points : ArrayLike
         The 2D image points in the image coordinate system. Shape (..., 2)
 
     intrinsic : Optional[:class:`Intrinsic`]

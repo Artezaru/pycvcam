@@ -14,12 +14,21 @@ The computed optical flow can be visualized using quiver plots or color-coded fl
 Compute Optical Flow
 ---------------------
 
-.. autofunction:: compute_optical_flow
+.. autosummary::
+   :toctree: ../_autosummary/
+
+   compute_optical_flow
+
 
 Display Optical Flow
 -----------------------
 
-.. autofunction:: display_optical_flow
+.. autosummary::
+   :toctree: ../_autosummary/
+
+   display_optical_flow
+   display_optical_flow_quiver
+
 
 Examples
 ---------

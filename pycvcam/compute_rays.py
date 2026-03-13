@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from typing import Optional, Dict
+from numpy.typing import ArrayLike
 import numpy
 import cv2
 import scipy
@@ -28,7 +29,7 @@ from .extrinsic_objects.no_extrinsic import NoExtrinsic
 
 
 def compute_rays(
-    image_points: numpy.ndarray,
+    image_points: ArrayLike,
     intrinsic: Optional[Intrinsic],
     distortion: Optional[Distortion],
     extrinsic: Optional[Extrinsic],
@@ -68,7 +69,7 @@ def compute_rays(
 
     Parameters
     ----------
-    image_points : numpy.ndarray
+    image_points : ArrayLike
         The 2D image points in the camera normalized coordinate system. Shape (..., 2)
 
     intrinsic : Optional[Intrinsic]

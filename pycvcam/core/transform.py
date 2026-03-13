@@ -82,8 +82,8 @@ class Transform(ABC):
     @abstractmethod
     def __init__(
         self,
-        parameters: Optional[numpy.ndarray] = None,
-        constants: Optional[numpy.ndarray] = None,
+        parameters: Optional[ArrayLike] = None,
+        constants: Optional[ArrayLike] = None,
     ):
         self.parameters = parameters
         self.constants = constants
